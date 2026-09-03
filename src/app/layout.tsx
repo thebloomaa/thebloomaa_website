@@ -7,6 +7,11 @@ export const metadata: Metadata = {
   description:
     "Subscription-based fitness meal prep service. Choose your macro targets, subscribe for 7, 15 or 30 days, and get fresh meals delivered to your door at your exact preferred time.",
   keywords: ["meal prep", "fitness meals", "macro tracking", "healthy food delivery", "gym diet", "Patna"],
+  openGraph: {
+    title: "TheBlooMaa — Macro-Tracked Meal Preps Delivered Daily",
+    description: "Subscription-based fitness meal prep service in Patna.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
