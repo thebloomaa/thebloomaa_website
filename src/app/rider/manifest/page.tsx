@@ -162,6 +162,8 @@ export default function RiderManifestPage() {
               </div>
             </div>
           ))}
+        </div>
+
         {routes.length === 0 && (
           <div className="text-center py-10 text-[var(--text-muted)] border rounded-xl" style={{ borderColor: 'var(--border-subtle)' }}>
             No orders queued for today.
