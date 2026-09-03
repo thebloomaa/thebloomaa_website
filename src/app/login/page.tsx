@@ -76,6 +76,15 @@ export default function LoginPage() {
       } else if (sessionData?.user?.role === 'RIDER') {
         router.push('/rider/manifest');
       } else {
+        // Fetch full profile to check if onboarding is needed
+        const profileRes = await fetch('/api/user/profile');
+        if (profileRes.ok) {
+          const profileData = await profileRes.json();
+          if (!profileData.user?.name || !profileData.user?.phone) {
+            router.push('/onboarding');
+            return; // Don't refresh yet, wait for onboarding
+          }
+        }
         router.push('/dashboard');
       }
       

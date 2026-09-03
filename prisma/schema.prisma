@@ -11,9 +11,15 @@ model User {
   id            String         @id @default(uuid())
   email         String         @unique
   phone         String?        @unique
-  name          String?
-  allergies     String?
-  fitnessGoal   String?
+  name              String?
+  allergies         String?
+  fitnessGoal       String?
+  gender            String?
+  age               Int?
+  weight            Float?         // in kg
+  height            Float?         // in cm
+  activityLevel     String?
+  dietaryPreference String?
   role          String         @default("CUSTOMER")
   addresses     Address[]
   subscriptions Subscription[]
