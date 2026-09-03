@@ -1,42 +1,5 @@
 'use client';
 
-import React, { useState } from 'react';
-
-// Mock manifest data grouped by pincode
-const mockManifest = {
-  date: 'Sep 4, 2026',
-  riderName: 'Raju',
-  totalOrders: 8,
-  routes: [
-    {
-      pincode: '560034',
-      neighborhood: 'Koramangala',
-      orders: [
-        { id: 'ORD-0101', customer: 'Arjun Mehta', address: '45, 4th Block, Koramangala', phone: '+91 99887 76655', meal: 'Lean Muscle Chicken Prep', calories: 650, time: '07:00', status: 'QUEUED' as const },
-        { id: 'ORD-0102', customer: 'Priya Sharma', address: '12, 3rd Cross, Koramangala', phone: '+91 98765 43210', meal: 'Vegan Keto Power Bowl', calories: 500, time: '07:30', status: 'QUEUED' as const },
-        { id: 'ORD-0103', customer: 'Vikram Patel', address: '78, 5th Block, Koramangala', phone: '+91 91234 56789', meal: 'Standard Weight Loss Diet', calories: 400, time: '08:00', status: 'QUEUED' as const },
-      ],
-    },
-    {
-      pincode: '560038',
-      neighborhood: 'Indiranagar',
-      orders: [
-        { id: 'ORD-0104', customer: 'Neha Gupta', address: '23, 12th Main, Indiranagar', phone: '+91 88776 65544', meal: 'Lean Muscle Chicken Prep', calories: 650, time: '08:15', status: 'QUEUED' as const },
-        { id: 'ORD-0105', customer: 'Rahul Krishnan', address: '56, CMH Road, Indiranagar', phone: '+91 77665 54433', meal: 'Lean Muscle Chicken Prep', calories: 650, time: '08:30', status: 'QUEUED' as const },
-      ],
-    },
-    {
-      pincode: '560102',
-      neighborhood: 'HSR Layout',
-      orders: [
-        { id: 'ORD-0106', customer: 'Divya Nair', address: '34, Sector 2, HSR Layout', phone: '+91 66554 43322', meal: 'Vegan Keto Power Bowl', calories: 500, time: '06:30', status: 'QUEUED' as const },
-        { id: 'ORD-0107', customer: 'Karthik Rao', address: '89, 27th Main, HSR Layout', phone: '+91 55443 32211', meal: 'Standard Weight Loss Diet', calories: 400, time: '07:45', status: 'QUEUED' as const },
-        { id: 'ORD-0108', customer: 'Sneha Iyer', address: '67, Sector 3, HSR Layout', phone: '+91 44332 21100', meal: 'Lean Muscle Chicken Prep', calories: 650, time: '09:00', status: 'QUEUED' as const },
-      ],
-    },
-  ],
-};
-
 type OrderStatus = 'QUEUED' | 'DELIVERED' | 'FAILED';
 
 const statusStyles: Record<OrderStatus, { bg: string; color: string; label: string }> = {
@@ -46,9 +9,33 @@ const statusStyles: Record<OrderStatus, { bg: string; color: string; label: stri
 };
 
 export default function RiderManifestPage() {
-  const [routes, setRoutes] = useState(mockManifest.routes);
+  const [routes, setRoutes] = useState<any[]>([]);
   const [deliveredCount, setDeliveredCount] = useState(0);
   const [failedCount, setFailedCount] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [date, setDate] = useState('');
+
+  React.useEffect(() => {
+    fetch('/api/rider/manifest')
+      .then(res => res.json())
+      .then(data => {
+        if (data.routes) {
+          setRoutes(data.routes);
+          setDate(data.date);
+          
+          let del = 0, fail = 0;
+          data.routes.forEach((r: any) => {
+            r.orders.forEach((o: any) => {
+              if (o.status === 'DELIVERED') del++;
+              if (o.status === 'FAILED') fail++;
+            });
+          });
+          setDeliveredCount(del);
+          setFailedCount(fail);
+        }
+        setLoading(false);
+      });
+  }, []);
 
   const totalOrders = routes.reduce((acc, r) => acc + r.orders.length, 0);
   const pendingCount = totalOrders - deliveredCount - failedCount;
@@ -72,6 +59,10 @@ export default function RiderManifestPage() {
   return (
     <main className="min-h-screen px-4 py-6" style={{ background: 'var(--bg-dark)' }}>
       <div className="max-w-2xl mx-auto">
+        {loading ? (
+          <div className="text-center py-20 text-[var(--text-muted)]">Loading manifest...</div>
+        ) : (
+          <>
         {/* Header */}
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -79,7 +70,7 @@ export default function RiderManifestPage() {
               <span className="text-2xl">🚴</span>
               <h1 className="text-xl font-black">Today&apos;s Manifest</h1>
             </div>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{mockManifest.date} · Hi, {mockManifest.riderName}!</p>
+            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{date} · Hi, Rider!</p>
           </div>
           <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' }}>
             Logout
@@ -171,7 +162,13 @@ export default function RiderManifestPage() {
               </div>
             </div>
           ))}
-        </div>
+        {routes.length === 0 && (
+          <div className="text-center py-10 text-[var(--text-muted)] border rounded-xl" style={{ borderColor: 'var(--border-subtle)' }}>
+            No orders queued for today.
+          </div>
+        )}
+        </>
+        )}
       </div>
     </main>
   );

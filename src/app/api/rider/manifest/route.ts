@@ -1,16 +1,12 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
-// GET /api/rider/manifest?riderId=xxx
-// Returns today's orders assigned to a rider, grouped by pincode
+// GET /api/rider/manifest
+// Returns today's orders, grouped by pincode
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const riderId = searchParams.get('riderId');
-
-    if (!riderId) {
-      return NextResponse.json({ error: 'riderId is required' }, { status: 400 });
-    }
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -19,7 +15,7 @@ export async function GET(request: Request) {
 
     const orders = await prisma.order.findMany({
       where: {
-        riderId,
+        ...(riderId ? { riderId } : {}),
         deliveryDate: {
           gte: today,
           lt: tomorrow,
@@ -46,7 +42,23 @@ export async function GET(request: Request) {
       grouped[pin].push(order);
     }
 
-    return NextResponse.json({ date: today.toISOString(), orders: grouped });
+    // Convert to array format expected by UI
+    const routesArray = Object.keys(grouped).map(pincode => ({
+      pincode,
+      neighborhood: 'Delivery Zone',
+      orders: grouped[pincode].map(o => ({
+        id: o.id,
+        customer: o.user.name || 'Customer',
+        address: o.address.street,
+        phone: o.user.phone || '',
+        meal: o.subscription?.product.name || 'Meal',
+        calories: o.subscription?.product.calories || 0,
+        time: o.deliveryTime || 'Morning',
+        status: o.status,
+      }))
+    }));
+
+    return NextResponse.json({ date: today.toLocaleDateString(), routes: routesArray });
   } catch (error) {
     console.error('Manifest API error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

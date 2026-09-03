@@ -1,4 +1,4 @@
-import { PrismaClient, ProductType, DietaryPreference } from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 
@@ -25,36 +25,36 @@ async function main() {
   const products = [
     { 
       name: 'Lean Muscle Chicken Prep', 
-      type: ProductType.MEAL_PLAN,
+      type: 'MEAL_PLAN',
       price: 350, 
       description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain.',
       calories: 650,
       protein: 55,
       carbs: 45,
       fats: 15,
-      dietaryPreference: DietaryPreference.HIGH_PROTEIN
+      dietaryPreference: 'HIGH_PROTEIN'
     },
     { 
       name: 'Vegan Keto Power Bowl', 
-      type: ProductType.MEAL_PLAN, 
+      type: 'MEAL_PLAN', 
       price: 300, 
       description: 'Tofu, avocado, spinach, and walnuts in an olive oil dressing. Low carb, high fat.',
       calories: 500,
       protein: 20,
       carbs: 12,
       fats: 40,
-      dietaryPreference: DietaryPreference.VEGAN
+      dietaryPreference: 'VEGAN'
     },
     { 
       name: 'Standard Weight Loss Diet', 
-      type: ProductType.MEAL_PLAN, 
+      type: 'MEAL_PLAN', 
       price: 250, 
       description: 'Balanced low-calorie meal with mixed lentils, brown rice, and a side salad.',
       calories: 400,
       protein: 18,
       carbs: 55,
       fats: 8,
-      dietaryPreference: DietaryPreference.VEG
+      dietaryPreference: 'VEG'
     }
   ];
 

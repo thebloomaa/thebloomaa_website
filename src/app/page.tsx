@@ -2,45 +2,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import PincodeChecker from '@/components/PincodeChecker';
-
-const meals = [
-  {
-    id: '1',
-    name: 'Lean Muscle Chicken Prep',
-    description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain with a perfect protein-to-carb ratio.',
-    price: 350,
-    calories: 650,
-    protein: 55,
-    carbs: 45,
-    fats: 15,
-    dietaryPreference: 'HIGH_PROTEIN',
-    image: '/meals/chicken-prep.png',
-  },
-  {
-    id: '2',
-    name: 'Vegan Keto Power Bowl',
-    description: 'Tofu, avocado, spinach, and walnuts in an olive oil dressing. Low carb, high fat — ideal for ketosis.',
-    price: 300,
-    calories: 500,
-    protein: 20,
-    carbs: 12,
-    fats: 40,
-    dietaryPreference: 'VEGAN',
-    image: '/meals/vegan-keto.png',
-  },
-  {
-    id: '3',
-    name: 'Standard Weight Loss Diet',
-    description: 'Balanced low-calorie meal with mixed lentils, brown rice, and a fresh side salad. Clean fuel for cutting.',
-    price: 250,
-    calories: 400,
-    protein: 18,
-    carbs: 55,
-    fats: 8,
-    dietaryPreference: 'VEG',
-    image: '/meals/weight-loss.png',
-  },
-];
+import { prisma } from '@/lib/prisma';
 
 const steps = [
   {
@@ -117,7 +79,25 @@ const faqs = [
   },
 ];
 
-export default function Home() {
+export default async function Home() {
+  const dbProducts = await prisma.product.findMany({
+    where: { type: 'MEAL_PLAN', active: true },
+    take: 3,
+  });
+
+  const meals = dbProducts.map(p => ({
+    id: p.id,
+    name: p.name,
+    description: p.description || '',
+    price: p.price,
+    calories: p.calories || 0,
+    protein: p.protein || 0,
+    carbs: p.carbs || 0,
+    fats: p.fats || 0,
+    dietaryPreference: p.dietaryPreference || 'VEG',
+    image: p.imageUrl || '/meals/chicken-prep.png',
+  }));
+
   return (
     <>
       <Navbar />

@@ -1,50 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useBundleStore, type Product } from '@/store/useBundleStore';
-
-const meals: Product[] = [
-  {
-    id: '1',
-    name: 'Lean Muscle Chicken Prep',
-    description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain with a perfect protein-to-carb ratio.',
-    price: 350,
-    imageUrl: '/meals/chicken-prep.png',
-    type: 'MEAL_PLAN',
-    calories: 650,
-    protein: 55,
-    carbs: 45,
-    fats: 15,
-    dietaryPreference: 'HIGH_PROTEIN',
-  },
-  {
-    id: '2',
-    name: 'Vegan Keto Power Bowl',
-    description: 'Tofu, avocado, spinach, and walnuts in an olive oil dressing. Low carb, high fat — ideal for ketosis.',
-    price: 300,
-    imageUrl: '/meals/vegan-keto.png',
-    type: 'MEAL_PLAN',
-    calories: 500,
-    protein: 20,
-    carbs: 12,
-    fats: 40,
-    dietaryPreference: 'VEGAN',
-  },
-  {
-    id: '3',
-    name: 'Standard Weight Loss Diet',
-    description: 'Balanced low-calorie meal with mixed lentils, brown rice, and a fresh side salad. Clean fuel for cutting.',
-    price: 250,
-    imageUrl: '/meals/weight-loss.png',
-    type: 'MEAL_PLAN',
-    calories: 400,
-    protein: 18,
-    carbs: 55,
-    fats: 8,
-    dietaryPreference: 'VEG',
-  },
-];
 
 const getBadgeStyle = (pref: string) => {
   switch (pref) {
@@ -60,6 +18,17 @@ const getBarWidth = (value: number, max: number) => Math.min((value / max) * 100
 
 export default function MenuPage() {
   const { selectedProduct, selectProduct } = useBundleStore();
+  const [meals, setMeals] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/products?type=MEAL_PLAN')
+      .then(res => res.json())
+      .then(data => {
+        if (data.products) setMeals(data.products.filter((p: any) => p.active));
+        setLoading(false);
+      });
+  }, []);
 
   return (
     <main className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-dark)' }}>
@@ -74,8 +43,11 @@ export default function MenuPage() {
         </div>
 
         {/* Meal Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {meals.map(meal => {
+        {loading ? (
+          <div className="text-center py-20 text-[var(--text-muted)]">Loading available meals...</div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {meals.map(meal => {
             const badge = getBadgeStyle(meal.dietaryPreference);
             const isSelected = selectedProduct?.id === meal.id;
             return (
@@ -143,8 +115,9 @@ export default function MenuPage() {
             );
           })}
         </div>
+        )}
 
-        {/* Continue CTA */}
+        {/* Footer Actions */}
         {selectedProduct && (
           <div className="mt-10 text-center animate-fade-in-up">
             <a

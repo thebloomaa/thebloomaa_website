@@ -362,14 +362,39 @@ export default function CheckoutPage() {
                 <button
                   className="flex-1 py-3.5 rounded-xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
                   style={{ background: 'var(--brand-primary)' }}
-                  onClick={() => {
+                  onClick={async () => {
                     const utr = (document.getElementById('utr-input') as HTMLInputElement)?.value;
                     if (utr?.length !== 12) {
                       alert('Please enter a valid 12-digit UTR / Reference Number.');
                       return;
                     }
-                    alert('Order confirmed! We will verify the payment and activate your plan.');
-                    window.location.href = '/dashboard';
+                    
+                    try {
+                      const res = await fetch('/api/checkout', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                          productId: selectedProduct?.id,
+                          address: form,
+                          bundleType,
+                          deliveryTime
+                        })
+                      });
+                      
+                      if (!res.ok) {
+                        if (res.status === 401) {
+                          alert('Please log in to complete checkout.');
+                          window.location.href = '/login';
+                          return;
+                        }
+                        throw new Error('Checkout failed');
+                      }
+                      
+                      alert('Order confirmed! We will verify the payment and activate your plan.');
+                      window.location.href = '/dashboard';
+                    } catch (err) {
+                      alert('Something went wrong during checkout. Please try again.');
+                    }
                   }}
                 >
                   Confirm Payment

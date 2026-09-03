@@ -2,18 +2,22 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import { signIn } from 'next-auth/react';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
   const [otp, setOtp] = useState(['', '', '', '', '', '']);
-  const [step, setStep] = useState<'phone' | 'otp'>('phone');
+  const [step, setStep] = useState<'email' | 'otp'>('email');
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const handleSendOtp = async () => {
-    if (phone.length < 10) return;
+    if (!email.includes('@')) return;
     setLoading(true);
     // Simulate OTP send
     await new Promise(r => setTimeout(r, 1000));
+    console.log(`[DEV] Sent OTP to ${email}: 123456`);
     setLoading(false);
     setStep('otp');
   };
@@ -41,11 +45,21 @@ export default function LoginPage() {
     const code = otp.join('');
     if (code.length !== 6) return;
     setLoading(true);
-    // Simulate verification
-    await new Promise(r => setTimeout(r, 1200));
+    
+    const res = await signIn('credentials', {
+      redirect: false,
+      email,
+      otp: code,
+    });
+
     setLoading(false);
-    // Redirect to dashboard
-    window.location.href = '/dashboard';
+    
+    if (res?.error) {
+      alert('Invalid OTP');
+    } else {
+      router.push('/dashboard');
+      router.refresh();
+    }
   };
 
   return (
@@ -64,25 +78,22 @@ export default function LoginPage() {
               </div>
               <h1 className="text-2xl font-black">Welcome Back</h1>
               <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>
-                {step === 'phone' ? 'Enter your phone number to continue' : `Enter the 6-digit OTP sent to +91 ${phone}`}
+                {step === 'email' ? 'Enter your email address to continue' : `Enter the 6-digit OTP sent to ${email}`}
               </p>
             </div>
 
-            {/* Phone Step */}
-            {step === 'phone' && (
+            {/* Email Step */}
+            {step === 'email' && (
               <div className="space-y-4 animate-fade-in-up">
                 <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Phone Number</label>
+                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email Address</label>
                   <div className="flex gap-2">
-                    <span className="flex items-center px-3 rounded-xl text-sm font-medium" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' }}>
-                      +91
-                    </span>
                     <input
-                      type="tel"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && handleSendOtp()}
-                      placeholder="98765 43210"
+                      placeholder="john@example.com"
                       className="flex-1 px-4 py-3 rounded-xl text-sm font-medium focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
                       style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                       autoFocus
@@ -91,7 +102,7 @@ export default function LoginPage() {
                 </div>
                 <button
                   onClick={handleSendOtp}
-                  disabled={phone.length < 10 || loading}
+                  disabled={!email.includes('@') || loading}
                   className="w-full py-3.5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
                   style={{ background: 'var(--brand-primary)' }}
                 >
@@ -137,8 +148,8 @@ export default function LoginPage() {
                   )}
                 </button>
                 <div className="text-center">
-                  <button onClick={() => { setStep('phone'); setOtp(['', '', '', '', '', '']); }} className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-                    ← Change phone number
+                  <button onClick={() => { setStep('email'); setOtp(['', '', '', '', '', '']); }} className="text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
+                    ← Change email address
                   </button>
                   <span className="mx-2 text-xs" style={{ color: 'var(--border-subtle)' }}>|</span>
                   <button onClick={handleSendOtp} className="text-xs font-medium" style={{ color: 'var(--brand-primary)' }}>

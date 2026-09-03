@@ -16,34 +16,46 @@ const dietColors: Record<string, { bg: string; color: string }> = {
 };
 
 export default function AdminProductsPage() {
-  const [products, setProducts] = useState(initialProducts);
+  const [products, setProducts] = useState<any[]>([]);
   const [showForm, setShowForm] = useState(false);
   const [form, setForm] = useState({ name: '', type: 'MEAL_PLAN', diet: 'VEG', price: '', calories: '', protein: '', carbs: '', fats: '' });
+  const [loading, setLoading] = useState(true);
 
-  const handleAdd = () => {
-    const newProduct = {
-      id: String(Date.now()),
-      name: form.name,
-      type: form.type,
-      diet: form.diet,
-      price: Number(form.price),
-      calories: Number(form.calories),
-      protein: Number(form.protein),
-      carbs: Number(form.carbs),
-      fats: Number(form.fats),
-      active: true,
-    };
-    setProducts([...products, newProduct]);
-    setShowForm(false);
-    setForm({ name: '', type: 'MEAL_PLAN', diet: 'VEG', price: '', calories: '', protein: '', carbs: '', fats: '' });
+  React.useEffect(() => {
+    fetch('/api/products')
+      .then(res => res.json())
+      .then(data => {
+        if (data.products) setProducts(data.products);
+        setLoading(false);
+      });
+  }, []);
+
+  const handleAdd = async () => {
+    const res = await fetch('/api/products', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(form)
+    });
+    
+    if (res.ok) {
+      const data = await res.json();
+      setProducts([...products, data.product]);
+      setShowForm(false);
+      setForm({ name: '', type: 'MEAL_PLAN', diet: 'VEG', price: '', calories: '', protein: '', carbs: '', fats: '' });
+    } else {
+      alert('Failed to add product');
+    }
   };
 
   const toggleActive = (id: string) => {
     setProducts(products.map(p => p.id === id ? { ...p, active: !p.active } : p));
   };
 
-  const deleteProduct = (id: string) => {
-    setProducts(products.filter(p => p.id !== id));
+  const deleteProduct = async (id: string) => {
+    const res = await fetch(`/api/products/${id}`, { method: 'DELETE' });
+    if (res.ok) {
+      setProducts(products.filter(p => p.id !== id));
+    }
   };
 
   const inputStyle = { background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' };
@@ -98,26 +110,34 @@ export default function AdminProductsPage() {
         <div className="hidden sm:grid grid-cols-8 gap-2 px-5 py-3 text-[10px] font-bold uppercase tracking-wider" style={{ background: 'var(--bg-dark)', color: 'var(--text-muted)' }}>
           <span className="col-span-2">Name</span><span>Type</span><span>Diet</span><span>Price</span><span>Calories</span><span>Status</span><span>Actions</span>
         </div>
-        <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
-          {products.map(p => {
-            const dc = dietColors[p.diet] || dietColors.VEG;
-            return (
-              <div key={p.id} className="grid grid-cols-2 sm:grid-cols-8 gap-2 px-5 py-3.5 items-center hover:bg-white/[0.02]" style={{ opacity: p.active ? 1 : 0.5 }}>
-                <span className="col-span-2 text-sm font-semibold">{p.name}</span>
-                <span className="text-xs hidden sm:block" style={{ color: 'var(--text-muted)' }}>{p.type.replace('_', ' ')}</span>
-                <span><span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase" style={{ background: dc.bg, color: dc.color }}>{p.diet.replace('_', ' ')}</span></span>
-                <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>₹{p.price}</span>
-                <span className="text-sm hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-accent)' }}>🔥{p.calories}</span>
-                <button onClick={() => toggleActive(p.id)} className="text-left">
-                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase" style={{ background: p.active ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: p.active ? '#6EE7B7' : '#FCA5A5' }}>
-                    {p.active ? 'Active' : 'Hidden'}
+        {loading ? (
+          <div className="text-center py-10 text-[var(--text-muted)]">Loading products...</div>
+        ) : (
+          <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
+            {products.map(product => (
+              <div key={product.id} className="grid grid-cols-1 sm:grid-cols-8 gap-4 px-5 py-4 items-center">
+                <div className="col-span-2 font-bold">{product.name}</div>
+                <div className="text-xs" style={{ color: 'var(--text-muted)' }}>{product.type.replace('_', ' ')}</div>
+                <div>
+                  <span className="px-2 py-0.5 rounded text-[10px] font-bold tracking-widest" style={{
+                    background: dietColors[product.dietaryPreference || product.diet || 'VEG']?.bg,
+                    color: dietColors[product.dietaryPreference || product.diet || 'VEG']?.color
+                  }}>
+                    {product.dietaryPreference || product.diet || 'VEG'}
+                  </span>
+                </div>
+                <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>₹{product.price}</span>
+                <span className="text-sm hidden sm:block" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-accent)' }}>🔥{product.calories}</span>
+                <button onClick={() => toggleActive(product.id)} className="text-left">
+                  <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase" style={{ background: product.active ? 'rgba(16,185,129,0.1)' : 'rgba(239,68,68,0.1)', color: product.active ? '#6EE7B7' : '#FCA5A5' }}>
+                    {product.active ? 'Active' : 'Hidden'}
                   </span>
                 </button>
-                <button onClick={() => deleteProduct(p.id)} className="text-xs font-semibold" style={{ color: '#FCA5A5' }}>Delete</button>
+                <button onClick={() => deleteProduct(product.id)} className="text-xs font-semibold" style={{ color: '#FCA5A5' }}>Delete</button>
               </div>
-            );
-          })}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

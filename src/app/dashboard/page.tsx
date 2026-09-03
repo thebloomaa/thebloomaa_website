@@ -1,19 +1,6 @@
 'use client';
 
-import React, { useState, useMemo } from 'react';
-
-// Mock subscription data (will come from API when DB is connected)
-const mockSubscription = {
-  id: 'sub_001',
-  meal: 'Lean Muscle Chicken Prep',
-  bundleDays: 30,
-  deliveriesLeft: 22,
-  status: 'ACTIVE' as const,
-  startDate: '2026-08-15',
-  nextDeliveryDate: '2026-09-04',
-  deliveryTime: '07:30',
-  perDay: 280,
-};
+import React, { useState, useEffect, useMemo } from 'react';
 
 // Mock delivery data for the calendar
 const generateDeliveryDays = () => {
@@ -42,8 +29,8 @@ const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'Ju
 const DAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 export default function DashboardPage() {
-  const sub = mockSubscription;
-  const progress = ((sub.bundleDays - sub.deliveriesLeft) / sub.bundleDays) * 100;
+  const [sub, setSub] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
 
   const [deliveryDays, setDeliveryDays] = useState(generateDeliveryDays);
   const [currentMonth, setCurrentMonth] = useState(8); // September = 8 (0-indexed)
@@ -83,6 +70,44 @@ export default function DashboardPage() {
     }
   };
 
+  useEffect(() => {
+    fetch('/api/dashboard')
+      .then(res => res.json())
+      .then(data => {
+        if (data.subscription) {
+          const bundleDays = data.subscription.bundleType === 'DAYS_30' ? 30 : data.subscription.bundleType === 'DAYS_15' ? 15 : 7;
+          setSub({
+            id: data.subscription.id,
+            meal: data.subscription.product.name,
+            bundleDays,
+            deliveriesLeft: data.subscription.deliveriesLeft,
+            status: data.subscription.status,
+            startDate: data.subscription.startDate,
+            nextDeliveryDate: data.subscription.nextDeliveryDate,
+            deliveryTime: data.subscription.deliveryTime,
+            perDay: Math.round(data.subscription.product.price / bundleDays),
+          });
+        }
+        setLoading(false);
+      });
+  }, []);
+
+  if (loading) return <div className="p-8 text-center text-[var(--text-muted)]">Loading dashboard...</div>;
+
+  if (!sub) {
+    return (
+      <div className="max-w-4xl mx-auto text-center p-12">
+        <h1 className="text-2xl font-black mb-4">No Active Subscription</h1>
+        <p className="text-[var(--text-muted)] mb-8">You don't have any active meal plans right now.</p>
+        <button onClick={() => window.location.href = '/'} className="px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
+          Explore Meal Plans
+        </button>
+      </div>
+    );
+  }
+
+  const progress = ((sub.bundleDays - sub.deliveriesLeft) / sub.bundleDays) * 100;
+
   return (
     <div className="max-w-4xl mx-auto">
       {/* Header */}
@@ -103,7 +128,7 @@ export default function DashboardPage() {
             </div>
             <h2 className="text-lg font-bold">{sub.meal}</h2>
             <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
-              Next delivery: <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>Sep 4, 2026 · {sub.deliveryTime}</span>
+              Next delivery: <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>{new Date(sub.nextDeliveryDate).toLocaleDateString()} · {sub.deliveryTime}</span>
             </p>
           </div>
           <div className="flex gap-2">

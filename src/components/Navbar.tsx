@@ -30,12 +30,12 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <button className="px-4 py-2 text-sm font-semibold rounded-xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
+            <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
               Log In
-            </button>
-            <button className="px-5 py-2.5 text-sm font-bold rounded-xl text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
+            </Link>
+            <a href="/#pricing" className="px-5 py-2.5 text-sm font-bold rounded-xl text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
               Start Your Plan
-            </button>
+            </a>
           </div>
 
           {/* Mobile hamburger */}
@@ -61,9 +61,9 @@ export default function Navbar() {
             <a href="#meals" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>Our Meals</a>
             <a href="#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>Pricing</a>
             <a href="#faq" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>FAQ</a>
-            <button className="w-full mt-2 px-5 py-2.5 text-sm font-bold rounded-xl text-white" style={{ background: 'var(--brand-primary)' }}>
+            <a href="/#pricing" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-white block" style={{ background: 'var(--brand-primary)' }}>
               Start Your Plan
-            </button>
+            </a>
           </div>
         )}
       </div>

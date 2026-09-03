@@ -1,4 +1,5 @@
 import React from 'react';
+import Link from 'next/link';
 import Image from 'next/image';
 
 interface ProductCardProps {
@@ -125,12 +126,13 @@ export default function ProductCard({
 
         {/* Actions */}
         <div className="grid grid-cols-2 gap-2.5 mt-auto">
-          <button
-            className="py-2.5 px-4 text-sm font-bold rounded-xl text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
+          <Link
+            href="/menu"
+            className="py-2.5 px-4 text-sm font-bold rounded-xl text-white transition-all hover:scale-[1.02] active:scale-[0.98] text-center"
             style={{ background: 'var(--brand-primary)' }}
           >
             Subscribe
-          </button>
+          </Link>
           <button
             className="py-2.5 px-4 text-sm font-semibold rounded-xl transition-all hover:scale-[1.02] active:scale-[0.98]"
             style={{ background: 'transparent', border: '1.5px solid var(--border-subtle)', color: 'var(--text-secondary)' }}

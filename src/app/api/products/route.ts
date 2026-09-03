@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
 
 export async function GET(request: Request) {
   try {
@@ -19,6 +19,30 @@ export async function GET(request: Request) {
     return NextResponse.json({ products });
   } catch (error) {
     console.error('Products API error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}
+
+export async function POST(request: Request) {
+  try {
+    const body = await request.json();
+    const product = await prisma.product.create({
+      data: {
+        name: body.name,
+        description: body.description || '',
+        price: Number(body.price),
+        imageUrl: body.imageUrl || '/meals/chicken-prep.png',
+        type: body.type,
+        calories: Number(body.calories),
+        protein: Number(body.protein),
+        carbs: Number(body.carbs),
+        fats: Number(body.fats),
+        dietaryPreference: body.diet,
+      }
+    });
+    return NextResponse.json({ product });
+  } catch (error) {
+    console.error('Products POST error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
