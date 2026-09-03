@@ -1,0 +1,193 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String         @id @default(uuid())
+  email         String         @unique
+  phone         String?        @unique
+  name          String?
+  allergies     String?
+  fitnessGoal   FitnessGoal?
+  role          UserRole       @default(CUSTOMER)
+  addresses     Address[]
+  subscriptions Subscription[]
+  orders        Order[]
+  createdAt     DateTime       @default(now())
+}
+
+model Rider {
+  id            String         @id @default(uuid())
+  name          String
+  phone         String         @unique
+  active        Boolean        @default(true)
+  deliveries    Order[]        
+  createdAt     DateTime       @default(now())
+}
+
+model Address {
+  id            String         @id @default(uuid())
+  userId        String
+  user          User           @relation(fields: [userId], references: [id])
+  street        String
+  city          String
+  state         String
+  pincode       String
+  isDefault     Boolean        @default(false)
+  subscriptions Subscription[]
+  orders        Order[]
+}
+
+model Product {
+  id                String            @id @default(uuid())
+  name              String
+  description       String
+  price             Decimal
+  imageUrl          String?
+  type              ProductType    
+  calories          Int
+  protein           Decimal
+  carbs             Decimal
+  fats              Decimal
+  dietaryPreference DietaryPreference
+  subscriptions     Subscription[]
+}
+
+model Subscription {
+  id               String              @id @default(uuid())
+  userId           String
+  user             User                @relation(fields: [userId], references: [id])
+  productId        String
+  product          Product             @relation(fields: [productId], references: [id])
+  addressId        String
+  address          Address             @relation(fields: [addressId], references: [id])
+  bundleType       BundleType          
+  deliveriesLeft   Int
+  status           SubStatus           
+  startDate        DateTime
+  nextDeliveryDate DateTime
+  deliveryTime     String?
+  pauses           SubscriptionPause[]
+  orders           Order[]
+  payments         Payment[]
+  createdAt        DateTime            @default(now())
+  updatedAt        DateTime            @updatedAt
+}
+
+model SubscriptionPause {
+  id             String       @id @default(uuid())
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+  startDate      DateTime
+  endDate        DateTime?    
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+}
+
+model Order {
+  id               String             @id @default(uuid())
+  subscriptionId   String?
+  subscription     Subscription?      @relation(fields: [subscriptionId], references: [id])
+  userId           String
+  user             User               @relation(fields: [userId], references: [id])
+  addressId        String
+  address          Address            @relation(fields: [addressId], references: [id])
+  riderId          String?
+  rider            Rider?             @relation(fields: [riderId], references: [id])
+  status           OrderStatus        
+  deliveryDate     DateTime           
+  deliveryTime     String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+}
+
+model Payment {
+  id               String          @id @default(uuid())
+  subscriptionId   String
+  subscription     Subscription    @relation(fields: [subscriptionId], references: [id])
+  amount           Decimal
+  currency         String          @default("INR")
+  gateway          String          @default("razorpay")
+  gatewayPaymentId String?         @unique
+  gatewayOrderId   String?         @unique
+  method           PaymentMethod
+  status           PaymentStatus
+  paidAt           DateTime?
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+}
+
+model DeliveryZone {
+  id         String   @id @default(uuid())
+  pincode    String   @unique
+  neighborhood String?
+  city       String
+  state      String
+  isActive   Boolean  @default(true)
+}
+
+enum UserRole {
+  CUSTOMER
+  ADMIN
+  RIDER
+}
+
+enum ProductType {
+  MEAL_PLAN
+  A_LA_CARTE
+  BEVERAGE
+}
+
+enum DietaryPreference {
+  VEG
+  VEGAN
+  KETO
+  HIGH_PROTEIN
+}
+
+enum FitnessGoal {
+  WEIGHT_LOSS
+  MUSCLE_GAIN
+  MAINTENANCE
+}
+
+enum BundleType {
+  DAYS_7
+  DAYS_15
+  DAYS_30
+}
+
+enum SubStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+}
+
+enum OrderStatus {
+  QUEUED
+  PENDING
+  PACKED
+  OUT_FOR_DELIVERY
+  DELIVERED
+  FAILED
+}
+
+enum PaymentMethod {
+  UPI
+  UPI_AUTOPAY
+  CARD
+  NETBANKING
+}
+
+enum PaymentStatus {
+  PENDING
+  AUTHORIZED
+  CAPTURED
+  FAILED
+  REFUNDED
+}
