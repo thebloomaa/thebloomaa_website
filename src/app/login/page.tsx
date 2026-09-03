@@ -67,7 +67,18 @@ export default function LoginPage() {
     if (res?.error) {
       alert('Invalid OTP');
     } else {
-      router.push('/dashboard');
+      // Fetch session to determine role
+      const sessionRes = await fetch('/api/auth/session');
+      const sessionData = await sessionRes.json();
+      
+      if (sessionData?.user?.role === 'ADMIN') {
+        router.push('/admin');
+      } else if (sessionData?.user?.role === 'RIDER') {
+        router.push('/rider/manifest');
+      } else {
+        router.push('/dashboard');
+      }
+      
       router.refresh();
     }
   };
