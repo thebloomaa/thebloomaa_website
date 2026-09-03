@@ -16,6 +16,7 @@ const getBadgeStyle = (pref: string) => {
 
 const getBarWidth = (value: number, max: number) => Math.min((value / max) * 100, 100);
 
+
 export default function MenuPage() {
   const { selectedProduct, selectProduct } = useBundleStore();
   const [meals, setMeals] = useState<Product[]>([]);
