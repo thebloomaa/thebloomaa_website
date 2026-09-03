@@ -1,18 +1,7 @@
 'use client';
 
-import React from 'react';
-
-// Mock order data
-const orders = [
-  { id: 'ORD-0008', date: 'Sep 3, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '6:42 AM', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0007', date: 'Sep 2, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '7:15 AM', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0006', date: 'Sep 1, 2026', meal: 'Lean Muscle Chicken Prep', status: 'SKIPPED', time: '—', rider: '—', amount: 0 },
-  { id: 'ORD-0005', date: 'Aug 31, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '6:28 AM', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0004', date: 'Aug 30, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '7:02 AM', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0003', date: 'Aug 29, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '6:55 AM', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0002', date: 'Aug 28, 2026', meal: 'Lean Muscle Chicken Prep', status: 'FAILED', time: '—', rider: 'Raju', amount: 280 },
-  { id: 'ORD-0001', date: 'Aug 27, 2026', meal: 'Lean Muscle Chicken Prep', status: 'DELIVERED', time: '6:33 AM', rider: 'Raju', amount: 280 },
-];
+import React, { useState, useEffect } from 'react';
+import { format, parseISO } from 'date-fns';
 
 const statusConfig: Record<string, { bg: string; color: string; label: string }> = {
   DELIVERED: { bg: 'rgba(16, 185, 129, 0.1)', color: '#6EE7B7', label: 'Delivered' },
@@ -25,6 +14,26 @@ const statusConfig: Record<string, { bg: string; color: string; label: string }>
 };
 
 export default function OrdersPage() {
+  const [orders, setOrders] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetch('/api/orders')
+      .then(res => res.json())
+      .then(data => {
+        if (data.orders) setOrders(data.orders);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch orders:', err);
+        setLoading(false);
+      });
+  }, []);
+
+  const deliveredCount = orders.filter(o => o.status === 'DELIVERED').length;
+  const skippedCount = orders.filter(o => o.status === 'SKIPPED').length;
+  const failedCount = orders.filter(o => o.status === 'FAILED').length;
+
   return (
     <div className="max-w-4xl mx-auto">
       <div className="mb-8">
@@ -35,10 +44,10 @@ export default function OrdersPage() {
       {/* Summary Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'Total Orders', value: '8', icon: '📦' },
-          { label: 'Delivered', value: '6', icon: '✅' },
-          { label: 'Skipped', value: '1', icon: '⏭️' },
-          { label: 'Failed', value: '1', icon: '❌' },
+          { label: 'Total Orders', value: orders.length.toString(), icon: '📦' },
+          { label: 'Delivered', value: deliveredCount.toString(), icon: '✅' },
+          { label: 'Skipped', value: skippedCount.toString(), icon: '⏭️' },
+          { label: 'Failed', value: failedCount.toString(), icon: '❌' },
         ].map((stat, i) => (
           <div key={i} className="rounded-xl p-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
             <span className="text-lg">{stat.icon}</span>
@@ -62,21 +71,32 @@ export default function OrdersPage() {
 
         {/* Rows */}
         <div className="divide-y" style={{ borderColor: 'var(--border-subtle)' }}>
-          {orders.map((order, i) => {
+          {loading ? (
+            <div className="text-center py-10 text-[var(--text-muted)]">Loading orders...</div>
+          ) : orders.length === 0 ? (
+            <div className="text-center py-10 text-[var(--text-muted)]">No orders found.</div>
+          ) : orders.map((order, i) => {
             const status = statusConfig[order.status] || statusConfig.PENDING;
+            const dateStr = format(parseISO(order.deliveryDate), 'MMM d, yyyy');
+            const mealName = order.subscription?.product?.name || 'Unknown Meal';
+            const timeStr = order.deliveredAt ? format(parseISO(order.deliveredAt), 'h:mm a') : '—';
+            
+            // Sub string for ID ORD-XXXX
+            const shortId = `ORD-${order.id.substring(order.id.length - 4).toUpperCase()}`;
+
             return (
-              <div key={i} className="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors">
-                <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{order.id}</span>
-                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{order.date}</span>
-                <span className="text-sm font-medium hidden sm:block" style={{ color: 'var(--text-secondary)' }}>{order.meal}</span>
+              <div key={order.id} className="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors">
+                <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{shortId}</span>
+                <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{dateStr}</span>
+                <span className="text-sm font-medium hidden sm:block truncate" style={{ color: 'var(--text-secondary)' }}>{mealName}</span>
                 <div>
                   <span className="inline-block px-2.5 py-0.5 rounded-md text-[10px] font-bold uppercase" style={{ background: status.bg, color: status.color }}>
                     {status.label}
                   </span>
                 </div>
-                <span className="text-sm hidden sm:block" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{order.time}</span>
+                <span className="text-sm hidden sm:block" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{timeStr}</span>
                 <span className="text-sm font-semibold text-right" style={{ fontFamily: 'var(--font-mono)', color: order.status === 'SKIPPED' ? 'var(--text-muted)' : 'var(--text-primary)' }}>
-                  {order.status === 'SKIPPED' ? '—' : `₹${order.amount}`}
+                  {order.status === 'SKIPPED' ? '—' : `₹${Math.round(order.subscription?.totalAmount / order.subscription?.totalDays) || 0}`}
                 </span>
               </div>
             );

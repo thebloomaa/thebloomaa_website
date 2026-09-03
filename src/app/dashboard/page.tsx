@@ -2,26 +2,15 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 
-// Mock delivery data for the calendar
-const generateDeliveryDays = () => {
+// Generate calendar from actual orders
+const generateDeliveryDays = (orders: any[]) => {
   const days: Record<string, 'DELIVERED' | 'SCHEDULED' | 'SKIPPED'> = {};
-  const start = new Date('2026-08-15');
-  const today = new Date('2026-09-03');
-  for (let d = new Date(start); d <= today; d.setDate(d.getDate() + 1)) {
-    const key = d.toISOString().split('T')[0];
-    // Randomly mark some as skipped for demo
-    if (key === '2026-09-01' || key === '2026-08-25') {
-      days[key] = 'SKIPPED';
-    } else {
-      days[key] = 'DELIVERED';
-    }
-  }
-  // Future scheduled days
-  for (let i = 1; i <= 22; i++) {
-    const futureDate = new Date(today);
-    futureDate.setDate(today.getDate() + i);
-    days[futureDate.toISOString().split('T')[0]] = 'SCHEDULED';
-  }
+  orders.forEach(o => {
+    const key = o.deliveryDate.split('T')[0];
+    if (o.status === 'DELIVERED') days[key] = 'DELIVERED';
+    else if (o.status === 'SKIPPED') days[key] = 'SKIPPED';
+    else if (o.status === 'QUEUED' || o.status === 'PENDING') days[key] = 'SCHEDULED';
+  });
   return days;
 };
 
@@ -32,7 +21,7 @@ export default function DashboardPage() {
   const [sub, setSub] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const [deliveryDays, setDeliveryDays] = useState(generateDeliveryDays);
+  const [deliveryDays, setDeliveryDays] = useState<Record<string, string>>({});
   const [currentMonth, setCurrentMonth] = useState(8); // September = 8 (0-indexed)
   const [currentYear] = useState(2026);
   const [skipConfirm, setSkipConfirm] = useState<string | null>(null);
@@ -86,7 +75,9 @@ export default function DashboardPage() {
             nextDeliveryDate: data.subscription.nextDeliveryDate,
             deliveryTime: data.subscription.deliveryTime,
             perDay: Math.round(data.subscription.product.price / bundleDays),
+            orders: data.subscription.orders,
           });
+          setDeliveryDays(generateDeliveryDays(data.subscription.orders));
         }
         setLoading(false);
       });
@@ -157,10 +148,10 @@ export default function DashboardPage() {
       {/* Quick Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
-          { label: 'This Month', value: '₹6,720', icon: '💰' },
-          { label: 'Meals Delivered', value: '8', icon: '🥗' },
-          { label: 'Days Skipped', value: '2', icon: '⏭️' },
-          { label: 'Avg Calories', value: '620', icon: '🔥' },
+          { label: 'This Month', value: `₹${(sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0) * sub.perDay}`, icon: '💰' },
+          { label: 'Meals Delivered', value: `${sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0}`, icon: '🥗' },
+          { label: 'Days Skipped', value: `${sub.orders?.filter((o: any) => o.status === 'SKIPPED').length || 0}`, icon: '⏭️' },
+          { label: 'Total Orders', value: `${sub.orders?.length || 0}`, icon: '📦' },
         ].map((stat, i) => (
           <div key={i} className="rounded-xl p-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
             <span className="text-lg">{stat.icon}</span>
