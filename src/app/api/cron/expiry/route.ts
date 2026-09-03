@@ -5,6 +5,11 @@ import { NotificationService } from '@/lib/notifications';
 // GET /api/cron/expiry
 // Finds subscriptions with 3 or fewer deliveries left and triggers warnings or auto-renewals
 export async function GET(request: Request) {
+  const authHeader = request.headers.get('authorization');
+  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
   try {
     // 1. Find all active subscriptions nearing expiry (e.g., 3 days left)
     const expiringSubs = await prisma.subscription.findMany({

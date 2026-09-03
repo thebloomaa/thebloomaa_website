@@ -21,6 +21,16 @@ model User {
   createdAt     DateTime       @default(now())
 }
 
+model Otp {
+  id        String   @id @default(uuid())
+  email     String
+  code      String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  @@index([email])
+}
+
 model Rider {
   id            String         @id @default(uuid())
   name          String
@@ -69,6 +79,7 @@ model Subscription {
   bundleType       String          
   deliveriesLeft   Int
   status           String           
+  utr              String?
   startDate        DateTime
   nextDeliveryDate DateTime
   deliveryTime     String?

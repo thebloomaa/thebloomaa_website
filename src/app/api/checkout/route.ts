@@ -10,7 +10,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { productId, address, bundleType, deliveryTime } = body;
+    const { productId, address, bundleType, deliveryTime, utr } = body;
 
     // Save address
     const newAddress = await prisma.address.create({
@@ -34,7 +34,8 @@ export async function POST(req: Request) {
         addressId: newAddress.id,
         bundleType,
         deliveriesLeft: bundleDays,
-        status: 'ACTIVE',
+        status: 'PENDING', // Awaiting admin verification of UTR
+        utr: utr,
         startDate: new Date(),
         nextDeliveryDate: new Date(new Date().setDate(new Date().getDate() + 1)), // Tomorrow
         deliveryTime,

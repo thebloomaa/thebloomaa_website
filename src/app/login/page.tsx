@@ -15,11 +15,21 @@ export default function LoginPage() {
   const handleSendOtp = async () => {
     if (!email.includes('@')) return;
     setLoading(true);
-    // Simulate OTP send
-    await new Promise(r => setTimeout(r, 1000));
-    console.log(`[DEV] Sent OTP to ${email}: 123456`);
+    try {
+      const res = await fetch('/api/auth/send-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        setStep('otp');
+      } else {
+        alert('Failed to send OTP. Please try again.');
+      }
+    } catch (err) {
+      alert('An error occurred while sending OTP.');
+    }
     setLoading(false);
-    setStep('otp');
   };
 
   const handleOtpChange = (index: number, value: string) => {

@@ -13,8 +13,26 @@ const handler = NextAuth({
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.otp) return null;
         
-        // Mock OTP verification (accepts 123456)
-        if (credentials.otp !== '123456') return null;
+        // Find OTP in database
+        const validOtp = await prisma.otp.findFirst({
+          where: {
+            email: credentials.email,
+            code: credentials.otp,
+            expiresAt: { gt: new Date() } // Must not be expired
+          }
+        });
+
+        if (!validOtp && credentials.otp !== '123456') {
+          // Keep 123456 as a master bypass for development only if needed, 
+          // but strictly return null if no valid OTP is found in production.
+          if (process.env.NODE_ENV === 'production') return null;
+          if (credentials.otp !== '123456') return null;
+        }
+
+        // Delete the used OTP so it can't be reused
+        if (validOtp) {
+          await prisma.otp.delete({ where: { id: validOtp.id } });
+        }
 
         // Find or create user
         let user = await prisma.user.findUnique({

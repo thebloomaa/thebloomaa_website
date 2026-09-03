@@ -377,7 +377,8 @@ export default function CheckoutPage() {
                           productId: selectedProduct?.id,
                           address: form,
                           bundleType,
-                          deliveryTime
+                          deliveryTime,
+                          utr
                         })
                       });
                       
