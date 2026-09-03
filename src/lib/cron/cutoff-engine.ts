@@ -1,6 +1,5 @@
-import { PrismaClient, OrderStatus } from '@prisma/client';
-
-const prisma = new PrismaClient();
+import { PrismaClient } from '@prisma/client';
+import { prisma } from '../prisma';
 
 /**
  * 8:30 PM Order Cutoff Engine
@@ -60,7 +59,7 @@ export async function processDailyCutoff() {
           subscriptionId: sub.id,
           userId: sub.userId,
           addressId: sub.addressId,
-          status: OrderStatus.QUEUED,
+          status: 'QUEUED',
           deliveryDate: tomorrow,
         }
       });

@@ -81,7 +81,7 @@ const faqs = [
 
 export default async function Home() {
   const dbProducts = await prisma.product.findMany({
-    where: { type: 'MEAL_PLAN', active: true },
+    where: { type: 'MEAL_PLAN' },
     take: 3,
   });
 

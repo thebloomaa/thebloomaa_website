@@ -25,7 +25,7 @@ export default function MenuPage() {
     fetch('/api/products?type=MEAL_PLAN')
       .then(res => res.json())
       .then(data => {
-        if (data.products) setMeals(data.products.filter((p: any) => p.active));
+        if (data.products) setMeals(data.products);
         setLoading(false);
       });
   }, []);

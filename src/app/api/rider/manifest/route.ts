@@ -64,3 +64,28 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
 }
+
+// PATCH /api/rider/manifest
+// Update order status
+export async function PATCH(request: Request) {
+  try {
+    const body = await request.json();
+    const { orderId, status } = body;
+
+    if (!orderId || !status) {
+      return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
+    }
+
+    const updatedOrder = await prisma.order.update({
+      where: { id: orderId },
+      data: { 
+        status
+      },
+    });
+
+    return NextResponse.json({ success: true, order: updatedOrder });
+  } catch (error) {
+    console.error('Update order error:', error);
+    return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+  }
+}

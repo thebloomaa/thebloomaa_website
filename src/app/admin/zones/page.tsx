@@ -1,31 +1,69 @@
 'use client';
 
-import React, { useState } from 'react';
-
-const initialZones = [
-  { id: '1', pincode: '560034', neighborhood: 'Koramangala', city: 'Bengaluru', state: 'Karnataka', isActive: true, orders: 145 },
-  { id: '2', pincode: '560038', neighborhood: 'Indiranagar', city: 'Bengaluru', state: 'Karnataka', isActive: true, orders: 112 },
-  { id: '3', pincode: '560102', neighborhood: 'HSR Layout', city: 'Bengaluru', state: 'Karnataka', isActive: true, orders: 85 },
-];
+import React, { useState, useEffect } from 'react';
 
 export default function AdminZonesPage() {
-  const [zones, setZones] = useState(initialZones);
+  const [zones, setZones] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ pincode: '', neighborhood: '', city: 'Bengaluru', state: 'Karnataka' });
+  const [form, setForm] = useState({ pincode: '', neighborhood: '', city: 'Patna', state: 'Bihar' });
 
-  const handleAdd = () => {
+  const fetchZones = () => {
+    fetch('/api/admin/zones')
+      .then(res => res.json())
+      .then(data => {
+        if (data.zones) setZones(data.zones);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error('Failed to fetch zones:', err);
+        setLoading(false);
+      });
+  };
+
+  useEffect(() => {
+    fetchZones();
+  }, []);
+
+  const handleAdd = async () => {
     if (!form.pincode || !form.neighborhood) return;
-    setZones([...zones, { id: String(Date.now()), ...form, isActive: true, orders: 0 }]);
-    setShowForm(false);
-    setForm({ pincode: '', neighborhood: '', city: 'Bengaluru', state: 'Karnataka' });
+    try {
+      const res = await fetch('/api/admin/zones', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form)
+      });
+      if (res.ok) {
+        fetchZones();
+        setShowForm(false);
+        setForm({ pincode: '', neighborhood: '', city: 'Patna', state: 'Bihar' });
+      }
+    } catch (error) {
+      console.error('Failed to add zone', error);
+    }
   };
 
-  const toggleZone = (id: string) => {
-    setZones(zones.map(z => z.id === id ? { ...z, isActive: !z.isActive } : z));
+  const toggleZone = async (id: string, currentStatus: boolean) => {
+    try {
+      const res = await fetch(`/api/admin/zones/${id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ isActive: !currentStatus })
+      });
+      if (res.ok) fetchZones();
+    } catch (error) {
+      console.error('Failed to toggle zone', error);
+    }
   };
 
-  const deleteZone = (id: string) => {
-    setZones(zones.filter(z => z.id !== id));
+  const deleteZone = async (id: string) => {
+    if (!confirm('Are you sure you want to delete this delivery zone?')) return;
+    try {
+      const res = await fetch(`/api/admin/zones/${id}`, { method: 'DELETE' });
+      if (res.ok) fetchZones();
+    } catch (error) {
+      console.error('Failed to delete zone', error);
+    }
   };
 
   const inputStyle = { background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' };
@@ -61,8 +99,11 @@ export default function AdminZonesPage() {
       )}
 
       {/* Zones Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {zones.map(zone => (
+      {loading ? (
+        <div className="text-center py-20 text-[var(--text-muted)]">Loading zones...</div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {zones.map((zone: any) => (
           <div key={zone.id} className="rounded-xl p-5 transition-all" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', opacity: zone.isActive ? 1 : 0.5 }}>
             <div className="flex items-start justify-between mb-3">
               <div>
@@ -82,7 +123,7 @@ export default function AdminZonesPage() {
               <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>{zone.orders}</span>
             </div>
             <div className="flex gap-2">
-              <button onClick={() => toggleZone(zone.id)} className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
+              <button onClick={() => toggleZone(zone.id, zone.isActive)} className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
                 {zone.isActive ? 'Disable' : 'Enable'}
               </button>
               <button onClick={() => deleteZone(zone.id)} className="py-2 px-3 rounded-lg text-xs font-semibold" style={{ background: 'rgba(239,68,68,0.1)', color: '#FCA5A5', border: '1px solid rgba(239,68,68,0.15)' }}>
@@ -91,7 +132,8 @@ export default function AdminZonesPage() {
             </div>
           </div>
         ))}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

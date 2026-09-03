@@ -1,5 +1,7 @@
 'use client';
 
+import React, { useState, useEffect } from 'react';
+
 type OrderStatus = 'QUEUED' | 'DELIVERED' | 'FAILED';
 
 const statusStyles: Record<OrderStatus, { bg: string; color: string; label: string }> = {
@@ -10,10 +12,14 @@ const statusStyles: Record<OrderStatus, { bg: string; color: string; label: stri
 
 export default function RiderManifestPage() {
   const [routes, setRoutes] = useState<any[]>([]);
-  const [deliveredCount, setDeliveredCount] = useState(0);
-  const [failedCount, setFailedCount] = useState(0);
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState('');
+
+  // Stats
+  const [pendingCount, setPendingCount] = useState(0);
+  const [deliveredCount, setDeliveredCount] = useState(0);
+  const [failedCount, setFailedCount] = useState(0);
+  const [totalOrders, setTotalOrders] = useState(0);
 
   React.useEffect(() => {
     fetch('/api/rider/manifest')
@@ -22,6 +28,9 @@ export default function RiderManifestPage() {
         if (data.routes) {
           setRoutes(data.routes);
           setDate(data.date);
+          
+          const total = data.routes.reduce((acc: number, r: any) => acc + r.orders.length, 0);
+          setTotalOrders(total);
           
           let del = 0, fail = 0;
           data.routes.forEach((r: any) => {
@@ -32,28 +41,38 @@ export default function RiderManifestPage() {
           });
           setDeliveredCount(del);
           setFailedCount(fail);
+          setPendingCount(total - del - fail);
         }
         setLoading(false);
       });
   }, []);
 
-  const totalOrders = routes.reduce((acc, r) => acc + r.orders.length, 0);
-  const pendingCount = totalOrders - deliveredCount - failedCount;
-
-  const updateOrderStatus = (pincode: string, orderId: string, newStatus: 'DELIVERED' | 'FAILED') => {
-    setRoutes(prev =>
-      prev.map(route => {
-        if (route.pincode !== pincode) return route;
-        return {
-          ...route,
-          orders: route.orders.map(o =>
-            o.id === orderId ? { ...o, status: newStatus } : o
-          ),
-        };
-      })
-    );
-    if (newStatus === 'DELIVERED') setDeliveredCount(c => c + 1);
-    if (newStatus === 'FAILED') setFailedCount(c => c + 1);
+  const updateOrderStatus = async (pincode: string, orderId: string, newStatus: 'DELIVERED' | 'FAILED') => {
+    try {
+      const res = await fetch('/api/rider/manifest', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, status: newStatus }),
+      });
+      if (res.ok) {
+        setRoutes(prev =>
+          prev.map((route: any) => {
+            if (route.pincode !== pincode) return route;
+            return {
+              ...route,
+              orders: route.orders.map((o: any) =>
+                o.id === orderId ? { ...o, status: newStatus } : o
+              ),
+            };
+          })
+        );
+        if (newStatus === 'DELIVERED') setDeliveredCount(c => c + 1);
+        if (newStatus === 'FAILED') setFailedCount(c => c + 1);
+        setPendingCount(c => c - 1);
+      }
+    } catch (error) {
+      console.error('Failed to update order status:', error);
+    }
   };
 
   return (
@@ -106,7 +125,7 @@ export default function RiderManifestPage() {
 
         {/* Routes grouped by pincode */}
         <div className="space-y-6">
-          {routes.map(route => (
+          {routes.map((route: any) => (
             <div key={route.pincode}>
               {/* Route Header */}
               <div className="flex items-center gap-2 mb-3">
@@ -120,7 +139,7 @@ export default function RiderManifestPage() {
 
               {/* Order Cards */}
               <div className="space-y-3">
-                {route.orders.map(order => {
+                {route.orders.map((order: any) => {
                   const st = statusStyles[order.status as OrderStatus];
                   const isCompleted = order.status !== 'QUEUED';
                   return (
