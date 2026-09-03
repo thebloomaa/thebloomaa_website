@@ -47,8 +47,8 @@ export default function Footer() {
             <h4 className="text-sm font-bold uppercase tracking-wider mb-4" style={{ color: 'var(--text-secondary)' }}>Get In Touch</h4>
             <ul className="space-y-2.5">
               <li className="text-sm" style={{ color: 'var(--text-muted)' }}>📍 Boring Road, Patna</li>
-              <li className="text-sm" style={{ color: 'var(--text-muted)' }}>📞 +91 98765 43210</li>
-              <li className="text-sm" style={{ color: 'var(--text-muted)' }}>✉️ hello@thebloomaa.in</li>
+              <li className="text-sm" style={{ color: 'var(--text-muted)' }}>📞 +91 62076 54684</li>
+              <li className="text-sm" style={{ color: 'var(--text-muted)' }}>✉️ admin@thebloomaa.com</li>
             </ul>
             <div className="flex gap-3 mt-5">
               <a href="#" className="w-9 h-9 rounded-lg flex items-center justify-center text-sm hover:scale-110 transition-transform" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>𝕏</a>
