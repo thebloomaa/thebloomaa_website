@@ -31,12 +31,15 @@ export const authOptions: NextAuthOptions = {
         // -------------------------------------------------------------
         if (credentials.password) {
           const submittedPass = credentials.password.trim();
-          const configuredAdminEmail = (process.env.ADMIN_EMAIL || 'thebloomaa@gmail.com').trim().toLowerCase();
-          const configuredAdminPass = process.env.ADMIN_SECRET_PASSWORD || 'TheBlooMaa@2026!';
+          const configuredAdminEmail = process.env.ADMIN_EMAIL?.trim().toLowerCase();
+          const configuredAdminPass = process.env.ADMIN_SECRET_PASSWORD;
 
-          const isEnvMatch =
+          const isEnvMatch = Boolean(
+            configuredAdminEmail &&
+            configuredAdminPass &&
             identifier === configuredAdminEmail &&
-            submittedPass === configuredAdminPass;
+            submittedPass === configuredAdminPass
+          );
 
           let adminUser = await prisma.user.findFirst({
             where: {
@@ -51,7 +54,7 @@ export const authOptions: NextAuthOptions = {
             return null;
           }
 
-          if (!adminUser) {
+          if (!adminUser && configuredAdminEmail && configuredAdminPass) {
             const anyAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
             if (anyAdmin) {
               adminUser = await prisma.user.update({
@@ -72,12 +75,14 @@ export const authOptions: NextAuthOptions = {
                 },
               });
             }
-          } else if (adminUser.password !== submittedPass) {
+          } else if (adminUser && configuredAdminPass && adminUser.password !== submittedPass && isEnvMatch) {
             adminUser = await prisma.user.update({
               where: { id: adminUser.id },
               data: { password: submittedPass },
             });
           }
+
+          if (!adminUser) return null;
 
           return {
             id: adminUser.id,

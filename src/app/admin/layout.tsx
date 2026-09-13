@@ -117,7 +117,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
             </div>
             <p className="text-xs font-mono font-medium text-slate-200 truncate">
-              {session?.user?.email || 'admin@thebloomaa.com'}
+              {session?.user?.email || 'Authorized Administrator'}
             </p>
           </div>
 
