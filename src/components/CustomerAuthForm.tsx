@@ -10,7 +10,20 @@ export default function CustomerAuthForm() {
   const searchParams = useSearchParams();
   const bioStore = useBioCalcStore();
 
-  const [mode, setMode] = useState<'signin' | 'register'>('register');
+  const urlMode = searchParams.get('mode');
+  const [mode, setMode] = useState<'signin' | 'register'>(
+    urlMode === 'signin' ? 'signin' : 'register'
+  );
+
+  useEffect(() => {
+    const m = searchParams.get('mode');
+    if (m === 'signin') {
+      setMode('signin');
+    } else if (m === 'signup' || m === 'register') {
+      setMode('register');
+    }
+  }, [searchParams]);
+
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // Register: 1: Contact, 2: Nutrition, 3: Delivery, 4: OTP
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -259,13 +272,14 @@ export default function CustomerAuthForm() {
             setMode('register');
             setErrorMsg(null);
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'register'
               ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          ✨ New Member Profile
+          <span>✨</span>
+          <span>Sign Up (New Member)</span>
         </button>
 
         <button
@@ -274,13 +288,14 @@ export default function CustomerAuthForm() {
             setMode('signin');
             setErrorMsg(null);
           }}
-          className={`flex-1 py-2.5 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer ${
+          className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'signin'
               ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
-          🔐 Returning Subscriber
+          <span>🔐</span>
+          <span>Log In (Returning User)</span>
         </button>
       </div>
 
@@ -393,6 +408,23 @@ export default function CustomerAuthForm() {
               </button>
             </form>
           )}
+
+          {/* Quick switch to Sign Up */}
+          <div className="pt-5 mt-6 border-t border-slate-800/80 text-center">
+            <p className="text-xs text-slate-400">
+              New to thebloomaa?{' '}
+              <button
+                type="button"
+                onClick={() => {
+                  setMode('register');
+                  setErrorMsg(null);
+                }}
+                className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+              >
+                Create your detailed member profile (Sign Up) →
+              </button>
+            </p>
+          </div>
         </div>
       )}
 
@@ -498,6 +530,23 @@ export default function CustomerAuthForm() {
                 >
                   Continue to Macro &amp; Nutrition Target →
                 </button>
+              </div>
+
+              {/* Quick switch to Log In */}
+              <div className="pt-4 border-t border-slate-800/80 text-center">
+                <p className="text-xs text-slate-400">
+                  Already have an account?{' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('signin');
+                      setErrorMsg(null);
+                    }}
+                    className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+                  >
+                    Log In with OTP →
+                  </button>
+                </p>
               </div>
             </div>
           )}
@@ -771,6 +820,23 @@ export default function CustomerAuthForm() {
                   '🎉 Activate Profile & Browse Meals →'
                 )}
               </button>
+
+              {/* Quick switch to Log In */}
+              <div className="pt-4 border-t border-slate-800/80 text-center">
+                <p className="text-xs text-slate-400">
+                  Already a subscriber?{' '}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMode('signin');
+                      setErrorMsg(null);
+                    }}
+                    className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+                  >
+                    Log In with OTP →
+                  </button>
+                </p>
+              </div>
             </form>
           )}
         </div>

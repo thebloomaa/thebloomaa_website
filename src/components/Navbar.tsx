@@ -53,10 +53,30 @@ export default function Navbar() {
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
-              Log In
+            <Link
+              href="/login"
+              className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-slate-200 hover:text-emerald-400 hover:bg-slate-800/80 border border-slate-700/60 hover:border-emerald-500/40 transition-all group"
+              title="Customer Login & Sign Up"
+            >
+              <svg
+                className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                />
+              </svg>
+              <span>Log In</span>
             </Link>
-            <Link href="/menu" className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20">
+            <Link
+              href="/menu"
+              className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20"
+            >
               Start Your Plan
             </Link>
           </div>
@@ -80,18 +100,27 @@ export default function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-slate-800 animate-fade-in-up">
-            <Link href="/menu" className="block px-3 py-2 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800">
+            <Link href="/menu" className="block px-3 py-2 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
               🥗 Meal Plans
             </Link>
-            <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+            <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" onClick={() => setMobileOpen(false)}>
               <span>🧬 Bio Calculator</span>
               <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">NEW</span>
             </Link>
-            <a href="/#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">How It Works</a>
-            <a href="/#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">Pricing</a>
-            <a href="/#faq" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">FAQ</a>
-            <Link href="/login" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">Log In</Link>
-            <Link href="/menu" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md">
+            <a href="/#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>How It Works</a>
+            <a href="/#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>Pricing</a>
+            <a href="/#faq" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>FAQ</a>
+            <Link
+              href="/login"
+              className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-200 hover:bg-slate-800 hover:text-emerald-400"
+              onClick={() => setMobileOpen(false)}
+            >
+              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+              <span>Log In / Sign Up</span>
+            </Link>
+            <Link href="/menu" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md" onClick={() => setMobileOpen(false)}>
               Start Your Plan →
             </Link>
           </div>
