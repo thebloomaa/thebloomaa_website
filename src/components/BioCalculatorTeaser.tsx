@@ -29,7 +29,7 @@ export default function BioCalculatorTeaser() {
 
               <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
                 Cooking food above 48°C denatures active enzymes and depletes heat-sensitive micronutrients. 
-                Find out how your ratio of cooked meals vs. raw fruits, sprouts, and living greens impacts your 
+                Find out how your ratio of cooked diets vs. raw fruits, sprouts, and living greens impacts your 
                 mitochondrial energy, gut microbiome, and biological diet age.
               </p>
 

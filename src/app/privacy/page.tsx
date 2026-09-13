@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
             <span className="text-xs text-amber-300 font-serif italic block mb-1">
-              Bloom your day with bloomaa
+              Bloom your day with BlooMaa
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-100">
               Privacy Policy
@@ -25,7 +25,7 @@ export default function PrivacyPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-slate-100">1. Information We Collect</h2>
               <p>
-                To deliver fresh chef-prepared meal preps and cellular living foods every morning, we collect your name, phone/WhatsApp number, email, delivery address (house number, street, Patna postal pincode), and preferred delivery time slots (6:00 AM – 9:00 AM).
+                To deliver fresh chef-prepared diet preps and cellular living foods every morning, we collect your name, phone/WhatsApp number, email, delivery address (house number, street, Patna postal pincode), and preferred delivery time slots (6:00 AM – 9:00 AM).
               </p>
             </section>
 
@@ -46,7 +46,7 @@ export default function PrivacyPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-slate-100">4. Bio Calculator &amp; Macro Data</h2>
               <p>
-                Nutritional metrics entered into our Bio Calculator (such as cooked food percentages, living enzyme scores, and biological diet age deltas) are processed in real-time to personalize your meal recommendations and may be stored locally in your browser for convenience.
+                Nutritional metrics entered into our Bio Calculator (such as cooked food percentages, living enzyme scores, and biological diet age deltas) are processed in real-time to personalize your diet recommendations and may be stored locally in your browser for convenience.
               </p>
             </section>
 

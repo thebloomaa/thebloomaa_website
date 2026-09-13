@@ -90,9 +90,9 @@ export default function DashboardPage() {
     return (
       <div className="max-w-4xl mx-auto text-center p-12">
         <h1 className="text-2xl font-black mb-4">No Active Subscription</h1>
-        <p className="text-[var(--text-muted)] mb-8">You don't have any active meal plans right now.</p>
+        <p className="text-[var(--text-muted)] mb-8">You don't have any active diet plans right now.</p>
         <button onClick={() => window.location.href = '/'} className="px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
-          Explore Meal Plans
+          Explore Diet Plans
         </button>
       </div>
     );
@@ -105,7 +105,7 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-2xl sm:text-3xl font-black">My Dashboard</h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Manage your meal subscription and deliveries.</p>
+        <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Manage your diet subscription and deliveries.</p>
       </div>
 
       {/* Subscription Status Card */}
@@ -150,7 +150,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
         {[
           { label: 'This Month', value: `₹${(sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0) * sub.perDay}`, icon: '💰' },
-          { label: 'Meals Delivered', value: `${sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0}`, icon: '🥗' },
+          { label: 'Diets Delivered', value: `${sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0}`, icon: '🥗' },
           { label: 'Days Skipped', value: `${sub.orders?.filter((o: any) => o.status === 'SKIPPED').length || 0}`, icon: '⏭️' },
           { label: 'Total Orders', value: `${sub.orders?.length || 0}`, icon: '📦' },
         ].map((stat, i) => (

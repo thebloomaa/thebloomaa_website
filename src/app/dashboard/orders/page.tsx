@@ -63,7 +63,7 @@ export default function OrdersPage() {
         <div className="hidden sm:grid grid-cols-6 gap-4 px-6 py-3 text-xs font-bold uppercase tracking-wider" style={{ background: 'var(--bg-dark)', color: 'var(--text-muted)' }}>
           <span>Order ID</span>
           <span>Date</span>
-          <span>Meal</span>
+          <span>Diet</span>
           <span>Status</span>
           <span>Time</span>
           <span className="text-right">Amount</span>
@@ -78,7 +78,7 @@ export default function OrdersPage() {
           ) : orders.map((order, i) => {
             const status = statusConfig[order.status] || statusConfig.PENDING;
             const dateStr = format(parseISO(order.deliveryDate), 'MMM d, yyyy');
-            const mealName = order.subscription?.product?.name || 'Unknown Meal';
+            const mealName = order.subscription?.product?.name || 'Unknown Diet';
             const timeStr = order.deliveredAt ? format(parseISO(order.deliveredAt), 'h:mm a') : '—';
             
             // Sub string for ID ORD-XXXX

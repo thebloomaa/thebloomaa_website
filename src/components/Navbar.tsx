@@ -16,7 +16,7 @@ export default function Navbar() {
             <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-md shadow-emerald-500/10 transition-transform group-hover:scale-105 shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
               <Image
                 src="/logo.jpg"
-                alt="thebloomaa - Bloom your day with bloomaa"
+                alt="Bloom your day with BlooMaa"
                 fill
                 sizes="40px"
                 className="object-cover"
@@ -30,7 +30,7 @@ export default function Navbar() {
                 </span>
               </div>
               <span className="text-[10px] text-amber-300/90 font-serif italic tracking-wide hidden sm:block leading-none">
-                Bloom your day with bloomaa
+                Bloom your day with BlooMaa
               </span>
             </div>
           </Link>

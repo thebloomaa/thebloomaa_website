@@ -13,7 +13,7 @@ export default function Footer() {
               <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-lg shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
                 <Image
                   src="/logo.jpg"
-                  alt="thebloomaa - Bloom your day with bloomaa"
+                  alt="Bloom your day with BlooMaa"
                   fill
                   sizes="48px"
                   className="object-cover"
@@ -24,12 +24,12 @@ export default function Footer() {
                   thebloo<span className="text-emerald-400">maa</span>
                 </span>
                 <span className="text-[11px] text-amber-300/90 font-serif italic tracking-wide block">
-                  Bloom your day with bloomaa
+                  Bloom your day with BlooMaa
                 </span>
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Nourished with motherly care. Macro-calibrated, chef-prepared fitness meal preps and cellular living foods delivered fresh across Patna every morning (6 AM – 9 AM).
+              Nourished with motherly care. Macro-calibrated, chef-prepared fitness diet preps and cellular living foods delivered fresh across Patna every morning (6 AM – 9 AM).
             </p>
           </div>
 
@@ -70,7 +70,7 @@ export default function Footer() {
             </ul>
             <div className="flex gap-2.5 mt-5">
               <a
-                href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20meal%20plans"
+                href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-all flex items-center gap-1.5"
@@ -89,7 +89,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 text-center text-xs" style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} thebloomaa · <span className="text-amber-300/80 italic">Bloom your day with bloomaa</span>. Made with 💚 in Patna.
+          © {new Date().getFullYear()} thebloomaa · <span className="text-amber-300/80 italic">Bloom your day with BlooMaa</span>. Made with 💚 in Patna.
         </div>
       </div>
     </footer>

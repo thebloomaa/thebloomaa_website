@@ -124,7 +124,7 @@ export default function MiniCartDrawer() {
                   🔥 {selectedProduct.calories} kcal · 🥩 {selectedProduct.protein}g P · 🥑 {selectedProduct.fats}g F
                 </p>
                 <span className="text-xs font-bold text-emerald-400 font-mono mt-1 block">
-                  ₹{selectedProduct.price} / meal
+                  ₹{selectedProduct.price} / diet
                 </span>
               </div>
             </div>

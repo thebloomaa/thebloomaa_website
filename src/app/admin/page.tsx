@@ -171,7 +171,7 @@ export default function AdminDashboard() {
           {
             label: 'Active Subscriptions',
             value: data.metrics.activeSubs.toString(),
-            sub: 'Enrolled in Meal Plans',
+            sub: 'Enrolled in Diet Plans',
             icon: '🥗',
             color: '#93C5FD',
             border: 'border-blue-500/20',
@@ -442,11 +442,11 @@ export default function AdminDashboard() {
         <div className="rounded-3xl p-6 bg-slate-900/80 border border-slate-800 shadow-xl space-y-6">
           <div>
             <h3 className="text-sm font-black text-white mb-4 flex items-center gap-2">
-              <span>🔥</span> High-Demand Meal Plans
+              <span>🔥</span> High-Demand Diet Plans
             </h3>
             <div className="space-y-3">
               {data.topMeals.length === 0 ? (
-                <p className="text-xs text-slate-500">No active meal subscriptions recorded yet.</p>
+                <p className="text-xs text-slate-500">No active diet subscriptions recorded yet.</p>
               ) : (
                 data.topMeals.map((m, idx) => (
                   <div key={idx} className="space-y-1">

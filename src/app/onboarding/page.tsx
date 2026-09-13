@@ -56,7 +56,7 @@ export default function OnboardingPage() {
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black mb-2">Complete Your Profile</h1>
             <p className="text-sm" style={{ color: 'var(--text-muted)' }}>
-              Tell us a bit about yourself so we can tailor the perfect fitness meal plan for you.
+              Tell us a bit about yourself so we can tailor the perfect fitness diet plan for you.
             </p>
           </div>
 

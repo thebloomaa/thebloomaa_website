@@ -31,7 +31,7 @@ export default function ContactPage() {
               />
             </div>
             <span className="text-xs text-amber-300 font-serif italic block">
-              Bloom your day with bloomaa
+              Bloom your day with BlooMaa
             </span>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight">
               Get in Touch with Our Team
@@ -88,7 +88,7 @@ export default function ContactPage() {
 
               <div className="pt-4 border-t border-slate-800">
                 <a
-                  href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20meal%20plans"
+                  href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20"

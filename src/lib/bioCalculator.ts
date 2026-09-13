@@ -188,7 +188,7 @@ export const BLOOMAA_PRODUCTS = {
     name: 'Standard Weight Loss Diet',
     type: 'MEAL_PLAN',
     price: 250,
-    description: 'Chef-balanced nutrient-dense meal with sprouted lentils, steamed brown rice, and a crisp live enzyme garden salad.',
+    description: 'Chef-balanced nutrient-dense diet with sprouted lentils, steamed brown rice, and a crisp live enzyme garden salad.',
     calories: 400,
     protein: 18,
     carbs: 55,
@@ -265,7 +265,7 @@ export function getVitalityTier(score: number): VitalityTier {
       label: 'Balanced Living Nutrition',
       status: 'optimal',
       color: '#34D399',
-      description: 'Strong foundation with good living enzyme presence. Steady post-meal energy and protective antioxidant shield.',
+      description: 'Strong foundation with good living enzyme presence. Steady post-diet energy and protective antioxidant shield.',
     };
   }
   if (score >= 50) {
@@ -288,7 +288,7 @@ export function getVitalityTier(score: number): VitalityTier {
     label: 'Critical Enzyme Depletion',
     status: 'critical',
     color: '#EF4444',
-    description: 'Diet dominated by high-temperature cooked foods. Elevates post-meal fatigue, metabolic stress, and cellular inflammatory AGE markers.',
+    description: 'Diet dominated by high-temperature cooked foods. Elevates post-diet fatigue, metabolic stress, and cellular inflammatory AGE markers.',
   };
 }
 
@@ -421,7 +421,7 @@ export function calculateBioProfile(inputs: BioCalculatorInputs): BioCalculatorR
     activeDigestiveEnzymes: vitalityScore < 45 ? '< 20% (Severely Heat Denatured)' : vitalityScore < 70 ? '40-55% (Partially Preserved)' : '75%+ (Active)',
     estimatedDailyFiber: estimatedCurrentFiber,
     antioxidantCapacity: vitalityScore < 40 ? 'Low (Heat Oxidized)' : vitalityScore < 70 ? 'Moderate' : 'High ORAC Shield',
-    digestionTransitTime: cookedPercentage > 75 ? '3.5 – 5 hrs (Post-Meal Fatigue)' : '2.5 – 3.5 hrs (Normal)',
+    digestionTransitTime: cookedPercentage > 75 ? '3.5 – 5 hrs (Post-Diet Fatigue)' : '2.5 – 3.5 hrs (Normal)',
     inflammatoryLoad: cookedPercentage > 80 ? 'Elevated (High AGEs & Thermal Byproducts)' : 'Moderate',
     cellularHydration: fruitServings < 2 ? 'Sub-Optimal (Low Electrolyte H2O)' : 'Good Hydration',
   };
@@ -449,13 +449,13 @@ export function calculateBioProfile(inputs: BioCalculatorInputs): BioCalculatorR
     livingFoodSynergyTip:
       healthGoal === 'LEAN_MUSCLE'
         ? 'Consume the sprouted moong and soaked pumpkin seed portions within 45 minutes of your morning workout for optimal enzymatic protein assimilation.'
-        : 'Eat Box 1 through 5 as your primary morning meal; on Day 6, enjoy Box 6 in the morning and Box 7 for a soothing evening gut reset.',
+        : 'Eat Box 1 through 5 as your primary morning diet; on Day 6, enjoy Box 6 in the morning and Box 7 for a soothing evening gut reset.',
   };
 
   // 7. Actionable Swaps
   const actionableSwaps: string[] = [];
   if (cookedPercentage > 65) {
-    actionableSwaps.push('Begin every lunch or dinner with a 1-cup bowl of crisp raw greens & microgreens before eating your cooked meal.');
+    actionableSwaps.push('Begin every lunch or dinner with a 1-cup bowl of crisp raw greens & microgreens before eating your cooked diet.');
   }
   if (fruitServings < 2) {
     actionableSwaps.push('Start your morning with 1 serving of enzyme-packed fresh fruit (papaya, berries, or citrus) on an empty stomach.');

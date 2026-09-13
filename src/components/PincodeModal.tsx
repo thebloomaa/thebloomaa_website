@@ -153,14 +153,14 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
           <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-xl shadow-emerald-500/10 mx-auto mb-3 bg-slate-900 ring-4 ring-emerald-500/20">
             <Image
               src="/logo.jpg"
-              alt="thebloomaa - Bloom your day with bloomaa"
+              alt="Bloom your day with BlooMaa"
               fill
               sizes="64px"
               className="object-cover"
             />
           </div>
           <span className="text-[11px] text-amber-300 font-serif italic tracking-wide block mb-1">
-            Bloom your day with bloomaa
+            Bloom your day with BlooMaa
           </span>
           <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
             Patna Delivery Zone Check
@@ -169,7 +169,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
             Check Your Area in Patna
           </h3>
           <p className="text-xs text-slate-400 mt-1.5 leading-relaxed max-w-xs mx-auto">
-            Fresh chef-prepared living meal preps delivered to your door every morning between 6:00 AM – 9:00 AM.
+            Fresh chef-prepared living diet preps delivered to your door every morning between 6:00 AM – 9:00 AM.
           </p>
         </div>
 
@@ -255,7 +255,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                     }}
                     className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-md"
                   >
-                    Browse Meal Plans →
+                    Browse Diet Plans →
                   </button>
                 </div>
               </div>

@@ -178,7 +178,7 @@ export default function AdminOrdersPage() {
                 <tr className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
                   <th className="p-4">Order / Customer</th>
                   <th className="p-4">Delivery Zone</th>
-                  <th className="p-4">Meal Item</th>
+                  <th className="p-4">Diet Item</th>
                   <th className="p-4">Slot &amp; Logistics Note</th>
                   <th className="p-4">Assigned Rider</th>
                   <th className="p-4">Status</th>
@@ -216,7 +216,7 @@ export default function AdminOrdersPage() {
 
                       <td className="p-4">
                         <span className="font-bold text-slate-100 block">
-                          {order.subscription?.product?.name || 'Chef Meal Prep'}
+                          {order.subscription?.product?.name || 'Chef Diet Prep'}
                         </span>
                         <span className="text-[10px] text-slate-400 block">
                           🔥 {order.subscription?.product?.calories || 520} kcal

@@ -11,13 +11,13 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
             <span className="text-xs text-amber-300 font-serif italic block mb-1">
-              Bloom your day with bloomaa
+              Bloom your day with BlooMaa
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-100">
               Terms of Service
             </h1>
             <p className="text-xs text-slate-400 mt-2">
-              Last updated: September 2026 · thebloomaa Meal Prep Subscriptions, Patna
+              Last updated: September 2026 · thebloomaa Diet Prep Subscriptions, Patna
             </p>
           </div>
 
@@ -32,7 +32,7 @@ export default function TermsPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-slate-100">2. Daily Morning Delivery Window</h2>
               <p>
-                Meals are chef-prepared fresh early every morning and delivered between 6:00 AM and 9:00 AM across serviceable pincodes in Patna. Subscribers can specify a preferred delivery time slot in their subscriber dashboard.
+                Diets are chef-prepared fresh early every morning and delivered between 6:00 AM and 9:00 AM across serviceable pincodes in Patna. Subscribers can specify a preferred delivery time slot in their subscriber dashboard.
               </p>
             </section>
 
@@ -53,7 +53,7 @@ export default function TermsPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-slate-100">5. Cancellations &amp; Refunds</h2>
               <p>
-                Unconsumed prepaid meal days may be refunded pro-rata upon request, less applicable bundle discounts, provided written notice is submitted via WhatsApp or email to admin@thebloomaa.com.
+                Unconsumed prepaid diet days may be refunded pro-rata upon request, less applicable bundle discounts, provided written notice is submitted via WhatsApp or email to admin@thebloomaa.com.
               </p>
             </section>
           </div>

@@ -27,7 +27,7 @@ export default function LoginPage() {
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-2xl shadow-emerald-500/15 bg-slate-900 ring-4 ring-emerald-500/20">
                   <Image
                     src="/logo.jpg"
-                    alt="thebloomaa - Bloom your day with bloomaa"
+                    alt="Bloom your day with BlooMaa"
                     fill
                     sizes="64px"
                     className="object-cover"
@@ -39,7 +39,7 @@ export default function LoginPage() {
                     thebloo<span className="text-emerald-400">maa</span>
                   </span>
                   <span className="text-xs text-amber-300 font-serif italic tracking-wide block">
-                    Bloom your day with bloomaa
+                    Bloom your day with BlooMaa
                   </span>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export default function LoginPage() {
                       Flexible 8:30 PM Cutoff
                     </strong>
                     <span className="text-[11px] text-slate-400 leading-normal block">
-                      Traveling or cheat meal? Pause or skip any upcoming morning directly from your phone. You never lose a meal.
+                      Traveling or cheat day? Pause or skip any upcoming morning directly from your phone. You never lose a diet.
                     </span>
                   </div>
                 </div>

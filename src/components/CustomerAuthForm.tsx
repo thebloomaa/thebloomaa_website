@@ -348,7 +348,7 @@ export default function CustomerAuthForm() {
               <p className="font-semibold text-sm leading-snug">{errorMsg}</p>
               {notRegisteredNotice && (
                 <p className="text-[11px] text-amber-300/80 mt-1">
-                  To get fresh macro-tailored meals delivered in Patna, please create your member profile.
+                  To get fresh macro-tailored diets delivered in Patna, please create your member profile.
                 </p>
               )}
               {alreadyRegisteredNotice && (
@@ -670,7 +670,7 @@ export default function CustomerAuthForm() {
                     {
                       id: 'CLEAN_FUEL',
                       title: '⚖️ Balanced Daily Energy',
-                      desc: 'Nutrient-dense whole meals for busy professionals & athletes in Patna.',
+                      desc: 'Nutrient-dense whole diets for busy professionals & athletes in Patna.',
                     },
                   ].map((goal) => (
                     <button
@@ -922,7 +922,7 @@ export default function CustomerAuthForm() {
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  '🎉 Activate Profile & Browse Meals →'
+                  '🎉 Activate Profile & Browse Diets →'
                 )}
               </button>
 

@@ -98,7 +98,7 @@ const faqs = [
   },
   {
     q: 'Can I pause or skip a delivery day?',
-    a: 'Yes! With our 8:30 PM prior-evening cutoff, you can pause or reschedule any upcoming morning directly from your account. You never lose a meal.',
+    a: 'Yes! With our 8:30 PM prior-evening cutoff, you can pause or reschedule any upcoming morning directly from your account. You never lose a diet.',
   },
   {
     q: 'How do I pay?',
@@ -239,13 +239,13 @@ export default function Home() {
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">The thebloomaa Difference</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Macro Precision.</h2>
-            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your day with bloomaa</p>
+            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your day with BlooMaa</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: '🏋️', title: 'Macro Precision', desc: 'Every meal is weighed and tracked — calories, protein, carbs, and fats down to the gram.' },
-              { icon: '⏰', title: 'Scheduled Delivery', desc: 'Set your preferred time in the planner, and our in-house fleet will deliver your meal at that specific time for the entire plan duration.' },
+              { icon: '🏋️', title: 'Macro Precision', desc: 'Every diet is weighed and tracked — calories, protein, carbs, and fats down to the gram.' },
+              { icon: '⏰', title: 'Scheduled Delivery', desc: 'Set your preferred time in the planner, and our in-house fleet will deliver your diet at that specific time for the entire plan duration.' },
               { icon: '🌿', title: 'Motherly Nourishment', desc: 'Prepared with whole living ingredients and motherly care. Never frozen, never reheated. Fresh every morning.' },
               { icon: '⏸️', title: 'Skip Anytime', desc: 'Cheat day? Traveling? Pause or skip any delivery day directly from your subscriber dashboard.' },
               { icon: '📱', title: 'UPI Payments', desc: 'Pay instantly via PhonePe, GPay, or Paytm with instant confirmation and QR codes.' },
@@ -293,7 +293,7 @@ export default function Home() {
         >
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ background: 'var(--brand-primary)' }} />
           <span className="text-xs text-amber-300 font-serif italic tracking-wide block mb-2">
-            Bloom your day with bloomaa
+            Bloom your day with BlooMaa
           </span>
           <h2 className="text-2xl sm:text-3xl font-black mb-3 relative z-10">Ready to Fuel Your Fitness &amp; Vitality?</h2>
           <p className="text-sm mb-8 max-w-lg mx-auto relative z-10" style={{ color: 'var(--text-muted)' }}>

@@ -170,7 +170,7 @@ export default function CheckoutPage() {
 
       const data = await res.json();
       if (res.ok && data.success) {
-        alert('🎉 Subscription confirmed! Your fresh morning meal prep is scheduled.');
+        alert('🎉 Subscription confirmed! Your fresh morning diet prep is scheduled.');
         router.push('/dashboard');
         router.refresh();
       } else {
@@ -246,7 +246,7 @@ export default function CheckoutPage() {
                 <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                   Step 1 of 3 · Verification
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Review Your Meal Plan</h2>
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Review Your Diet Plan</h2>
                 <p className="text-xs sm:text-sm text-slate-400 mt-1">
                   Macro-tracked, chef-crafted, and delivered fresh to your door every morning.
                 </p>
@@ -270,7 +270,7 @@ export default function CheckoutPage() {
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                       <h3 className="text-xl sm:text-2xl font-black text-slate-100">{selectedProduct.name}</h3>
                       <div className="text-xl font-black text-emerald-400 font-mono">
-                        {isTrialProduct ? '₹451 (Flat 7D Trial)' : `₹${selectedProduct.price}/meal`}
+                        {isTrialProduct ? '₹451 (Flat 7D Trial)' : `₹${selectedProduct.price}/diet`}
                       </div>
                     </div>
 
@@ -354,7 +354,7 @@ export default function CheckoutPage() {
                 <div className="space-y-2.5 text-xs">
                   <div className="flex justify-between text-slate-400">
                     <span>Effective daily rate:</span>
-                    <span className="font-bold text-slate-200 font-mono">₹{finalPerDay} / meal</span>
+                    <span className="font-bold text-slate-200 font-mono">₹{finalPerDay} / diet</span>
                   </div>
                   <div className="flex justify-between text-slate-400">
                     <span>Scheduled duration:</span>
@@ -645,7 +645,7 @@ export default function CheckoutPage() {
                     {/* Order Reference Breakdown */}
                     <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800 text-xs space-y-1.5">
                       <div className="flex justify-between text-slate-400">
-                        <span>Selected Meal Prep:</span>
+                        <span>Selected Diet Prep:</span>
                         <span className="font-bold text-slate-200">{selectedProduct.name}</span>
                       </div>
                       <div className="flex justify-between text-slate-400">

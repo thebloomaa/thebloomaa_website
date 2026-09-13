@@ -301,7 +301,7 @@ export default function BioCalculator() {
                     Daily Cooked Food Intake
                   </label>
                   <p className="text-xs text-slate-400 mt-0.5">
-                    Percentage of your daily meals cooked at high heat (roti, rice, gravies, fried foods).
+                    Percentage of your daily diet cooked at high heat (roti, rice, gravies, fried foods).
                   </p>
                 </div>
                 <div className="text-right">
@@ -366,7 +366,7 @@ export default function BioCalculator() {
                   { id: 'rarely', label: 'Rarely', subtitle: '< 1x per week' },
                   { id: 'weekly', label: '1–2x Weekly', subtitle: 'Occasional sprouts' },
                   { id: 'daily', label: 'Daily Boost', subtitle: 'Chia / flax / moong' },
-                  { id: 'multiple_daily', label: 'Living Power', subtitle: 'Multiple sprout meals' },
+                  { id: 'multiple_daily', label: 'Living Power', subtitle: 'Multiple sprout diets' },
                 ].map((item) => (
                   <button
                     key={item.id}
@@ -750,7 +750,7 @@ export default function BioCalculator() {
                     <span className="font-bold text-amber-400 font-mono">🍞 {results.matchedProduct.carbs}g Carbs</span>
                     <span className="font-bold text-emerald-400 font-mono">🥑 {results.matchedProduct.fats}g Fats</span>
                     <span className="font-black text-base text-slate-100 font-mono">
-                      {results.matchedProduct.isTrialPlan ? '₹451 (7 Days Trial)' : `₹${results.matchedProduct.price}/meal`}
+                      {results.matchedProduct.isTrialPlan ? '₹451 (7 Days Trial)' : `₹${results.matchedProduct.price}/diet`}
                     </span>
                   </div>
 

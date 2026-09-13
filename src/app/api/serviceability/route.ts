@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     if (zone && zone.isActive) {
       return NextResponse.json({
         serviceable: true,
-        message: `Great news! We deliver meal preps to ${zone.neighborhood || zone.city}.`,
+        message: `Great news! We deliver diet preps to ${zone.neighborhood || zone.city}.`,
         zone,
       });
     }

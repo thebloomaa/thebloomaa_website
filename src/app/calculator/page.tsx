@@ -22,11 +22,11 @@ const livingFaqs = [
   },
   {
     q: 'How does Thebloomaa support my living food goals?',
-    a: 'Every Thebloomaa meal plan is designed to pair perfectly with living foods. Our chef preps feature fresh sprouted lentils, crisp living salads, and unheated superfood dressings alongside clean proteins and complex grains, ensuring high enzyme vitality.',
+    a: 'Every Thebloomaa diet plan is designed to pair perfectly with living foods. Our chef preps feature fresh sprouted lentils, crisp living salads, and unheated superfood dressings alongside clean proteins and complex grains, ensuring high enzyme vitality.',
   },
   {
-    q: 'Can I customize my meals after calculating my bio profile?',
-    a: 'Yes! Once your profile is calculated, you can select the recommended meal plan and proceed to checkout, or customize your delivery time and bundle duration (7, 15, or 30 days) directly.',
+    q: 'Can I customize my diets after calculating my bio profile?',
+    a: 'Yes! Once your profile is calculated, you can select the recommended diet plan and proceed to checkout, or customize your delivery time and bundle duration (7, 15, or 30 days) directly.',
   },
 ];
 

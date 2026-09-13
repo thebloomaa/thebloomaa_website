@@ -65,7 +65,7 @@ export default function AdminProductsPage() {
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-black">Products</h1>
-          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage your meal plans and beverages.</p>
+          <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage your diet plans and beverages.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
           className="px-4 py-2 rounded-xl text-sm font-bold text-white"
@@ -79,9 +79,9 @@ export default function AdminProductsPage() {
         <div className="rounded-2xl p-6 mb-6 animate-fade-in-up" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
           <h3 className="text-sm font-bold mb-4">New Product</h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
-            <input type="text" placeholder="Meal name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle} />
+            <input type="text" placeholder="Diet name" value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle} />
             <select value={form.type} onChange={(e) => setForm({ ...form, type: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle}>
-              <option value="MEAL_PLAN">Meal Plan</option>
+              <option value="MEAL_PLAN">Diet Plan</option>
               <option value="A_LA_CARTE">A La Carte</option>
               <option value="BEVERAGE">Beverage</option>
             </select>
