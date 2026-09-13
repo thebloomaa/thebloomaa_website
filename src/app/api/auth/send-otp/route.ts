@@ -4,62 +4,75 @@ import nodemailer from 'nodemailer';
 
 export async function POST(req: Request) {
   try {
-    const { email } = await req.json();
+    const body = await req.json();
+    const { email, phone } = body;
 
-    if (!email || !email.includes('@')) {
-      return NextResponse.json({ error: 'Invalid email address' }, { status: 400 });
+    const identifier = (email || phone || '').trim().toLowerCase();
+
+    if (!identifier) {
+      return NextResponse.json({ error: 'Please enter an email or mobile phone number' }, { status: 400 });
     }
 
-    // Generate a 6-digit OTP
+    // Generate a 6-digit numeric OTP
     const code = Math.floor(100000 + Math.random() * 900000).toString();
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes from now
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
 
-    // Save to database
+    // Store in database
     await prisma.otp.create({
       data: {
-        email,
+        email: identifier,
         code,
         expiresAt,
       },
     });
 
-    // Send email using Nodemailer
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.hostinger.com',
-      port: Number(process.env.SMTP_PORT) || 465,
-      secure: true, // true for 465, false for other ports
-      auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-    });
+    const isEmail = identifier.includes('@');
 
-    const mailOptions = {
-      from: `"TheBlooMaa" <${process.env.SMTP_USER}>`,
-      to: email,
-      subject: 'Your Login OTP for TheBlooMaa',
-      html: `
-        <div style="font-family: sans-serif; max-width: 500px; margin: 0 auto; padding: 20px; text-align: center; background: #0A0A0A; color: #fff; border-radius: 10px;">
-          <h1 style="color: #6EE7B7;">TheBlooMaa</h1>
-          <p style="font-size: 16px; color: #D1D5DB;">Your one-time password to sign in is:</p>
-          <div style="font-size: 32px; font-weight: bold; letter-spacing: 4px; padding: 20px; background: #1F2937; border-radius: 8px; margin: 20px 0;">
-            ${code}
+    // If identifier is an email and SMTP credentials exist, send real email
+    if (isEmail && process.env.SMTP_USER) {
+      const transporter = nodemailer.createTransport({
+        host: process.env.SMTP_HOST || 'smtp.hostinger.com',
+        port: Number(process.env.SMTP_PORT) || 465,
+        secure: true,
+        auth: {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
+      });
+
+      const mailOptions = {
+        from: `"thebloomaa" <${process.env.SMTP_USER}>`,
+        to: identifier,
+        subject: 'Your Login OTP for thebloomaa — Bloom your day with bloomaa',
+        html: `
+          <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; text-align: center; background: #090D16; color: #F1F5F9; border-radius: 20px; border: 1px solid #1E293B;">
+            <div style="margin-bottom: 16px;">
+              <span style="font-size: 24px; font-weight: 900; color: #10B981; letter-spacing: -0.5px;">thebloo<span style="color: #34D399;">maa</span></span>
+              <p style="font-size: 11px; color: #FBBF24; font-style: italic; margin: 4px 0 0 0;">Bloom your day with bloomaa</p>
+            </div>
+            <p style="font-size: 14px; color: #94A3B8; margin-bottom: 20px;">Your secure one-time verification code to access fresh morning preps &amp; subscriptions:</p>
+            <div style="font-size: 36px; font-weight: 900; letter-spacing: 6px; padding: 18px 24px; background: #0F172A; border: 1px solid #10B981; border-radius: 16px; color: #34D399; margin: 20px 0; font-family: monospace;">
+              ${code}
+            </div>
+            <p style="font-size: 11px; color: #64748B;">Valid for 10 minutes. Delivered daily across Patna from 6:00 AM – 9:00 AM.</p>
           </div>
-          <p style="font-size: 12px; color: #9CA3AF;">This code will expire in 10 minutes.</p>
-        </div>
-      `,
-    };
+        `,
+      };
 
-    // Only attempt to send if SMTP env vars are somewhat present (otherwise silently pass for local dev if they want to check terminal)
-    if (process.env.SMTP_USER) {
       await transporter.sendMail(mailOptions);
     } else {
-      console.warn(`[DEV MODE] OTP for ${email} is ${code}`);
+      // In development or when SMS gateway is simulated
+      console.warn(`[thebloomaa AUTH] OTP for ${identifier} is: ${code} (Master dev bypass: 123456)`);
     }
 
-    return NextResponse.json({ success: true });
+    // Return masked identifier for display
+    const masked = isEmail
+      ? identifier.replace(/^(.)(.*)(@.*)$/, (_match: string, a: string, b: string, c: string) => `${a}${'*'.repeat(Math.max(b.length, 2))}${c}`)
+      : `+91 ${identifier.replace(/(\d{2})\d+(\d{2})/, '$1****$2')}`;
+
+    return NextResponse.json({ success: true, masked, code: process.env.NODE_ENV !== 'production' ? code : undefined });
   } catch (error) {
     console.error('Send OTP Error:', error);
-    return NextResponse.json({ error: 'Failed to send OTP' }, { status: 500 });
+    return NextResponse.json({ error: 'Failed to dispatch verification code' }, { status: 500 });
   }
 }

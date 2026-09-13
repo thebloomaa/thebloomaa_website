@@ -1,7 +1,10 @@
+import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
-import PincodeChecker from '@/components/PincodeChecker';
+import LandingHero from '@/components/LandingHero';
+import BioCalculatorTeaser from '@/components/BioCalculatorTeaser';
+import TrialPlanShowcase from '@/components/TrialPlanShowcase';
 import { prisma } from '@/lib/prisma';
 
 const steps = [
@@ -32,6 +35,7 @@ const stats = [
 const bundles = [
   {
     name: 'Starter',
+    bundleType: 'DAYS_7',
     days: 7,
     perDay: '₹250',
     total: '₹1,750',
@@ -40,6 +44,7 @@ const bundles = [
   },
   {
     name: 'Committed',
+    bundleType: 'DAYS_15',
     days: 15,
     perDay: '₹230',
     total: '₹3,450',
@@ -48,6 +53,7 @@ const bundles = [
   },
   {
     name: 'All-In',
+    bundleType: 'DAYS_30',
     days: 30,
     perDay: '₹200',
     total: '₹6,000',
@@ -104,42 +110,8 @@ export default async function Home() {
     <>
       <Navbar />
 
-      {/* ===== HERO ===== */}
-      <section className="relative pt-28 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        {/* Background glow effects */}
-        <div className="absolute top-20 left-1/4 w-96 h-96 rounded-full opacity-10 blur-3xl pointer-events-none" style={{ background: 'var(--brand-primary)' }} />
-        <div className="absolute bottom-10 right-1/4 w-72 h-72 rounded-full opacity-8 blur-3xl pointer-events-none" style={{ background: 'var(--brand-accent)' }} />
-
-        <div className="max-w-5xl mx-auto text-center relative z-10">
-          <div className="animate-fade-in-up">
-            <span
-              className="inline-block px-4 py-1.5 rounded-full text-xs font-bold uppercase tracking-widest mb-6"
-              style={{ background: 'rgba(16, 185, 129, 0.1)', color: 'var(--brand-primary)', border: '1px solid rgba(16, 185, 129, 0.2)' }}
-            >
-              Now delivering in Patna 🚀
-            </span>
-          </div>
-
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-black tracking-tight leading-[1.1] mb-6 animate-fade-in-up-delay-1">
-            Your Gains,{' '}
-            <span style={{ color: 'var(--brand-primary)' }}>Delivered</span>{' '}
-            <br className="hidden sm:block" />
-            On Your Schedule.
-          </h1>
-
-          <p className="max-w-2xl mx-auto text-base sm:text-lg leading-relaxed mb-10 animate-fade-in-up-delay-2" style={{ color: 'var(--text-muted)' }}>
-            Macro-tracked, chef-prepared meal preps delivered to your door at your exact preferred time.
-            Choose your fitness goal, pick a plan, and we handle the rest.
-          </p>
-
-          <div className="max-w-md mx-auto animate-fade-in-up-delay-3">
-            <PincodeChecker variant="hero" />
-            <p className="mt-3 text-xs" style={{ color: 'var(--text-muted)' }}>
-              Check if we deliver to your area — it takes 2 seconds.
-            </p>
-          </div>
-        </div>
-      </section>
+      {/* ===== HERO WITH PINCODE GATE ===== */}
+      <LandingHero />
 
       {/* ===== STATS BAR ===== */}
       <section className="py-8 px-4" style={{ borderTop: '1px solid var(--border-subtle)', borderBottom: '1px solid var(--border-subtle)' }}>
@@ -176,6 +148,9 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* ===== BIO CALCULATOR TEASER ===== */}
+      <BioCalculatorTeaser />
+
       {/* ===== OUR MEALS ===== */}
       <section id="meals" className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(180deg, var(--bg-dark) 0%, #0B1120 100%)' }}>
         <div className="max-w-6xl mx-auto">
@@ -192,6 +167,13 @@ export default async function Home() {
               <ProductCard key={meal.id} {...meal} />
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ===== 7-DAY TRIAL SHOWCASE ===== */}
+      <section id="trial" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="max-w-6xl mx-auto">
+          <TrialPlanShowcase />
         </div>
       </section>
 
@@ -241,16 +223,17 @@ export default async function Home() {
                     </li>
                   ))}
                 </ul>
-                <button
-                  className="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
+                <Link
+                  href={`/menu?bundle=${bundle.bundleType}`}
+                  className="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer"
                   style={{
                     background: bundle.popular ? 'var(--brand-primary)' : 'transparent',
                     color: bundle.popular ? 'white' : 'var(--text-secondary)',
                     border: bundle.popular ? 'none' : '1.5px solid var(--border-subtle)',
                   }}
                 >
-                  Get Started
-                </button>
+                  Get Started →
+                </Link>
               </div>
             ))}
           </div>
@@ -261,18 +244,19 @@ export default async function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-card)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>The TheBlooMaa Difference</span>
-            <h2 className="text-3xl sm:text-4xl font-black mt-2">Why Fitness Enthusiasts Choose Us</h2>
+            <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">The thebloomaa Difference</span>
+            <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Macro Precision.</h2>
+            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your day with bloomaa</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
               { icon: '🏋️', title: 'Macro Precision', desc: 'Every meal is weighed and tracked — calories, protein, carbs, and fats down to the gram.' },
               { icon: '⏰', title: 'Scheduled Delivery', desc: 'Set your preferred time in the planner, and our in-house fleet will deliver your meal at that specific time for the entire plan duration.' },
-              { icon: '🧑‍🍳', title: 'Chef-Prepared Daily', desc: 'Never frozen, never reheated. Fresh meals prepared in our cloud kitchen every morning.' },
-              { icon: '⏸️', title: 'Skip Anytime', desc: 'Cheat day? Traveling? Pause or skip any delivery day from your dashboard.' },
-              { icon: '📱', title: 'UPI Payments', desc: 'Pay instantly via PhonePe, GPay, or Paytm. Supports recurring UPI AutoPay.' },
-              { icon: '♻️', title: 'Eco-Friendly Packaging', desc: 'All our containers are reusable and made from food-grade recycled materials.' },
+              { icon: '🌿', title: 'Motherly Nourishment', desc: 'Prepared with whole living ingredients and motherly care. Never frozen, never reheated. Fresh every morning.' },
+              { icon: '⏸️', title: 'Skip Anytime', desc: 'Cheat day? Traveling? Pause or skip any delivery day directly from your subscriber dashboard.' },
+              { icon: '📱', title: 'UPI Payments', desc: 'Pay instantly via PhonePe, GPay, or Paytm with instant confirmation and QR codes.' },
+              { icon: '♻️', title: 'Eco-Friendly Packaging', desc: 'All our containers are reusable, food-grade, and designed to keep living nutrients protected.' },
             ].map((item, i) => (
               <div key={i} className="rounded-xl p-6" style={{ background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)' }}>
                 <div className="text-2xl mb-3">{item.icon}</div>
@@ -315,16 +299,19 @@ export default async function Home() {
           style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05))', border: '1px solid rgba(16, 185, 129, 0.2)' }}
         >
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ background: 'var(--brand-primary)' }} />
-          <h2 className="text-2xl sm:text-3xl font-black mb-3 relative z-10">Ready to Fuel Your Fitness?</h2>
+          <span className="text-xs text-amber-300 font-serif italic tracking-wide block mb-2">
+            Bloom your day with bloomaa
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black mb-3 relative z-10">Ready to Fuel Your Fitness &amp; Vitality?</h2>
           <p className="text-sm mb-8 max-w-lg mx-auto relative z-10" style={{ color: 'var(--text-muted)' }}>
-            Join hundreds of fitness enthusiasts in Patna who start every morning with a TheBlooMaa box.
+            Join hundreds of fitness and wellness enthusiasts in Patna who start every morning with fresh chef-prepared thebloomaa boxes.
           </p>
-          <button
-            className="px-8 py-3.5 rounded-xl text-base font-bold text-white transition-all hover:scale-105 active:scale-95 relative z-10"
-            style={{ background: 'var(--brand-primary)' }}
+          <a
+            href="/#pricing"
+            className="inline-block px-8 py-3.5 rounded-xl text-base font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 relative z-10 shadow-lg shadow-emerald-500/20"
           >
             Start Your Plan Today →
-          </button>
+          </a>
         </div>
       </section>
 

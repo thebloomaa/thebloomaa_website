@@ -1,16 +1,17 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 export async function POST(req: Request) {
   try {
-    const session = await getServerSession();
+    const session = await getServerSession(authOptions);
     if (!session || !session.user) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
     const body = await req.json();
-    const { productId, address, bundleType, deliveryTime, utr } = body;
+    const { productId, address, bundleType, deliveryTime, utr, deliveryNote } = body;
 
     // Save address
     const newAddress = await prisma.address.create({
@@ -51,6 +52,7 @@ export async function POST(req: Request) {
         status: 'QUEUED',
         deliveryDate: new Date(new Date().setDate(new Date().getDate() + 1)), // Tomorrow
         deliveryTime,
+        deliveryNote: deliveryNote || null,
       }
     });
 

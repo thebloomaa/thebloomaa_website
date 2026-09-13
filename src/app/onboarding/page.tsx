@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
+import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
 
 export default function OnboardingPage() {
@@ -224,6 +225,7 @@ export default function OnboardingPage() {
           </form>
         </div>
       </main>
+      <Footer />
     </>
   );
 }

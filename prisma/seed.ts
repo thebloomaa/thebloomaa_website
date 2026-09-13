@@ -55,6 +55,17 @@ async function main() {
       carbs: 55,
       fats: 8,
       dietaryPreference: 'VEG'
+    },
+    { 
+      name: 'Just Bloomed 7D Trial', 
+      type: 'TRIAL_PLAN', 
+      price: 451, 
+      description: '7 unique raw & living nutrient boxes over 6 delivery days (6+1 double drop on day 6). Designed for high enzymatic vitality and cellular gut reset.',
+      calories: 420,
+      protein: 22,
+      carbs: 48,
+      fats: 16,
+      dietaryPreference: 'LIVING_RAW'
     }
   ];
 

@@ -156,10 +156,16 @@ export default function RiderManifestPage() {
                           📞
                         </a>
                       </div>
-                      <p className="text-xs mb-1" style={{ color: 'var(--text-muted)' }}>📍 {order.address}</p>
-                      <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>
+                      <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
                         ⏰ <span className="font-bold text-white">{order.time}</span> · 🥗 {order.meal} · 🔥 {order.calories} kcal
                       </p>
+
+                      {order.deliveryNote && (
+                        <div className="mb-3 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1.5">
+                          <span>⚠️</span>
+                          <span>{order.deliveryNote}</span>
+                        </div>
+                      )}
 
                       {!isCompleted && (
                         <div className="flex gap-2">

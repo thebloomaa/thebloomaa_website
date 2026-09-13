@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -10,22 +11,44 @@ export default function Navbar() {
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: 'var(--brand-primary)' }}>
-              T
+          {/* Brand Logo */}
+          <Link href="/" className="flex items-center gap-3 group">
+            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-md shadow-emerald-500/10 transition-transform group-hover:scale-105 shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
+              <Image
+                src="/logo.jpg"
+                alt="thebloomaa - Bloom your day with bloomaa"
+                fill
+                sizes="40px"
+                className="object-cover"
+                priority
+              />
             </div>
-            <span className="text-xl font-extrabold tracking-tight" style={{ color: 'var(--text-primary)' }}>
-              TheBloo<span style={{ color: 'var(--brand-primary)' }}>Maa</span>
-            </span>
+            <div className="flex flex-col">
+              <div className="flex items-center gap-1.5 leading-tight">
+                <span className="text-xl font-black tracking-tight text-slate-100 font-sans">
+                  thebloo<span className="text-emerald-400">maa</span>
+                </span>
+              </div>
+              <span className="text-[10px] text-amber-300/90 font-serif italic tracking-wide hidden sm:block leading-none">
+                Bloom your day with bloomaa
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-8">
-            <a href="#how-it-works" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>How It Works</a>
-            <a href="#meals" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>Our Meals</a>
-            <a href="#pricing" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>Pricing</a>
-            <a href="#faq" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>FAQ</a>
+          <div className="hidden md:flex items-center gap-7">
+            <Link href="/menu" className="text-sm font-semibold transition-colors hover:text-emerald-400 text-slate-100">
+              Meal Plans
+            </Link>
+            <Link href="/calculator" className="text-sm font-semibold transition-all hover:text-emerald-300 flex items-center gap-1.5 text-slate-100">
+              <span>Bio Calculator</span>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">
+                New
+              </span>
+            </Link>
+            <a href="/#how-it-works" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>How It Works</a>
+            <a href="/#pricing" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>Pricing</a>
+            <a href="/#faq" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>FAQ</a>
           </div>
 
           {/* CTA */}
@@ -33,18 +56,18 @@ export default function Navbar() {
             <Link href="/login" className="px-4 py-2 text-sm font-semibold rounded-xl transition-colors" style={{ color: 'var(--text-secondary)' }}>
               Log In
             </Link>
-            <a href="/#pricing" className="px-5 py-2.5 text-sm font-bold rounded-xl text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
+            <Link href="/menu" className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20">
               Start Your Plan
-            </a>
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
           <button
-            className="md:hidden p-2 rounded-lg"
+            className="md:hidden p-2 rounded-lg text-slate-200 hover:text-white"
             onClick={() => setMobileOpen(!mobileOpen)}
             aria-label="Toggle menu"
           >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--text-primary)' }}>
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               {mobileOpen ? (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
@@ -56,14 +79,21 @@ export default function Navbar() {
 
         {/* Mobile menu */}
         {mobileOpen && (
-          <div className="md:hidden pb-4 pt-2 space-y-2 border-t" style={{ borderColor: 'var(--border-subtle)' }}>
-            <a href="#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>How It Works</a>
-            <a href="#meals" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>Our Meals</a>
-            <a href="#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>Pricing</a>
-            <a href="#faq" className="block px-3 py-2 text-sm font-medium rounded-lg hover:bg-slate-800" style={{ color: 'var(--text-muted)' }}>FAQ</a>
-            <a href="/#pricing" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-white block" style={{ background: 'var(--brand-primary)' }}>
-              Start Your Plan
-            </a>
+          <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-slate-800 animate-fade-in-up">
+            <Link href="/menu" className="block px-3 py-2 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800">
+              🥗 Meal Plans
+            </Link>
+            <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span>🧬 Bio Calculator</span>
+              <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">NEW</span>
+            </Link>
+            <a href="/#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">How It Works</a>
+            <a href="/#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">Pricing</a>
+            <a href="/#faq" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">FAQ</a>
+            <Link href="/login" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800">Log In</Link>
+            <Link href="/menu" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md">
+              Start Your Plan →
+            </Link>
           </div>
         )}
       </div>

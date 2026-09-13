@@ -119,6 +119,7 @@ model Order {
   status           String        
   deliveryDate     DateTime           
   deliveryTime     String?
+  deliveryNote     String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
 }

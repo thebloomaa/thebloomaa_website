@@ -2,7 +2,9 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 
 const navItems = [
   { href: '/dashboard', label: 'Overview', icon: '📊' },
@@ -12,19 +14,30 @@ const navItems = [
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const { data: session } = useSession();
 
   return (
     <div className="min-h-screen flex" style={{ background: 'var(--bg-dark)' }}>
       {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 p-5 fixed top-0 left-0 h-full z-40" style={{ background: '#0B1120', borderRight: '1px solid var(--border-subtle)' }}>
-        {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 mb-8">
-          <div className="w-9 h-9 rounded-xl flex items-center justify-center text-lg font-black" style={{ background: 'var(--brand-primary)' }}>
-            T
+      <aside className="hidden md:flex flex-col w-64 p-5 fixed top-0 left-0 h-full z-40 bg-slate-950 border-r border-slate-800">
+        {/* Brand Logo */}
+        <Link href="/" className="flex items-center gap-3 mb-8 group">
+          <div className="relative w-9 h-9 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-md shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
+            <Image
+              src="/logo.jpg"
+              alt="thebloomaa"
+              fill
+              className="object-cover"
+            />
           </div>
-          <span className="text-xl font-extrabold tracking-tight">
-            TheBloo<span style={{ color: 'var(--brand-primary)' }}>Maa</span>
-          </span>
+          <div>
+            <span className="text-lg font-black tracking-tight text-slate-100 block leading-tight">
+              thebloo<span className="text-emerald-400">maa</span>
+            </span>
+            <span className="text-[10px] text-amber-300 font-serif italic block">
+              Bloom your day with bloomaa
+            </span>
+          </div>
         </Link>
 
         {/* Nav */}
@@ -49,25 +62,38 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        {/* User */}
-        <div className="pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+        {/* Live User Session */}
+        <div className="pt-4 border-t border-slate-800">
           <div className="flex items-center gap-3 px-2">
-            <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold" style={{ background: 'var(--bg-surface)', color: 'var(--brand-primary)' }}>
-              R
+            <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shrink-0">
+              {(session?.user?.name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
             </div>
-            <div>
-              <p className="text-sm font-semibold">Rahul K.</p>
-              <p className="text-xs" style={{ color: 'var(--text-muted)' }}>+91 98765 43210</p>
+            <div className="overflow-hidden">
+              <p className="text-sm font-semibold text-slate-100 truncate">
+                {session?.user?.name || 'Patna Subscriber'}
+              </p>
+              <p className="text-xs text-slate-400 truncate">
+                {session?.user?.email || 'Logged In'}
+              </p>
             </div>
           </div>
         </div>
       </aside>
 
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 glass">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 glass border-b border-slate-800">
         <Link href="/" className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black" style={{ background: 'var(--brand-primary)' }}>T</div>
-          <span className="text-lg font-extrabold">TheBloo<span style={{ color: 'var(--brand-primary)' }}>Maa</span></span>
+          <div className="relative w-7 h-7 rounded-full overflow-hidden border border-amber-400/70 shrink-0">
+            <Image
+              src="/logo.jpg"
+              alt="thebloomaa"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <span className="text-base font-black text-slate-100">
+            thebloo<span className="text-emerald-400">maa</span>
+          </span>
         </Link>
         <div className="flex items-center gap-1">
           {navItems.map(item => {

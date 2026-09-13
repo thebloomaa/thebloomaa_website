@@ -1,24 +1,49 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import AuthProvider from "@/components/AuthProvider";
+import MiniCartDrawer from "@/components/MiniCartDrawer";
 
 export const metadata: Metadata = {
-  title: "TheBlooMaa — Macro-Tracked Meal Preps Delivered Daily",
+  metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
+  title: "thebloomaa — Bloom your day with bloomaa | Macro-Tracked Meal Preps & Living Foods",
   description:
-    "Subscription-based fitness meal prep service. Choose your macro targets, subscribe for 7, 15 or 30 days, and get fresh meals delivered to your door at your exact preferred time.",
-  keywords: ["meal prep", "fitness meals", "macro tracking", "healthy food delivery", "gym diet", "Patna"],
+    "Bloom your day with bloomaa. Chef-prepared, macro-tracked fitness meal preps and cellular living foods delivered fresh across Patna every morning between 6:00 AM – 9:00 AM.",
+  keywords: [
+    "thebloomaa",
+    "bloom your day with bloomaa",
+    "fitness meals Patna",
+    "macro preps",
+    "living food vitality",
+    "healthy food delivery Patna",
+    "gym diet Patna",
+  ],
+  icons: {
+    icon: "/logo.jpg",
+    shortcut: "/logo.jpg",
+    apple: "/logo.jpg",
+  },
   openGraph: {
-    title: "TheBlooMaa — Macro-Tracked Meal Preps Delivered Daily",
-    description: "Subscription-based fitness meal prep service in Patna.",
+    title: "thebloomaa — Bloom your day with bloomaa",
+    description: "Nourished with motherly care. Macro-calibrated fitness preps and living foods delivered daily in Patna.",
     type: "website",
+    images: [
+      {
+        url: "/logo.jpg",
+        width: 1024,
+        height: 1024,
+        alt: "thebloomaa - Bloom your day with bloomaa",
+      },
+    ],
   },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" className="h-full antialiased">
-      <body className="min-h-full flex flex-col">        <AuthProvider>
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>
           {children}
+          <MiniCartDrawer />
         </AuthProvider>
       </body>
     </html>

@@ -2,6 +2,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 
 const navItems = [
@@ -19,9 +20,19 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <div className="min-h-screen flex" style={{ background: 'var(--bg-dark)' }}>
       {/* Sidebar */}
       <aside className="hidden md:flex flex-col w-60 p-5 fixed top-0 left-0 h-full z-40" style={{ background: '#0B1120', borderRight: '1px solid var(--border-subtle)' }}>
-        <div className="flex items-center gap-2 mb-8">
-          <div className="w-8 h-8 rounded-lg flex items-center justify-center text-sm font-black" style={{ background: 'var(--danger)' }}>A</div>
-          <span className="text-lg font-extrabold">Admin Panel</span>
+        <div className="flex items-center gap-2.5 mb-8">
+          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-amber-400/70 shrink-0">
+            <Image
+              src="/logo.jpg"
+              alt="thebloomaa"
+              fill
+              className="object-cover"
+            />
+          </div>
+          <div>
+            <span className="text-sm font-black text-slate-100 block leading-tight">thebloomaa</span>
+            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Admin Ops</span>
+          </div>
         </div>
         <nav className="space-y-1 flex-grow">
           {navItems.map(item => {

@@ -54,6 +54,7 @@ export async function GET(request: Request) {
         meal: o.subscription?.product.name || 'Meal',
         calories: o.subscription?.product.calories || 0,
         time: o.deliveryTime || 'Morning',
+        deliveryNote: o.deliveryNote,
         status: o.status,
       }))
     }));

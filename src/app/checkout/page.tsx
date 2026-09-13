@@ -1,410 +1,716 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 
-const bundles: { type: BundleType; label: string; days: number; discount: string }[] = [
-  { type: 'DAYS_7', label: 'Starter', days: 7, discount: '' },
-  { type: 'DAYS_15', label: 'Committed', days: 15, discount: '8% off' },
-  { type: 'DAYS_30', label: 'All-In', days: 30, discount: '20% off' },
+const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discount: string; discountPct: number }[] = [
+  { type: 'DAYS_7', label: 'Starter', days: 7, discount: '', discountPct: 0 },
+  { type: 'DAYS_15', label: 'Committed', days: 15, discount: '8% OFF', discountPct: 8 },
+  { type: 'DAYS_30', label: 'All-In', days: 30, discount: '20% OFF', discountPct: 20 },
 ];
 
 export default function CheckoutPage() {
-  const { selectedProduct, bundleType, selectBundle, getTotalPrice, getPerDayPrice, getBundleDays, setAddress, address, deliveryTime, setDeliveryTime } = useBundleStore();
+  const router = useRouter();
+  const {
+    selectedProduct,
+    bundleType,
+    selectBundle,
+    getTotalPrice,
+    getPerDayPrice,
+    getBundleDays,
+    setAddress,
+    address,
+    deliveryTime,
+    setDeliveryTime,
+    deliveryNote,
+    setDeliveryNote,
+  } = useBundleStore();
 
+  const [step, setStep] = useState<'summary' | 'address' | 'pay'>('summary');
+  const [copiedUpi, setCopiedUpi] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [pincodeError, setPincodeError] = useState<string | null>(null);
+
+  // Address Form State
   const [form, setForm] = useState({
     name: '',
     phone: '',
     email: '',
+    houseNo: '',
     street: '',
     city: 'Patna',
     state: 'Bihar',
     pincode: '',
-    deliveryTime: '07:00',
+    deliveryTime: deliveryTime || '07:00',
+    deliveryNote: deliveryNote || '',
   });
-  const [step, setStep] = useState<'bundle' | 'address' | 'pay'>('bundle');
 
-  // Redirect if no product selected
+  const [utr, setUtr] = useState('');
+
+  const isTrialProduct = Boolean(
+    selectedProduct &&
+    (selectedProduct.name.toLowerCase().includes('just bloomed') ||
+      selectedProduct.type === 'TRIAL_PLAN' ||
+      selectedProduct.dietaryPreference === 'LIVING_RAW' ||
+      selectedProduct.isTrialPlan)
+  );
+
+  // Calculate strict checkout total
+  const finalTotal = isTrialProduct ? 451 : getTotalPrice();
+  const finalDays = isTrialProduct ? 7 : getBundleDays();
+  const finalPerDay = isTrialProduct ? Math.round(451 / 7) : getPerDayPrice();
+
+  useEffect(() => {
+    if (isTrialProduct && bundleType !== 'DAYS_7') {
+      selectBundle('DAYS_7');
+    }
+  }, [isTrialProduct, bundleType, selectBundle]);
+
+  // If no product selected, show prompt to browse meals or calculator
   if (!selectedProduct) {
     return (
       <>
         <Navbar />
         <main className="min-h-screen pt-28 pb-16 px-4 flex items-center justify-center" style={{ background: 'var(--bg-dark)' }}>
-          <div className="text-center">
+          <div className="text-center max-w-md p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl">
             <div className="text-6xl mb-4">🥗</div>
-            <h1 className="text-2xl font-black mb-2">No Meal Selected</h1>
-            <p className="text-sm mb-6" style={{ color: 'var(--text-muted)' }}>Please choose a meal plan first.</p>
-            <a href="/menu" className="px-6 py-3 rounded-xl text-sm font-bold text-white" style={{ background: 'var(--brand-primary)' }}>
-              Browse Meals
-            </a>
+            <h1 className="text-2xl font-black mb-2 text-slate-100">No Meal Selected</h1>
+            <p className="text-sm mb-6 text-slate-400 leading-relaxed">
+              Please choose a fitness meal plan or run the Bio Calculator to get your personalized living food recommendation.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                href="/calculator"
+                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all"
+              >
+                Run Bio Calculator
+              </Link>
+              <Link
+                href="/menu"
+                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-all"
+              >
+                Browse Menu
+              </Link>
+            </div>
           </div>
         </main>
       </>
     );
   }
 
-  const handleSubmitAddress = () => {
-    if (!form.street || !form.pincode || !form.name || !form.phone || !form.deliveryTime) return;
-    setAddress({ street: form.street, city: form.city, state: form.state, pincode: form.pincode });
+  const handleValidateAndProceedAddress = () => {
+    if (!form.name || !form.phone || !form.street || !form.pincode) {
+      alert('Please fill out all required address fields.');
+      return;
+    }
+
+    if (form.pincode.length !== 6) {
+      setPincodeError('Pincode must be 6 digits.');
+      return;
+    }
+
+    // Combine House No & Street
+    const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+
+    setAddress({
+      street: fullStreet,
+      city: form.city,
+      state: form.state,
+      pincode: form.pincode,
+    });
     setDeliveryTime(form.deliveryTime);
+    setDeliveryNote(form.deliveryNote);
+    setPincodeError(null);
     setStep('pay');
   };
+
+  const handleCopyUpiId = () => {
+    navigator.clipboard.writeText('thebloomaa@upi');
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2500);
+  };
+
+  const handleConfirmPayment = async () => {
+    if (utr.trim().length !== 12) {
+      alert('Please enter a valid 12-digit UPI UTR / Transaction Reference Number.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: selectedProduct.id,
+          bundleType: isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
+          deliveryTime: form.deliveryTime,
+          deliveryNote: isTrialProduct
+            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. Customer Note: ${form.deliveryNote}`
+            : form.deliveryNote,
+          utr: utr.trim(),
+          address: {
+            street: fullStreet,
+            city: form.city,
+            state: form.state,
+            pincode: form.pincode,
+          },
+        }),
+      });
+
+      if (res.status === 401) {
+        // User not logged in, route to login with redirect
+        router.push('/login?callbackUrl=/checkout');
+        return;
+      }
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        alert('🎉 Subscription confirmed! Your fresh morning meal prep is scheduled.');
+        router.push('/dashboard');
+        router.refresh();
+      } else {
+        alert(data.error || 'Failed to confirm order. Please try again.');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      alert('Network error occurred during payment verification.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  // Dynamic UPI Intent String
+  const upiIntentUri = `upi://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(selectedProduct.name)}`;
 
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 pb-16 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-dark)' }}>
+
+      <main className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-dark)' }}>
         <div className="max-w-4xl mx-auto">
+          {/* Multi-Step Stepper Header */}
+          <div className="flex items-center justify-center gap-3 mb-10">
+            {[
+              { id: 'summary', label: '1. Order Summary' },
+              { id: 'address', label: '2. Delivery Address' },
+              { id: 'pay', label: '3. UPI Payment' },
+            ].map((s, idx) => {
+              const stepOrder = ['summary', 'address', 'pay'];
+              const currentIdx = stepOrder.indexOf(step);
+              const isPast = currentIdx > idx;
+              const isCurrent = step === s.id;
 
-          {/* Progress Bar */}
-          <div className="flex items-center justify-center gap-2 mb-12">
-            {['bundle', 'address', 'pay'].map((s, i) => (
-              <React.Fragment key={s}>
-                <div
-                  className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold transition-all"
-                  style={{
-                    background: step === s ? 'var(--brand-primary)' : ((['bundle', 'address', 'pay'].indexOf(step) > i) ? 'var(--brand-primary)' : 'var(--bg-surface)'),
-                    color: step === s || ['bundle', 'address', 'pay'].indexOf(step) > i ? 'white' : 'var(--text-muted)',
-                  }}
-                >
-                  {['bundle', 'address', 'pay'].indexOf(step) > i ? '✓' : i + 1}
-                </div>
-                {i < 2 && <div className="w-16 h-0.5" style={{ background: ['bundle', 'address', 'pay'].indexOf(step) > i ? 'var(--brand-primary)' : 'var(--bg-surface)' }} />}
-              </React.Fragment>
-            ))}
-          </div>
-
-          {/* Selected meal summary */}
-          <div className="rounded-2xl p-5 mb-8 flex items-center gap-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-            <div className="w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 relative">
-              <img src={selectedProduct.imageUrl || ''} alt={selectedProduct.name} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-grow">
-              <h3 className="font-bold text-sm">{selectedProduct.name}</h3>
-              <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>🔥 {selectedProduct.calories} kcal · 🥩 {selectedProduct.protein}g P · 🍞 {selectedProduct.carbs}g C · 🥑 {selectedProduct.fats}g F</p>
-            </div>
-            <a href="/menu" className="text-xs font-semibold" style={{ color: 'var(--brand-primary)' }}>Change</a>
-          </div>
-
-          {/* STEP 1: Bundle Selection */}
-          {step === 'bundle' && (
-            <div className="animate-fade-in-up">
-              <div className="text-center mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-accent)' }}>Step 2 of 3</span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2">Choose Your Bundle</h2>
-                <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>Longer bundles = bigger savings. Skip any day, anytime.</p>
-              </div>
-
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-                {bundles.map(b => {
-                  const isSelected = bundleType === b.type;
-                  return (
-                    <button
-                      key={b.type}
-                      onClick={() => selectBundle(b.type)}
-                      className="glow-card relative rounded-2xl p-6 text-left transition-all"
-                      style={{
-                        background: isSelected ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02))' : 'var(--bg-card)',
-                        border: isSelected ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                      }}
+              return (
+                <React.Fragment key={s.id}>
+                  <div className="flex items-center gap-2">
+                    <div
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
+                        isCurrent
+                          ? 'bg-emerald-500 text-slate-950 ring-4 ring-emerald-500/20 scale-105'
+                          : isPast
+                          ? 'bg-emerald-600 text-white'
+                          : 'bg-slate-800 text-slate-400'
+                      }`}
                     >
-                      {b.type === 'DAYS_15' && (
-                        <span className="absolute -top-2.5 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[10px] font-bold text-white" style={{ background: 'var(--brand-primary)' }}>
-                          Most Popular
-                        </span>
-                      )}
-                      <h3 className="text-lg font-bold mb-1">{b.label}</h3>
-                      <p className="text-xs mb-3" style={{ color: 'var(--text-muted)' }}>{b.days} days of fresh meal preps</p>
-                      {b.discount && (
-                        <span className="inline-block px-2 py-0.5 rounded-md text-[10px] font-bold mb-3" style={{ background: 'rgba(245, 158, 11, 0.15)', color: 'var(--brand-accent)' }}>
-                          {b.discount}
-                        </span>
-                      )}
-                      {isSelected && (
-                        <div className="absolute top-4 right-4 w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ background: 'var(--brand-primary)' }}>✓</div>
-                      )}
-                    </button>
-                  );
-                })}
+                      {isPast ? '✓' : idx + 1}
+                    </div>
+                    <span
+                      className={`text-xs font-bold hidden sm:inline transition-colors ${
+                        isCurrent ? 'text-emerald-400' : 'text-slate-400'
+                      }`}
+                    >
+                      {s.label}
+                    </span>
+                  </div>
+                  {idx < 2 && (
+                    <div
+                      className={`w-12 sm:w-20 h-0.5 transition-colors ${
+                        isPast ? 'bg-emerald-500' : 'bg-slate-800'
+                      }`}
+                    />
+                  )}
+                </React.Fragment>
+              );
+            })}
+          </div>
+
+          {/* STEP 1: ORDER SUMMARY */}
+          {step === 'summary' && (
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="text-center mb-6">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Step 1 of 3 · Verification
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Review Your Meal Plan</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                  Macro-tracked, chef-crafted, and delivered fresh to your door every morning.
+                </p>
               </div>
 
-              {/* Price Summary */}
-              {bundleType && (
-                <div className="rounded-2xl p-5 mb-6 animate-fade-in-up" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Per day</span>
-                    <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>₹{getPerDayPrice()}</span>
+              {/* Product Hero Card */}
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden">
+                <div className="flex flex-col sm:flex-row gap-6 items-center">
+                  <div className="w-full sm:w-44 h-40 rounded-2xl overflow-hidden relative flex-shrink-0 bg-slate-950 border border-slate-700">
+                    <img
+                      src={selectedProduct.imageUrl || '/meals/chicken-prep.png'}
+                      alt={selectedProduct.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-950/80 text-emerald-400 border border-emerald-500/30">
+                      {selectedProduct.dietaryPreference.replace('_', ' ')}
+                    </div>
                   </div>
-                  <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm" style={{ color: 'var(--text-muted)' }}>Duration</span>
-                    <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)' }}>{getBundleDays()} days</span>
+
+                  <div className="flex-grow text-center sm:text-left">
+                    <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
+                      <h3 className="text-xl sm:text-2xl font-black text-slate-100">{selectedProduct.name}</h3>
+                      <div className="text-xl font-black text-emerald-400 font-mono">
+                        {isTrialProduct ? '₹451 (Flat 7D Trial)' : `₹${selectedProduct.price}/meal`}
+                      </div>
+                    </div>
+
+                    <p className="text-xs text-slate-300 mt-2 leading-relaxed max-w-xl">
+                      {selectedProduct.description}
+                    </p>
+
+                    {/* Macro Badges */}
+                    <div className="flex flex-wrap gap-2.5 mt-4 justify-center sm:justify-start">
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                        🔥 {selectedProduct.calories} kcal
+                      </span>
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
+                        🥩 {selectedProduct.protein}g Protein
+                      </span>
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-amber-400/10 text-amber-300 border border-amber-400/20 font-mono">
+                        🍞 {selectedProduct.carbs}g Carbs
+                      </span>
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                        🥑 {selectedProduct.fats}g Fats
+                      </span>
+                    </div>
                   </div>
-                  <div className="h-px my-3" style={{ background: 'var(--border-subtle)' }} />
-                  <div className="flex justify-between items-center">
-                    <span className="text-base font-bold">Total</span>
-                    <span className="text-xl font-black" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>₹{getTotalPrice()}</span>
+                </div>
+
+                {/* Trial Plan 6+1 Logistics Alert */}
+                {isTrialProduct && (
+                  <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-1">
+                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
+                      <span>🚚</span>
+                      <span>6+1 Logistics Protocol Active</span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      Delivered across <strong>6 active mornings (5:00 AM – 8:00 AM)</strong>. On Day 6, your rider will execute a <strong>Double Drop</strong> (delivering Box 6 &amp; Box 7 together) for your Day 7 Gut Reset.
+                    </p>
+                  </div>
+                )}
+              </div>
+
+              {/* Standard Meal Plan Bundle Selector (Hidden for Trial Plan) */}
+              {!isTrialProduct && (
+                <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/80 border border-slate-800">
+                  <h4 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-4">
+                    Subscription Duration
+                  </h4>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    {STANDARD_BUNDLES.map((b) => {
+                      const isSelected = bundleType === b.type;
+                      return (
+                        <button
+                          key={b.type}
+                          type="button"
+                          onClick={() => selectBundle(b.type)}
+                          className={`p-4 rounded-2xl text-left transition-all border relative ${
+                            isSelected
+                              ? 'bg-emerald-500/15 border-emerald-500 shadow-md shadow-emerald-500/15'
+                              : 'bg-slate-800/40 border-slate-800 hover:bg-slate-800 text-slate-300'
+                          }`}
+                        >
+                          {b.discount && (
+                            <span className="absolute -top-2.5 right-3 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500 text-slate-950">
+                              {b.discount}
+                            </span>
+                          )}
+                          <div className="text-sm font-bold text-slate-100">{b.label} ({b.days} Days)</div>
+                          <p className="text-xs text-slate-400 mt-1">Skip any day with 1-click</p>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               )}
 
-              <button
-                onClick={() => bundleType && setStep('address')}
-                disabled={!bundleType}
-                className="w-full py-3.5 rounded-xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
-                style={{ background: 'var(--brand-primary)' }}
-              >
-                Continue to Delivery Address →
-              </button>
+              {/* Price Calculation Summary */}
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/80 border border-slate-800">
+                <h4 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-4">
+                  Pricing Breakdown
+                </h4>
+
+                <div className="space-y-2.5 text-xs">
+                  <div className="flex justify-between text-slate-400">
+                    <span>Effective daily rate:</span>
+                    <span className="font-bold text-slate-200 font-mono">₹{finalPerDay} / meal</span>
+                  </div>
+                  <div className="flex justify-between text-slate-400">
+                    <span>Scheduled duration:</span>
+                    <span className="font-bold text-slate-200 font-mono">{finalDays} days</span>
+                  </div>
+                  <div className="flex justify-between text-slate-400">
+                    <span>Doorstep morning delivery:</span>
+                    <span className="font-bold text-emerald-400 font-mono">FREE (Included)</span>
+                  </div>
+                  <div className="pt-3 border-t border-slate-800 flex justify-between items-baseline">
+                    <span className="text-base font-bold text-slate-100">Total Payable:</span>
+                    <span className="text-2xl font-black text-emerald-400 font-mono">₹{finalTotal}</span>
+                  </div>
+                </div>
+
+                <div className="mt-6 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={() => setStep('address')}
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  >
+                    Continue to Delivery Address →
+                  </button>
+                </div>
+              </div>
             </div>
           )}
 
-          {/* STEP 2: Address Form */}
+          {/* STEP 2: DELIVERY ADDRESS FORM */}
           {step === 'address' && (
-            <div className="animate-fade-in-up">
-              <div className="text-center mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-accent)' }}>Step 3 of 3</span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2">Delivery Details</h2>
-                <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>Where should we deliver your daily meal prep?</p>
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="text-center mb-6">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Step 2 of 3 · Logistics
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Where Should We Deliver?</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                  Fresh cloud kitchen delivery in Patna between 5:00 AM – 8:00 AM daily.
+                </p>
               </div>
 
-              <div className="rounded-2xl p-6 space-y-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-5">
+                {/* Name & Phone */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Full Name *</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Full Name *
+                    </label>
                     <input
                       type="text"
+                      required
+                      placeholder="e.g. Aditi Sharma"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      placeholder="John Doe"
-                      className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Phone Number *</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Mobile Phone (for delivery SMS/call) *
+                    </label>
                     <input
                       type="tel"
+                      required
+                      placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      placeholder="+91 98765 43210"
-                      className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
+
+                {/* Email */}
                 <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Email</label>
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    Email Address (for subscription confirmation)
+                  </label>
                   <input
                     type="email"
+                    placeholder="aditi@example.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    placeholder="john@example.com"
-                    className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                    style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
                   />
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Delivery Address *</label>
-                  <textarea
-                    value={form.street}
-                    onChange={(e) => setForm({ ...form, street: e.target.value })}
-                    placeholder="House/Flat No., Building, Street, Landmark"
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 resize-none"
-                    style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
-                  />
+
+                {/* House No & Street Address */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-1">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Flat / House No. *
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Flat 402, Block B"
+                      value={form.houseNo}
+                      onChange={(e) => setForm({ ...form, houseNo: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Street / Society / Landmark *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g. Boring Road, near Alankar Jewellers"
+                      value={form.street}
+                      onChange={(e) => setForm({ ...form, street: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                    />
+                  </div>
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                {/* City, State & Pincode */}
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>City</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      City
+                    </label>
                     <input
                       type="text"
                       value={form.city}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl text-sm opacity-60"
-                      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-sm text-slate-400 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>State</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      State
+                    </label>
                     <input
                       type="text"
                       value={form.state}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl text-sm opacity-60"
-                      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-sm text-slate-400 cursor-not-allowed"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Pincode *</label>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Pincode (Patna) *
+                    </label>
                     <input
                       type="text"
-                      value={form.pincode}
-                      onChange={(e) => setForm({ ...form, pincode: e.target.value.replace(/\D/g, '') })}
-                      placeholder="560034"
                       maxLength={6}
-                      className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                      style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
+                      required
+                      placeholder="e.g. 800001"
+                      value={form.pincode}
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/\D/g, '');
+                        setForm({ ...form, pincode: val });
+                      }}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono"
+                    />
+                    {pincodeError && (
+                      <p className="text-[11px] text-red-400 mt-1">{pincodeError}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Delivery Time Slot & Notes */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Preferred Morning Delivery Slot *
+                    </label>
+                    <select
+                      value={form.deliveryTime}
+                      onChange={(e) => setForm({ ...form, deliveryTime: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                    >
+                      <option value="06:00">06:00 AM (Early Riser)</option>
+                      <option value="06:30">06:30 AM</option>
+                      <option value="07:00">07:00 AM (Standard Fitness Prep)</option>
+                      <option value="07:30">07:30 AM</option>
+                      <option value="08:00">08:00 AM</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                      Delivery Instructions (Optional)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g. Leave with guard / Ring bell once"
+                      value={form.deliveryNote}
+                      onChange={(e) => setForm({ ...form, deliveryNote: e.target.value })}
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
                     />
                   </div>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Preferred Delivery Time *</label>
-                  <input
-                    type="time"
-                    value={form.deliveryTime}
-                    onChange={(e) => setForm({ ...form, deliveryTime: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                    style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
-                  />
-                  <p className="text-[10px] mt-1.5" style={{ color: 'var(--text-muted)' }}>We will deliver your meal at this time every day.</p>
-                </div>
-              </div>
 
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={() => setStep('bundle')}
-                  className="px-6 py-3.5 rounded-xl text-sm font-semibold transition-all"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
-                >
-                  ← Back
-                </button>
-                <button
-                  onClick={handleSubmitAddress}
-                  disabled={!form.street || !form.pincode || !form.name || !form.phone || !form.deliveryTime}
-                  className="flex-1 py-3.5 rounded-xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40 disabled:cursor-not-allowed"
-                  style={{ background: 'var(--brand-primary)' }}
-                >
-                  Proceed to Payment — ₹{getTotalPrice()}
-                </button>
+                <div className="pt-4 border-t border-slate-800 flex justify-between">
+                  <button
+                    type="button"
+                    onClick={() => setStep('summary')}
+                    className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                  >
+                    ← Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleValidateAndProceedAddress}
+                    className="px-8 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                  >
+                    Proceed to Payment — ₹{finalTotal} →
+                  </button>
+                </div>
               </div>
             </div>
           )}
 
-          {/* STEP 3: Payment */}
+          {/* STEP 3: UPI PAYMENT ENFORCEMENT */}
           {step === 'pay' && (
-            <div className="animate-fade-in-up">
-              <div className="text-center mb-8">
-                <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Almost There!</span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2">Pay via UPI</h2>
-                <p className="mt-2 text-sm" style={{ color: 'var(--text-muted)' }}>Securely pay using PhonePe, GPay, or Paytm.</p>
+            <div className="space-y-6 animate-fade-in-up">
+              <div className="text-center mb-6">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                  Step 3 of 3 · Direct UPI Prepayment
+                </span>
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Complete Your Payment</h2>
+                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                  Scan via PhonePe, Google Pay, or Paytm and enter the 12-digit UTR reference code.
+                </p>
               </div>
 
-              {/* Order Summary */}
-              <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                <h3 className="text-sm font-bold mb-4" style={{ color: 'var(--text-secondary)' }}>Order Summary</h3>
-
-                <div className="space-y-3 text-sm">
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Meal Plan</span>
-                    <span className="font-semibold">{selectedProduct.name}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Bundle</span>
-                    <span className="font-semibold">{getBundleDays()} days</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Per Day</span>
-                    <span className="font-semibold" style={{ fontFamily: 'var(--font-mono)' }}>₹{getPerDayPrice()}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Delivery</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>FREE</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Deliver to</span>
-                    <span className="font-semibold text-right max-w-[200px] truncate">{address?.street}, {address?.pincode}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span style={{ color: 'var(--text-muted)' }}>Delivery Time</span>
-                    <span className="font-semibold" style={{ color: 'var(--brand-primary)' }}>{deliveryTime}</span>
-                  </div>
-                  <div className="h-px my-1" style={{ background: 'var(--border-subtle)' }} />
-                  <div className="flex justify-between items-center">
-                    <span className="font-bold text-base">Total</span>
-                    <span className="text-xl font-black" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>₹{getTotalPrice()}</span>
+              {/* Strict COD Disabled Alert for Just Bloomed 7D Trial */}
+              {isTrialProduct && (
+                <div className="rounded-2xl p-4 bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 flex items-start gap-3">
+                  <span className="text-xl">🔒</span>
+                  <div>
+                    <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
+                      Prepaid Living Raw Order Enforced
+                    </h4>
+                    <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                      Cash on Delivery is <strong>strictly disabled</strong> for the Just Bloomed 7D Trial to guarantee continuous morning cold-chain logistics. Total fixed package price: <strong>₹451</strong>.
+                    </p>
                   </div>
                 </div>
-              </div>
+              )}
 
-              {/* UPI QR Payment */}
-              <div className="rounded-2xl p-6 mb-6 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-                <h3 className="text-sm font-bold mb-2" style={{ color: 'var(--text-secondary)' }}>Scan QR to Pay</h3>
-                <p className="text-xs mb-6" style={{ color: 'var(--text-muted)' }}>Use PhonePe, GPay, or Paytm to scan and pay <span className="font-bold text-white">₹{getTotalPrice()}</span>.</p>
-                
-                <div className="inline-block p-2 bg-white rounded-xl mb-6">
-                  <img src="/upi-qr.png" alt="UPI QR Code" className="w-48 h-48 rounded-lg border border-gray-200" />
+              {/* UPI Payment Container Card */}
+              <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                  {/* Dynamic UPI QR Code Display */}
+                  <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-slate-950 border border-slate-800">
+                    <div className="p-3 bg-white rounded-2xl shadow-xl">
+                      {/* Generates dynamic UPI QR representation */}
+                      <img
+                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiIntentUri)}`}
+                        alt="Thebloomaa UPI Payment QR Code"
+                        className="w-48 h-48 rounded-lg"
+                      />
+                    </div>
+
+                    <div className="mt-4 text-center">
+                      <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
+                        Scan to Pay with Any UPI App
+                      </span>
+                      <span className="text-2xl font-black text-emerald-400 font-mono mt-1 block">
+                        ₹{finalTotal}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Manual UPI ID & UTR Input Column */}
+                  <div className="space-y-5">
+                    {/* Copyable UPI ID Pill */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Merchant UPI ID
+                      </label>
+                      <div className="flex items-center gap-2">
+                        <div className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 font-mono text-sm text-slate-100 flex items-center justify-between">
+                          <span>thebloomaa@upi</span>
+                          <span className="text-[10px] text-emerald-400 uppercase font-black">Verified</span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={handleCopyUpiId}
+                          className="px-4 py-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                        >
+                          {copiedUpi ? 'Copied! ✓' : 'Copy'}
+                        </button>
+                      </div>
+                    </div>
+
+                    {/* Order Reference Breakdown */}
+                    <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800 text-xs space-y-1.5">
+                      <div className="flex justify-between text-slate-400">
+                        <span>Selected Meal Prep:</span>
+                        <span className="font-bold text-slate-200">{selectedProduct.name}</span>
+                      </div>
+                      <div className="flex justify-between text-slate-400">
+                        <span>Delivery Address:</span>
+                        <span className="font-bold text-slate-200 max-w-[180px] truncate">
+                          {form.houseNo ? `${form.houseNo}, ` : ''}{form.street}, {form.pincode}
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-slate-400">
+                        <span>Delivery Slot:</span>
+                        <span className="font-bold text-emerald-400 font-mono">{form.deliveryTime} AM</span>
+                      </div>
+                    </div>
+
+                    {/* 12-Digit UTR Input */}
+                    <div>
+                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                        Enter 12-Digit UPI UTR / Reference No. *
+                      </label>
+                      <input
+                        type="text"
+                        maxLength={12}
+                        required
+                        placeholder="e.g. 325498712345"
+                        value={utr}
+                        onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
+                        className="w-full px-4 py-3.5 rounded-xl bg-slate-800 border border-slate-700 text-base font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500"
+                      />
+                      <p className="text-[10px] text-slate-400 mt-1.5">
+                        Found in your PhonePe / GPay / Paytm payment receipt under "UPI Transaction ID" or "UTR".
+                      </p>
+                    </div>
+                  </div>
                 </div>
-                
-                <div className="text-left">
-                  <label className="block text-xs font-semibold mb-1.5" style={{ color: 'var(--text-secondary)' }}>Enter 12-digit UTR / Reference No. *</label>
-                  <input
-                    type="text"
-                    placeholder="e.g. 123456789012"
-                    maxLength={12}
-                    className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50"
-                    style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
-                    id="utr-input"
-                  />
-                  <p className="text-[10px] mt-1.5" style={{ color: 'var(--text-muted)' }}>Find this in your UPI app's transaction history.</p>
+
+                {/* Bottom Navigation */}
+                <div className="pt-4 border-t border-slate-800 flex justify-between items-center">
+                  <button
+                    type="button"
+                    onClick={() => setStep('address')}
+                    className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                  >
+                    ← Back
+                  </button>
+
+                  <button
+                    type="button"
+                    disabled={submitting || utr.trim().length !== 12}
+                    onClick={handleConfirmPayment}
+                    className="px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
+                  >
+                    {submitting ? (
+                      <>
+                        <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                        <span>Verifying...</span>
+                      </>
+                    ) : (
+                      <>
+                        <span>Confirm Payment &amp; Schedule Prep</span>
+                        <span>→</span>
+                      </>
+                    )}
+                  </button>
                 </div>
               </div>
-
-              <div className="flex gap-3">
-                <button
-                  onClick={() => setStep('address')}
-                  className="px-6 py-3.5 rounded-xl text-sm font-semibold transition-all"
-                  style={{ background: 'transparent', border: '1.5px solid var(--border-subtle)', color: 'var(--text-secondary)' }}
-                >
-                  ← Back
-                </button>
-                <button
-                  className="flex-1 py-3.5 rounded-xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99]"
-                  style={{ background: 'var(--brand-primary)' }}
-                  onClick={async () => {
-                    const utr = (document.getElementById('utr-input') as HTMLInputElement)?.value;
-                    if (utr?.length !== 12) {
-                      alert('Please enter a valid 12-digit UTR / Reference Number.');
-                      return;
-                    }
-                    
-                    try {
-                      const res = await fetch('/api/checkout', {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                          productId: selectedProduct?.id,
-                          address: form,
-                          bundleType,
-                          deliveryTime,
-                          utr
-                        })
-                      });
-                      
-                      if (!res.ok) {
-                        if (res.status === 401) {
-                          alert('Please log in to complete checkout.');
-                          window.location.href = '/login';
-                          return;
-                        }
-                        throw new Error('Checkout failed');
-                      }
-                      
-                      alert('Order confirmed! We will verify the payment and activate your plan.');
-                      window.location.href = '/dashboard';
-                    } catch (err) {
-                      alert('Something went wrong during checkout. Please try again.');
-                    }
-                  }}
-                >
-                  Confirm Payment
-                </button>
-              </div>
-
-              <p className="text-center text-[10px] mt-4" style={{ color: 'var(--text-muted)' }}>
-                🔒 Your transaction reference will be manually verified by our team before activation.
-              </p>
             </div>
           )}
         </div>
