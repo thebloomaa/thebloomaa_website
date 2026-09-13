@@ -239,7 +239,7 @@ export default function Home() {
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">The thebloomaa Difference</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Macro Precision.</h2>
-            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your day with BlooMaa</p>
+            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your life with BlooMaa</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -293,7 +293,7 @@ export default function Home() {
         >
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ background: 'var(--brand-primary)' }} />
           <span className="text-xs text-amber-300 font-serif italic tracking-wide block mb-2">
-            Bloom your day with BlooMaa
+            Bloom your life with BlooMaa
           </span>
           <h2 className="text-2xl sm:text-3xl font-black mb-3 relative z-10">Ready to Fuel Your Fitness &amp; Vitality?</h2>
           <p className="text-sm mb-8 max-w-lg mx-auto relative z-10" style={{ color: 'var(--text-muted)' }}>

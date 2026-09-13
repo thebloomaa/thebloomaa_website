@@ -35,7 +35,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               thebloo<span className="text-emerald-400">maa</span>
             </span>
             <span className="text-[10px] text-amber-300 font-serif italic block">
-              Bloom your day with BlooMaa
+              Bloom your life with BlooMaa
             </span>
           </div>
         </Link>

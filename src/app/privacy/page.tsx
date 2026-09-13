@@ -11,7 +11,7 @@ export default function PrivacyPage() {
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="border-b border-slate-800 pb-6">
             <span className="text-xs text-amber-300 font-serif italic block mb-1">
-              Bloom your day with BlooMaa
+              Bloom your life with BlooMaa
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-slate-100">
               Privacy Policy

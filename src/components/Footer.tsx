@@ -13,7 +13,7 @@ export default function Footer() {
               <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-lg shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
                 <Image
                   src="/logo.jpg"
-                  alt="Bloom your day with BlooMaa"
+                  alt="Bloom your life with BlooMaa"
                   fill
                   sizes="48px"
                   className="object-cover"
@@ -24,7 +24,7 @@ export default function Footer() {
                   thebloo<span className="text-emerald-400">maa</span>
                 </span>
                 <span className="text-[11px] text-amber-300/90 font-serif italic tracking-wide block">
-                  Bloom your day with BlooMaa
+                  Bloom your life with BlooMaa
                 </span>
               </div>
             </div>
@@ -89,7 +89,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 text-center text-xs" style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} thebloomaa · <span className="text-amber-300/80 italic">Bloom your day with BlooMaa</span>. Made with 💚 in Patna.
+          © {new Date().getFullYear()} thebloomaa · <span className="text-amber-300/80 italic">Bloom your life with BlooMaa</span>. Made with 💚 in Patna.
         </div>
       </div>
     </footer>

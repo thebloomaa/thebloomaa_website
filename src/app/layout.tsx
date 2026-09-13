@@ -5,12 +5,12 @@ import MiniCartDrawer from "@/components/MiniCartDrawer";
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
-  title: "thebloomaa — Bloom your day with BlooMaa | Macro-Tracked Diet Preps & Living Foods",
+  title: "thebloomaa — Bloom your life with BlooMaa | Macro-Tracked Diet Preps & Living Foods",
   description:
-    "Bloom your day with BlooMaa. Chef-prepared, macro-tracked fitness diet preps and cellular living foods delivered fresh across Patna every morning between 6:00 AM – 9:00 AM.",
+    "Bloom your life with BlooMaa. Chef-prepared, macro-tracked fitness diet preps and cellular living foods delivered fresh across Patna every morning between 6:00 AM – 9:00 AM.",
   keywords: [
     "thebloomaa",
-    "bloom your day with BlooMaa",
+    "bloom your life with BlooMaa",
     "fitness diets Patna",
     "macro preps",
     "living food vitality",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
     apple: "/logo.jpg",
   },
   openGraph: {
-    title: "thebloomaa — Bloom your day with BlooMaa",
+    title: "thebloomaa — Bloom your life with BlooMaa",
     description: "Nourished with motherly care. Macro-calibrated fitness preps and living foods delivered daily in Patna.",
     type: "website",
     images: [
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
         url: "/logo.jpg",
         width: 1024,
         height: 1024,
-        alt: "Bloom your day with BlooMaa",
+        alt: "Bloom your life with BlooMaa",
       },
     ],
   },

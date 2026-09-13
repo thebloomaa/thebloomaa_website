@@ -27,7 +27,7 @@ export default function LoginPage() {
                 <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-2xl shadow-emerald-500/15 bg-slate-900 ring-4 ring-emerald-500/20">
                   <Image
                     src="/logo.jpg"
-                    alt="Bloom your day with BlooMaa"
+                    alt="Bloom your life with BlooMaa"
                     fill
                     sizes="64px"
                     className="object-cover"
@@ -39,7 +39,7 @@ export default function LoginPage() {
                     thebloo<span className="text-emerald-400">maa</span>
                   </span>
                   <span className="text-xs text-amber-300 font-serif italic tracking-wide block">
-                    Bloom your day with BlooMaa
+                    Bloom your life with BlooMaa
                   </span>
                 </div>
               </div>

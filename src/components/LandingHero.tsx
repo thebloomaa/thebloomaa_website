@@ -48,42 +48,9 @@ export default function LandingHero() {
       <div className="absolute bottom-10 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl pointer-events-none bg-amber-500" />
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
-        {/* Centered Brand Tagline */}
-        <div className="animate-fade-in-up mb-6 flex flex-col items-center justify-center gap-2.5">
-          <div className="inline-flex items-center gap-2.5 px-5 py-2 rounded-full bg-slate-900/90 border border-amber-400/40 backdrop-blur-md shadow-lg shadow-amber-500/5 hover:border-amber-400/70 transition-all">
-            <div className="relative w-6 h-6 rounded-full overflow-hidden border border-amber-400/70 shrink-0">
-              <Image
-                src="/logo.jpg"
-                alt="Bloom your day with BlooMaa"
-                fill
-                sizes="24px"
-                className="object-cover"
-              />
-            </div>
-            <span className="text-xs sm:text-sm font-serif italic text-amber-300 font-medium">
-              Bloom your day with BlooMaa
-            </span>
-          </div>
-
-          {mounted && verifiedPincode && (
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full text-[11px] font-bold uppercase tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 shadow-sm">
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-              <span>Delivering to Patna ({verifiedPincode})</span>
-              <button
-                type="button"
-                onClick={() => setIsModalOpen(true)}
-                className="ml-1 text-[10px] text-slate-400 hover:text-emerald-300 underline underline-offset-2"
-              >
-                Change Area
-              </button>
-            </div>
-          )}
-        </div>
-
-        {/* Primary Required Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.08] mb-6 text-slate-100 animate-fade-in-up-delay-1">
-          Your Macros, <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Mastered.</span> <br className="hidden sm:block" />
-          Delivered Daily.
+        {/* Primary Headline */}
+        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 text-slate-100 animate-fade-in-up">
+          Bloom your life with <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">BlooMaa</span>
         </h1>
 
         {/* Sub-headline */}
