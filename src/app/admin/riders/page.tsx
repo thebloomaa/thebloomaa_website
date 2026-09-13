@@ -12,6 +12,7 @@ interface RiderItem {
   id: string;
   name: string;
   phone: string;
+  passcode?: string;
   active: boolean;
   vehicleType: string;
   vehicleNumber: string;
@@ -38,6 +39,21 @@ export default function AdminRidersPage() {
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [autoAssignMsg, setAutoAssignMsg] = useState<string | null>(null);
 
+  // Copied feedback and enrollment success
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const [enrolledRiderSuccess, setEnrolledRiderSuccess] = useState<{
+    name: string;
+    phone: string;
+    passcode: string;
+  } | null>(null);
+
+  // Edit passcode modal
+  const [editingPasscodeRider, setEditingPasscodeRider] = useState<RiderItem | null>(null);
+  const [newPasscodeVal, setNewPasscodeVal] = useState('');
+  const [savingPasscode, setSavingPasscode] = useState(false);
+
+  const generateRandomPasscode = () => Math.floor(100000 + Math.random() * 900000).toString();
+
   // Add rider form modal
   const [showModal, setShowModal] = useState(false);
   const [modalLoading, setModalLoading] = useState(false);
@@ -45,6 +61,7 @@ export default function AdminRidersPage() {
   const [newRider, setNewRider] = useState({
     name: '',
     phone: '',
+    passcode: '123456',
     vehicleType: 'EV Scooter',
     vehicleNumber: '',
     assignedZoneId: '',
@@ -138,6 +155,39 @@ export default function AdminRidersPage() {
     }
   };
 
+  const handleCopyPasscode = (code: string, id: string) => {
+    navigator.clipboard.writeText(code);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
+  };
+
+  const openEditPasscode = (rider: RiderItem) => {
+    setEditingPasscodeRider(rider);
+    setNewPasscodeVal(rider.passcode || '123456');
+  };
+
+  const handleSavePasscode = async () => {
+    if (!editingPasscodeRider) return;
+    if (newPasscodeVal.trim().length !== 6) return;
+
+    setSavingPasscode(true);
+    try {
+      const res = await fetch(`/api/admin/riders/${editingPasscodeRider.id}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ passcode: newPasscodeVal.trim() }),
+      });
+      if (res.ok) {
+        setEditingPasscodeRider(null);
+        fetchData();
+      }
+    } catch (err) {
+      console.error('Failed to update passcode:', err);
+    } finally {
+      setSavingPasscode(false);
+    }
+  };
+
   const handleAddRider = async (e: React.FormEvent) => {
     e.preventDefault();
     setModalLoading(true);
@@ -152,9 +202,17 @@ export default function AdminRidersPage() {
       const data = await res.json();
       if (res.ok) {
         setShowModal(false);
+        if (data.rider) {
+          setEnrolledRiderSuccess({
+            name: data.rider.name,
+            phone: data.rider.phone,
+            passcode: data.rider.passcode || newRider.passcode,
+          });
+        }
         setNewRider({
           name: '',
           phone: '',
+          passcode: generateRandomPasscode(),
           vehicleType: 'EV Scooter',
           vehicleNumber: '',
           assignedZoneId: '',
@@ -230,6 +288,46 @@ export default function AdminRidersPage() {
           >
             ✕
           </button>
+        </div>
+      )}
+
+      {/* Enrolled rider success credentials card */}
+      {enrolledRiderSuccess && (
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+          <div className="flex items-center gap-3">
+            <span className="text-2xl">🎉</span>
+            <div>
+              <p className="font-bold text-white text-sm">
+                Rider {enrolledRiderSuccess.name} Enrolled Successfully!
+              </p>
+              <p className="text-xs text-amber-300/90 font-mono mt-0.5">
+                Mobile: +91 {enrolledRiderSuccess.phone} · Login PIN:{' '}
+                <strong className="text-white bg-slate-950 px-2 py-0.5 rounded border border-amber-500/30">
+                  {enrolledRiderSuccess.passcode}
+                </strong>
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={() => {
+                const text = `🚴 Welcome to Thebloomaa Fleet!\nPortal: https://thebloomaa.com/rider\nMobile: ${enrolledRiderSuccess.phone}\n6-Digit Login Passcode: ${enrolledRiderSuccess.passcode}`;
+                navigator.clipboard.writeText(text);
+                alert('Credentials copied to clipboard! You can paste them into WhatsApp/SMS.');
+              }}
+              className="px-3.5 py-1.5 rounded-xl font-black bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs cursor-pointer transition-colors shadow-md"
+            >
+              📋 Copy WhatsApp Invite
+            </button>
+            <button
+              type="button"
+              onClick={() => setEnrolledRiderSuccess(null)}
+              className="p-1.5 text-amber-400 hover:text-white cursor-pointer font-bold"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
 
@@ -410,6 +508,7 @@ export default function AdminRidersPage() {
               <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-800">
                 <tr>
                   <th className="py-3.5 px-4">Rider Details</th>
+                  <th className="py-3.5 px-4">Dispatch Passcode</th>
                   <th className="py-3.5 px-4">Vehicle Specs</th>
                   <th className="py-3.5 px-4">Assigned Delivery Zone</th>
                   <th className="py-3.5 px-4">Today&apos;s Stops Progress</th>
@@ -428,13 +527,42 @@ export default function AdminRidersPage() {
                           📱 {rider.phone}
                         </span>
                         <a
-                          href={`https://wa.me/91${rider.phone}`}
+                          href={`https://wa.me/91${rider.phone.replace(/\D/g, '').slice(-10)}`}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-[10px] font-bold text-emerald-400/80 hover:text-emerald-300 hover:underline"
                         >
                           (WhatsApp)
                         </a>
+                      </div>
+                    </td>
+
+                    {/* Dispatch Passcode */}
+                    <td className="py-4 px-4 align-middle">
+                      <div className="flex items-center gap-1.5">
+                        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 text-amber-300 border border-amber-400/30 tracking-widest">
+                          🔑 {rider.passcode || '123456'}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleCopyPasscode(rider.passcode || '123456', rider.id)}
+                          className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                          title="Copy 6-digit passcode"
+                        >
+                          {copiedId === rider.id ? (
+                            <span className="text-emerald-400 font-bold text-[11px]">✓</span>
+                          ) : (
+                            <span className="text-[12px]">📋</span>
+                          )}
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => openEditPasscode(rider)}
+                          className="p-1 rounded-md text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                          title="Change passcode"
+                        >
+                          <span className="text-[12px]">✏️</span>
+                        </button>
                       </div>
                     </td>
 
@@ -586,6 +714,43 @@ export default function AdminRidersPage() {
                 />
               </div>
 
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                    6-Digit Dispatch Passcode (Login PIN)
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNewRider({
+                        ...newRider,
+                        passcode: generateRandomPasscode(),
+                      })
+                    }
+                    className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+                  >
+                    <span>🎲 Auto-Generate</span>
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  required
+                  maxLength={6}
+                  placeholder="e.g. 849201"
+                  value={newRider.passcode}
+                  onChange={(e) =>
+                    setNewRider({
+                      ...newRider,
+                      passcode: e.target.value.replace(/\D/g, '').slice(0, 6),
+                    })
+                  }
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-amber-300 font-mono font-bold tracking-widest placeholder:text-slate-600 focus:outline-none focus:border-amber-400"
+                />
+                <p className="text-[11px] text-slate-500 mt-1">
+                  The rider will use this 6-digit code with their phone number to log into the Rider Portal.
+                </p>
+              </div>
+
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
@@ -647,13 +812,81 @@ export default function AdminRidersPage() {
                 </button>
                 <button
                   type="submit"
-                  disabled={modalLoading || !newRider.name || newRider.phone.length < 10}
+                  disabled={modalLoading || !newRider.name || newRider.phone.length < 10 || newRider.passcode.length < 6}
                   className="px-5 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {modalLoading ? 'Enrolling...' : 'Enroll Rider →'}
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Passcode Modal */}
+      {editingPasscodeRider && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm rounded-3xl p-6 bg-slate-900 border border-slate-800 shadow-2xl">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h3 className="text-base font-black text-white">Update Dispatch Passcode</h3>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Rider: <span className="text-slate-200 font-bold">{editingPasscodeRider.name}</span> ({editingPasscodeRider.phone})
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setEditingPasscodeRider(null)}
+                className="text-slate-400 hover:text-white cursor-pointer font-bold"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                    New 6-Digit Passcode
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setNewPasscodeVal(generateRandomPasscode())
+                    }
+                    className="text-[11px] font-bold text-amber-400 hover:text-amber-300 cursor-pointer"
+                  >
+                    🎲 Randomize
+                  </button>
+                </div>
+                <input
+                  type="text"
+                  maxLength={6}
+                  value={newPasscodeVal}
+                  onChange={(e) => setNewPasscodeVal(e.target.value.replace(/\D/g, '').slice(0, 6))}
+                  placeholder="6-digit PIN"
+                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-amber-300 font-mono font-bold tracking-widest text-center focus:outline-none focus:border-amber-400"
+                />
+              </div>
+
+              <div className="flex items-center justify-end gap-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setEditingPasscodeRider(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={newPasscodeVal.length !== 6 || savingPasscode}
+                  onClick={handleSavePasscode}
+                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all disabled:opacity-50 cursor-pointer"
+                >
+                  {savingPasscode ? 'Saving...' : 'Update Passcode'}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       )}

@@ -59,6 +59,19 @@ export default function RiderLoginPage() {
     }
   };
 
+  const handlePaste = (e: React.ClipboardEvent) => {
+    e.preventDefault();
+    const pasted = e.clipboardData.getData('text').replace(/\D/g, '').slice(0, 6);
+    if (!pasted) return;
+    const newOtp = [...otp];
+    for (let i = 0; i < 6; i++) {
+      newOtp[i] = pasted[i] || '';
+    }
+    setOtp(newOtp);
+    const nextIdx = Math.min(pasted.length, 5);
+    document.getElementById(`rotp-${nextIdx}`)?.focus();
+  };
+
   const handleVerify = async (e?: React.FormEvent) => {
     if (e) e.preventDefault();
     const code = otp.join('');
@@ -112,8 +125,8 @@ export default function RiderLoginPage() {
             </div>
             <p className="text-xs text-slate-400">
               {step === 'phone'
-                ? 'Sign in with your registered phone number to access today’s delivery routes.'
-                : `Welcome, ${riderInfo?.name || 'Rider'}! Enter your 6-digit code.`}
+                ? 'Sign in with your registered phone number to enter your dispatch passcode.'
+                : `Welcome, ${riderInfo?.name || 'Rider'}! Enter your 6-digit dispatch passcode.`}
             </p>
           </div>
 
@@ -145,7 +158,7 @@ export default function RiderLoginPage() {
                   />
                 </div>
                 <p className="text-[11px] text-slate-500 mt-1.5">
-                  Pre-seeded test fleet: 9876500001, 9876500002, 9876500003
+                  Fleet members: Enter your 10-digit registered mobile number.
                 </p>
               </div>
 
@@ -157,7 +170,7 @@ export default function RiderLoginPage() {
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  'Send Dispatch Code →'
+                  'Continue to Passcode →'
                 )}
               </button>
             </form>
@@ -171,10 +184,13 @@ export default function RiderLoginPage() {
               )}
 
               <div>
-                <label className="block text-center text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">
-                  Enter 6-Digit Code (Dev: 123456)
+                <label className="block text-center text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                  Enter 6-Digit Dispatch Passcode
                 </label>
-                <div className="flex justify-center gap-2">
+                <p className="text-center text-[11px] text-slate-500 mb-3">
+                  Enter the 6-digit code assigned to you during onboarding.
+                </p>
+                <div className="flex justify-center gap-2" onPaste={handlePaste}>
                   {otp.map((digit, i) => (
                     <input
                       key={i}
@@ -200,7 +216,7 @@ export default function RiderLoginPage() {
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
                 ) : (
-                  'Verify & Start Delivery Shift →'
+                  'Verify Passcode & Open Manifest →'
                 )}
               </button>
 

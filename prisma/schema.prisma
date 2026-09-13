@@ -43,6 +43,7 @@ model Rider {
   name          String
   phone         String         @unique
   active        Boolean        @default(true)
+  passcode      String?        @default("123456")
   vehicleType   String?        @default("Bike")
   vehicleNumber String?
   assignedZoneId String?

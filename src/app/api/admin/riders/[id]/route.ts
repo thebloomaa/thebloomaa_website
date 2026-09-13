@@ -17,11 +17,12 @@ export async function PATCH(request: Request, context: Context) {
 
     const { id } = await context.params;
     const body = await request.json();
-    const { name, phone, vehicleType, vehicleNumber, assignedZoneId, active } = body;
+    const { name, phone, passcode, vehicleType, vehicleNumber, assignedZoneId, active } = body;
 
     const data: any = {};
     if (name !== undefined) data.name = name.trim();
     if (phone !== undefined) data.phone = phone.replace(/\D/g, '').slice(-10);
+    if (passcode !== undefined && passcode.trim().length === 6) data.passcode = passcode.trim();
     if (vehicleType !== undefined) data.vehicleType = vehicleType;
     if (vehicleNumber !== undefined) data.vehicleNumber = vehicleNumber ? vehicleNumber.trim() : null;
     if (assignedZoneId !== undefined) data.assignedZoneId = assignedZoneId || null;

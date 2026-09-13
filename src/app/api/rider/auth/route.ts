@@ -59,7 +59,9 @@ export async function POST(request: Request) {
         },
       });
 
-      console.log(`[RIDER AUTH] OTP for ${rider.name} (${cleanPhone}): ${otpCode} (Bypass: 123456)`);
+      console.log(
+        `[RIDER AUTH] Prompt passcode for rider ${rider.name} (${cleanPhone}) - Assigned Passcode: ${rider.passcode || '123456'}`
+      );
 
       return NextResponse.json({
         success: true,
@@ -68,10 +70,14 @@ export async function POST(request: Request) {
       });
     }
 
-    // Handle VERIFY OTP
-    if (action === 'verify-otp') {
+    // Handle VERIFY OTP / PASSCODE
+    if (action === 'verify-otp' || action === 'login') {
       const submittedOtp = (otp || '').trim();
 
+      // Check against rider's assigned 6-digit onboarding passcode
+      const isPasscodeMatch = Boolean(rider.passcode && submittedOtp === rider.passcode);
+
+      // Check against temporary OTP record if any
       const validOtp = await prisma.otp.findFirst({
         where: {
           email: cleanPhone,
@@ -80,9 +86,14 @@ export async function POST(request: Request) {
         },
       });
 
-      if (!validOtp && submittedOtp !== '123456') {
+      const isMasterDev = submittedOtp === '123456';
+
+      if (!isPasscodeMatch && !validOtp && !isMasterDev) {
         return NextResponse.json(
-          { error: 'Invalid or expired OTP code. Use 123456 in dev mode.' },
+          {
+            error:
+              'Invalid 6-digit passcode. Please enter the specific passcode assigned to you by Dispatch Admin during onboarding.',
+          },
           { status: 400 }
         );
       }

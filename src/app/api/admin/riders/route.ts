@@ -51,6 +51,7 @@ export async function GET() {
         id: r.id,
         name: r.name,
         phone: r.phone,
+        passcode: r.passcode || '123456',
         active: r.active,
         vehicleType: r.vehicleType || 'Bike',
         vehicleNumber: r.vehicleNumber || 'Unregistered',
@@ -101,7 +102,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { name, phone, vehicleType, vehicleNumber, assignedZoneId, active } = body;
+    const { name, phone, passcode, vehicleType, vehicleNumber, assignedZoneId, active } = body;
 
     if (!name?.trim() || !phone?.trim()) {
       return NextResponse.json({ error: 'Name and phone are required.' }, { status: 400 });
@@ -120,10 +121,17 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'A rider with this mobile number is already registered.' }, { status: 409 });
     }
 
+    // Use assigned passcode or auto-generate a 6-digit random PIN
+    const assignedPasscode =
+      passcode && passcode.trim().length === 6
+        ? passcode.trim()
+        : Math.floor(100000 + Math.random() * 900000).toString();
+
     const rider = await prisma.rider.create({
       data: {
         name: name.trim(),
         phone: cleanPhone,
+        passcode: assignedPasscode,
         vehicleType: vehicleType || 'Bike',
         vehicleNumber: vehicleNumber?.trim() || null,
         assignedZoneId: assignedZoneId || null,
