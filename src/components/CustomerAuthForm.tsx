@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useBioCalcStore } from '@/store/useBioCalcStore';
+import LocationPickerMap from '@/components/LocationPickerMap';
 
 export default function CustomerAuthForm() {
   const router = useRouter();
@@ -49,6 +50,7 @@ export default function CustomerAuthForm() {
     street: '',
     landmark: '',
     deliveryTime: '07:00',
+    gpsCoordinates: '25.6133, 85.1147',
   });
   const [regOtp, setRegOtp] = useState(['', '', '', '', '', '']);
 
@@ -208,7 +210,13 @@ export default function CustomerAuthForm() {
     setLoading(true);
     setErrorMsg(null);
 
-    const fullStreetAddress = `${regForm.street}${regForm.landmark ? ` (Near ${regForm.landmark})` : ''}`;
+    const fullStreetAddress = `${regForm.street}${regForm.landmark ? ` (Near ${regForm.landmark})` : ''}${
+      regForm.gpsCoordinates
+        ? ` [📍 GPS: ${regForm.gpsCoordinates} | https://maps.google.com/?q=${encodeURIComponent(
+            regForm.gpsCoordinates.replace(/\s+/g, '')
+          )}]`
+        : ''
+    }`;
 
     const res = await signIn('credentials', {
       redirect: false,
@@ -664,6 +672,19 @@ export default function CustomerAuthForm() {
           {/* STEP 3: PATNA MORNING DELIVERY & TIME SLOT */}
           {step === 3 && (
             <div className="space-y-5 animate-fade-in text-xs">
+              {/* Google Map Exact Delivery Gate Pin */}
+              <LocationPickerMap
+                onLocationSelect={(loc) => {
+                  setRegForm((prev) => ({
+                    ...prev,
+                    gpsCoordinates: `${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)}`,
+                    pincode: loc.pincode && loc.pincode.length === 6 ? loc.pincode : prev.pincode,
+                    landmark: prev.landmark ? prev.landmark : loc.neighborhood || prev.landmark,
+                    street: prev.street ? prev.street : loc.formattedAddress || prev.street,
+                  }));
+                }}
+              />
+
               <div>
                 <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
                   Patna Delivery Pincode *

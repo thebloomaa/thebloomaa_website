@@ -160,6 +160,25 @@ export default function RiderManifestPage() {
                         ⏰ <span className="font-bold text-white">{order.time}</span> · 🥗 {order.meal} · 🔥 {order.calories} kcal
                       </p>
 
+                      {order.address && (
+                        <div className="mb-2 text-xs text-slate-300 flex items-center justify-between gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
+                          <span className="truncate text-[11px]">📍 {order.address}</span>
+                          <a
+                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+                              order.address.includes('GPS:')
+                                ? order.address.split('GPS:')[1]?.split('|')[0]?.trim() || order.address
+                                : `${order.address}, Patna`
+                            )}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold hover:bg-emerald-500/30 transition-all shrink-0 flex items-center gap-1"
+                          >
+                            <span>🗺️ Map</span>
+                            <span>↗</span>
+                          </a>
+                        </div>
+                      )}
+
                       {order.deliveryNote && (
                         <div className="mb-3 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1.5">
                           <span>⚠️</span>
