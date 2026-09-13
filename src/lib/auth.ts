@@ -19,11 +19,74 @@ export const authOptions: NextAuthOptions = {
         deliveryTime: { label: 'Delivery Time', type: 'text' },
         street: { label: 'Street Address', type: 'text' },
         pincode: { label: 'Pincode', type: 'text' },
+        password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email || !credentials?.otp) return null;
+        if (!credentials?.email) return null;
 
         const identifier = credentials.email.trim().toLowerCase();
+
+        // -------------------------------------------------------------
+        // A. ADMIN PASSWORD AUTHENTICATION
+        // -------------------------------------------------------------
+        if (credentials.password) {
+          const submittedPass = credentials.password.trim();
+          const configuredAdminEmail = (process.env.ADMIN_EMAIL || 'admin@thebloomaa.com').trim().toLowerCase();
+          const configuredAdminPass = process.env.ADMIN_SECRET_PASSWORD || 'BloomaaAdmin@2026!';
+
+          const isEnvMatch =
+            identifier === configuredAdminEmail &&
+            submittedPass === configuredAdminPass;
+
+          let adminUser = await prisma.user.findFirst({
+            where: {
+              OR: [
+                { email: identifier },
+                { role: 'ADMIN' },
+              ],
+            },
+          });
+
+          const isDbMatch =
+            Boolean(adminUser?.password && adminUser.password === submittedPass && adminUser.role === 'ADMIN');
+
+          if (!isEnvMatch && !isDbMatch) {
+            return null;
+          }
+
+          // Ensure Admin user exists in DB with role ADMIN
+          if (!adminUser) {
+            adminUser = await prisma.user.create({
+              data: {
+                email: configuredAdminEmail,
+                name: 'Thebloomaa Master Admin',
+                role: 'ADMIN',
+                password: configuredAdminPass,
+              },
+            });
+          } else if (adminUser.role !== 'ADMIN' || adminUser.password !== configuredAdminPass) {
+            adminUser = await prisma.user.update({
+              where: { id: adminUser.id },
+              data: {
+                role: 'ADMIN',
+                password: configuredAdminPass,
+              },
+            });
+          }
+
+          return {
+            id: adminUser.id,
+            email: adminUser.email,
+            name: adminUser.name || 'Thebloomaa Admin',
+            role: 'ADMIN',
+          };
+        }
+
+        // -------------------------------------------------------------
+        // B. CUSTOMER OTP AUTHENTICATION
+        // -------------------------------------------------------------
+        if (!credentials.otp) return null;
+
         const otpCode = credentials.otp.trim();
 
         // 1. Verify OTP

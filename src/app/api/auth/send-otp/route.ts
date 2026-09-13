@@ -5,12 +5,45 @@ import nodemailer from 'nodemailer';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, phone } = body;
+    const { email, phone, action = 'signin' } = body;
 
     const identifier = (email || phone || '').trim().toLowerCase();
 
     if (!identifier) {
       return NextResponse.json({ error: 'Please enter an email or mobile phone number' }, { status: 400 });
+    }
+
+    // 1. Database Existence Check
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        OR: [
+          { email: identifier },
+          { phone: identifier },
+          ...(phone ? [{ phone: phone.trim() }] : []),
+        ],
+      },
+    });
+
+    // If customer is trying to Log In but has no profile in the database:
+    if (action === 'signin' && !existingUser) {
+      return NextResponse.json(
+        {
+          error: 'No account found with this email or mobile number. Please create your Member Profile (Sign Up) first.',
+          notRegistered: true,
+        },
+        { status: 404 }
+      );
+    }
+
+    // If customer is trying to Sign Up but already has an account:
+    if (action === 'register' && existingUser) {
+      return NextResponse.json(
+        {
+          error: 'An account with this email or mobile number already exists. Please switch to Log In.',
+          alreadyRegistered: true,
+        },
+        { status: 409 }
+      );
     }
 
     // Generate a 6-digit numeric OTP

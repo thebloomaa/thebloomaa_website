@@ -1,27 +1,80 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useSession, signOut } from 'next-auth/react';
 
 const navItems = [
-  { href: '/admin', label: 'Overview', icon: '📊' },
-  { href: '/admin/products', label: 'Products', icon: '🥗' },
+  { href: '/admin', label: 'Overview & Directory', icon: '📊' },
+  { href: '/admin/products', label: 'Meal Products', icon: '🥗' },
   { href: '/admin/zones', label: 'Delivery Zones', icon: '📍' },
-  { href: '/admin/orders', label: 'Orders', icon: '📦' },
+  { href: '/admin/orders', label: 'Order Dispatch', icon: '📦' },
   { href: '/admin/analytics', label: 'Analytics', icon: '📈' },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { data: session, status } = useSession();
+
+  const isLoginPage = pathname === '/admin/login';
+
+  // Protect all /admin/* routes other than /admin/login
+  useEffect(() => {
+    if (!isLoginPage && status === 'unauthenticated') {
+      router.replace('/admin/login');
+    } else if (
+      !isLoginPage &&
+      status === 'authenticated' &&
+      (session?.user as any)?.role !== 'ADMIN'
+    ) {
+      router.replace('/admin/login');
+    }
+  }, [isLoginPage, status, session, router]);
+
+  // If on login page, render full screen without sidebar
+  if (isLoginPage) {
+    return <>{children}</>;
+  }
+
+  // Loading state
+  if (status === 'loading') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070b14] text-slate-100">
+        <div className="text-center space-y-3">
+          <div className="w-10 h-10 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="text-xs text-slate-400 font-mono">Verifying Admin Session...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // If authenticated but not admin, prevent render while redirecting
+  if (status === 'authenticated' && (session?.user as any)?.role !== 'ADMIN') {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#070b14] text-slate-100">
+        <div className="text-center space-y-3 p-6 rounded-2xl bg-red-950/40 border border-red-500/40 max-w-sm">
+          <p className="text-sm font-bold text-red-300">Access Restricted</p>
+          <p className="text-xs text-slate-400">Your account is not an authorized Administrator.</p>
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-red-500 text-white cursor-pointer"
+          >
+            Sign Out & Switch Account
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen flex" style={{ background: 'var(--bg-dark)' }}>
+    <div className="min-h-screen flex bg-[#070b14] text-slate-100">
       {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-60 p-5 fixed top-0 left-0 h-full z-40" style={{ background: '#0B1120', borderRight: '1px solid var(--border-subtle)' }}>
+      <aside className="hidden md:flex flex-col w-64 p-5 fixed top-0 left-0 h-full z-40 bg-[#0B1120] border-r border-slate-800">
         <div className="flex items-center gap-2.5 mb-8">
-          <div className="relative w-8 h-8 rounded-full overflow-hidden border border-amber-400/70 shrink-0">
+          <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-amber-400/70 shrink-0">
             <Image
               src="/logo.jpg"
               alt="thebloomaa"
@@ -31,41 +84,94 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           </div>
           <div>
             <span className="text-sm font-black text-slate-100 block leading-tight">thebloomaa</span>
-            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Admin Ops</span>
+            <span className="text-[10px] text-amber-400 font-bold uppercase tracking-wider block">Admin Ops Center</span>
           </div>
         </div>
-        <nav className="space-y-1 flex-grow">
-          {navItems.map(item => {
+
+        <nav className="space-y-1.5 flex-grow">
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             return (
-              <Link key={item.href} href={item.href}
-                className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all"
-                style={{ background: isActive ? 'rgba(239, 68, 68, 0.08)' : 'transparent', color: isActive ? '#FCA5A5' : 'var(--text-muted)', border: isActive ? '1px solid rgba(239, 68, 68, 0.12)' : '1px solid transparent' }}>
-                <span>{item.icon}</span>{item.label}
+              <Link
+                key={item.href}
+                href={item.href}
+                className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
+                  isActive
+                    ? 'bg-amber-400/10 text-amber-300 border border-amber-400/30 shadow-sm shadow-amber-400/10'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-900 border border-transparent'
+                }`}
+              >
+                <span className="text-base">{item.icon}</span>
+                <span>{item.label}</span>
               </Link>
             );
           })}
         </nav>
-        <Link href="/" className="flex items-center gap-2 px-3 py-2 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-          ← Back to site
-        </Link>
+
+        {/* Admin Session Profile & Logout */}
+        <div className="pt-4 mt-4 border-t border-slate-800 space-y-3">
+          <div className="p-3 rounded-xl bg-slate-900/80 border border-slate-800/80">
+            <div className="flex items-center justify-between mb-1">
+              <span className="text-[10px] uppercase font-black text-amber-400 tracking-wider">Logged In</span>
+              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+            </div>
+            <p className="text-xs font-mono font-medium text-slate-200 truncate">
+              {session?.user?.email || 'admin@thebloomaa.com'}
+            </p>
+          </div>
+
+          <div className="flex items-center justify-between gap-2 text-xs">
+            <Link
+              href="/"
+              target="_blank"
+              className="text-slate-400 hover:text-slate-200 transition-colors text-[11px] font-medium"
+            >
+              🌐 Site
+            </Link>
+            <button
+              onClick={() => signOut({ callbackUrl: '/admin/login' })}
+              className="text-red-400 hover:text-red-300 font-bold transition-colors text-[11px] cursor-pointer flex items-center gap-1"
+            >
+              <span>🚪</span>
+              <span>Sign Out</span>
+            </button>
+          </div>
+        </div>
       </aside>
 
-      {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 glass">
-        <span className="text-lg font-extrabold">Admin</span>
-        <div className="flex gap-1">
-          {navItems.map(item => (
-            <Link key={item.href} href={item.href}
-              className="w-9 h-9 rounded-lg flex items-center justify-center text-sm"
-              style={{ background: pathname === item.href ? 'rgba(239, 68, 68, 0.08)' : 'transparent' }}>
+      {/* Mobile Top Bar */}
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#0B1120]/95 backdrop-blur-md border-b border-slate-800">
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-black text-white">thebloomaa</span>
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-amber-400/20 text-amber-300 uppercase">
+            Admin
+          </span>
+        </div>
+        <div className="flex items-center gap-1">
+          {navItems.map((item) => (
+            <Link
+              key={item.href}
+              href={item.href}
+              className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${
+                pathname === item.href ? 'bg-amber-400/20 text-amber-300' : 'text-slate-400'
+              }`}
+            >
               {item.icon}
             </Link>
           ))}
+          <button
+            onClick={() => signOut({ callbackUrl: '/admin/login' })}
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-red-400 ml-1"
+            title="Sign Out"
+          >
+            🚪
+          </button>
         </div>
       </div>
 
-      <main className="flex-1 md:ml-60 pt-16 md:pt-8 pb-8 px-4 sm:px-6 lg:px-8">{children}</main>
+      <main className="flex-1 md:ml-64 pt-16 md:pt-8 pb-12 px-4 sm:px-6 lg:px-8 max-w-7xl">
+        {children}
+      </main>
     </div>
   );
 }

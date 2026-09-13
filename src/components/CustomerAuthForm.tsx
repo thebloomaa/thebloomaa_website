@@ -28,6 +28,8 @@ export default function CustomerAuthForm() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1); // Register: 1: Contact, 2: Nutrition, 3: Delivery, 4: OTP
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [notRegisteredNotice, setNotRegisteredNotice] = useState(false);
+  const [alreadyRegisteredNotice, setAlreadyRegisteredNotice] = useState(false);
   const [maskedTarget, setMaskedTarget] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
 
@@ -93,12 +95,14 @@ export default function CustomerAuthForm() {
 
     setLoading(true);
     setErrorMsg(null);
+    setNotRegisteredNotice(false);
 
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          action: 'signin',
           email: loginIdentifier.includes('@') ? loginIdentifier : undefined,
           phone: !loginIdentifier.includes('@') ? loginIdentifier : undefined,
         }),
@@ -110,6 +114,9 @@ export default function CustomerAuthForm() {
         setLoginStep('otp');
         setResendTimer(30);
       } else {
+        if (data.notRegistered) {
+          setNotRegisteredNotice(true);
+        }
         setErrorMsg(data.error || 'Failed to send OTP. Please try again.');
       }
     } catch {
@@ -176,12 +183,17 @@ export default function CustomerAuthForm() {
 
     setLoading(true);
     setErrorMsg(null);
+    setAlreadyRegisteredNotice(false);
 
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: regForm.email, phone: regForm.phone }),
+        body: JSON.stringify({
+          action: 'register',
+          email: regForm.email,
+          phone: regForm.phone,
+        }),
       });
 
       const data = await res.json();
@@ -190,6 +202,9 @@ export default function CustomerAuthForm() {
         setStep(4); // Move to OTP step
         setResendTimer(30);
       } else {
+        if (data.alreadyRegistered) {
+          setAlreadyRegisteredNotice(true);
+        }
         setErrorMsg(data.error || 'Failed to dispatch verification code.');
       }
     } catch {
@@ -282,6 +297,8 @@ export default function CustomerAuthForm() {
           onClick={() => {
             setMode('register');
             setErrorMsg(null);
+            setNotRegisteredNotice(false);
+            setAlreadyRegisteredNotice(false);
           }}
           className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'register'
@@ -298,6 +315,8 @@ export default function CustomerAuthForm() {
           onClick={() => {
             setMode('signin');
             setErrorMsg(null);
+            setNotRegisteredNotice(false);
+            setAlreadyRegisteredNotice(false);
           }}
           className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'signin'
@@ -310,11 +329,73 @@ export default function CustomerAuthForm() {
         </button>
       </div>
 
-      {/* Inline Error Notice */}
+      {/* Inline Error / Registration Notice */}
       {errorMsg && (
-        <div className="mb-6 p-3.5 rounded-2xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs flex items-center gap-2 animate-fade-in">
-          <span>⚠️</span>
-          <span>{errorMsg}</span>
+        <div
+          className={`mb-6 p-4 rounded-2xl border text-xs flex flex-col gap-3 animate-fade-in ${
+            notRegisteredNotice
+              ? 'bg-amber-950/40 border-amber-500/50 text-amber-200'
+              : alreadyRegisteredNotice
+              ? 'bg-blue-950/40 border-blue-500/50 text-blue-200'
+              : 'bg-red-950/40 border-red-500/40 text-red-300'
+          }`}
+        >
+          <div className="flex items-start gap-2.5">
+            <span className="text-base leading-none mt-0.5">
+              {notRegisteredNotice ? '🔍' : alreadyRegisteredNotice ? 'ℹ️' : '⚠️'}
+            </span>
+            <div className="flex-1">
+              <p className="font-semibold text-sm leading-snug">{errorMsg}</p>
+              {notRegisteredNotice && (
+                <p className="text-[11px] text-amber-300/80 mt-1">
+                  To get fresh macro-tailored meals delivered in Patna, please create your member profile.
+                </p>
+              )}
+              {alreadyRegisteredNotice && (
+                <p className="text-[11px] text-blue-300/80 mt-1">
+                  You already have an existing profile. Simply request a login OTP to access your account.
+                </p>
+              )}
+            </div>
+          </div>
+
+          {notRegisteredNotice && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('register');
+                setStep(1);
+                if (loginIdentifier.includes('@')) {
+                  setRegForm((prev) => ({ ...prev, email: loginIdentifier }));
+                } else if (loginIdentifier.trim()) {
+                  setRegForm((prev) => ({ ...prev, phone: loginIdentifier }));
+                }
+                setErrorMsg(null);
+                setNotRegisteredNotice(false);
+              }}
+              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-amber-400/20"
+            >
+              <span>✨ Create New Member Profile (Sign Up)</span>
+              <span>→</span>
+            </button>
+          )}
+
+          {alreadyRegisteredNotice && (
+            <button
+              type="button"
+              onClick={() => {
+                setMode('signin');
+                setLoginStep('input');
+                setLoginIdentifier(regForm.email || regForm.phone);
+                setErrorMsg(null);
+                setAlreadyRegisteredNotice(false);
+              }}
+              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-emerald-400 text-slate-950 hover:bg-emerald-300 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-400/20"
+            >
+              <span>🔐 Switch to Log In (Returning User)</span>
+              <span>→</span>
+            </button>
+          )}
         </div>
       )}
 
