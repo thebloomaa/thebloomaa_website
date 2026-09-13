@@ -1,6 +1,8 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 // GET /api/rider/manifest
 // Returns today's stops for the authenticated rider
@@ -8,6 +10,8 @@ export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
     const cookieStore = await cookies();
+    const session = await getServerSession(authOptions);
+    const isAdmin = Boolean(session?.user && (session.user as any).role === 'ADMIN');
 
     let riderId = searchParams.get('riderId') || cookieStore.get('thebloomaa_rider_id')?.value;
 
@@ -19,8 +23,8 @@ export async function GET(request: Request) {
       });
     }
 
-    // If no specific rider, fallback to first active rider or all orders
-    if (!rider) {
+    // Admin previewing manifest fallback
+    if (!rider && isAdmin) {
       rider = await prisma.rider.findFirst({
         where: { active: true },
         include: { assignedZone: true },
@@ -28,6 +32,13 @@ export async function GET(request: Request) {
       if (rider) {
         riderId = rider.id;
       }
+    }
+
+    if (!rider) {
+      return NextResponse.json(
+        { error: 'Unauthorized: Rider sign-in required to view delivery manifest' },
+        { status: 401 }
+      );
     }
 
     const today = new Date();

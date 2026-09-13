@@ -101,6 +101,8 @@ model Subscription {
   payments         Payment[]
   createdAt        DateTime            @default(now())
   updatedAt        DateTime            @updatedAt
+
+  @@index([userId, status])
 }
 
 model SubscriptionPause {
@@ -129,6 +131,9 @@ model Order {
   deliveryNote     String?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
+
+  @@index([deliveryDate, riderId])
+  @@index([userId])
 }
 
 model Payment {

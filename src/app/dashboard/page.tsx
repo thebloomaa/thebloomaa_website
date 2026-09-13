@@ -22,8 +22,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
 
   const [deliveryDays, setDeliveryDays] = useState<Record<string, string>>({});
-  const [currentMonth, setCurrentMonth] = useState(8); // September = 8 (0-indexed)
-  const [currentYear] = useState(2026);
+  const now = new Date();
+  const [currentMonth, setCurrentMonth] = useState(now.getMonth());
+  const [currentYear] = useState(now.getFullYear());
   const [skipConfirm, setSkipConfirm] = useState<string | null>(null);
 
   // Generate calendar grid for the month

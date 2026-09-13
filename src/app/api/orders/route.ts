@@ -12,9 +12,10 @@ export async function GET() {
 
     const orders = await prisma.order.findMany({
       where: {
-        subscription: {
-          userId: session.user.id
-        }
+        OR: [
+          { userId: session.user.id },
+          { subscription: { userId: session.user.id } },
+        ],
       },
       include: {
         subscription: {
@@ -22,7 +23,14 @@ export async function GET() {
             product: true
           }
         },
-        rider: true
+        address: true,
+        rider: {
+          select: {
+            name: true,
+            phone: true,
+            vehicleType: true,
+          }
+        }
       },
       orderBy: { deliveryDate: 'desc' }
     });

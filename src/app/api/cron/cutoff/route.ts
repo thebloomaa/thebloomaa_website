@@ -4,9 +4,10 @@ import { processDailyCutoff } from '@/lib/cron/cutoff-engine';
 export async function GET(request: Request) {
   // Security check: verify this is a trusted cron job invocation using a secure secret
   const authHeader = request.headers.get('authorization');
+  const cronSecret = process.env.CRON_SECRET;
   
-  if (process.env.CRON_SECRET && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+    return NextResponse.json({ error: 'Unauthorized: Invalid or missing CRON_SECRET' }, { status: 401 });
   }
 
   try {

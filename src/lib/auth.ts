@@ -108,10 +108,11 @@ export const authOptions: NextAuthOptions = {
           },
         });
 
-        // Master bypass for local testing
-        if (!validOtp && otpCode !== '123456') {
-          if (process.env.NODE_ENV === 'production') return null;
-          if (otpCode !== '123456') return null;
+        // Master bypass for local testing only (strictly disabled in production)
+        if (!validOtp) {
+          if (process.env.NODE_ENV === 'production' || otpCode !== '123456') {
+            return null;
+          }
         }
 
         // Delete used OTP

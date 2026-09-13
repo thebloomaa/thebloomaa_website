@@ -59,9 +59,7 @@ export async function POST(request: Request) {
         },
       });
 
-      console.log(
-        `[RIDER AUTH] Prompt passcode for rider ${rider.name} (${cleanPhone}) - Assigned Passcode: ${rider.passcode || '123456'}`
-      );
+      console.log(`[RIDER AUTH] Login requested for rider ${rider.name} (${cleanPhone})`);
 
       return NextResponse.json({
         success: true,
@@ -86,7 +84,7 @@ export async function POST(request: Request) {
         },
       });
 
-      const isMasterDev = submittedOtp === '123456';
+      const isMasterDev = process.env.NODE_ENV !== 'production' && submittedOtp === '123456';
 
       if (!isPasscodeMatch && !validOtp && !isMasterDev) {
         return NextResponse.json(
@@ -107,11 +105,15 @@ export async function POST(request: Request) {
       cookieStore.set('thebloomaa_rider_id', rider.id, {
         path: '/',
         httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7, // 7 days
       });
       cookieStore.set('thebloomaa_rider_name', rider.name, {
         path: '/',
         httpOnly: false,
+        sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60 * 24 * 7,
       });
 

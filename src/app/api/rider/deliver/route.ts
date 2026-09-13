@@ -1,10 +1,22 @@
 import { NextResponse } from 'next/server';
-import prisma from '@/lib/prisma';
+import { prisma } from '@/lib/prisma';
+import { cookies } from 'next/headers';
+import { getServerSession } from 'next-auth';
+import { authOptions } from '@/lib/auth';
 
 // POST /api/rider/deliver
 // Mark an order as DELIVERED or FAILED
 export async function POST(request: Request) {
   try {
+    const cookieStore = await cookies();
+    const riderId = cookieStore.get('thebloomaa_rider_id')?.value;
+    const session = await getServerSession(authOptions);
+    const isAdmin = Boolean(session?.user && (session.user as any).role === 'ADMIN');
+
+    if (!riderId && !isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized: Rider or admin sign-in required' }, { status: 401 });
+    }
+
     const body = await request.json();
     const { orderId, status } = body;
 
