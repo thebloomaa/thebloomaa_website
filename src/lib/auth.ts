@@ -14,6 +14,8 @@ export const authOptions: NextAuthOptions = {
         fitnessGoal: { label: 'Fitness Goal', type: 'text' },
         dietaryPreference: { label: 'Dietary Preference', type: 'text' },
         allergies: { label: 'Allergies', type: 'text' },
+        gender: { label: 'Gender', type: 'text' },
+        age: { label: 'Age', type: 'text' },
         deliveryTime: { label: 'Delivery Time', type: 'text' },
         street: { label: 'Street Address', type: 'text' },
         pincode: { label: 'Pincode', type: 'text' },
@@ -61,6 +63,11 @@ export const authOptions: NextAuthOptions = {
         if (credentials.fitnessGoal) profileData.fitnessGoal = credentials.fitnessGoal;
         if (credentials.dietaryPreference) profileData.dietaryPreference = credentials.dietaryPreference;
         if (credentials.allergies) profileData.allergies = credentials.allergies;
+        if (credentials.gender) profileData.gender = credentials.gender;
+        if (credentials.age) {
+          const parsedAge = parseInt(credentials.age, 10);
+          if (!isNaN(parsedAge)) profileData.age = parsedAge;
+        }
 
         if (!user) {
           // New subscriber creation
@@ -84,7 +91,7 @@ export const authOptions: NextAuthOptions = {
           });
         }
 
-        // 3. Save default address if provided during registration
+        // 3. Save or update default address if provided during registration
         if (credentials.street && credentials.pincode && user) {
           try {
             const existingAddress = await prisma.address.findFirst({
@@ -100,6 +107,14 @@ export const authOptions: NextAuthOptions = {
                   state: 'Bihar',
                   pincode: credentials.pincode.trim(),
                   isDefault: true,
+                },
+              });
+            } else {
+              await prisma.address.update({
+                where: { id: existingAddress.id },
+                data: {
+                  street: credentials.street.trim(),
+                  pincode: credentials.pincode.trim(),
                 },
               });
             }

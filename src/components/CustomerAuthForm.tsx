@@ -227,6 +227,8 @@ export default function CustomerAuthForm() {
       fitnessGoal: regForm.fitnessGoal,
       dietaryPreference: regForm.dietaryPreference,
       allergies: regForm.allergies,
+      gender: regForm.gender,
+      age: regForm.age ? String(regForm.age) : undefined,
       deliveryTime: regForm.deliveryTime,
       street: fullStreetAddress,
       pincode: regForm.pincode,
