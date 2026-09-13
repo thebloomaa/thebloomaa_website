@@ -20,23 +20,23 @@ export default function BioCalculatorTeaser() {
             <div className="lg:col-span-7 space-y-5 text-center lg:text-left">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                 <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-                Living Food Intelligence
+                Raw &amp; Fresh Nutrition Intelligence
               </div>
 
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-100 tracking-tight leading-tight">
-                Discover Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Living Food Vitality</span> Score
+                Discover Your <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Fresh &amp; Raw Vitality</span> Score
               </h2>
 
               <p className="text-sm sm:text-base text-slate-300 max-w-xl leading-relaxed">
                 Cooking food above 48°C denatures active enzymes and depletes heat-sensitive micronutrients. 
-                Find out how your ratio of cooked diets vs. raw fruits, sprouts, and living greens impacts your 
-                mitochondrial energy, gut microbiome, and biological diet age.
+                Find out how your ratio of cooked diets vs. raw fruits, sprouts, and crisp raw greens impacts your 
+                daily energy, gut microbiome, and biological diet age.
               </p>
 
               {/* Feature Chips */}
               <div className="flex flex-wrap gap-2.5 pt-2 justify-center lg:justify-start">
                 <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/90 text-slate-200 border border-slate-700 flex items-center gap-1.5 shadow-sm">
-                  ⚡ <strong className="text-emerald-400">Living Enzyme Ratio</strong>
+                  ⚡ <strong className="text-emerald-400">Natural Enzyme Ratio</strong>
                 </span>
                 <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-slate-800/90 text-slate-200 border border-slate-700 flex items-center gap-1.5 shadow-sm">
                   🧬 <strong className="text-amber-400">Biological Diet Age</strong>

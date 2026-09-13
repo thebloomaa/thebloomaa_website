@@ -278,18 +278,18 @@ export default function BioCalculator() {
           </div>
         )}
 
-        {/* STEP 2: Dietary Habits (Cooked vs Living Foods) */}
+        {/* STEP 2: Dietary Habits (Cooked vs Raw & Fresh Foods) */}
         {currentStep === 2 && (
           <div className="space-y-8 animate-fade-in-up">
             <div>
               <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
-                Step 2 of 4 · Living Food Intake
+                Step 2 of 4 · Fresh &amp; Raw Food Intake
               </span>
               <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
-                How much live food do you eat?
+                How much fresh &amp; raw food do you eat?
               </h2>
               <p className="text-sm text-slate-400 mt-1">
-                Cooking above 48°C denatures active enzymes and essential plant polyphenols.
+                Cooking at high heat removes natural digestive enzymes. Fresh fruits, sprouted seeds, and raw salads keep them intact.
               </p>
             </div>
 
@@ -309,7 +309,7 @@ export default function BioCalculator() {
                     {inputs.cookedFoodPercentage}%
                   </span>
                   <span className="text-xs text-slate-400 block">
-                    ({100 - inputs.cookedFoodPercentage}% Living Raw)
+                    ({100 - inputs.cookedFoodPercentage}% Fresh &amp; Raw)
                   </span>
                 </div>
               </div>
@@ -324,7 +324,7 @@ export default function BioCalculator() {
                 className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
               />
               <div className="flex justify-between text-[11px] text-slate-500 mt-2 font-mono">
-                <span className="text-emerald-400">0% (100% Living Raw)</span>
+                <span className="text-emerald-400">0% (100% Fresh &amp; Raw)</span>
                 <span>50% Balanced</span>
                 <span className="text-red-400">100% (Strictly Cooked)</span>
               </div>
@@ -442,10 +442,10 @@ export default function BioCalculator() {
                 Step 3 of 4 · Real-Time Vitality Dashboard
               </span>
               <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
-                Your Living Food Bio Profile
+                Your Fresh &amp; Raw Vitality Profile
               </h2>
               <p className="text-sm text-slate-400 mt-1">
-                Calibrated against living digestive enzymes, thermal denaturation, and metabolic expenditure.
+                Calibrated against natural digestive enzymes, fresh raw nutrition, and daily metabolic energy.
               </p>
             </div>
 
@@ -762,7 +762,7 @@ export default function BioCalculator() {
                   )}
 
                   <div className="mt-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-[11px] text-emerald-300">
-                    <span className="font-bold">Living Synergy Tip: </span>
+                    <span className="font-bold">Fresh Nutrition Tip: </span>
                     {results.matchedProduct.livingFoodSynergyTip}
                   </div>
                 </div>

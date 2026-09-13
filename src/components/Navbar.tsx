@@ -105,7 +105,7 @@ export default function Navbar() {
         {mobileOpen && (
           <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-slate-800 animate-fade-in-up">
             <a href="/#trial" className="flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
-              <span className="flex items-center gap-2">🌱 7D Living Food Trial</span>
+              <span className="flex items-center gap-2">🌱 7D Fresh Nutrition Trial</span>
               <span className="text-xs px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-black">₹451</span>
             </a>
             <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" onClick={() => setMobileOpen(false)}>

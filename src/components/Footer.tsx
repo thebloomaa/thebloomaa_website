@@ -29,7 +29,7 @@ export default function Footer() {
               </div>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>
-              Nourished with motherly care. Macro-calibrated, chef-prepared fitness diet preps and cellular living foods delivered fresh across Patna every morning (6 AM – 9 AM).
+              Nourished with motherly care. Macro-calibrated, chef-prepared fitness diet preps, fresh sprouted salads, and natural raw nutrition delivered daily across Patna (6 AM – 9 AM).
             </p>
           </div>
 

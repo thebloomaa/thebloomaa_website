@@ -49,13 +49,13 @@ export default function LandingHero() {
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
         {/* Primary Headline */}
-        <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] mb-6 text-slate-100 animate-fade-in-up">
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.2] mb-5 text-slate-100 animate-fade-in-up">
           Bloom your life with <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">BlooMaa</span>
         </h1>
 
         {/* Sub-headline */}
-        <p className="max-w-2xl mx-auto text-base sm:text-lg leading-relaxed mb-8 text-slate-300 animate-fade-in-up-delay-2">
-          Cold-crafted living foods, sprouted nutrition boxes, and cellular enzyme resets delivered fresh across Patna every morning (6 AM – 9 AM). Zero cooked denatured oils, 100% biological vitality.
+        <p className="max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-8 text-slate-300 animate-fade-in-up-delay-2">
+          Cold-crafted fresh salads, sprouted nutrition boxes, and natural enzyme vitality delivered across Patna every morning (6 AM – 9 AM). Zero cooked denatured oils, 100% clean vitality.
         </p>
 
         {/* CTA Area: If verified, show "Claim 7D Trial" directly; otherwise "Check Delivery Zone" */}

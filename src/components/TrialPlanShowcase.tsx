@@ -53,13 +53,13 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
       <div className="text-center mb-8">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-3">
           <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
-          7 Days · 7 Cellular Targets · 100% Raw & Living
+          7 Days · 7 Cellular Targets · 100% Raw &amp; Fresh
         </div>
         <h3 className="text-2xl sm:text-3xl font-black text-slate-100 tracking-tight">
           The <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">Just Bloomed</span> 7D Trial
         </h3>
         <p className="text-xs sm:text-sm text-slate-400 max-w-xl mx-auto mt-2 leading-relaxed">
-          Experience 7 distinct daily living nutrient boxes crafted with cold-sprouted legumes, microgreens, and active enzymes for a full cellular gut reset.
+          Experience 7 distinct daily fresh nutrient boxes crafted with cold-sprouted legumes, microgreens, and active enzymes for a full cellular gut reset.
         </p>
       </div>
 
@@ -112,7 +112,7 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
               {/* Core Ingredients Micro-Badge */}
               <div className="pt-2 border-t border-slate-800/80 mt-2">
                 <span className="text-[10px] uppercase font-bold text-slate-500 block mb-1">
-                  Living Actives:
+                  Active Superfoods:
                 </span>
                 <p className="text-[11px] text-slate-300 leading-relaxed font-medium">
                   {box.highlightIngredients}

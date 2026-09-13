@@ -90,11 +90,11 @@ const offerings = [
 const faqs = [
   {
     q: 'What is the Just Bloomed 7D Trial Plan?',
-    a: 'It is a 7-day cellular nutrition reset featuring 7 distinct, completely raw living food boxes (sprouted seeds, microgreens, organic nuts, raw fruits) calibrated for enzyme vitality. Delivered over 6 delivery mornings with a double drop (6+1) on Day 6.',
+    a: 'It is a 7-day cellular nutrition reset featuring 7 distinct, completely fresh & raw food boxes (sprouted seeds, microgreens, organic nuts, raw fruits) calibrated for enzyme vitality. Delivered over 6 delivery mornings with a double drop (6+1) on Day 6.',
   },
   {
     q: 'How early is the morning drop?',
-    a: 'Our in-house Patna delivery fleet drops your fresh living box between 6:00 AM and 9:00 AM every morning, right before your morning workout or workday starts.',
+    a: 'Our in-house Patna delivery fleet drops your fresh nutrition box between 6:00 AM and 9:00 AM every morning, right before your morning workout or workday starts.',
   },
   {
     q: 'Can I pause or skip a delivery day?',
@@ -110,7 +110,7 @@ const faqs = [
   },
   {
     q: 'Are the items cooked or processed?',
-    a: 'No! The Just Bloomed Trial is 100% raw, cold-prepared, and living. Zero heating, zero refined oils, and zero preservatives to ensure intact digestive enzymes.',
+    a: 'No! The Just Bloomed Trial is 100% raw, fresh, and cold-prepared. Zero heating, zero refined oils, and zero preservatives to ensure intact digestive enzymes.',
   },
 ];
 
@@ -173,10 +173,10 @@ export default function Home() {
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Living Food Plans</span>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Fresh Nutrition Plans</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">Choose Your Vitality Reset</h2>
             <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
-              Cold-prepared living raw boxes and personalized biological age analysis for Patna health-seekers.
+              Cold-prepared fresh &amp; raw diet boxes and personalized biological age analysis for Patna health-seekers.
             </p>
           </div>
 
