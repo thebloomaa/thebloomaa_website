@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "studio": "prisma studio",
-    "view-data": "tsx src/scripts/view-data.ts"
+    "view-data": "npx tsx src/scripts/view-data.ts",
+    "sync-admin": "npx tsx src/scripts/seed-admin.ts"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
