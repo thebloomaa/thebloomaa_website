@@ -117,11 +117,37 @@ export default function AdminZonesPage() {
                 {zone.isActive ? 'Active' : 'Disabled'}
               </span>
             </div>
-            <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{zone.city}, {zone.state}</p>
-            <div className="flex items-center justify-between mb-4 py-2 px-3 rounded-lg" style={{ background: 'var(--bg-dark)' }}>
+            <div className="flex items-center justify-between mb-3 py-2 px-3 rounded-lg" style={{ background: 'var(--bg-dark)' }}>
               <span className="text-xs" style={{ color: 'var(--text-muted)' }}>Active Orders</span>
               <span className="text-sm font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>{zone.orders}</span>
             </div>
+
+            {/* Assigned Rider info */}
+            <div className="mb-4 p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
+                <span>Designated Rider</span>
+                {zone.assignedRider && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+              </div>
+              {zone.assignedRider ? (
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                    <span>🚴</span>
+                    <span>{zone.assignedRider.name}</span>
+                  </span>
+                  <span className="text-[10px] font-mono text-slate-400">
+                    {zone.assignedRider.vehicleType}
+                  </span>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between text-[11px]">
+                  <span className="text-amber-400/90 font-medium">⚠️ No rider assigned</span>
+                  <a href="/admin/riders" className="text-amber-400 hover:underline font-bold text-[10px]">
+                    Assign →
+                  </a>
+                </div>
+              )}
+            </div>
+
             <div className="flex gap-2">
               <button onClick={() => toggleZone(zone.id, zone.isActive)} className="flex-1 py-2 rounded-lg text-xs font-semibold transition-all" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
                 {zone.isActive ? 'Disable' : 'Enable'}

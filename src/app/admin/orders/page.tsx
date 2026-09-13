@@ -6,9 +6,12 @@ type OrderStatus = 'QUEUED' | 'DELIVERED' | 'FAILED' | 'SKIPPED';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
+  const [allRiders, setAllRiders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [autoAssigning, setAutoAssigning] = useState(false);
+  const [autoAssignMsg, setAutoAssignMsg] = useState<string | null>(null);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -16,6 +19,7 @@ export default function AdminOrdersPage() {
       const res = await fetch(`/api/admin/orders?status=${statusFilter}`);
       const data = await res.json();
       if (data.orders) setOrders(data.orders);
+      if (data.allRiders) setAllRiders(data.allRiders);
     } catch (err) {
       console.error('Failed to fetch admin orders:', err);
     } finally {
@@ -44,6 +48,45 @@ export default function AdminOrdersPage() {
     }
   };
 
+  const handleAssignRider = async (orderId: string, riderId: string) => {
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, riderId: riderId || null }),
+      });
+      if (res.ok) {
+        const selectedRider = allRiders.find((r) => r.id === riderId) || null;
+        setOrders((prev) =>
+          prev.map((o) => (o.id === orderId ? { ...o, rider: selectedRider, riderId: riderId || null } : o))
+        );
+      }
+    } catch (err) {
+      alert('Failed to assign rider');
+    }
+  };
+
+  const handleAutoAssign = async () => {
+    setAutoAssigning(true);
+    setAutoAssignMsg(null);
+    try {
+      const res = await fetch('/api/admin/riders/auto-assign', {
+        method: 'POST',
+      });
+      const data = await res.json();
+      if (res.ok) {
+        setAutoAssignMsg(`Auto-routed ${data.assignedCount} order(s) by zone!`);
+        fetchOrders();
+      } else {
+        setAutoAssignMsg(data.error || 'Failed to auto-assign orders.');
+      }
+    } catch {
+      setAutoAssignMsg('Network error while auto-assigning.');
+    } finally {
+      setAutoAssigning(false);
+    }
+  };
+
   const filteredOrders = orders.filter((o) => {
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
@@ -68,6 +111,15 @@ export default function AdminOrdersPage() {
         </div>
 
         <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={handleAutoAssign}
+            disabled={autoAssigning}
+            className="px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+          >
+            <span>⚡</span>
+            <span>{autoAssigning ? 'Routing...' : 'Auto-Assign by Zone'}</span>
+          </button>
           <input
             type="text"
             placeholder="Search customer, phone, PIN..."
@@ -77,12 +129,20 @@ export default function AdminOrdersPage() {
           />
           <button
             onClick={fetchOrders}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer"
           >
             Refresh
           </button>
         </div>
       </div>
+
+      {/* Auto-assign feedback banner */}
+      {autoAssignMsg && (
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between animate-fade-in">
+          <span>✓ {autoAssignMsg}</span>
+          <button onClick={() => setAutoAssignMsg(null)} className="font-bold text-emerald-400 cursor-pointer">✕</button>
+        </div>
+      )}
 
       {/* Filter Tabs */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
@@ -120,6 +180,7 @@ export default function AdminOrdersPage() {
                   <th className="p-4">Delivery Zone</th>
                   <th className="p-4">Meal Item</th>
                   <th className="p-4">Slot &amp; Logistics Note</th>
+                  <th className="p-4">Assigned Rider</th>
                   <th className="p-4">Status</th>
                   <th className="p-4 text-right">Actions</th>
                 </tr>
@@ -170,6 +231,27 @@ export default function AdminOrdersPage() {
                           <div className="p-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold">
                             ⚠️ {order.deliveryNote}
                           </div>
+                        )}
+                      </td>
+
+                      {/* Assigned Rider Column */}
+                      <td className="p-4">
+                        <select
+                          value={order.riderId || ''}
+                          onChange={(e) => handleAssignRider(order.id, e.target.value)}
+                          className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-xs font-bold text-slate-200 focus:outline-none focus:border-amber-400 max-w-[150px]"
+                        >
+                          <option value="">Unassigned</option>
+                          {allRiders.map((r) => (
+                            <option key={r.id} value={r.id}>
+                              {r.name} ({r.vehicleType})
+                            </option>
+                          ))}
+                        </select>
+                        {order.rider && (
+                          <span className="block text-[10px] font-mono text-emerald-400 mt-1">
+                            📱 {order.rider.phone}
+                          </span>
                         )}
                       </td>
 

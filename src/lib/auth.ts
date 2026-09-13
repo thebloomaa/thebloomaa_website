@@ -31,8 +31,8 @@ export const authOptions: NextAuthOptions = {
         // -------------------------------------------------------------
         if (credentials.password) {
           const submittedPass = credentials.password.trim();
-          const configuredAdminEmail = (process.env.ADMIN_EMAIL || 'admin@thebloomaa.com').trim().toLowerCase();
-          const configuredAdminPass = process.env.ADMIN_SECRET_PASSWORD || 'BloomaaAdmin@2026!';
+          const configuredAdminEmail = (process.env.ADMIN_EMAIL || 'thebloomaa@gmail.com').trim().toLowerCase();
+          const configuredAdminPass = process.env.ADMIN_SECRET_PASSWORD || 'TheBlooMaa@2026!';
 
           const isEnvMatch =
             identifier === configuredAdminEmail &&
@@ -40,37 +40,42 @@ export const authOptions: NextAuthOptions = {
 
           let adminUser = await prisma.user.findFirst({
             where: {
-              OR: [
-                { email: identifier },
-                { role: 'ADMIN' },
-              ],
+              email: identifier,
+              role: 'ADMIN',
             },
           });
 
-          const isDbMatch =
-            Boolean(adminUser?.password && adminUser.password === submittedPass && adminUser.role === 'ADMIN');
+          const isDbMatch = Boolean(adminUser?.password && adminUser.password === submittedPass);
 
           if (!isEnvMatch && !isDbMatch) {
             return null;
           }
 
-          // Ensure Admin user exists in DB with role ADMIN
           if (!adminUser) {
-            adminUser = await prisma.user.create({
-              data: {
-                email: configuredAdminEmail,
-                name: 'Thebloomaa Master Admin',
-                role: 'ADMIN',
-                password: configuredAdminPass,
-              },
-            });
-          } else if (adminUser.role !== 'ADMIN' || adminUser.password !== configuredAdminPass) {
+            const anyAdmin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+            if (anyAdmin) {
+              adminUser = await prisma.user.update({
+                where: { id: anyAdmin.id },
+                data: {
+                  email: configuredAdminEmail,
+                  password: configuredAdminPass,
+                  role: 'ADMIN',
+                },
+              });
+            } else {
+              adminUser = await prisma.user.create({
+                data: {
+                  email: configuredAdminEmail,
+                  name: 'Thebloomaa Master Admin',
+                  role: 'ADMIN',
+                  password: configuredAdminPass,
+                },
+              });
+            }
+          } else if (adminUser.password !== submittedPass) {
             adminUser = await prisma.user.update({
               where: { id: adminUser.id },
-              data: {
-                role: 'ADMIN',
-                password: configuredAdminPass,
-              },
+              data: { password: submittedPass },
             });
           }
 

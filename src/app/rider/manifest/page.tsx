@@ -1,220 +1,388 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 
-type OrderStatus = 'QUEUED' | 'DELIVERED' | 'FAILED';
+interface StopItem {
+  id: string;
+  stopNumber: number;
+  customer: string;
+  phone: string;
+  street: string;
+  pincode: string;
+  city: string;
+  gpsCoords: string | null;
+  mapsUrl: string;
+  meal: string;
+  calories: number;
+  dietary: string;
+  time: string;
+  deliveryNote?: string | null;
+  status: 'QUEUED' | 'DELIVERED' | 'FAILED';
+}
 
-const statusStyles: Record<OrderStatus, { bg: string; color: string; label: string }> = {
-  QUEUED: { bg: 'rgba(96, 165, 250, 0.12)', color: '#93C5FD', label: 'Queued' },
-  DELIVERED: { bg: 'rgba(16, 185, 129, 0.12)', color: '#6EE7B7', label: 'Delivered' },
-  FAILED: { bg: 'rgba(239, 68, 68, 0.12)', color: '#FCA5A5', label: 'Failed' },
-};
+interface RiderManifestData {
+  date: string;
+  rider: {
+    id: string;
+    name: string;
+    phone: string;
+    vehicleType: string;
+    vehicleNumber: string;
+    assignedZone: string;
+  } | null;
+  stops: StopItem[];
+  totalStops: number;
+  deliveredCount: number;
+  failedCount: number;
+  pendingCount: number;
+}
 
 export default function RiderManifestPage() {
-  const [routes, setRoutes] = useState<any[]>([]);
+  const [data, setData] = useState<RiderManifestData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [date, setDate] = useState('');
+  const [filter, setFilter] = useState<'ALL' | 'PENDING' | 'DELIVERED'>('ALL');
+  const [updatingId, setUpdatingId] = useState<string | null>(null);
 
-  // Stats
-  const [pendingCount, setPendingCount] = useState(0);
-  const [deliveredCount, setDeliveredCount] = useState(0);
-  const [failedCount, setFailedCount] = useState(0);
-  const [totalOrders, setTotalOrders] = useState(0);
+  const fetchManifest = async () => {
+    try {
+      const res = await fetch('/api/rider/manifest');
+      if (res.ok) {
+        const result = await res.json();
+        setData(result);
+      }
+    } catch (err) {
+      console.error('Failed to fetch manifest:', err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  React.useEffect(() => {
-    fetch('/api/rider/manifest')
-      .then(res => res.json())
-      .then(data => {
-        if (data.routes) {
-          setRoutes(data.routes);
-          setDate(data.date);
-          
-          const total = data.routes.reduce((acc: number, r: any) => acc + r.orders.length, 0);
-          setTotalOrders(total);
-          
-          let del = 0, fail = 0;
-          data.routes.forEach((r: any) => {
-            r.orders.forEach((o: any) => {
-              if (o.status === 'DELIVERED') del++;
-              if (o.status === 'FAILED') fail++;
-            });
-          });
-          setDeliveredCount(del);
-          setFailedCount(fail);
-          setPendingCount(total - del - fail);
-        }
-        setLoading(false);
-      });
+  useEffect(() => {
+    fetchManifest();
   }, []);
 
-  const updateOrderStatus = async (pincode: string, orderId: string, newStatus: 'DELIVERED' | 'FAILED') => {
+  const handleUpdateStatus = async (orderId: string, newStatus: 'DELIVERED' | 'FAILED') => {
+    setUpdatingId(orderId);
     try {
       const res = await fetch('/api/rider/manifest', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, status: newStatus }),
       });
+
       if (res.ok) {
-        setRoutes(prev =>
-          prev.map((route: any) => {
-            if (route.pincode !== pincode) return route;
-            return {
-              ...route,
-              orders: route.orders.map((o: any) =>
-                o.id === orderId ? { ...o, status: newStatus } : o
-              ),
-            };
-          })
-        );
-        if (newStatus === 'DELIVERED') setDeliveredCount(c => c + 1);
-        if (newStatus === 'FAILED') setFailedCount(c => c + 1);
-        setPendingCount(c => c - 1);
+        setData((prev) => {
+          if (!prev) return null;
+          const updatedStops = prev.stops.map((s) =>
+            s.id === orderId ? { ...s, status: newStatus } : s
+          );
+          const deliveredCount = updatedStops.filter((s) => s.status === 'DELIVERED').length;
+          const failedCount = updatedStops.filter((s) => s.status === 'FAILED').length;
+          const pendingCount = updatedStops.filter((s) => s.status === 'QUEUED').length;
+
+          return {
+            ...prev,
+            stops: updatedStops,
+            deliveredCount,
+            failedCount,
+            pendingCount,
+          };
+        });
       }
-    } catch (error) {
-      console.error('Failed to update order status:', error);
+    } catch (err) {
+      console.error('Failed to update stop status:', err);
+    } finally {
+      setUpdatingId(null);
     }
   };
 
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('thebloomaa_rider_id');
+      localStorage.removeItem('thebloomaa_rider_name');
+      localStorage.removeItem('thebloomaa_rider_zone');
+      document.cookie = 'thebloomaa_rider_id=; path=/; max-age=0';
+    }
+    window.location.href = '/rider';
+  };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#070b14] text-slate-100">
+        <div className="w-10 h-10 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-xs font-mono text-slate-400">Loading delivery stops & GPS route...</p>
+      </div>
+    );
+  }
+
+  const stops = data?.stops || [];
+  const filteredStops = stops.filter((s) => {
+    if (filter === 'PENDING') return s.status === 'QUEUED';
+    if (filter === 'DELIVERED') return s.status === 'DELIVERED';
+    return true;
+  });
+
+  const completionPct =
+    data && data.totalStops > 0
+      ? Math.round((data.deliveredCount / data.totalStops) * 100)
+      : 0;
+
   return (
-    <main className="min-h-screen px-4 py-6" style={{ background: 'var(--bg-dark)' }}>
-      <div className="max-w-2xl mx-auto">
-        {loading ? (
-          <div className="text-center py-20 text-[var(--text-muted)]">Loading manifest...</div>
-        ) : (
-          <>
-        {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-2xl">🚴</span>
-              <h1 className="text-xl font-black">Today&apos;s Manifest</h1>
+    <main className="min-h-screen bg-[#070b14] text-slate-100 pb-20 px-3 sm:px-6 pt-4 max-w-xl mx-auto">
+      {/* Top Rider Header */}
+      <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-11 h-11 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-xl">
+              🚴
             </div>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{date} · Hi, Rider!</p>
+            <div>
+              <div className="flex items-center gap-1.5">
+                <h1 className="text-sm font-black text-white">
+                  {data?.rider?.name || 'Patna Rider'}
+                </h1>
+                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+              </div>
+              <p className="text-[11px] font-mono text-slate-400">
+                {data?.rider?.vehicleType} · {data?.rider?.vehicleNumber}
+              </p>
+            </div>
           </div>
-          <button className="px-3 py-1.5 rounded-lg text-xs font-semibold" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)', border: '1px solid var(--border-subtle)' }}>
+
+          <button
+            type="button"
+            onClick={handleLogout}
+            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 border border-slate-800 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+          >
             Logout
           </button>
         </div>
 
-        {/* Stats Bar */}
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(96, 165, 250, 0.08)', border: '1px solid rgba(96, 165, 250, 0.15)' }}>
-            <p className="text-lg font-black" style={{ fontFamily: 'var(--font-mono)', color: '#93C5FD' }}>{pendingCount}</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#93C5FD' }}>Pending</p>
+        {/* Assigned Zone banner */}
+        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-1.5">
+            <span className="text-amber-400">📍</span>
+            <span className="font-bold text-slate-200">
+              Zone: {data?.rider?.assignedZone || 'All Patna'}
+            </span>
           </div>
-          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.15)' }}>
-            <p className="text-lg font-black" style={{ fontFamily: 'var(--font-mono)', color: '#6EE7B7' }}>{deliveredCount}</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#6EE7B7' }}>Delivered</p>
-          </div>
-          <div className="rounded-xl p-3 text-center" style={{ background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.15)' }}>
-            <p className="text-lg font-black" style={{ fontFamily: 'var(--font-mono)', color: '#FCA5A5' }}>{failedCount}</p>
-            <p className="text-[10px] font-semibold uppercase tracking-wider" style={{ color: '#FCA5A5' }}>Failed</p>
-          </div>
+          <span className="font-mono text-[11px] text-slate-400">{data?.date}</span>
+        </div>
+      </div>
+
+      {/* Progress & Quick Stats */}
+      <div className="p-4 rounded-3xl bg-slate-900/90 border border-slate-800 mb-4 shadow-lg">
+        <div className="flex items-center justify-between text-xs mb-2">
+          <span className="font-bold text-slate-300">Shift Completion</span>
+          <span className="font-mono font-bold text-emerald-400">{completionPct}% Done</span>
+        </div>
+        <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800 mb-4">
+          <div
+            className="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500"
+            style={{ width: `${completionPct}%` }}
+          />
         </div>
 
-        {/* Progress */}
-        <div className="mb-6">
-          <div className="flex justify-between text-xs mb-1.5" style={{ color: 'var(--text-muted)' }}>
-            <span>Completion</span>
-            <span>{deliveredCount + failedCount} / {totalOrders}</span>
+        <div className="grid grid-cols-3 gap-2 text-center">
+          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800">
+            <p className="text-lg font-black font-mono text-blue-400">
+              {data?.pendingCount || 0}
+            </p>
+            <p className="text-[10px] uppercase font-bold text-slate-400">Pending</p>
           </div>
-          <div className="h-2 rounded-full overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
-            <div className="h-full rounded-full transition-all duration-500" style={{ width: `${((deliveredCount + failedCount) / totalOrders) * 100}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
+          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-emerald-500/20">
+            <p className="text-lg font-black font-mono text-emerald-400">
+              {data?.deliveredCount || 0}
+            </p>
+            <p className="text-[10px] uppercase font-bold text-emerald-400/80">Delivered</p>
+          </div>
+          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800">
+            <p className="text-lg font-black font-mono text-slate-100">
+              {data?.totalStops || 0}
+            </p>
+            <p className="text-[10px] uppercase font-bold text-slate-400">Total Stops</p>
           </div>
         </div>
+      </div>
 
-        {/* Routes grouped by pincode */}
-        <div className="space-y-6">
-          {routes.map((route: any) => (
-            <div key={route.pincode}>
-              {/* Route Header */}
-              <div className="flex items-center gap-2 mb-3">
-                <span className="text-sm">📍</span>
-                <h2 className="text-sm font-bold">{route.neighborhood}</h2>
-                <span className="px-2 py-0.5 rounded-md text-[10px] font-bold" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>
-                  {route.pincode}
-                </span>
-                <span className="text-xs" style={{ color: 'var(--text-muted)' }}>· {route.orders.length} orders</span>
+      {/* Filter Tabs */}
+      <div className="flex gap-2 mb-4">
+        {[
+          { key: 'ALL', label: `All Stops (${stops.length})` },
+          { key: 'PENDING', label: `Pending (${data?.pendingCount || 0})` },
+          { key: 'DELIVERED', label: `Delivered (${data?.deliveredCount || 0})` },
+        ].map((tab) => (
+          <button
+            key={tab.key}
+            onClick={() => setFilter(tab.key as any)}
+            className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+              filter === tab.key
+                ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/10'
+                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+            }`}
+          >
+            {tab.label}
+          </button>
+        ))}
+      </div>
+
+      {/* Delivery Stops List */}
+      {filteredStops.length === 0 ? (
+        <div className="p-12 text-center rounded-3xl bg-slate-900/60 border border-slate-800 text-slate-400 text-xs">
+          <p className="text-2xl mb-2">🎉</p>
+          <p className="font-bold text-slate-200">No stops in this view!</p>
+          <p className="text-[11px] text-slate-500 mt-1">
+            {filter === 'PENDING'
+              ? 'All deliveries for your current zone are completed.'
+              : 'No orders dispatched for this criteria yet.'}
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-3">
+          {filteredStops.map((stop) => {
+            const isDelivered = stop.status === 'DELIVERED';
+            const isFailed = stop.status === 'FAILED';
+
+            return (
+              <div
+                key={stop.id}
+                className={`rounded-3xl p-5 border transition-all ${
+                  isDelivered
+                    ? 'bg-emerald-950/20 border-emerald-500/30'
+                    : isFailed
+                    ? 'bg-red-950/20 border-red-500/30'
+                    : 'bg-slate-900/90 border-slate-800 shadow-md'
+                }`}
+              >
+                {/* Stop Header */}
+                <div className="flex items-start justify-between mb-3">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-1 rounded-xl text-xs font-black bg-slate-950 text-amber-400 border border-slate-800 font-mono">
+                      STOP #{stop.stopNumber}
+                    </span>
+                    <span className="text-xs font-bold text-slate-200">{stop.customer}</span>
+                  </div>
+
+                  <span
+                    className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      isDelivered
+                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                        : isFailed
+                        ? 'bg-red-500/20 text-red-400 border border-red-500/40'
+                        : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
+                    }`}
+                  >
+                    {stop.status}
+                  </span>
+                </div>
+
+                {/* Delivery Address */}
+                <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 mb-3">
+                  <p className="text-xs font-semibold text-slate-200 leading-relaxed">
+                    {stop.street}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1.5 text-[11px] text-slate-400 font-mono">
+                    <span className="text-amber-400 font-bold">PIN: {stop.pincode}</span>
+                    <span>• {stop.city}</span>
+                    {stop.gpsCoords && <span>• 📍 GPS Pinned</span>}
+                  </div>
+                </div>
+
+                {/* Meal Info & Special Notes */}
+                <div className="flex items-center justify-between text-xs mb-3 text-slate-300">
+                  <div className="flex items-center gap-1.5">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                      {stop.dietary}
+                    </span>
+                    <span className="font-bold text-xs">{stop.meal}</span>
+                  </div>
+                  <span className="font-mono text-[11px] text-slate-400">
+                    ⏰ {stop.time}
+                  </span>
+                </div>
+
+                {stop.deliveryNote && (
+                  <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-medium mb-3">
+                    💬 Note: {stop.deliveryNote}
+                  </div>
+                )}
+
+                {/* Action Buttons: Google Maps, Call, WhatsApp */}
+                <div className="grid grid-cols-3 gap-2 mb-3">
+                  <a
+                    href={stop.mapsUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2.5 px-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 transition-all flex items-center justify-center gap-1 shadow-sm"
+                  >
+                    <span>🗺️</span>
+                    <span>Maps ↗</span>
+                  </a>
+
+                  {stop.phone ? (
+                    <>
+                      <a
+                        href={`tel:${stop.phone}`}
+                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 text-slate-200 transition-all flex items-center justify-center gap-1"
+                      >
+                        <span>📞</span>
+                        <span>Call</span>
+                      </a>
+                      <a
+                        href={`https://wa.me/91${stop.phone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-slate-950 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-1"
+                      >
+                        <span>💬</span>
+                        <span>WhatsApp</span>
+                      </a>
+                    </>
+                  ) : (
+                    <span className="col-span-2 py-2.5 text-center text-xs text-slate-500 bg-slate-950 rounded-xl border border-slate-800">
+                      No Phone on file
+                    </span>
+                  )}
+                </div>
+
+                {/* Delivery Completion Buttons */}
+                {!isDelivered && (
+                  <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2">
+                    <button
+                      type="button"
+                      disabled={updatingId === stop.id}
+                      onClick={() => handleUpdateStatus(stop.id, 'DELIVERED')}
+                      className="flex-1 py-2.5 px-3 rounded-xl font-black text-xs bg-emerald-400 hover:bg-emerald-300 text-slate-950 shadow-md shadow-emerald-400/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
+                    >
+                      <span>✓</span>
+                      <span>Mark Delivered</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      disabled={updatingId === stop.id}
+                      onClick={() => handleUpdateStatus(stop.id, 'FAILED')}
+                      className="py-2.5 px-3 rounded-xl font-bold text-xs bg-slate-950 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all cursor-pointer disabled:opacity-50"
+                    >
+                      Report Issue
+                    </button>
+                  </div>
+                )}
               </div>
-
-              {/* Order Cards */}
-              <div className="space-y-3">
-                {route.orders.map((order: any) => {
-                  const st = statusStyles[order.status as OrderStatus];
-                  const isCompleted = order.status !== 'QUEUED';
-                  return (
-                    <div key={order.id} className="rounded-xl p-4 transition-all" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)', opacity: isCompleted ? 0.6 : 1 }}>
-                      <div className="flex items-start justify-between mb-2">
-                        <div>
-                          <div className="flex items-center gap-2 mb-0.5">
-                            <span className="text-xs font-bold" style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{order.id}</span>
-                            <span className="px-2 py-0.5 rounded-md text-[9px] font-bold uppercase" style={{ background: st.bg, color: st.color }}>{st.label}</span>
-                          </div>
-                          <h3 className="text-sm font-bold">{order.customer}</h3>
-                        </div>
-                        <a href={`tel:${order.phone}`} className="w-8 h-8 rounded-lg flex items-center justify-center text-sm flex-shrink-0" style={{ background: 'rgba(16, 185, 129, 0.1)', color: '#6EE7B7' }}>
-                          📞
-                        </a>
-                      </div>
-                      <p className="text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
-                        ⏰ <span className="font-bold text-white">{order.time}</span> · 🥗 {order.meal} · 🔥 {order.calories} kcal
-                      </p>
-
-                      {order.address && (
-                        <div className="mb-2 text-xs text-slate-300 flex items-center justify-between gap-2 bg-slate-900/60 p-2 rounded-lg border border-slate-800">
-                          <span className="truncate text-[11px]">📍 {order.address}</span>
-                          <a
-                            href={`https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-                              order.address.includes('GPS:')
-                                ? order.address.split('GPS:')[1]?.split('|')[0]?.trim() || order.address
-                                : `${order.address}, Patna`
-                            )}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="px-2 py-1 rounded bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 text-[10px] font-bold hover:bg-emerald-500/30 transition-all shrink-0 flex items-center gap-1"
-                          >
-                            <span>🗺️ Map</span>
-                            <span>↗</span>
-                          </a>
-                        </div>
-                      )}
-
-                      {order.deliveryNote && (
-                        <div className="mb-3 p-2 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-xs font-bold flex items-center gap-1.5">
-                          <span>⚠️</span>
-                          <span>{order.deliveryNote}</span>
-                        </div>
-                      )}
-
-                      {!isCompleted && (
-                        <div className="flex gap-2">
-                          <button onClick={() => updateOrderStatus(route.pincode, order.id, 'DELIVERED')}
-                            className="flex-1 py-2 rounded-lg text-xs font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            style={{ background: 'var(--brand-primary)' }}>
-                            ✓ Delivered
-                          </button>
-                          <button onClick={() => updateOrderStatus(route.pincode, order.id, 'FAILED')}
-                            className="py-2 px-4 rounded-lg text-xs font-bold transition-all hover:scale-[1.02] active:scale-[0.98]"
-                            style={{ background: 'rgba(239, 68, 68, 0.12)', color: '#FCA5A5', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                            ✕ Failed
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
+      )}
 
-        {routes.length === 0 && (
-          <div className="text-center py-10 text-[var(--text-muted)] border rounded-xl" style={{ borderColor: 'var(--border-subtle)' }}>
-            No orders queued for today.
-          </div>
-        )}
-        </>
-        )}
+      {/* Floating Bottom Link to site */}
+      <div className="mt-8 text-center">
+        <Link
+          href="/"
+          className="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors"
+        >
+          thebloomaa Patna Kitchen Dispatch • 2026
+        </Link>
       </div>
     </main>
   );

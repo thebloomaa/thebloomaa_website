@@ -8,7 +8,7 @@ import { signIn } from 'next-auth/react';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@thebloomaa.com');
+  const [email, setEmail] = useState('thebloomaa@gmail.com');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);

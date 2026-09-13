@@ -43,8 +43,13 @@ model Rider {
   name          String
   phone         String         @unique
   active        Boolean        @default(true)
+  vehicleType   String?        @default("Bike")
+  vehicleNumber String?
+  assignedZoneId String?
+  assignedZone  DeliveryZone?  @relation(fields: [assignedZoneId], references: [id])
   deliveries    Order[]        
   createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt @default(now())
 }
 
 model Address {
@@ -142,12 +147,14 @@ model Payment {
 }
 
 model DeliveryZone {
-  id         String   @id @default(uuid())
-  pincode    String   @unique
+  id           String   @id @default(uuid())
+  pincode      String   @unique
   neighborhood String?
-  city       String
-  state      String
-  isActive   Boolean  @default(true)
+  city         String
+  state        String
+  isActive     Boolean  @default(true)
+  riders       Rider[]
+  createdAt    DateTime @default(now())
 }
 
 

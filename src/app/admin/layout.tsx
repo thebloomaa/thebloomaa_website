@@ -8,6 +8,7 @@ import { useSession, signOut } from 'next-auth/react';
 
 const navItems = [
   { href: '/admin', label: 'Overview & Directory', icon: '📊' },
+  { href: '/admin/riders', label: 'Delivery Fleet & Riders', icon: '🚴' },
   { href: '/admin/products', label: 'Meal Products', icon: '🥗' },
   { href: '/admin/zones', label: 'Delivery Zones', icon: '📍' },
   { href: '/admin/orders', label: 'Order Dispatch', icon: '📦' },
