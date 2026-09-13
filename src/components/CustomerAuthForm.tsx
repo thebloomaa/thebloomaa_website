@@ -229,7 +229,8 @@ export default function CustomerAuthForm() {
     if (res?.error) {
       setErrorMsg('Invalid verification code. Please check your code or use 123456 in dev mode.');
     } else {
-      router.push('/menu');
+      const callback = searchParams.get('callbackUrl') || '/#trial';
+      router.push(callback);
       router.refresh();
     }
   };

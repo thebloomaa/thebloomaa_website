@@ -1,111 +1,122 @@
 import Link from 'next/link';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
-import ProductCard from '@/components/ProductCard';
 import LandingHero from '@/components/LandingHero';
 import BioCalculatorTeaser from '@/components/BioCalculatorTeaser';
 import TrialPlanShowcase from '@/components/TrialPlanShowcase';
-import { prisma } from '@/lib/prisma';
 
 const steps = [
   {
     icon: '📍',
-    title: 'Check Your Area',
-    description: 'Enter your pincode to see if we deliver fresh meals to your neighborhood in Patna.',
+    title: '1. Check Delivery Area',
+    description: 'Enter your 6-digit pincode to verify morning cloud kitchen coverage in Patna (Boring Rd, Kankarbagh, Patliputra).',
   },
   {
-    icon: '🥗',
-    title: 'Pick Your Plan',
-    description: 'Choose from high protein, keto, or balanced meals. Select a 7, 15, or 30-day prepaid bundle.',
+    icon: '🌱',
+    title: '2. Claim 7-Day Reset',
+    description: 'Experience 7 unique living enzyme raw boxes, cold-prepared daily to reset your gut microbiome and cellular age.',
   },
   {
     icon: '🚀',
-    title: 'Get It Fresh Daily',
-    description: 'Your macro-tracked meal prep is delivered to your door every morning between 6–9 AM.',
+    title: '3. Fresh Morning Drop',
+    description: 'Chef-crafted living nutrition delivered to your doorstep every morning between 6:00 AM – 9:00 AM.',
   },
 ];
 
 const stats = [
-  { value: '5,000+', label: 'Meals Delivered' },
+  { value: '5,000+', label: 'Boxes Delivered' },
   { value: '500+', label: 'Active Subscribers' },
-  { value: '6 AM', label: 'First Delivery' },
-  { value: '98%', label: 'On-Time Rate' },
+  { value: '6 AM', label: 'First Morning Drop' },
+  { value: '98%', label: 'On-Time Fleet Rate' },
 ];
 
-const bundles = [
+const offerings = [
   {
-    name: 'Starter',
-    bundleType: 'DAYS_7',
-    days: 7,
-    perDay: '₹250',
-    total: '₹1,750',
-    features: ['7 morning deliveries', 'Macro-tracked meals', 'Skip any day', 'WhatsApp support'],
+    name: 'Bio Calculator & Diet Assessment',
+    type: 'CALCULATOR',
+    tag: 'Free Tool',
+    perDay: '₹0',
+    total: '100% Free',
+    period: 'Instant Assessment',
+    features: [
+      'Mifflin-St Jeor metabolic BMR & TDEE calculation',
+      'Biological Diet Age delta (+3 to +5 yr cooked penalty)',
+      'Raw living enzyme vs denatured food ratio audit',
+      'Custom Patna nutrition recommendation',
+    ],
     popular: false,
+    ctaText: 'Run Free Calculator →',
+    ctaHref: '/calculator',
   },
   {
-    name: 'Committed',
-    bundleType: 'DAYS_15',
-    days: 15,
-    perDay: '₹230',
-    total: '₹3,450',
-    features: ['15 morning deliveries', 'Macro-tracked meals', 'Skip any day', 'Priority support', 'Free nutrition consult'],
+    name: 'Just Bloomed 7-Day Living Trial',
+    type: 'TRIAL',
+    tag: 'Most Popular',
+    perDay: '₹64',
+    total: '₹451',
+    period: '7-day living reset',
+    features: [
+      '7 goal-targeted living enzyme boxes (Sprouts, Raw Greens, Seeds)',
+      'Chef cold-prepared daily at 5:00 AM, zero cooked oil',
+      'Morning 6:00 AM – 9:00 AM doorstep delivery in Patna',
+      'Unique 6+1 physical drop (2 boxes on Day 6 for weekend vitality)',
+      'Flexible 8:30 PM cutoff to pause or skip any morning',
+      'Free WhatsApp nutrition consultation',
+    ],
     popular: true,
+    ctaText: 'Claim 7D Trial (₹451) →',
+    ctaHref: '#trial',
   },
   {
-    name: 'All-In',
-    bundleType: 'DAYS_30',
-    days: 30,
-    perDay: '₹200',
-    total: '₹6,000',
-    features: ['30 morning deliveries', 'Macro-tracked meals', 'Skip any day', 'Dedicated support', 'Free nutrition consult', 'Custom meal tweaks'],
+    name: 'Corporate & Team Vitality Reset',
+    type: 'CORPORATE',
+    tag: 'Teams & Clinics',
+    perDay: 'Custom',
+    total: 'On Demand',
+    period: 'Flexible team schedule',
+    features: [
+      'Bulk living raw enzyme boxes for office desks & gyms',
+      'Dedicated morning fleet dispatch across Patna',
+      'Eliminates 2 PM carb crashes & boosts employee focus',
+      'Custom allergen & dietary preference alignment',
+      'Dedicated wellness concierge support',
+    ],
     popular: false,
+    ctaText: 'Inquire on WhatsApp →',
+    ctaHref: 'https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20am%20interested%20in%20a%20Corporate%20Living%20Food%20Reset%20for%20our%20team%20in%20Patna.',
   },
 ];
 
 const faqs = [
   {
-    q: 'How early are meals delivered?',
-    a: 'Our in-house delivery fleet delivers all meal preps between 6:00 AM and 9:00 AM every morning, so your food is ready before you start your day.',
+    q: 'What is the Just Bloomed 7D Trial Plan?',
+    a: 'It is a 7-day cellular nutrition reset featuring 7 distinct, completely raw living food boxes (sprouted seeds, microgreens, organic nuts, raw fruits) calibrated for enzyme vitality. Delivered over 6 delivery mornings with a double drop (6+1) on Day 6.',
+  },
+  {
+    q: 'How early is the morning drop?',
+    a: 'Our in-house Patna delivery fleet drops your fresh living box between 6:00 AM and 9:00 AM every morning, right before your morning workout or workday starts.',
   },
   {
     q: 'Can I pause or skip a delivery day?',
-    a: 'Absolutely! You can skip any upcoming day directly from your subscriber dashboard. Skipped days are added back to your bundle — you never lose a meal.',
+    a: 'Yes! With our 8:30 PM prior-evening cutoff, you can pause or reschedule any upcoming morning directly from your account. You never lose a meal.',
   },
   {
     q: 'How do I pay?',
-    a: 'We support UPI payments via PhonePe, GPay, and Paytm. You pay upfront for your chosen bundle (7, 15, or 30 days). We also support UPI AutoPay for renewals.',
+    a: 'We support UPI payments via PhonePe, GPay, Paytm, and UPI QR code directly at checkout.',
   },
   {
-    q: 'What areas do you deliver to?',
-    a: 'We currently serve select neighborhoods in Patna including Boring Road, Kankarbagh, and Patliputra. Use the pincode checker on this page to verify.',
+    q: 'What areas do you deliver to in Patna?',
+    a: 'We currently serve central Patna neighborhoods including Boring Road (800001), Kankarbagh (800020), and Patliputra (800013). Use the pincode checker on this page to confirm your address.',
   },
   {
-    q: 'Are the meals freshly prepared?',
-    a: 'Yes. Every meal is chef-prepared in our cloud kitchen the same morning and delivered fresh — never frozen, never reheated.',
+    q: 'Are the items cooked or processed?',
+    a: 'No! The Just Bloomed Trial is 100% raw, cold-prepared, and living. Zero heating, zero refined oils, and zero preservatives to ensure intact digestive enzymes.',
   },
 ];
 
-export const revalidate = 60; // Revalidate every 60 seconds
+export const revalidate = 60;
 
-export default async function Home() {
-  const dbProducts = await prisma.product.findMany({
-    where: { type: 'MEAL_PLAN' },
-    take: 3,
-  });
-
-  const meals = dbProducts.map(p => ({
-    id: p.id,
-    name: p.name,
-    description: p.description || '',
-    price: p.price,
-    calories: p.calories || 0,
-    protein: p.protein || 0,
-    carbs: p.carbs || 0,
-    fats: p.fats || 0,
-    dietaryPreference: p.dietaryPreference || 'VEG',
-    image: p.imageUrl || '/meals/chicken-prep.png',
-  }));
-
+export default function Home() {
   return (
     <>
       <Navbar />
@@ -151,25 +162,6 @@ export default async function Home() {
       {/* ===== BIO CALCULATOR TEASER ===== */}
       <BioCalculatorTeaser />
 
-      {/* ===== OUR MEALS ===== */}
-      <section id="meals" className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'linear-gradient(180deg, var(--bg-dark) 0%, #0B1120 100%)' }}>
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-accent)' }}>Fuel Your Goals</span>
-            <h2 className="text-3xl sm:text-4xl font-black mt-2">Our Signature Meals</h2>
-            <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
-              Every meal is macro-balanced, chef-prepared fresh daily, and delivered in eco-friendly packaging.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {meals.map(meal => (
-              <ProductCard key={meal.id} {...meal} />
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ===== 7-DAY TRIAL SHOWCASE ===== */}
       <section id="trial" className="py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
         <div className="max-w-6xl mx-auto">
@@ -177,63 +169,64 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ===== PRICING ===== */}
+      {/* ===== PRICING & OFFERINGS ===== */}
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-5xl mx-auto">
+        <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Prepaid Bundles</span>
-            <h2 className="text-3xl sm:text-4xl font-black mt-2">Choose Your Commitment</h2>
+            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Living Food Plans</span>
+            <h2 className="text-3xl sm:text-4xl font-black mt-2">Choose Your Vitality Reset</h2>
             <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
-              All plans include daily morning delivery, macro tracking, and the ability to skip any day.
+              Cold-prepared living raw boxes and personalized biological age analysis for Patna health-seekers.
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {bundles.map((bundle, i) => (
+            {offerings.map((plan, i) => (
               <div
                 key={i}
                 className="glow-card relative rounded-2xl p-7 flex flex-col"
                 style={{
-                  background: bundle.popular ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02))' : 'var(--bg-card)',
-                  border: bundle.popular ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
+                  background: plan.popular ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.09), rgba(16, 185, 129, 0.02))' : 'var(--bg-card)',
+                  border: plan.popular ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
                 }}
               >
-                {bundle.popular && (
+                {plan.popular && (
                   <span
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-white"
-                    style={{ background: 'var(--brand-primary)' }}
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-slate-950 bg-emerald-400 shadow-md shadow-emerald-500/20"
                   >
-                    Most Popular
+                    ⭐ {plan.tag}
                   </span>
                 )}
-                <h3 className="text-lg font-bold mb-1">{bundle.name}</h3>
-                <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{bundle.days}-day bundle</p>
+                <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
+                <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{plan.period}</p>
                 <div className="mb-5">
-                  <span className="text-3xl font-black" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>{bundle.perDay}</span>
-                  <span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>/day</span>
+                  <span className="text-3xl font-black" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>{plan.perDay}</span>
+                  {plan.perDay !== 'Free' && plan.perDay !== 'Custom' && (
+                    <span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>/day</span>
+                  )}
                 </div>
                 <p className="text-xs font-medium mb-5" style={{ color: 'var(--text-muted)' }}>
-                  Total: <span className="font-bold" style={{ color: 'var(--text-secondary)' }}>{bundle.total}</span>
+                  Total Commitment: <span className="font-bold" style={{ color: 'var(--text-secondary)' }}>{plan.total}</span>
                 </p>
                 <ul className="space-y-2.5 mb-7 flex-grow">
-                  {bundle.features.map((feat, j) => (
-                    <li key={j} className="flex items-center gap-2.5 text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      <span style={{ color: 'var(--brand-primary)' }}>✓</span>
-                      {feat}
+                  {plan.features.map((feat, j) => (
+                    <li key={j} className="flex items-start gap-2.5 text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                      <span className="text-emerald-400 shrink-0 mt-0.5">✓</span>
+                      <span>{feat}</span>
                     </li>
                   ))}
                 </ul>
-                <Link
-                  href={`/menu?bundle=${bundle.bundleType}`}
-                  className="w-full py-3 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer"
+                <a
+                  href={plan.ctaHref}
+                  className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer"
                   style={{
-                    background: bundle.popular ? 'var(--brand-primary)' : 'transparent',
-                    color: bundle.popular ? 'white' : 'var(--text-secondary)',
-                    border: bundle.popular ? 'none' : '1.5px solid var(--border-subtle)',
+                    background: plan.popular ? 'var(--brand-primary)' : 'rgba(255,255,255,0.05)',
+                    color: plan.popular ? '#020617' : 'var(--text-primary)',
+                    border: plan.popular ? 'none' : '1.5px solid var(--border-subtle)',
                   }}
                 >
-                  Get Started →
-                </Link>
+                  {plan.ctaText}
+                </a>
               </div>
             ))}
           </div>

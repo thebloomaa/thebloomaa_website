@@ -437,29 +437,20 @@ export function calculateBioProfile(inputs: BioCalculatorInputs): BioCalculatorR
   };
 
   // 6. Conversion Strategy: Recommend "Just Bloomed 7D Trial" if vitality is suboptimal (< 70)
-  // or if customer specifically seeks Gut Reset, Longevity, or Vitality reboot.
-  let matchedProduct: MatchedProduct;
-
-  if (vitalityScore < 70 || healthGoal === 'GUT_HEALTH' || healthGoal === 'LONGEVITY_DETOX' || healthGoal === 'ENERGY_VITALITY') {
-    matchedProduct = {
-      ...BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL,
-      reason: `Your Living Food Vitality Score (${vitalityScore}%) indicates depleted enzyme levels. The Just Bloomed 7D Trial delivers 7 unique totally raw/living boxes over 6 mornings to restore active enzymes, reset gut flora, and reduce biological diet age by ${Math.abs(dietAgeDelta || 3)} years.`,
-      livingFoodSynergyTip: 'Eat Box 1 through 5 as your primary breakfast; on Day 6, enjoy Box 6 in the morning and Box 7 for a soothing evening gut reset.',
-    };
-  } else if (healthGoal === 'LEAN_MUSCLE') {
-    matchedProduct = {
-      ...BLOOMAA_PRODUCTS.LEAN_MUSCLE,
-      reason: 'Delivers 55g clean high-density protein with complex quinoa and steamed broccoli to fuel hypertrophy without empty calories.',
-      livingFoodSynergyTip: 'Pair with 1 cup of fresh sprouted lentils and raw chia water 20 minutes before this prep to optimize digestive enzyme activity.',
-    };
-  } else {
-    // High vitality weight loss seeker
-    matchedProduct = {
-      ...BLOOMAA_PRODUCTS.STANDARD_WEIGHT_LOSS,
-      reason: 'Engineered at 400 clean kcal with complex lentils and slow-digesting fibers to keep insulin stable and curb cravings all afternoon.',
-      livingFoodSynergyTip: 'Eat the fresh live salad portion first to activate digestive salivary enzymes before consuming the warm brown rice and lentils.',
-    };
-  }
+  // 6. Matched Solution: The Just Bloomed 7D Living Foods Trial
+  const matchedProduct: MatchedProduct = {
+    ...BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL,
+    reason:
+      healthGoal === 'LEAN_MUSCLE'
+        ? `Delivers bioavailable sprouted plant proteins, live amino acids, and antioxidant microgreens to maximize nutrient absorption and cellular recovery without inflammatory cooked oils.`
+        : healthGoal === 'WEIGHT_LOSS'
+        ? `Engineered at 420 living kcal with high-fiber raw sprouts, low-glycemic berries, and enzyme-rich hydration to accelerate fat oxidation and keep insulin completely stable.`
+        : `Your Living Food Vitality Score (${vitalityScore}%) indicates depleted enzyme levels. The Just Bloomed 7D Trial delivers 7 unique totally raw/living boxes over 6 mornings to restore active enzymes, reset gut flora, and reduce biological diet age by ${Math.abs(dietAgeDelta || 3)} years.`,
+    livingFoodSynergyTip:
+      healthGoal === 'LEAN_MUSCLE'
+        ? 'Consume the sprouted moong and soaked pumpkin seed portions within 45 minutes of your morning workout for optimal enzymatic protein assimilation.'
+        : 'Eat Box 1 through 5 as your primary morning meal; on Day 6, enjoy Box 6 in the morning and Box 7 for a soothing evening gut reset.',
+  };
 
   // 7. Actionable Swaps
   const actionableSwaps: string[] = [];

@@ -37,7 +37,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-300">Quick Links</h4>
             <ul className="space-y-2.5">
-              <li><Link href="/menu" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Meal Plans &amp; Bundles</Link></li>
+              <li><a href="/#trial" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">7-Day Living Food Trial (₹451)</a></li>
               <li><Link href="/calculator" className="text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5">Bio Calculator <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">NEW</span></Link></li>
               <li><a href="/#pricing" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Pricing &amp; Subscriptions</a></li>
               <li><a href="/#how-it-works" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">How It Works</a></li>

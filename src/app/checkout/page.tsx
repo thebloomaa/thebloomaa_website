@@ -76,23 +76,23 @@ export default function CheckoutPage() {
         <Navbar />
         <main className="min-h-screen pt-28 pb-16 px-4 flex items-center justify-center" style={{ background: 'var(--bg-dark)' }}>
           <div className="text-center max-w-md p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl">
-            <div className="text-6xl mb-4">🥗</div>
-            <h1 className="text-2xl font-black mb-2 text-slate-100">No Meal Selected</h1>
+            <div className="text-6xl mb-4">🌱</div>
+            <h1 className="text-2xl font-black mb-2 text-slate-100">No Plan Selected</h1>
             <p className="text-sm mb-6 text-slate-400 leading-relaxed">
-              Please choose a fitness meal plan or run the Bio Calculator to get your personalized living food recommendation.
+              Claim the Just Bloomed 7-Day Living Food Trial (₹451) or run the Bio Calculator to discover your biological diet score.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
-                href="/calculator"
-                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all"
+                href="/#trial"
+                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
               >
-                Run Bio Calculator
+                Claim 7D Trial (₹451)
               </Link>
               <Link
-                href="/menu"
+                href="/calculator"
                 className="px-6 py-3 rounded-xl text-sm font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-all"
               >
-                Browse Menu
+                Bio Calculator
               </Link>
             </div>
           </div>

@@ -93,19 +93,19 @@ export default function LandingHero() {
 
         {/* Sub-headline */}
         <p className="max-w-2xl mx-auto text-base sm:text-lg leading-relaxed mb-8 text-slate-300 animate-fade-in-up-delay-2">
-          Chef-crafted, macro-tracked meal preps and living foods delivered to your doorstep in Patna every morning. Zero cooking, zero dishwashing, pure performance.
+          Cold-crafted living foods, sprouted nutrition boxes, and cellular enzyme resets delivered fresh across Patna every morning (6 AM – 9 AM). Zero cooked denatured oils, 100% biological vitality.
         </p>
 
-        {/* CTA Area: If verified, show "Browse Meal Plans" directly; otherwise "Check Delivery Zone" */}
+        {/* CTA Area: If verified, show "Claim 7D Trial" directly; otherwise "Check Delivery Zone" */}
         <div className="max-w-md mx-auto mb-14 animate-fade-in-up-delay-3 flex flex-col sm:flex-row items-center justify-center gap-3">
           {mounted && verifiedPincode ? (
-            <Link
-              href="/menu"
+            <a
+              href="#trial"
               className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Browse Meal Plans</span>
+              <span>🌱 Claim 7D Trial (₹451)</span>
               <span>→</span>
-            </Link>
+            </a>
           ) : (
             <button
               type="button"

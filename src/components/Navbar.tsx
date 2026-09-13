@@ -37,9 +37,12 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-7">
-            <Link href="/menu" className="text-sm font-semibold transition-colors hover:text-emerald-400 text-slate-100">
-              Meal Plans
-            </Link>
+            <a href="/#trial" className="text-sm font-semibold transition-colors hover:text-emerald-400 text-slate-100 flex items-center gap-1.5">
+              <span>🌱 7D Trial</span>
+              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
+                ₹451
+              </span>
+            </a>
             <Link href="/calculator" className="text-sm font-semibold transition-all hover:text-emerald-300 flex items-center gap-1.5 text-slate-100">
               <span>Bio Calculator</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">
@@ -73,12 +76,13 @@ export default function Navbar() {
               </svg>
               <span>Log In</span>
             </Link>
-            <Link
-              href="/menu"
-              className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20"
+            <a
+              href="/#trial"
+              className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20 flex items-center gap-1.5"
             >
-              Start Your Plan
-            </Link>
+              <span>Get 7D Trial</span>
+              <span className="text-[11px] bg-slate-950/20 px-1.5 py-0.5 rounded font-black">₹451</span>
+            </a>
           </div>
 
           {/* Mobile hamburger */}
@@ -100,9 +104,10 @@ export default function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-slate-800 animate-fade-in-up">
-            <Link href="/menu" className="block px-3 py-2 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
-              🥗 Meal Plans
-            </Link>
+            <a href="/#trial" className="flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
+              <span className="flex items-center gap-2">🌱 7D Living Food Trial</span>
+              <span className="text-xs px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-black">₹451</span>
+            </a>
             <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" onClick={() => setMobileOpen(false)}>
               <span>🧬 Bio Calculator</span>
               <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">NEW</span>
@@ -120,9 +125,9 @@ export default function Navbar() {
               </svg>
               <span>Log In / Sign Up</span>
             </Link>
-            <Link href="/menu" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md" onClick={() => setMobileOpen(false)}>
-              Start Your Plan →
-            </Link>
+            <a href="/#trial" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md" onClick={() => setMobileOpen(false)}>
+              Claim 7D Trial (₹451) →
+            </a>
           </div>
         )}
       </div>
