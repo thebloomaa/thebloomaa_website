@@ -33,6 +33,11 @@ export default function CheckoutPage() {
   const [copiedUpi, setCopiedUpi] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [pincodeError, setPincodeError] = useState<string | null>(null);
+  const [launchedApp, setLaunchedApp] = useState<string | null>(null);
+  const [returnedFromApp, setReturnedFromApp] = useState(false);
+  const [pastedUtr, setPastedUtr] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [orderSuccess, setOrderSuccess] = useState(false);
 
   // Address Form State
   const [form, setForm] = useState({
@@ -49,6 +54,26 @@ export default function CheckoutPage() {
   });
 
   const [utr, setUtr] = useState('');
+
+  // Detect when user returns from UPI App
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && launchedApp) {
+        setReturnedFromApp(true);
+      }
+    };
+    const handleFocus = () => {
+      if (launchedApp) {
+        setReturnedFromApp(true);
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('focus', handleFocus);
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      window.removeEventListener('focus', handleFocus);
+    };
+  }, [launchedApp]);
 
   const isTrialProduct = Boolean(
     selectedProduct &&
@@ -68,6 +93,134 @@ export default function CheckoutPage() {
       selectBundle('DAYS_7');
     }
   }, [isTrialProduct, bundleType, selectBundle]);
+
+  // Unique Order Reference for UPI Transaction Note
+  const orderRefNote = `BLM-${(selectedProduct?.name || 'Diet').replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)}-${finalTotal}`;
+  const universalUpiUri = `upi://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const upiIntentUri = universalUpiUri;
+  const gpayUri = `gpay://upi/pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const phonepeUri = `phonepe://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const paytmUri = `paytmmp://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+
+  const handleLaunchApp = (appName: string, uri: string) => {
+    setLaunchedApp(appName);
+    window.location.href = uri;
+  };
+
+  const handlePasteClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      const match = text.match(/\b\d{12}\b/);
+      if (match) {
+        setUtr(match[0]);
+        setPastedUtr(true);
+        setTimeout(() => setPastedUtr(false), 3000);
+      } else {
+        const clean = text.replace(/\D/g, '');
+        if (clean.length >= 12) {
+          setUtr(clean.slice(0, 12));
+          setPastedUtr(true);
+          setTimeout(() => setPastedUtr(false), 3000);
+        } else if (clean.length > 0) {
+          setUtr(clean);
+        } else {
+          alert('No 12-digit number found in clipboard. Please paste or enter manually.');
+        }
+      }
+    } catch {
+      alert('Clipboard permission denied. Please manually enter your UTR.');
+    }
+  };
+
+  const handleCopyUpiId = () => {
+    navigator.clipboard.writeText('thebloomaa@upi');
+    setCopiedUpi(true);
+    setTimeout(() => setCopiedUpi(false), 2500);
+  };
+
+  const handleConfirmPayment = async (forcePaidWithoutUtr = false) => {
+    if (!selectedProduct) return;
+    if (!forcePaidWithoutUtr && utr.trim().length > 0 && utr.trim().length !== 12) {
+      alert('Please enter a valid 12-digit UTR, or click "Confirm Order (Paid via App)" without entering UTR.');
+      return;
+    }
+
+    setSubmitting(true);
+    setSubmitError(null);
+    try {
+      const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+      const effectiveUtr = utr.trim().length === 12
+        ? utr.trim()
+        : `DIRECT_UPI_${Date.now().toString().slice(-8)}`;
+
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          productId: selectedProduct.id,
+          bundleType: isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
+          deliveryTime: form.deliveryTime,
+          deliveryNote: isTrialProduct
+            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. Customer Note: ${form.deliveryNote}`
+            : form.deliveryNote,
+          utr: effectiveUtr,
+          address: {
+            street: fullStreet,
+            city: form.city,
+            state: form.state,
+            pincode: form.pincode,
+          },
+        }),
+      });
+
+      if (res.status === 401) {
+        router.push('/login?callbackUrl=/checkout');
+        return;
+      }
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        setOrderSuccess(true);
+        setTimeout(() => {
+          router.push('/dashboard');
+          router.refresh();
+        }, 2000);
+      } else {
+        setSubmitError(data.error || 'Failed to confirm order. Please try again.');
+      }
+    } catch (err) {
+      console.error('Checkout error:', err);
+      setSubmitError('Network error occurred during payment confirmation.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleValidateAndProceedAddress = () => {
+    if (!form.name || !form.phone || !form.street || !form.pincode) {
+      alert('Please fill out all required address fields.');
+      return;
+    }
+
+    if (form.pincode.length !== 6) {
+      setPincodeError('Pincode must be 6 digits.');
+      return;
+    }
+
+    // Combine House No & Street
+    const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+
+    setAddress({
+      street: fullStreet,
+      city: form.city,
+      state: form.state,
+      pincode: form.pincode,
+    });
+    setDeliveryTime(form.deliveryTime);
+    setDeliveryNote(form.deliveryNote);
+    setPincodeError(null);
+    setStep('pay');
+  };
 
   // If no product selected, show prompt to browse meals or calculator
   if (!selectedProduct) {
@@ -100,92 +253,6 @@ export default function CheckoutPage() {
       </>
     );
   }
-
-  const handleValidateAndProceedAddress = () => {
-    if (!form.name || !form.phone || !form.street || !form.pincode) {
-      alert('Please fill out all required address fields.');
-      return;
-    }
-
-    if (form.pincode.length !== 6) {
-      setPincodeError('Pincode must be 6 digits.');
-      return;
-    }
-
-    // Combine House No & Street
-    const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
-
-    setAddress({
-      street: fullStreet,
-      city: form.city,
-      state: form.state,
-      pincode: form.pincode,
-    });
-    setDeliveryTime(form.deliveryTime);
-    setDeliveryNote(form.deliveryNote);
-    setPincodeError(null);
-    setStep('pay');
-  };
-
-  const handleCopyUpiId = () => {
-    navigator.clipboard.writeText('thebloomaa@upi');
-    setCopiedUpi(true);
-    setTimeout(() => setCopiedUpi(false), 2500);
-  };
-
-  const handleConfirmPayment = async () => {
-    if (utr.trim().length !== 12) {
-      alert('Please enter a valid 12-digit UPI UTR / Transaction Reference Number.');
-      return;
-    }
-
-    setSubmitting(true);
-    try {
-      const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          productId: selectedProduct.id,
-          bundleType: isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
-          deliveryTime: form.deliveryTime,
-          deliveryNote: isTrialProduct
-            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. Customer Note: ${form.deliveryNote}`
-            : form.deliveryNote,
-          utr: utr.trim(),
-          address: {
-            street: fullStreet,
-            city: form.city,
-            state: form.state,
-            pincode: form.pincode,
-          },
-        }),
-      });
-
-      if (res.status === 401) {
-        // User not logged in, route to login with redirect
-        router.push('/login?callbackUrl=/checkout');
-        return;
-      }
-
-      const data = await res.json();
-      if (res.ok && data.success) {
-        alert('🎉 Subscription confirmed! Your fresh morning diet prep is scheduled.');
-        router.push('/dashboard');
-        router.refresh();
-      } else {
-        alert(data.error || 'Failed to confirm order. Please try again.');
-      }
-    } catch (err) {
-      console.error('Checkout error:', err);
-      alert('Network error occurred during payment verification.');
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
-  // Dynamic UPI Intent String
-  const upiIntentUri = `upi://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(selectedProduct.name)}`;
 
   return (
     <>
@@ -571,146 +638,285 @@ export default function CheckoutPage() {
           {/* STEP 3: UPI PAYMENT ENFORCEMENT */}
           {step === 'pay' && (
             <div className="space-y-6 animate-fade-in-up">
-              <div className="text-center mb-6">
-                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                  Step 3 of 3 · Direct UPI Prepayment
-                </span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Complete Your Payment</h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
-                  Scan via PhonePe, Google Pay, or Paytm and enter the 12-digit UTR reference code.
-                </p>
-              </div>
-
-              {/* Strict COD Disabled Alert for Just Bloomed 7D Trial */}
-              {isTrialProduct && (
-                <div className="rounded-2xl p-4 bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 flex items-start gap-3">
-                  <span className="text-xl">🔒</span>
-                  <div>
-                    <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
-                      Prepaid Living Raw Order Enforced
-                    </h4>
-                    <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                      Cash on Delivery is <strong>strictly disabled</strong> for the Just Bloomed 7D Trial to guarantee continuous morning cold-chain logistics. Total fixed package price: <strong>₹451</strong>.
-                    </p>
+              {/* ORDER SUCCESS OVERLAY */}
+              {orderSuccess ? (
+                <div className="rounded-3xl p-8 sm:p-12 backdrop-blur-xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl text-center space-y-5 animate-fade-in-up">
+                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center text-3xl mx-auto">
+                    ✓
+                  </div>
+                  <h2 className="text-2xl sm:text-3xl font-black text-slate-100">
+                    Subscription Confirmed! 🎉
+                  </h2>
+                  <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                    Your morning diet prep has been scheduled. Cold-chain morning drop begins tomorrow at{' '}
+                    <strong className="text-emerald-400 font-mono">{form.deliveryTime || '07:00'} AM</strong>.
+                  </p>
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-xs font-mono text-emerald-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    Redirecting to your Subscriber Dashboard...
                   </div>
                 </div>
-              )}
-
-              {/* UPI Payment Container Card */}
-              <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                  {/* Dynamic UPI QR Code Display */}
-                  <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-slate-950 border border-slate-800">
-                    <div className="p-3 bg-white rounded-2xl shadow-xl">
-                      {/* Generates dynamic UPI QR representation */}
-                      <img
-                        src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiIntentUri)}`}
-                        alt="Thebloomaa UPI Payment QR Code"
-                        className="w-48 h-48 rounded-lg"
-                      />
-                    </div>
-
-                    <div className="mt-4 text-center">
-                      <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
-                        Scan to Pay with Any UPI App
-                      </span>
-                      <span className="text-2xl font-black text-emerald-400 font-mono mt-1 block">
-                        ₹{finalTotal}
-                      </span>
-                    </div>
+              ) : (
+                <>
+                  <div className="text-center mb-6">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                      Step 3 of 3 · Fast UPI Prepayment
+                    </span>
+                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Complete Your Payment</h2>
+                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                      Pay via Google Pay, PhonePe, Paytm, or any UPI app in 1-click.
+                    </p>
                   </div>
 
-                  {/* Manual UPI ID & UTR Input Column */}
-                  <div className="space-y-5">
-                    {/* Copyable UPI ID Pill */}
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Merchant UPI ID
-                      </label>
-                      <div className="flex items-center gap-2">
-                        <div className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 font-mono text-sm text-slate-100 flex items-center justify-between">
-                          <span>thebloomaa@upi</span>
-                          <span className="text-[10px] text-emerald-400 uppercase font-black">Verified</span>
+                  {/* Submission Error Banner */}
+                  {submitError && (
+                    <div className="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center justify-between">
+                      <span>⚠️ {submitError}</span>
+                      <button
+                        type="button"
+                        onClick={() => setSubmitError(null)}
+                        className="text-slate-400 hover:text-white text-sm font-bold ml-2"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Returned from App Quick-Confirm Banner */}
+                  {returnedFromApp && (
+                    <div className="rounded-2xl p-4 bg-emerald-500/15 border-2 border-emerald-500/40 text-emerald-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                      <div className="flex items-start gap-2.5">
+                        <span className="text-2xl">✨</span>
+                        <div>
+                          <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
+                            Returned from {launchedApp || 'UPI App'}
+                          </h4>
+                          <p className="text-xs text-slate-300 mt-0.5">
+                            Completed your ₹{finalTotal} payment? Click below to immediately lock in your morning drop without typing anything!
+                          </p>
                         </div>
+                      </div>
+                      <button
+                        type="button"
+                        disabled={submitting}
+                        onClick={() => handleConfirmPayment(true)}
+                        className="px-5 py-2.5 rounded-xl font-black text-xs bg-emerald-500 text-slate-950 hover:bg-emerald-400 shrink-0 shadow-lg cursor-pointer transition-all hover:scale-105"
+                      >
+                        {submitting ? 'Confirming...' : '✓ Confirm Order Now'}
+                      </button>
+                    </div>
+                  )}
+
+                  {/* Strict COD Disabled Alert for Just Bloomed 7D Trial */}
+                  {isTrialProduct && (
+                    <div className="rounded-2xl p-4 bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 flex items-start gap-3">
+                      <span className="text-xl">🔒</span>
+                      <div>
+                        <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
+                          Prepaid Living Raw Order Enforced
+                        </h4>
+                        <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                          Cash on Delivery is <strong>strictly disabled</strong> for the Just Bloomed 7D Trial to guarantee continuous morning cold-chain logistics. Total fixed package price: <strong>₹451</strong>.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {/* UPI Payment Container Card */}
+                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
+                    {/* SECTION 1: ONE-TAP MOBILE UPI LAUNCHER */}
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-800 space-y-3">
+                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
+                        <span className="text-xs font-black uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                          <span>⚡</span> 1-Click UPI App Payment
+                        </span>
+                        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 w-fit">
+                          Direct App Redirection · No typing amount
+                        </span>
+                      </div>
+                      <p className="text-xs text-slate-400">
+                        Tap any app below to launch payment directly on your phone with ₹{finalTotal} prefilled:
+                      </p>
+
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
+                        {/* Google Pay */}
                         <button
                           type="button"
-                          onClick={handleCopyUpiId}
-                          className="px-4 py-3 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                          onClick={() => handleLaunchApp('Google Pay', gpayUri)}
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
                         >
-                          {copiedUpi ? 'Copied! ✓' : 'Copy'}
+                          <span className="text-sm font-black text-blue-400 group-hover:scale-110 transition-transform">G</span>
+                          <span className="text-xs font-bold text-slate-200">Google Pay</span>
+                        </button>
+
+                        {/* PhonePe */}
+                        <button
+                          type="button"
+                          onClick={() => handleLaunchApp('PhonePe', phonepeUri)}
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                        >
+                          <span className="text-sm font-black text-purple-400 group-hover:scale-110 transition-transform">पे</span>
+                          <span className="text-xs font-bold text-slate-200">PhonePe</span>
+                        </button>
+
+                        {/* Paytm */}
+                        <button
+                          type="button"
+                          onClick={() => handleLaunchApp('Paytm', paytmUri)}
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                        >
+                          <span className="text-sm font-black text-sky-400 group-hover:scale-110 transition-transform">P</span>
+                          <span className="text-xs font-bold text-slate-200">Paytm</span>
+                        </button>
+
+                        {/* Any UPI App */}
+                        <button
+                          type="button"
+                          onClick={() => handleLaunchApp('UPI App', universalUpiUri)}
+                          className="p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                        >
+                          <span className="text-sm font-black text-emerald-400 group-hover:scale-110 transition-transform">📲</span>
+                          <span className="text-xs font-bold text-emerald-300">Any UPI App</span>
                         </button>
                       </div>
                     </div>
 
-                    {/* Order Reference Breakdown */}
-                    <div className="p-4 rounded-2xl bg-slate-800/40 border border-slate-800 text-xs space-y-1.5">
-                      <div className="flex justify-between text-slate-400">
-                        <span>Selected Diet Prep:</span>
-                        <span className="font-bold text-slate-200">{selectedProduct.name}</span>
+                    {/* SECTION 2: DESKTOP QR CODE & UTR CONFIRMATION */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
+                      {/* Dynamic UPI QR Code Display */}
+                      <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-slate-950 border border-slate-800">
+                        <div className="p-3 bg-white rounded-2xl shadow-xl">
+                          <img
+                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(universalUpiUri)}`}
+                            alt="Thebloomaa UPI Payment QR Code"
+                            className="w-48 h-48 rounded-lg"
+                          />
+                        </div>
+
+                        <div className="mt-4 text-center">
+                          <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
+                            Or Scan with PhonePe / GPay / Paytm
+                          </span>
+                          <span className="text-2xl font-black text-emerald-400 font-mono mt-1 block">
+                            ₹{finalTotal}
+                          </span>
+                        </div>
                       </div>
-                      <div className="flex justify-between text-slate-400">
-                        <span>Delivery Address:</span>
-                        <span className="font-bold text-slate-200 max-w-[180px] truncate">
-                          {form.houseNo ? `${form.houseNo}, ` : ''}{form.street}, {form.pincode}
-                        </span>
-                      </div>
-                      <div className="flex justify-between text-slate-400">
-                        <span>Delivery Slot:</span>
-                        <span className="font-bold text-emerald-400 font-mono">{form.deliveryTime} AM</span>
+
+                      {/* UPI ID & UTR Input Column */}
+                      <div className="space-y-4">
+                        {/* Copyable UPI ID Pill */}
+                        <div>
+                          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                            Merchant UPI ID
+                          </label>
+                          <div className="flex items-center gap-2">
+                            <div className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 font-mono text-sm text-slate-100 flex items-center justify-between">
+                              <span>thebloomaa@upi</span>
+                              <span className="text-[10px] text-emerald-400 uppercase font-black">Verified</span>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={handleCopyUpiId}
+                              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                            >
+                              {copiedUpi ? 'Copied! ✓' : 'Copy'}
+                            </button>
+                          </div>
+                        </div>
+
+                        {/* Order Reference Breakdown */}
+                        <div className="p-3.5 rounded-2xl bg-slate-800/40 border border-slate-800 text-xs space-y-1.5">
+                          <div className="flex justify-between text-slate-400">
+                            <span>Selected Diet Prep:</span>
+                            <span className="font-bold text-slate-200">{selectedProduct.name}</span>
+                          </div>
+                          <div className="flex justify-between text-slate-400">
+                            <span>Delivery Address:</span>
+                            <span className="font-bold text-slate-200 max-w-[180px] truncate">
+                              {form.houseNo ? `${form.houseNo}, ` : ''}{form.street}, {form.pincode}
+                            </span>
+                          </div>
+                          <div className="flex justify-between text-slate-400">
+                            <span>Morning Slot:</span>
+                            <span className="font-bold text-emerald-400 font-mono">{form.deliveryTime} AM</span>
+                          </div>
+                        </div>
+
+                        {/* 12-Digit UTR Input with 1-Tap Paste */}
+                        <div>
+                          <div className="flex items-center justify-between mb-1.5">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                              UPI UTR / Reference No.{' '}
+                              <span className="text-slate-500 font-normal lowercase">(optional if paid via app)</span>
+                            </label>
+                            <button
+                              type="button"
+                              onClick={handlePasteClipboard}
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-colors cursor-pointer"
+                            >
+                              <span>📋</span>
+                              <span>{pastedUtr ? 'Pasted! ✓' : 'Paste UTR'}</span>
+                            </button>
+                          </div>
+                          <input
+                            type="text"
+                            maxLength={12}
+                            placeholder="e.g. 325498712345 (or 1-click confirm below)"
+                            value={utr}
+                            onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
+                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500"
+                          />
+                          <p className="text-[10px] text-slate-400 mt-1">
+                            Tip: You can 1-tap paste from your clipboard, or click &quot;I Have Paid&quot; below.
+                          </p>
+                        </div>
                       </div>
                     </div>
 
-                    {/* 12-Digit UTR Input */}
-                    <div>
-                      <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
-                        Enter 12-Digit UPI UTR / Reference No. *
-                      </label>
-                      <input
-                        type="text"
-                        maxLength={12}
-                        required
-                        placeholder="e.g. 325498712345"
-                        value={utr}
-                        onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
-                        className="w-full px-4 py-3.5 rounded-xl bg-slate-800 border border-slate-700 text-base font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500"
-                      />
-                      <p className="text-[10px] text-slate-400 mt-1.5">
-                        Found in your PhonePe / GPay / Paytm payment receipt under "UPI Transaction ID" or "UTR".
-                      </p>
+                    {/* SECTION 3: BOTTOM CONFIRMATION NAVIGATION */}
+                    <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
+                      <button
+                        type="button"
+                        onClick={() => setStep('address')}
+                        className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                      >
+                        ← Back
+                      </button>
+
+                      <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          onClick={() => handleConfirmPayment(true)}
+                          className="px-6 py-3.5 rounded-2xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer text-center"
+                        >
+                          {submitting ? 'Confirming...' : `I Have Paid ₹${finalTotal} (No UTR)`}
+                        </button>
+
+                        <button
+                          type="button"
+                          disabled={submitting}
+                          onClick={() => handleConfirmPayment(false)}
+                          className="px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          {submitting ? (
+                            <>
+                              <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                              <span>Scheduling Prep...</span>
+                            </>
+                          ) : (
+                            <>
+                              <span>Confirm Payment &amp; Schedule Prep</span>
+                              <span>→</span>
+                            </>
+                          )}
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-
-                {/* Bottom Navigation */}
-                <div className="pt-4 border-t border-slate-800 flex justify-between items-center">
-                  <button
-                    type="button"
-                    onClick={() => setStep('address')}
-                    className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
-                  >
-                    ← Back
-                  </button>
-
-                  <button
-                    type="button"
-                    disabled={submitting || utr.trim().length !== 12}
-                    onClick={handleConfirmPayment}
-                    className="px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center gap-2"
-                  >
-                    {submitting ? (
-                      <>
-                        <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
-                        <span>Verifying...</span>
-                      </>
-                    ) : (
-                      <>
-                        <span>Confirm Payment &amp; Schedule Prep</span>
-                        <span>→</span>
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
+                </>
+              )}
             </div>
           )}
         </div>

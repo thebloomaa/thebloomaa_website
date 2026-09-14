@@ -267,6 +267,19 @@ export default function AdminOrdersPage() {
                         >
                           {order.status}
                         </span>
+                        {order.subscription?.utr && (
+                          <div className="mt-1.5">
+                            {order.subscription.utr.startsWith('DIRECT_UPI_') ? (
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30" title="User paid via 1-click UPI app intent without typing UTR">
+                                📲 1-Tap UPI ({order.subscription.utr.slice(-6)})
+                              </span>
+                            ) : (
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" title="Verified UPI UTR">
+                                🔑 UTR: {order.subscription.utr}
+                              </span>
+                            )}
+                          </div>
+                        )}
                       </td>
 
                       <td className="p-4 text-right">

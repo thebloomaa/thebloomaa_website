@@ -24,6 +24,7 @@ async function main() {
   // 2. Seed Fitness Products
   const products = [
     { 
+      id: 'prod-lean-muscle-chicken',
       name: 'Lean Muscle Chicken Prep', 
       type: 'MEAL_PLAN',
       price: 350, 
@@ -35,6 +36,7 @@ async function main() {
       dietaryPreference: 'HIGH_PROTEIN'
     },
     { 
+      id: 'prod-vegan-keto-bowl',
       name: 'Vegan Keto Power Bowl', 
       type: 'MEAL_PLAN', 
       price: 300, 
@@ -46,6 +48,7 @@ async function main() {
       dietaryPreference: 'VEGAN'
     },
     { 
+      id: 'prod-weight-loss-diet',
       name: 'Standard Weight Loss Diet', 
       type: 'MEAL_PLAN', 
       price: 250, 
@@ -57,6 +60,7 @@ async function main() {
       dietaryPreference: 'VEG'
     },
     { 
+      id: 'prod-just-bloomed-7d-trial',
       name: 'Just Bloomed 7D Trial', 
       type: 'TRIAL_PLAN', 
       price: 451, 
@@ -70,8 +74,10 @@ async function main() {
   ];
 
   for (const prod of products) {
-    await prisma.product.create({
-      data: prod
+    await prisma.product.upsert({
+      where: { id: prod.id },
+      update: prod,
+      create: prod
     });
   }
   console.log('✅ Seeded Fitness Products');

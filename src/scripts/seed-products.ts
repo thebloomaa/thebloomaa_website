@@ -1,0 +1,78 @@
+import { prisma } from '../lib/prisma';
+
+const products = [
+  { 
+    id: 'prod-just-bloomed-7d-trial',
+    name: 'Just Bloomed 7D Trial', 
+    type: 'TRIAL_PLAN', 
+    price: 451, 
+    description: '7 unique raw & living nutrient boxes over 6 delivery days (6+1 double drop on day 6). Designed for high enzymatic vitality and cellular gut reset.',
+    calories: 420,
+    protein: 22,
+    carbs: 48,
+    fats: 16,
+    dietaryPreference: 'LIVING_RAW',
+    imageUrl: '/meals/vegan-keto.png'
+  },
+  { 
+    id: 'prod-lean-muscle-chicken',
+    name: 'Lean Muscle Chicken Prep', 
+    type: 'MEAL_PLAN',
+    price: 350, 
+    description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain.',
+    calories: 650,
+    protein: 55,
+    carbs: 45,
+    fats: 15,
+    dietaryPreference: 'HIGH_PROTEIN',
+    imageUrl: '/meals/chicken-prep.png'
+  },
+  { 
+    id: 'prod-vegan-keto-bowl',
+    name: 'Vegan Keto Power Bowl', 
+    type: 'MEAL_PLAN', 
+    price: 300, 
+    description: 'Tofu, avocado, spinach, and walnuts in an olive oil dressing. Low carb, high fat.',
+    calories: 500,
+    protein: 20,
+    carbs: 12,
+    fats: 40,
+    dietaryPreference: 'VEGAN',
+    imageUrl: '/meals/vegan-keto.png'
+  },
+  { 
+    id: 'prod-weight-loss-diet',
+    name: 'Standard Weight Loss Diet', 
+    type: 'MEAL_PLAN', 
+    price: 250, 
+    description: 'Balanced low-calorie meal with mixed lentils, brown rice, and a side salad.',
+    calories: 400,
+    protein: 18,
+    carbs: 55,
+    fats: 8,
+    dietaryPreference: 'VEG',
+    imageUrl: '/meals/weight-loss.png'
+  }
+];
+
+async function main() {
+  console.log('Upserting products into database...');
+  for (const prod of products) {
+    const res = await prisma.product.upsert({
+      where: { id: prod.id },
+      update: prod,
+      create: prod,
+    });
+    console.log(`✅ Upserted product: ${res.id} (${res.name})`);
+  }
+  console.log('All products successfully seeded.');
+}
+
+main()
+  .catch((e) => {
+    console.error('Failed to seed products:', e);
+    process.exit(1);
+  })
+  .finally(async () => {
+    await prisma.$disconnect();
+  });
