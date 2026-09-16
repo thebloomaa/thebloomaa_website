@@ -112,7 +112,7 @@ export default function MiniCartDrawer() {
             <div className="rounded-2xl p-4 bg-slate-800/50 border border-slate-800 flex items-center gap-4">
               <div className="w-16 h-16 rounded-xl overflow-hidden relative flex-shrink-0 bg-slate-900 border border-slate-700">
                 <img
-                  src={selectedProduct.imageUrl || '/meals/chicken-prep.png'}
+                  src={selectedProduct.imageUrl || '/meals/vegan-keto.png'}
                   alt={selectedProduct.name}
                   className="w-full h-full object-cover"
                 />
@@ -121,7 +121,7 @@ export default function MiniCartDrawer() {
               <div className="flex-grow min-w-0">
                 <h4 className="text-sm font-bold text-slate-100 truncate">{selectedProduct.name}</h4>
                 <p className="text-[11px] text-slate-400 mt-0.5">
-                  🔥 {selectedProduct.calories} kcal · 🥩 {selectedProduct.protein}g P · 🥑 {selectedProduct.fats}g F
+                  🔥 {selectedProduct.calories} kcal · 💪 {selectedProduct.protein}g P · 🥑 {selectedProduct.fats}g F
                 </p>
                 <span className="text-xs font-bold text-emerald-400 font-mono mt-1 block">
                   ₹{selectedProduct.price} / diet

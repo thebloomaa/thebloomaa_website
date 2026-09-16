@@ -28,17 +28,17 @@ const products = [
     imageUrl: '/meals/vegan-keto.png'
   },
   { 
-    id: 'prod-lean-muscle-chicken',
-    name: 'Lean Muscle Chicken Prep', 
+    id: 'prod-plant-protein-power-bowl',
+    name: 'Sprouted High Protein Power Bowl', 
     type: 'MEAL_PLAN',
     price: 350, 
-    description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain.',
-    calories: 650,
-    protein: 55,
-    carbs: 45,
-    fats: 15,
+    description: 'Sprouted organic moong, edamame, roasted organic tofu cubes, tri-color quinoa, and steamed broccoli with almond crunch. 100% pure veg, optimized for lean muscle gain.',
+    calories: 620,
+    protein: 48,
+    carbs: 48,
+    fats: 16,
     dietaryPreference: 'HIGH_PROTEIN',
-    imageUrl: '/meals/chicken-prep.png'
+    imageUrl: '/meals/vegan-keto.png'
   },
   { 
     id: 'prod-vegan-keto-bowl',
@@ -70,6 +70,21 @@ const products = [
 
 async function main() {
   console.log('Upserting products into database...');
+  // Purge/update any legacy prod-lean-muscle-chicken in DB to 100% pure veg
+  try {
+    await prisma.product.updateMany({
+      where: { id: 'prod-lean-muscle-chicken' },
+      data: {
+        name: 'Sprouted High Protein Power Bowl',
+        description: 'Sprouted organic moong, edamame, roasted organic tofu cubes, tri-color quinoa, and steamed broccoli with almond crunch. 100% pure veg, optimized for lean muscle gain.',
+        imageUrl: '/meals/vegan-keto.png',
+        dietaryPreference: 'HIGH_PROTEIN',
+      },
+    });
+  } catch (e) {
+    console.log('Legacy cleanup check:', e);
+  }
+
   for (const prod of products) {
     const res = await prisma.product.upsert({
       where: { id: prod.id },

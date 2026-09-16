@@ -118,6 +118,10 @@ const faqs = [
     q: 'Are the items cooked or processed?',
     a: 'No! The Just Bloomed Trial is 100% raw, fresh, and cold-prepared. Zero heating, zero refined oils, and zero preservatives to ensure intact digestive enzymes.',
   },
+  {
+    q: 'Is TheBlooMaa 100% vegetarian & plant-based?',
+    a: 'Yes, absolutely 100% pure vegetarian! Our kitchen is strictly plant-based and cold-crafted with living sprouted legumes, microgreens, vitality seeds, and raw nuts. Zero meat, zero poultry, zero eggs, and zero non-vegetarian items ever enter our preparation facility.',
+  },
 ];
 
 export const revalidate = 60;

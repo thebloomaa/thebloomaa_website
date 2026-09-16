@@ -466,7 +466,7 @@ function CheckoutPageInner() {
                 <div className="flex flex-col sm:flex-row gap-6 items-center">
                   <div className="w-full sm:w-44 h-40 rounded-2xl overflow-hidden relative flex-shrink-0 bg-slate-950 border border-slate-700">
                     <img
-                      src={selectedProduct.imageUrl || '/meals/chicken-prep.png'}
+                      src={selectedProduct.imageUrl || '/meals/vegan-keto.png'}
                       alt={selectedProduct.name}
                       className="w-full h-full object-cover"
                     />
@@ -497,7 +497,7 @@ function CheckoutPageInner() {
                         🔥 {selectedProduct.calories} kcal
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
-                        🥩 {selectedProduct.protein}g Protein
+                        💪 {selectedProduct.protein}g Protein
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-amber-400/10 text-amber-300 border border-amber-400/20 font-mono">
                         🍞 {selectedProduct.carbs}g Carbs

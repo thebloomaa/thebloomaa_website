@@ -3,15 +3,16 @@
 import React, { useState } from 'react';
 
 const initialProducts = [
-  { id: '1', name: 'Lean Muscle Chicken Prep', type: 'MEAL_PLAN', diet: 'HIGH_PROTEIN', price: 350, calories: 650, protein: 55, carbs: 45, fats: 15, active: true },
+  { id: '1', name: 'Sprouted High Protein Power Bowl', type: 'MEAL_PLAN', diet: 'HIGH_PROTEIN', price: 350, calories: 620, protein: 48, carbs: 48, fats: 16, active: true },
   { id: '2', name: 'Vegan Keto Power Bowl', type: 'MEAL_PLAN', diet: 'VEGAN', price: 300, calories: 500, protein: 20, carbs: 12, fats: 40, active: true },
   { id: '3', name: 'Standard Weight Loss Diet', type: 'MEAL_PLAN', diet: 'VEG', price: 250, calories: 400, protein: 18, carbs: 55, fats: 8, active: true },
 ];
 
 const dietColors: Record<string, { bg: string; color: string }> = {
-  HIGH_PROTEIN: { bg: 'rgba(239, 68, 68, 0.1)', color: '#FCA5A5' },
+  HIGH_PROTEIN: { bg: 'rgba(245, 158, 11, 0.15)', color: '#FCD34D' },
   VEGAN: { bg: 'rgba(16, 185, 129, 0.1)', color: '#6EE7B7' },
   VEG: { bg: 'rgba(52, 211, 153, 0.1)', color: '#A7F3D0' },
+  LIVING_RAW: { bg: 'rgba(16, 185, 129, 0.2)', color: '#34D399' },
   KETO: { bg: 'rgba(168, 85, 247, 0.1)', color: '#C4B5FD' },
 };
 
@@ -86,10 +87,11 @@ export default function AdminProductsPage() {
               <option value="BEVERAGE">Beverage</option>
             </select>
             <select value={form.diet} onChange={(e) => setForm({ ...form, diet: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle}>
-              <option value="VEG">Veg</option>
+              <option value="VEG">Pure Veg</option>
+              <option value="LIVING_RAW">Living Raw</option>
               <option value="VEGAN">Vegan</option>
-              <option value="KETO">Keto</option>
-              <option value="HIGH_PROTEIN">High Protein</option>
+              <option value="HIGH_PROTEIN">High Protein Veg</option>
+              <option value="KETO">Plant Keto</option>
             </select>
             <input type="number" placeholder="Price (₹)" value={form.price} onChange={(e) => setForm({ ...form, price: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle} />
           </div>

@@ -658,7 +658,7 @@ export default function CustomerAuthForm() {
                   {[
                     {
                       id: 'LEAN_MUSCLE',
-                      title: '🥩 Lean Muscle Growth',
+                      title: '💪 Lean Muscle Growth',
                       desc: 'High clean protein (140-180g), complex carbohydrates, hypertrophy recovery.',
                     },
                     {
@@ -698,15 +698,15 @@ export default function CustomerAuthForm() {
 
               <div>
                 <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
-                  Dietary Preference
+                  Dietary Preference <span className="text-emerald-400 font-normal lowercase">(100% pure veg kitchen)</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
-                    { id: 'VEG', label: '🥗 Vegetarian' },
+                    { id: 'VEG', label: '🥗 Pure Vegetarian' },
                     { id: 'VEGAN', label: '🌿 100% Vegan' },
                     { id: 'LIVING_RAW', label: '🌱 Living Raw & Sprouts' },
-                    { id: 'HIGH_PROTEIN', label: '🍗 High Protein Non-Veg / Eggs' },
-                    { id: 'KETO', label: '🥑 Keto / Low Carb' },
+                    { id: 'HIGH_PROTEIN', label: '💪 High Protein Plant / Sprouts' },
+                    { id: 'KETO', label: '🥑 Plant Keto / Low Carb' },
                   ].map((diet) => (
                     <button
                       key={diet.id}

@@ -40,7 +40,7 @@ export async function POST(request: Request) {
         name: body.name,
         description: body.description || '',
         price: Number(body.price),
-        imageUrl: body.imageUrl || '/meals/chicken-prep.png',
+        imageUrl: body.imageUrl || '/meals/vegan-keto.png',
         type: body.type,
         calories: Number(body.calories),
         protein: Number(body.protein),

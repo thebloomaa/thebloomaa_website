@@ -192,11 +192,12 @@ export default function OnboardingPage() {
                     className="w-full px-4 py-3 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                   >
-                    <option value="">No Preference</option>
-                    <option value="VEG">Vegetarian</option>
-                    <option value="VEGAN">Vegan</option>
-                    <option value="HIGH_PROTEIN">High Protein (Non-Veg)</option>
-                    <option value="KETO">Keto</option>
+                    <option value="">No Preference (100% Veg)</option>
+                    <option value="VEG">100% Pure Vegetarian</option>
+                    <option value="VEGAN">Vegan Plant-Based</option>
+                    <option value="LIVING_RAW">Living Raw & Sprouts</option>
+                    <option value="HIGH_PROTEIN">High Protein Plant / Sprouts</option>
+                    <option value="KETO">Plant Keto / Low Carb</option>
                   </select>
                 </div>
                 <div>

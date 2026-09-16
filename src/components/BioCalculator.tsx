@@ -746,7 +746,7 @@ export default function BioCalculator() {
                   </p>
 
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-xs">
-                    <span className="font-bold text-blue-400 font-mono">🥩 {results.matchedProduct.protein}g Protein</span>
+                    <span className="font-bold text-blue-400 font-mono">💪 {results.matchedProduct.protein}g Protein</span>
                     <span className="font-bold text-amber-400 font-mono">🍞 {results.matchedProduct.carbs}g Carbs</span>
                     <span className="font-bold text-emerald-400 font-mono">🥑 {results.matchedProduct.fats}g Fats</span>
                     <span className="font-black text-base text-slate-100 font-mono">

@@ -16,10 +16,11 @@ interface ProductCardProps {
 
 const getBadgeStyle = (pref: string) => {
   switch (pref) {
+    case 'LIVING_RAW': return { bg: '#064E3B', color: '#6EE7B7', border: '#059669' };
     case 'VEGAN': return { bg: '#065F46', color: '#6EE7B7', border: '#059669' };
     case 'VEG': return { bg: '#064E3B', color: '#A7F3D0', border: '#047857' };
     case 'KETO': return { bg: '#4C1D95', color: '#C4B5FD', border: '#6D28D9' };
-    case 'HIGH_PROTEIN': return { bg: '#7F1D1D', color: '#FCA5A5', border: '#991B1B' };
+    case 'HIGH_PROTEIN': return { bg: '#78350F', color: '#FDE68A', border: '#D97706' };
     default: return { bg: '#374151', color: '#D1D5DB', border: '#4B5563' };
   }
 };
@@ -90,7 +91,7 @@ export default function ProductCard({
           {/* Protein */}
           <div className="flex items-center justify-between mb-2.5">
             <div className="flex items-center gap-2 text-xs font-medium" style={{ color: 'var(--text-muted)' }}>
-              <span>🥩</span>
+              <span>💪</span>
               <span>Protein</span>
             </div>
             <span className="text-xs font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#60A5FA' }}>{protein}g</span>

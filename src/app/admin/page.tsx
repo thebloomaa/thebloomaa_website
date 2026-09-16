@@ -972,9 +972,10 @@ export default function AdminDashboard() {
                 onChange={(e) => setDietFilter(e.target.value)}
                 className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-300 font-bold focus:outline-none focus:border-amber-400"
               >
-                <option value="ALL">All Diets</option>
+                <option value="ALL">All Diets (100% Veg)</option>
                 <option value="VEG">Pure Veg</option>
-                <option value="NON_VEG">Non-Veg</option>
+                <option value="VEGAN">Vegan</option>
+                <option value="HIGH_PROTEIN">High Protein Veg</option>
                 <option value="LIVING_RAW">Living Raw</option>
               </select>
             </div>

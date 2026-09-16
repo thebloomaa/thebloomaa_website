@@ -48,6 +48,11 @@ export default function LandingHero() {
       <div className="absolute bottom-10 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl pointer-events-none bg-amber-500" />
 
       <div className="max-w-5xl mx-auto text-center relative z-10">
+        {/* Pure Veg Trust Badge */}
+        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 mb-4 animate-fade-in">
+          <span>🌿 100% Pure Vegetarian &amp; Living Plant Nutrition</span>
+        </div>
+
         {/* Primary Headline */}
         <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight leading-[1.2] mb-5 text-slate-100 animate-fade-in-up">
           Bloom your life with <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 to-teal-300">BlooMaa</span>
@@ -55,7 +60,7 @@ export default function LandingHero() {
 
         {/* Sub-headline */}
         <p className="max-w-2xl mx-auto text-sm sm:text-base leading-relaxed mb-8 text-slate-300 animate-fade-in-up-delay-2">
-          Cold-crafted fresh salads, sprouted nutrition boxes, and natural enzyme vitality delivered across Patna every morning (6 AM – 9 AM). Zero cooked denatured oils, 100% clean vitality.
+          Cold-crafted fresh salads, sprouted nutrition boxes, and natural enzyme vitality delivered across Patna every morning (6 AM – 9 AM). 100% pure vegetarian, zero meat/eggs, zero cooked denatured oils.
         </p>
 
         {/* CTA Area: If verified, show "Claim 7D Trial" directly; otherwise "Check Delivery Zone" */}

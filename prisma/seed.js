@@ -70,14 +70,14 @@ function main() {
                     console.log('✅ Seeded Delivery Zones (Patna)');
                     products = [
                         {
-                            name: 'Lean Muscle Chicken Prep',
+                            name: 'Sprouted High Protein Power Bowl',
                             type: 'MEAL_PLAN',
                             price: 350,
-                            description: 'Grilled chicken breast with quinoa and steamed broccoli. Optimized for muscle gain.',
-                            calories: 650,
-                            protein: 55,
-                            carbs: 45,
-                            fats: 15,
+                            description: 'Sprouted organic moong, edamame, roasted organic tofu cubes, tri-color quinoa, and steamed broccoli with almond crunch. 100% pure veg, optimized for lean muscle gain.',
+                            calories: 620,
+                            protein: 48,
+                            carbs: 48,
+                            fats: 16,
                             dietaryPreference: 'HIGH_PROTEIN'
                         },
                         {

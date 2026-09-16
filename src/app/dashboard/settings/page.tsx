@@ -164,11 +164,11 @@ export default function SubscriberSettingsPage() {
                     onChange={(e) => setForm({ ...form, dietaryPreference: e.target.value })}
                     className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
                   >
-                    <option value="VEG">Vegetarian</option>
-                    <option value="VEGAN">Vegan</option>
+                    <option value="VEG">100% Pure Vegetarian</option>
+                    <option value="VEGAN">Vegan Plant-Based</option>
                     <option value="LIVING_RAW">Living Raw &amp; Sprouts</option>
-                    <option value="HIGH_PROTEIN">High Protein</option>
-                    <option value="KETO">Keto</option>
+                    <option value="HIGH_PROTEIN">High Protein Plant / Sprouts</option>
+                    <option value="KETO">Plant Keto / Low Carb</option>
                   </select>
                 </div>
 
