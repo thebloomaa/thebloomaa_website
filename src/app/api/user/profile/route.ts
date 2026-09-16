@@ -10,11 +10,39 @@ export async function GET(request: Request) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const user = await prisma.user.findUnique({
-      where: { id: session.user.id }
-    });
+    const [user, latestSub] = await Promise.all([
+      prisma.user.findUnique({
+        where: { id: session.user.id },
+        include: {
+          addresses: {
+            orderBy: { isDefault: 'desc' },
+          },
+        },
+      }),
+      prisma.subscription.findFirst({
+        where: {
+          userId: session.user.id,
+          status: { in: ['ACTIVE', 'PENDING'] },
+        },
+        orderBy: { createdAt: 'desc' },
+        select: { deliveryTime: true },
+      }),
+    ]);
 
-    return NextResponse.json({ user });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
+    // Clean up deliveryTime (e.g. '07:00 AM' -> '07:00')
+    const rawDeliveryTime = latestSub?.deliveryTime || '07:00 AM';
+    const cleanDeliveryTime = rawDeliveryTime.replace(/\s*(AM|PM)/i, '').trim();
+
+    return NextResponse.json({
+      user: {
+        ...user,
+        deliveryTime: cleanDeliveryTime || '07:00',
+      },
+    });
   } catch (error) {
     console.error('Profile GET error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
@@ -29,7 +57,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    
+
     // Allow updating these fields
     const data: any = {};
     if (body.name) data.name = body.name;
@@ -45,8 +73,33 @@ export async function PATCH(request: Request) {
 
     const user = await prisma.user.update({
       where: { id: session.user.id },
-      data
+      data,
     });
+
+    // Synchronize deliveryTime to active/pending subscriptions and queued orders
+    if (body.deliveryTime) {
+      const formattedTime =
+        body.deliveryTime.includes('AM') || body.deliveryTime.includes('PM')
+          ? body.deliveryTime
+          : `${body.deliveryTime} AM`;
+
+      await prisma.$transaction([
+        prisma.subscription.updateMany({
+          where: {
+            userId: session.user.id,
+            status: { in: ['ACTIVE', 'PENDING'] },
+          },
+          data: { deliveryTime: formattedTime },
+        }),
+        prisma.order.updateMany({
+          where: {
+            userId: session.user.id,
+            status: 'QUEUED',
+          },
+          data: { deliveryTime: formattedTime },
+        }),
+      ]);
+    }
 
     return NextResponse.json({ user });
   } catch (error) {

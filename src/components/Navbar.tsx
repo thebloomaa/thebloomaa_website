@@ -3,9 +3,11 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useSession, signOut } from 'next-auth/react';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { data: session } = useSession();
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 glass">
@@ -37,52 +39,80 @@ export default function Navbar() {
 
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-7">
-            <a href="/#trial" className="text-sm font-semibold transition-colors hover:text-emerald-400 text-slate-100 flex items-center gap-1.5">
+            <Link href="/#trial" className="text-sm font-semibold transition-colors hover:text-emerald-400 text-slate-100 flex items-center gap-1.5">
               <span>🌱 7D Trial</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-300 border border-amber-500/30">
                 ₹451
               </span>
-            </a>
+            </Link>
             <Link href="/calculator" className="text-sm font-semibold transition-all hover:text-emerald-300 flex items-center gap-1.5 text-slate-100">
               <span>Bio Calculator</span>
               <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 animate-pulse">
                 New
               </span>
             </Link>
-            <a href="/#how-it-works" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>How It Works</a>
-            <a href="/#pricing" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>Pricing</a>
-            <a href="/#faq" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>FAQ</a>
+            <Link href="/#how-it-works" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>How It Works</Link>
+            <Link href="/#pricing" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>Pricing</Link>
+            <Link href="/#faq" className="text-sm font-medium transition-colors hover:text-emerald-400" style={{ color: 'var(--text-muted)' }}>FAQ</Link>
           </div>
 
           {/* CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Link
-              href="/login"
-              className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-slate-200 hover:text-emerald-400 hover:bg-slate-800/80 border border-slate-700/60 hover:border-emerald-500/40 transition-all group"
-              title="Customer Login & Sign Up"
-            >
-              <svg
-                className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+            {session?.user ? (
+              <div className="flex items-center gap-2">
+                <Link
+                  href="/dashboard"
+                  className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-slate-100 hover:text-emerald-400 bg-slate-900/90 hover:bg-slate-800 border border-emerald-500/30 transition-all group shadow-sm"
+                  title="Go to Subscriber Dashboard"
+                >
+                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black bg-emerald-500 text-slate-950">
+                    {(session.user.name?.[0] || session.user.email?.[0] || 'U').toUpperCase()}
+                  </div>
+                  <span className="max-w-[110px] truncate">
+                    {session.user.name?.split(' ')[0] || 'Dashboard'}
+                  </span>
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => signOut({ callbackUrl: '/' })}
+                  className="p-2 rounded-xl text-slate-400 hover:text-red-400 hover:bg-slate-800/80 transition-all cursor-pointer"
+                  title="Log Out"
+                >
+                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                  </svg>
+                </button>
+              </div>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-slate-200 hover:text-emerald-400 hover:bg-slate-800/80 border border-slate-700/60 hover:border-emerald-500/40 transition-all group"
+                title="Customer Login & Sign Up"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                />
-              </svg>
-              <span>Log In</span>
-            </Link>
-            <a
+                <svg
+                  className="w-4 h-4 text-emerald-400 group-hover:scale-110 transition-transform"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+                  />
+                </svg>
+                <span>Log In</span>
+              </Link>
+            )}
+
+            <Link
               href="/#trial"
               className="px-5 py-2.5 text-sm font-bold rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 shadow-md shadow-emerald-500/20 flex items-center gap-1.5"
             >
               <span>Get 7D Trial</span>
               <span className="text-[11px] bg-slate-950/20 px-1.5 py-0.5 rounded font-black">₹451</span>
-            </a>
+            </Link>
           </div>
 
           {/* Mobile hamburger */}
@@ -104,30 +134,66 @@ export default function Navbar() {
         {/* Mobile menu */}
         {mobileOpen && (
           <div className="md:hidden pb-4 pt-2 space-y-2 border-t border-slate-800 animate-fade-in-up">
-            <a href="/#trial" className="flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
+            {session?.user && (
+              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-900 border border-emerald-500/20 mb-2">
+                <div className="flex items-center gap-2.5">
+                  <div className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-emerald-500 text-slate-950">
+                    {(session.user.name?.[0] || session.user.email?.[0] || 'U').toUpperCase()}
+                  </div>
+                  <div className="overflow-hidden">
+                    <p className="text-xs font-bold text-slate-100 truncate">{session.user.name || 'Subscriber'}</p>
+                    <p className="text-[10px] text-slate-400 truncate">{session.user.email}</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setMobileOpen(false);
+                    signOut({ callbackUrl: '/' });
+                  }}
+                  className="text-xs text-red-400 hover:text-red-300 font-semibold px-2 py-1 rounded bg-red-500/10 border border-red-500/20"
+                >
+                  Log Out
+                </button>
+              </div>
+            )}
+
+            <Link href="/#trial" className="flex items-center justify-between px-3 py-2.5 text-sm font-bold rounded-lg text-slate-100 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>
               <span className="flex items-center gap-2">🌱 7D Fresh Nutrition Trial</span>
               <span className="text-xs px-2 py-0.5 rounded bg-amber-400 text-slate-950 font-black">₹451</span>
-            </a>
+            </Link>
             <Link href="/calculator" className="flex items-center justify-between px-3 py-2 text-sm font-bold rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" onClick={() => setMobileOpen(false)}>
               <span>🧬 Bio Calculator</span>
               <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-500 text-slate-950 font-black">NEW</span>
             </Link>
-            <a href="/#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>How It Works</a>
-            <a href="/#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>Pricing</a>
-            <a href="/#faq" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>FAQ</a>
-            <Link
-              href="/login"
-              className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-200 hover:bg-slate-800 hover:text-emerald-400"
-              onClick={() => setMobileOpen(false)}
-            >
-              <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-              </svg>
-              <span>Log In / Sign Up</span>
-            </Link>
-            <a href="/#trial" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md" onClick={() => setMobileOpen(false)}>
+            <Link href="/#how-it-works" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>How It Works</Link>
+            <Link href="/#pricing" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>Pricing</Link>
+            <Link href="/#faq" className="block px-3 py-2 text-sm font-medium rounded-lg text-slate-300 hover:bg-slate-800" onClick={() => setMobileOpen(false)}>FAQ</Link>
+
+            {session?.user ? (
+              <Link
+                href="/dashboard"
+                className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-bold rounded-lg text-emerald-400 bg-emerald-500/10 border border-emerald-500/20"
+                onClick={() => setMobileOpen(false)}
+              >
+                <span>📊 My Subscriber Dashboard</span>
+              </Link>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2.5 px-3 py-2.5 text-sm font-medium rounded-lg text-slate-200 hover:bg-slate-800 hover:text-emerald-400"
+                onClick={() => setMobileOpen(false)}
+              >
+                <svg className="w-4 h-4 text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+                </svg>
+                <span>Log In / Sign Up</span>
+              </Link>
+            )}
+
+            <Link href="/#trial" className="w-full mt-2 px-5 py-2.5 text-sm font-bold text-center rounded-xl text-slate-950 bg-emerald-500 hover:bg-emerald-400 block shadow-md" onClick={() => setMobileOpen(false)}>
               Claim 7D Trial (₹451) →
-            </a>
+            </Link>
           </div>
         )}
       </div>

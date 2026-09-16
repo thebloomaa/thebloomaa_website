@@ -1,31 +1,91 @@
 'use client';
 
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import Link from 'next/link';
 
 // Generate calendar from actual orders
 const generateDeliveryDays = (orders: any[]) => {
   const days: Record<string, 'DELIVERED' | 'SCHEDULED' | 'SKIPPED'> = {};
-  orders.forEach(o => {
+  if (!orders) return days;
+  orders.forEach((o) => {
+    if (!o.deliveryDate) return;
     const key = o.deliveryDate.split('T')[0];
     if (o.status === 'DELIVERED') days[key] = 'DELIVERED';
     else if (o.status === 'SKIPPED') days[key] = 'SKIPPED';
-    else if (o.status === 'QUEUED' || o.status === 'PENDING') days[key] = 'SCHEDULED';
+    else if (o.status === 'QUEUED' || o.status === 'PENDING' || o.status === 'PACKED' || o.status === 'OUT_FOR_DELIVERY') {
+      days[key] = 'SCHEDULED';
+    }
   });
   return days;
 };
 
-const MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
 const DAY_LABELS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su'];
 
 export default function DashboardPage() {
   const [sub, setSub] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
   const [deliveryDays, setDeliveryDays] = useState<Record<string, string>>({});
-  const now = new Date();
+
+  const now = useMemo(() => new Date(), []);
+  const todayStr = useMemo(() => {
+    return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  }, [now]);
+
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear] = useState(now.getFullYear());
-  const [skipConfirm, setSkipConfirm] = useState<string | null>(null);
+
+  // Modal and action states
+  const [skipConfirmDate, setSkipConfirmDate] = useState<string | null>(null);
+  const [skipLoading, setSkipLoading] = useState(false);
+  const [skipError, setSkipError] = useState<string | null>(null);
+
+  const [pauseModalOpen, setPauseModalOpen] = useState(false);
+  const [pauseLoading, setPauseLoading] = useState(false);
+  const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+
+  const fetchDashboardData = useCallback(async () => {
+    try {
+      const res = await fetch('/api/dashboard');
+      const data = await res.json();
+      if (data.subscription) {
+        const bundleDays =
+          data.subscription.bundleType === 'DAYS_30'
+            ? 30
+            : data.subscription.bundleType === 'DAYS_15'
+            ? 15
+            : 7;
+
+        setSub({
+          id: data.subscription.id,
+          meal: data.subscription.product?.name || 'Chef Diet Prep',
+          bundleDays,
+          deliveriesLeft: data.subscription.deliveriesLeft,
+          status: data.subscription.status,
+          startDate: data.subscription.startDate,
+          nextDeliveryDate: data.subscription.nextDeliveryDate,
+          deliveryTime: data.subscription.deliveryTime || '07:00 AM',
+          perDay: Math.round((data.subscription.product?.price || 451) / bundleDays),
+          orders: data.subscription.orders || [],
+        });
+
+        setDeliveryDays(generateDeliveryDays(data.subscription.orders));
+      } else {
+        setSub(null);
+      }
+    } catch (err) {
+      console.error('Failed to load dashboard data:', err);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, [fetchDashboardData]);
 
   // Generate calendar grid for the month
   const calendarDays = useMemo(() => {
@@ -39,211 +99,432 @@ export default function DashboardPage() {
     return days;
   }, [currentMonth, currentYear]);
 
-  const handleSkipDay = (dateStr: string) => {
-    setDeliveryDays(prev => ({
-      ...prev,
-      [dateStr]: 'SKIPPED',
-    }));
-    setSkipConfirm(null);
-  };
-
   const getDateStr = (day: number) => {
     return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   };
 
   const getStatusStyle = (status: string | undefined) => {
     switch (status) {
-      case 'DELIVERED': return { bg: 'rgba(16, 185, 129, 0.15)', color: '#6EE7B7', border: 'rgba(16, 185, 129, 0.25)' };
-      case 'SCHEDULED': return { bg: 'rgba(245, 158, 11, 0.12)', color: '#FCD34D', border: 'rgba(245, 158, 11, 0.2)' };
-      case 'SKIPPED': return { bg: 'rgba(239, 68, 68, 0.12)', color: '#FCA5A5', border: 'rgba(239, 68, 68, 0.2)' };
-      default: return { bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
+      case 'DELIVERED':
+        return { bg: 'rgba(16, 185, 129, 0.15)', color: '#6EE7B7', border: 'rgba(16, 185, 129, 0.25)' };
+      case 'SCHEDULED':
+        return { bg: 'rgba(245, 158, 11, 0.12)', color: '#FCD34D', border: 'rgba(245, 158, 11, 0.2)' };
+      case 'SKIPPED':
+        return { bg: 'rgba(239, 68, 68, 0.12)', color: '#FCA5A5', border: 'rgba(239, 68, 68, 0.2)' };
+      default:
+        return { bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
     }
   };
 
-  useEffect(() => {
-    fetch('/api/dashboard')
-      .then(res => res.json())
-      .then(data => {
-        if (data.subscription) {
-          const bundleDays = data.subscription.bundleType === 'DAYS_30' ? 30 : data.subscription.bundleType === 'DAYS_15' ? 15 : 7;
-          setSub({
-            id: data.subscription.id,
-            meal: data.subscription.product.name,
-            bundleDays,
-            deliveriesLeft: data.subscription.deliveriesLeft,
-            status: data.subscription.status,
-            startDate: data.subscription.startDate,
-            nextDeliveryDate: data.subscription.nextDeliveryDate,
-            deliveryTime: data.subscription.deliveryTime,
-            perDay: Math.round(data.subscription.product.price / bundleDays),
-            orders: data.subscription.orders,
-          });
-          setDeliveryDays(generateDeliveryDays(data.subscription.orders));
-        }
-        setLoading(false);
-      });
-  }, []);
+  // --- Real Skip Day Handler ---
+  const handleConfirmSkipDay = async () => {
+    if (!skipConfirmDate || !sub) return;
+    setSkipLoading(true);
+    setSkipError(null);
 
-  if (loading) return <div className="p-8 text-center text-[var(--text-muted)]">Loading dashboard...</div>;
+    // Find the corresponding queued order for this date
+    const matchingOrder = (sub.orders || []).find((o: any) =>
+      o.deliveryDate?.startsWith(skipConfirmDate) && (o.status === 'QUEUED' || o.status === 'PENDING')
+    );
+
+    if (!matchingOrder) {
+      setSkipError('No active scheduled order found for this date.');
+      setSkipLoading(false);
+      return;
+    }
+
+    try {
+      const res = await fetch(`/api/orders/${matchingOrder.id}/skip`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setDeliveryDays((prev) => ({
+          ...prev,
+          [skipConfirmDate]: 'SKIPPED',
+        }));
+        setSkipConfirmDate(null);
+        setActionFeedback({
+          type: 'success',
+          text: `Delivery on ${skipConfirmDate} skipped! Your remaining delivery days are safely preserved.`,
+        });
+        fetchDashboardData();
+      } else {
+        setSkipError(data.error || 'Failed to skip order.');
+      }
+    } catch {
+      setSkipError('Network error while processing skip request.');
+    } finally {
+      setSkipLoading(false);
+    }
+  };
+
+  // --- Real Pause / Resume Handlers ---
+  const handlePauseSubscription = async () => {
+    if (!sub) return;
+    setPauseLoading(true);
+    setActionFeedback(null);
+
+    try {
+      const res = await fetch(`/api/subscriptions/${sub.id}/pause`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ startDate: new Date().toISOString() }),
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setPauseModalOpen(false);
+        setActionFeedback({
+          type: 'success',
+          text: 'Subscription successfully paused. Morning deliveries are on hold until you resume.',
+        });
+        fetchDashboardData();
+      } else {
+        setActionFeedback({ type: 'error', text: data.error || 'Could not pause subscription.' });
+      }
+    } catch {
+      setActionFeedback({ type: 'error', text: 'Network connection issue while pausing.' });
+    } finally {
+      setPauseLoading(false);
+    }
+  };
+
+  const handleResumeSubscription = async () => {
+    if (!sub) return;
+    setPauseLoading(true);
+    setActionFeedback(null);
+
+    try {
+      const res = await fetch(`/api/subscriptions/${sub.id}/resume`, {
+        method: 'POST',
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setActionFeedback({
+          type: 'success',
+          text: data.message || 'Plan resumed! Morning deliveries scheduled.',
+        });
+        fetchDashboardData();
+      } else {
+        setActionFeedback({ type: 'error', text: data.error || 'Could not resume subscription.' });
+      }
+    } catch {
+      setActionFeedback({ type: 'error', text: 'Network error while resuming subscription.' });
+    } finally {
+      setPauseLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="p-12 text-center text-[var(--text-muted)] font-mono text-sm">Loading your diet dashboard...</div>;
+  }
 
   if (!sub) {
     return (
       <div className="max-w-4xl mx-auto text-center p-12">
         <h1 className="text-2xl font-black mb-4">No Active Subscription</h1>
-        <p className="text-[var(--text-muted)] mb-8">You don't have any active diet plans right now.</p>
-        <button onClick={() => window.location.href = '/'} className="px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105" style={{ background: 'var(--brand-primary)' }}>
-          Explore Diet Plans
-        </button>
+        <p className="text-[var(--text-muted)] mb-8">You don&apos;t have any active diet plans right now.</p>
+        <Link
+          href="/#trial"
+          className="inline-block px-6 py-3 rounded-xl font-bold text-slate-950 transition-all hover:scale-105"
+          style={{ background: 'var(--brand-primary)' }}
+        >
+          Explore Diet Plans &amp; 7D Trial
+        </Link>
       </div>
     );
   }
 
-  const progress = ((sub.bundleDays - sub.deliveriesLeft) / sub.bundleDays) * 100;
+  const isPaused = sub.status === 'PAUSED';
+  const progress = Math.min(100, Math.max(0, ((sub.bundleDays - sub.deliveriesLeft) / sub.bundleDays) * 100));
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto space-y-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-2xl sm:text-3xl font-black">My Dashboard</h1>
-        <p className="text-sm mt-1" style={{ color: 'var(--text-muted)' }}>Manage your diet subscription and deliveries.</p>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-black">My Dashboard</h1>
+          <p className="text-xs text-slate-400 mt-1">Manage your living diet subscription and morning deliveries.</p>
+        </div>
+
+        {/* WhatsApp Concierge Trigger */}
+        <a
+          href="https://wa.me/919999999999?text=Hi%20BlooMaa%20Team,%20I%20have%20a%20question%20about%20my%20morning%20diet%20delivery"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all w-fit cursor-pointer"
+        >
+          <span>💬</span>
+          <span>WhatsApp Concierge</span>
+        </a>
       </div>
 
+      {/* Global Feedback Alert */}
+      {actionFeedback && (
+        <div
+          className={`p-4 rounded-2xl text-xs font-semibold flex items-center justify-between animate-fade-in ${
+            actionFeedback.type === 'success'
+              ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+              : 'bg-red-500/15 border border-red-500/30 text-red-300'
+          }`}
+        >
+          <span>{actionFeedback.text}</span>
+          <button onClick={() => setActionFeedback(null)} className="font-bold cursor-pointer ml-4">✕</button>
+        </div>
+      )}
+
       {/* Subscription Status Card */}
-      <div className="rounded-2xl p-6 mb-6" style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02))', border: '2px solid rgba(16, 185, 129, 0.15)' }}>
+      <div
+        className="rounded-3xl p-6 sm:p-7 shadow-xl"
+        style={{
+          background: isPaused
+            ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(245, 158, 11, 0.02))'
+            : 'linear-gradient(135deg, rgba(16, 185, 129, 0.08), rgba(16, 185, 129, 0.02))',
+          border: isPaused
+            ? '2px solid rgba(245, 158, 11, 0.25)'
+            : '2px solid rgba(16, 185, 129, 0.2)',
+        }}
+      >
+        {sub.status === 'PENDING' && (
+          <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2.5">
+            <span className="text-base">✨</span>
+            <span>
+              <strong>Prep Queued &amp; Scheduled:</strong> Your subscription is confirmed! Kitchen prep begins at 5:00 AM and morning delivery runs 6:00 AM – 9:00 AM.
+            </span>
+          </div>
+        )}
+
+        {isPaused && (
+          <div className="mb-4 p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2.5">
+            <span className="text-base">⏸️</span>
+            <span>
+              <strong>Plan Paused:</strong> Deliveries are paused and your days are preserved. Tap &quot;Resume Plan&quot; whenever you are ready to restart.
+            </span>
+          </div>
+        )}
+
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <div className="flex items-center gap-2 mb-1">
-              <span className="inline-block w-2 h-2 rounded-full" style={{ background: sub.status === 'ACTIVE' ? 'var(--brand-primary)' : 'var(--brand-accent)' }} />
-              <span className="text-xs font-bold uppercase tracking-wider" style={{ color: sub.status === 'ACTIVE' ? 'var(--brand-primary)' : 'var(--brand-accent)' }}>
-                {sub.status}
+            <div className="flex items-center gap-2 mb-1.5">
+              <span
+                className="inline-block w-2.5 h-2.5 rounded-full"
+                style={{
+                  background: isPaused
+                    ? '#F59E0B'
+                    : sub.status === 'ACTIVE'
+                    ? 'var(--brand-primary)'
+                    : 'var(--brand-accent)',
+                }}
+              />
+              <span
+                className="text-xs font-black uppercase tracking-wider"
+                style={{
+                  color: isPaused
+                    ? '#F59E0B'
+                    : sub.status === 'ACTIVE'
+                    ? 'var(--brand-primary)'
+                    : 'var(--brand-accent)',
+                }}
+              >
+                {sub.status === 'PENDING' ? 'Scheduled & Queued' : sub.status}
               </span>
             </div>
-            <h2 className="text-lg font-bold">{sub.meal}</h2>
-            <p className="text-sm mt-0.5" style={{ color: 'var(--text-muted)' }}>
-              Next delivery: <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>{new Date(sub.nextDeliveryDate).toLocaleDateString()} · {sub.deliveryTime}</span>
+            <h2 className="text-xl font-black text-slate-100">{sub.meal}</h2>
+            <p className="text-xs text-slate-400 mt-1">
+              Next delivery:{' '}
+              <span className="font-semibold text-slate-200">
+                {isPaused
+                  ? 'Paused (No upcoming drop)'
+                  : `${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                    })} · ${sub.deliveryTime}`}
+              </span>
             </p>
           </div>
-          <div className="flex gap-2">
-            <button className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105" style={{ background: 'rgba(245, 158, 11, 0.12)', color: 'var(--brand-accent)', border: '1px solid rgba(245, 158, 11, 0.2)' }}>
-              ⏸️ Pause Plan
-            </button>
-            <button className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
+
+          <div className="flex flex-wrap gap-2">
+            {isPaused ? (
+              <button
+                type="button"
+                onClick={handleResumeSubscription}
+                disabled={pauseLoading}
+                className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
+              >
+                {pauseLoading ? 'Resuming...' : '▶️ Resume Plan'}
+              </button>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setPauseModalOpen(true)}
+                disabled={pauseLoading}
+                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 cursor-pointer bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
+              >
+                ⏸️ Pause Plan
+              </button>
+            )}
+
+            <Link
+              href="/#trial"
+              className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 flex items-center bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"
+            >
               🔄 Change Plan
-            </button>
+            </Link>
           </div>
         </div>
 
         {/* Progress bar */}
-        <div className="flex items-center justify-between text-xs mb-2" style={{ color: 'var(--text-muted)' }}>
-          <span>{sub.bundleDays - sub.deliveriesLeft} delivered</span>
-          <span>{sub.deliveriesLeft} remaining</span>
+        <div className="flex items-center justify-between text-xs mb-2 text-slate-400">
+          <span>{sub.bundleDays - sub.deliveriesLeft} of {sub.bundleDays} delivered</span>
+          <span className="font-bold text-emerald-400">{sub.deliveriesLeft} days left</span>
         </div>
-        <div className="h-2.5 rounded-full overflow-hidden" style={{ background: 'var(--bg-surface)' }}>
-          <div className="h-full rounded-full transition-all duration-700" style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
+        <div className="h-2.5 rounded-full overflow-hidden bg-slate-800">
+          <div
+            className="h-full rounded-full transition-all duration-700"
+            style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }}
+          />
         </div>
-        <p className="text-xs font-medium mt-2" style={{ fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>
-          ₹{sub.perDay}/day · {sub.deliveriesLeft} days left
+        <p className="text-xs font-medium mt-2 font-mono text-slate-400">
+          ₹{sub.perDay}/day · Fresh Living Box drop 6:00 AM – 9:00 AM
         </p>
       </div>
 
-      {/* Quick Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-8">
-        {[
-          { label: 'This Month', value: `₹${(sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0) * sub.perDay}`, icon: '💰' },
-          { label: 'Diets Delivered', value: `${sub.orders?.filter((o: any) => o.status === 'DELIVERED').length || 0}`, icon: '🥗' },
-          { label: 'Days Skipped', value: `${sub.orders?.filter((o: any) => o.status === 'SKIPPED').length || 0}`, icon: '⏭️' },
-          { label: 'Total Orders', value: `${sub.orders?.length || 0}`, icon: '📦' },
-        ].map((stat, i) => (
-          <div key={i} className="rounded-xl p-4" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-            <span className="text-lg">{stat.icon}</span>
-            <p className="text-lg font-black mt-1" style={{ fontFamily: 'var(--font-mono)' }}>{stat.value}</p>
-            <p className="text-xs" style={{ color: 'var(--text-muted)' }}>{stat.label}</p>
-          </div>
-        ))}
-      </div>
-
       {/* Delivery Calendar */}
-      <div className="rounded-2xl p-6 mb-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+      <div className="rounded-3xl p-6 sm:p-7 bg-slate-900 border border-slate-800 shadow-xl">
         <div className="flex items-center justify-between mb-6">
-          <h3 className="text-lg font-bold">Delivery Calendar</h3>
+          <div>
+            <h3 className="text-lg font-bold text-slate-100">Delivery Calendar</h3>
+            <p className="text-xs text-slate-400 mt-0.5">Tap any scheduled morning drop to skip it before 8:30 PM</p>
+          </div>
           <div className="flex items-center gap-2">
-            <button onClick={() => setCurrentMonth(m => Math.max(m - 1, 0))} className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>←</button>
-            <span className="text-sm font-semibold min-w-[120px] text-center">{MONTH_NAMES[currentMonth]} {currentYear}</span>
-            <button onClick={() => setCurrentMonth(m => Math.min(m + 1, 11))} className="w-8 h-8 rounded-lg flex items-center justify-center text-sm" style={{ background: 'var(--bg-surface)', color: 'var(--text-muted)' }}>→</button>
+            <button
+              onClick={() => setCurrentMonth((m) => Math.max(m - 1, 0))}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+            >
+              ←
+            </button>
+            <span className="text-xs font-bold min-w-[110px] text-center text-slate-200">
+              {MONTH_NAMES[currentMonth]} {currentYear}
+            </span>
+            <button
+              onClick={() => setCurrentMonth((m) => Math.min(m + 1, 11))}
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+            >
+              →
+            </button>
           </div>
         </div>
 
         {/* Day labels */}
-        <div className="grid grid-cols-7 gap-1 mb-2">
-          {DAY_LABELS.map(d => (
-            <div key={d} className="text-center text-xs font-semibold py-1" style={{ color: 'var(--text-muted)' }}>{d}</div>
+        <div className="grid grid-cols-7 gap-1.5 mb-2">
+          {DAY_LABELS.map((d) => (
+            <div key={d} className="text-center text-xs font-bold py-1 text-slate-400">
+              {d}
+            </div>
           ))}
         </div>
 
         {/* Calendar grid */}
-        <div className="grid grid-cols-7 gap-1">
+        <div className="grid grid-cols-7 gap-1.5">
           {calendarDays.map((day, i) => {
-            if (!day) return <div key={i} />;
+            if (!day) return <div key={i} className="aspect-square" />;
             const dateStr = getDateStr(day);
             const status = deliveryDays[dateStr];
             const style = getStatusStyle(status);
             const isScheduled = status === 'SCHEDULED';
-            const isToday = dateStr === '2026-09-03';
+            const isToday = dateStr === todayStr;
 
             return (
               <button
                 key={i}
-                onClick={() => isScheduled && setSkipConfirm(dateStr)}
+                type="button"
+                onClick={() => {
+                  if (isScheduled) {
+                    setSkipConfirmDate(dateStr);
+                    setSkipError(null);
+                  }
+                }}
                 disabled={!isScheduled}
-                className="relative aspect-square rounded-lg flex flex-col items-center justify-center text-xs font-semibold transition-all disabled:cursor-default"
+                className="relative aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-bold transition-all disabled:cursor-default"
                 style={{
                   background: style.bg,
                   color: style.color,
                   border: isToday ? '2px solid var(--brand-primary)' : `1px solid ${style.border}`,
                 }}
-                title={status ? `${status}` : ''}
+                title={status ? `${dateStr}: ${status}` : dateStr}
               >
-                {day}
-                {status === 'DELIVERED' && <span className="text-[8px] mt-0.5">✓</span>}
-                {status === 'SKIPPED' && <span className="text-[8px] mt-0.5">✕</span>}
-                {isScheduled && <span className="text-[8px] mt-0.5">●</span>}
+                <span>{day}</span>
+                {status === 'DELIVERED' && <span className="text-[9px] mt-0.5 font-bold">✓</span>}
+                {status === 'SKIPPED' && <span className="text-[9px] mt-0.5 font-bold">✕</span>}
+                {isScheduled && <span className="text-[9px] mt-0.5 text-amber-400">●</span>}
               </button>
             );
           })}
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 mt-5 pt-4" style={{ borderTop: '1px solid var(--border-subtle)' }}>
+        <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-slate-800 text-xs text-slate-400">
           {[
             { label: 'Delivered', color: '#6EE7B7', symbol: '✓' },
             { label: 'Scheduled', color: '#FCD34D', symbol: '●' },
             { label: 'Skipped', color: '#FCA5A5', symbol: '✕' },
-          ].map(item => (
-            <div key={item.label} className="flex items-center gap-1.5 text-xs" style={{ color: 'var(--text-muted)' }}>
-              <span style={{ color: item.color }}>{item.symbol}</span>
-              {item.label}
+          ].map((item) => (
+            <div key={item.label} className="flex items-center gap-1.5">
+              <span style={{ color: item.color }} className="font-bold">{item.symbol}</span>
+              <span>{item.label}</span>
             </div>
           ))}
-          <span className="text-xs" style={{ color: 'var(--text-muted)' }}>· Tap any scheduled day to skip it</span>
+          <span className="ml-auto text-[11px] text-slate-500">
+            ⏰ 8:30 PM eve cutoff for skips
+          </span>
         </div>
       </div>
 
       {/* Skip Confirmation Modal */}
-      {skipConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center px-4" style={{ background: 'rgba(0,0,0,0.6)' }}>
-          <div className="rounded-2xl p-6 w-full max-w-sm animate-fade-in-up" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+      {skipConfirmDate && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-slate-900 border border-slate-800 shadow-2xl animate-fade-in-up">
             <div className="text-center">
-              <div className="text-3xl mb-3">⏭️</div>
-              <h3 className="text-lg font-bold mb-1">Skip This Day?</h3>
-              <p className="text-sm mb-5" style={{ color: 'var(--text-muted)' }}>
-                Skip delivery on <span className="font-semibold" style={{ color: 'var(--text-secondary)' }}>{new Date(skipConfirm).toLocaleDateString('en-IN', { weekday: 'long', month: 'short', day: 'numeric' })}</span>. The day will be added back to your bundle.
+              <div className="text-3xl mb-2">⏭️</div>
+              <h3 className="text-lg font-bold text-slate-100">Skip This Delivery?</h3>
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                Skip your morning drop on{' '}
+                <span className="font-bold text-amber-400">
+                  {new Date(skipConfirmDate).toLocaleDateString('en-IN', {
+                    weekday: 'long',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
+                </span>
+                . Your plan day is not lost—it will be automatically extended at the end.
               </p>
-              <div className="flex gap-3">
-                <button onClick={() => setSkipConfirm(null)} className="flex-1 py-2.5 rounded-xl text-sm font-semibold" style={{ background: 'var(--bg-surface)', color: 'var(--text-secondary)', border: '1px solid var(--border-subtle)' }}>
-                  Cancel
+
+              {skipError && (
+                <div className="mt-3 p-2.5 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300 text-xs text-left">
+                  ⚠️ {skipError}
+                </div>
+              )}
+
+              <div className="flex gap-3 mt-5">
+                <button
+                  type="button"
+                  disabled={skipLoading}
+                  onClick={() => setSkipConfirmDate(null)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 cursor-pointer"
+                >
+                  Keep Delivery
                 </button>
-                <button onClick={() => handleSkipDay(skipConfirm)} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-white" style={{ background: 'var(--brand-accent)' }}>
-                  Skip Day
+                <button
+                  type="button"
+                  disabled={skipLoading}
+                  onClick={handleConfirmSkipDay}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 cursor-pointer disabled:opacity-50"
+                >
+                  {skipLoading ? 'Skipping...' : 'Confirm Skip'}
                 </button>
               </div>
             </div>
@@ -251,47 +532,113 @@ export default function DashboardPage() {
         </div>
       )}
 
-      {/* Recent Deliveries */}
-      <div className="rounded-2xl p-6" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
-        <h3 className="text-lg font-bold mb-4">Recent Deliveries</h3>
-        <div className="space-y-3">
-          {[
-            { date: 'Sep 3, 2026', time: '6:42 AM', status: 'DELIVERED', rider: 'Raju' },
-            { date: 'Sep 2, 2026', time: '7:15 AM', status: 'DELIVERED', rider: 'Raju' },
-            { date: 'Sep 1, 2026', time: '—', status: 'SKIPPED', rider: '—' },
-            { date: 'Aug 31, 2026', time: '6:28 AM', status: 'DELIVERED', rider: 'Raju' },
-            { date: 'Aug 30, 2026', time: '7:02 AM', status: 'DELIVERED', rider: 'Raju' },
-          ].map((d, i) => (
-            <div key={i} className="flex items-center justify-between py-2.5 px-3 rounded-xl" style={{ background: 'var(--bg-dark)' }}>
-              <div className="flex items-center gap-3">
-                <span
-                  className="w-8 h-8 rounded-lg flex items-center justify-center text-xs"
-                  style={{
-                    background: d.status === 'DELIVERED' ? 'rgba(16, 185, 129, 0.12)' : 'rgba(239, 68, 68, 0.12)',
-                    color: d.status === 'DELIVERED' ? '#6EE7B7' : '#FCA5A5',
-                  }}
+      {/* Pause Confirmation Modal */}
+      {pauseModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-slate-900 border border-slate-800 shadow-2xl animate-fade-in-up">
+            <div className="text-center">
+              <div className="text-3xl mb-2">⏸️</div>
+              <h3 className="text-lg font-bold text-slate-100">Pause Subscription?</h3>
+              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                Traveling or taking a break? Pausing freezes your deliveries starting tomorrow morning. All your remaining deliveries ({sub.deliveriesLeft} days) stay safe and ready when you resume.
+              </p>
+
+              <div className="flex gap-3 mt-5">
+                <button
+                  type="button"
+                  disabled={pauseLoading}
+                  onClick={() => setPauseModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 cursor-pointer"
                 >
-                  {d.status === 'DELIVERED' ? '✓' : '✕'}
-                </span>
-                <div>
-                  <p className="text-sm font-semibold">{d.date}</p>
-                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
-                    {d.status === 'DELIVERED' ? `Delivered at ${d.time} by ${d.rider}` : 'Skipped by you'}
-                  </p>
-                </div>
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  disabled={pauseLoading}
+                  onClick={handlePauseSubscription}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 cursor-pointer disabled:opacity-50"
+                >
+                  {pauseLoading ? 'Pausing...' : 'Pause Plan'}
+                </button>
               </div>
-              <span
-                className="px-2 py-0.5 rounded-md text-[10px] font-bold uppercase"
-                style={{
-                  background: d.status === 'DELIVERED' ? 'rgba(16, 185, 129, 0.1)' : 'rgba(239, 68, 68, 0.1)',
-                  color: d.status === 'DELIVERED' ? '#6EE7B7' : '#FCA5A5',
-                }}
-              >
-                {d.status}
-              </span>
             </div>
-          ))}
+          </div>
         </div>
+      )}
+
+      {/* Recent Deliveries (Real orders from DB) */}
+      <div className="rounded-3xl p-6 sm:p-7 bg-slate-900 border border-slate-800 shadow-xl">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-bold text-slate-100">Recent Deliveries</h3>
+          <Link href="/dashboard/orders" className="text-xs font-bold text-emerald-400 hover:text-emerald-300">
+            View All Orders →
+          </Link>
+        </div>
+
+        {sub.orders && sub.orders.length > 0 ? (
+          <div className="space-y-2.5">
+            {sub.orders.slice(0, 5).map((order: any) => {
+              const shortId = `ORD-${order.id.slice(-4).toUpperCase()}`;
+              const formattedDate = order.deliveryDate
+                ? new Date(order.deliveryDate).toLocaleDateString('en-IN', {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric',
+                  })
+                : 'Scheduled';
+
+              return (
+                <div
+                  key={order.id}
+                  className="flex items-center justify-between py-3 px-4 rounded-2xl bg-slate-800/60 border border-slate-800/80 hover:bg-slate-800 transition-colors"
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold ${
+                        order.status === 'DELIVERED'
+                          ? 'bg-emerald-500/15 text-emerald-300'
+                          : order.status === 'SKIPPED'
+                          ? 'bg-red-500/15 text-red-300'
+                          : 'bg-blue-500/15 text-blue-300'
+                      }`}
+                    >
+                      {order.status === 'DELIVERED' ? '✓' : order.status === 'SKIPPED' ? '✕' : '●'}
+                    </span>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-mono text-xs font-bold text-slate-200">{shortId}</span>
+                        <span className="text-xs text-slate-400">{formattedDate}</span>
+                      </div>
+                      <p className="text-[11px] text-slate-400 mt-0.5">
+                        {order.status === 'DELIVERED'
+                          ? `Delivered by Patna Fleet · ${order.deliveryTime || 'Morning Slot'}`
+                          : order.status === 'SKIPPED'
+                          ? 'Delivery skipped by user'
+                          : `Scheduled for ${order.deliveryTime || '07:00 AM'}`}
+                      </p>
+                    </div>
+                  </div>
+
+                  <span
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      order.status === 'DELIVERED'
+                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        : order.status === 'SKIPPED'
+                        ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                        : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                    }`}
+                  >
+                    {order.status}
+                  </span>
+                </div>
+              );
+            })}
+          </div>
+        ) : (
+          <div className="p-8 text-center text-xs text-slate-400 rounded-2xl bg-slate-800/30 border border-dashed border-slate-800">
+            No previous deliveries yet. Your fresh living diet box is scheduled for tomorrow morning!
+          </div>
+        )}
       </div>
     </div>
   );

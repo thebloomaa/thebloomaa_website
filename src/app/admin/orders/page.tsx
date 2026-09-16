@@ -40,11 +40,43 @@ export default function AdminOrdersPage() {
       });
       if (res.ok) {
         setOrders((prev) =>
-          prev.map((o) => (o.id === orderId ? { ...o, status: newStatus } : o))
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  status: newStatus,
+                  subscription:
+                    newStatus === 'DELIVERED' && o.subscription
+                      ? { ...o.subscription, status: 'ACTIVE' }
+                      : o.subscription,
+                }
+              : o
+          )
         );
       }
     } catch (err) {
       alert('Failed to update status');
+    }
+  };
+
+  const handleActivateSubscription = async (orderId: string) => {
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, activateSubscription: true }),
+      });
+      if (res.ok) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId && o.subscription
+              ? { ...o, subscription: { ...o.subscription, status: 'ACTIVE' } }
+              : o
+          )
+        );
+      }
+    } catch (err) {
+      alert('Failed to activate subscription');
     }
   };
 
@@ -256,17 +288,30 @@ export default function AdminOrdersPage() {
                       </td>
 
                       <td className="p-4">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                            order.status === 'DELIVERED'
-                              ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                              : order.status === 'FAILED'
-                              ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                              : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-                          }`}
-                        >
-                          {order.status}
-                        </span>
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <span
+                            className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                              order.status === 'DELIVERED'
+                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                                : order.status === 'FAILED'
+                                ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                                : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
+                            }`}
+                          >
+                            {order.status}
+                          </span>
+                          {order.subscription?.status && (
+                            <span
+                              className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                                order.subscription.status === 'ACTIVE'
+                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                  : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              }`}
+                            >
+                              Plan: {order.subscription.status}
+                            </span>
+                          )}
+                        </div>
                         {order.subscription?.utr && (
                           <div className="mt-1.5">
                             {order.subscription.utr.startsWith('DIRECT_UPI_') ? (
@@ -284,6 +329,16 @@ export default function AdminOrdersPage() {
 
                       <td className="p-4 text-right">
                         <div className="flex items-center justify-end gap-1.5">
+                          {order.subscription?.status === 'PENDING' && (
+                            <button
+                              type="button"
+                              onClick={() => handleActivateSubscription(order.id)}
+                              className="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-bold text-[11px] cursor-pointer transition-all whitespace-nowrap"
+                              title="Verify payment and activate recurring daily cutoff engine"
+                            >
+                              Verify Plan ⚡
+                            </button>
+                          )}
                           {!isDelivered && (
                             <button
                               type="button"

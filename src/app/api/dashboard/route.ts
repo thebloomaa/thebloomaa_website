@@ -10,7 +10,8 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const subscription = await prisma.subscription.findFirst({
+    // Look for ACTIVE first, or PENDING if awaiting verification/morning drop
+    let subscription = await prisma.subscription.findFirst({
       where: { userId: session.user.id, status: 'ACTIVE' },
       include: {
         product: true,
@@ -18,6 +19,17 @@ export async function GET() {
       },
       orderBy: { createdAt: 'desc' }
     });
+
+    if (!subscription) {
+      subscription = await prisma.subscription.findFirst({
+        where: { userId: session.user.id, status: 'PENDING' },
+        include: {
+          product: true,
+          orders: true,
+        },
+        orderBy: { createdAt: 'desc' }
+      });
+    }
 
     if (!subscription) {
       return NextResponse.json({ subscription: null });

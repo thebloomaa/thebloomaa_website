@@ -152,10 +152,14 @@ export default function CustomerAuthForm() {
       const sessionRes = await fetch('/api/auth/session');
       const sessionData = await sessionRes.json();
 
+      const callback = searchParams.get('callbackUrl');
+
       if (sessionData?.user?.role === 'ADMIN') {
         router.push('/admin');
       } else if (sessionData?.user?.role === 'RIDER') {
         router.push('/rider/manifest');
+      } else if (callback && callback.startsWith('/') && !callback.startsWith('//')) {
+        router.push(callback);
       } else {
         router.push('/dashboard');
       }

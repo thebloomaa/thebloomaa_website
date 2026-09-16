@@ -218,6 +218,12 @@ export default function Home() {
                 </ul>
                 <a
                   href={plan.ctaHref}
+                  onClick={(e) => {
+                    if (plan.ctaHref === '#trial') {
+                      e.preventDefault();
+                      document.getElementById('trial')?.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer"
                   style={{
                     background: plan.popular ? 'var(--brand-primary)' : 'rgba(255,255,255,0.05)',

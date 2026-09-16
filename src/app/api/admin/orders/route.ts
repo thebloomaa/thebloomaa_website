@@ -64,14 +64,19 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { orderId, status, riderId } = body;
+    const { orderId, status, riderId, activateSubscription } = body;
 
     if (!orderId) {
       return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
     }
 
     const data: any = {};
-    if (status) data.status = status;
+    if (status) {
+      data.status = status;
+      if (status === 'DELIVERED') {
+        data.deliveredAt = new Date();
+      }
+    }
     if (riderId !== undefined) data.riderId = riderId || null;
 
     const order = await prisma.order.update({
@@ -79,8 +84,17 @@ export async function PATCH(request: Request) {
       data,
       include: {
         rider: { select: { id: true, name: true, phone: true, vehicleType: true } },
+        subscription: true,
       },
     });
+
+    // Auto-promote subscription to ACTIVE upon delivery or explicit admin activation
+    if (order.subscriptionId && (activateSubscription || status === 'DELIVERED')) {
+      await prisma.subscription.update({
+        where: { id: order.subscriptionId },
+        data: { status: 'ACTIVE' },
+      });
+    }
 
     return NextResponse.json({ success: true, order });
   } catch (error) {

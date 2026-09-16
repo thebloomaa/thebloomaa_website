@@ -13,33 +13,42 @@ export async function POST() {
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-    const tomorrow = new Date(today);
-    tomorrow.setDate(today.getDate() + 1);
 
-    // 1. Fetch active riders that have an assigned zone
-    const riders = await prisma.rider.findMany({
-      where: {
-        active: true,
-        assignedZoneId: { not: null },
-      },
-      include: {
-        assignedZone: true,
-      },
+    // Look at orders scheduled for today or tomorrow (upcoming morning deliveries)
+    const windowEnd = new Date(today);
+    windowEnd.setDate(today.getDate() + 2);
+    windowEnd.setHours(0, 0, 0, 0);
+
+    // 1. Fetch all active riders with their assigned zones
+    const activeRiders = await prisma.rider.findMany({
+      where: { active: true },
+      include: { assignedZone: true },
     });
+
+    if (activeRiders.length === 0) {
+      return NextResponse.json(
+        { error: 'No active delivery riders found in fleet.' },
+        { status: 400 }
+      );
+    }
 
     // Map pincode to riderId
     const pinToRiderId: Record<string, string> = {};
-    for (const r of riders) {
+    for (const r of activeRiders) {
       if (r.assignedZone?.pincode) {
         pinToRiderId[r.assignedZone.pincode] = r.id;
       }
     }
 
-    // 2. Fetch unassigned orders for today
+    // Default primary fallback rider for unzoned orders
+    const fallbackRider = activeRiders[0];
+
+    // 2. Fetch unassigned queued orders
     const unassignedOrders = await prisma.order.findMany({
       where: {
         riderId: null,
-        deliveryDate: { gte: today, lt: tomorrow },
+        status: 'QUEUED',
+        deliveryDate: { gte: today, lt: windowEnd },
       },
       include: {
         address: true,
@@ -47,15 +56,30 @@ export async function POST() {
     });
 
     let assignedCount = 0;
+    let fallbackAssignedCount = 0;
 
     for (const order of unassignedOrders) {
-      const orderPin = order.address?.pincode;
-      const riderId = pinToRiderId[orderPin];
+      const orderPin = order.address?.pincode || '';
+      let targetRiderId = pinToRiderId[orderPin];
+      let noteAddition = '';
 
-      if (riderId) {
+      if (!targetRiderId && fallbackRider) {
+        targetRiderId = fallbackRider.id;
+        noteAddition = ` [Fleet Pool: Assigned to ${fallbackRider.name}]`;
+        fallbackAssignedCount++;
+      }
+
+      if (targetRiderId) {
         await prisma.order.update({
           where: { id: order.id },
-          data: { riderId },
+          data: {
+            riderId: targetRiderId,
+            deliveryNote: noteAddition
+              ? order.deliveryNote
+                ? `${order.deliveryNote}${noteAddition}`
+                : noteAddition.trim()
+              : order.deliveryNote,
+          },
         });
         assignedCount++;
       }
@@ -64,6 +88,7 @@ export async function POST() {
     return NextResponse.json({
       success: true,
       assignedCount,
+      fallbackAssignedCount,
       totalUnassigned: unassignedOrders.length,
       remainingUnassigned: unassignedOrders.length - assignedCount,
     });

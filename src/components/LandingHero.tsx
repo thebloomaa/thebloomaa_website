@@ -63,6 +63,10 @@ export default function LandingHero() {
           {mounted && verifiedPincode ? (
             <a
               href="#trial"
+              onClick={(e) => {
+                e.preventDefault();
+                document.getElementById('trial')?.scrollIntoView({ behavior: 'smooth' });
+              }}
               className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>🌱 Claim 7D Trial (₹451)</span>

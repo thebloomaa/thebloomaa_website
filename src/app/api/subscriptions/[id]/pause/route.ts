@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
 // POST /api/subscriptions/[id]/pause
-// Creates a SubscriptionPause record for a specific date or open-ended pause
+// Creates a SubscriptionPause record and updates subscription.status to 'PAUSED'
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -16,10 +16,15 @@ export async function POST(
     }
 
     const { id } = await params;
-    const body = await request.json();
+    let body: any = {};
+    try {
+      body = await request.json();
+    } catch {
+      // Body may be empty for quick pause
+    }
     const { startDate, endDate } = body;
 
-    // Validate subscription exists and is ACTIVE
+    // Validate subscription exists
     const subscription = await prisma.subscription.findUnique({
       where: { id },
     });
@@ -33,32 +38,50 @@ export async function POST(
       return NextResponse.json({ error: 'Forbidden: You do not own this subscription' }, { status: 403 });
     }
 
-    if (subscription.status !== 'ACTIVE') {
-      return NextResponse.json({ error: 'Can only pause an active subscription' }, { status: 400 });
+    if (subscription.status === 'PAUSED') {
+      return NextResponse.json({ error: 'Subscription is already paused.' }, { status: 400 });
     }
 
-    // Check for existing overlapping pause
-    const existingPause = await prisma.subscriptionPause.findFirst({
-      where: {
-        subscriptionId: id,
-        endDate: null, // Open-ended active pause
-      },
-    });
-
-    if (existingPause) {
-      return NextResponse.json({ error: 'Subscription already has an active pause' }, { status: 409 });
+    if (subscription.status === 'COMPLETED' || subscription.status === 'CANCELLED') {
+      return NextResponse.json({ error: 'Cannot pause a completed or cancelled subscription.' }, { status: 400 });
     }
 
-    // Create the pause record
-    const pause = await prisma.subscriptionPause.create({
-      data: {
-        subscriptionId: id,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
-      },
+    const effectiveStartDate = startDate ? new Date(startDate) : new Date();
+
+    const result = await prisma.$transaction(async (tx) => {
+      // Create the pause record
+      const pause = await tx.subscriptionPause.create({
+        data: {
+          subscriptionId: id,
+          startDate: effectiveStartDate,
+          endDate: endDate ? new Date(endDate) : null,
+        },
+      });
+
+      // Update subscription status to PAUSED
+      const updatedSub = await tx.subscription.update({
+        where: { id },
+        data: {
+          status: 'PAUSED',
+        },
+      });
+
+      // If there is an immediate queued order for tomorrow, mark it skipped so kitchen doesn't dispatch
+      await tx.order.updateMany({
+        where: {
+          subscriptionId: id,
+          status: 'QUEUED',
+        },
+        data: {
+          status: 'SKIPPED',
+          deliveryNote: `Plan paused by customer on ${new Date().toLocaleDateString()}`,
+        },
+      });
+
+      return { pause, subscription: updatedSub };
     });
 
-    return NextResponse.json({ success: true, pause });
+    return NextResponse.json({ success: true, ...result, message: 'Subscription successfully paused.' });
   } catch (error) {
     console.error('Pause API error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

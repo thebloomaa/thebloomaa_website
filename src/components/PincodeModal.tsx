@@ -40,6 +40,8 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
         .find((row) => row.startsWith('thebloomaa_pincode='))
         ?.split('=')[1];
 
+    const isSessionDismissed = sessionStorage.getItem('thebloomaa_pincode_dismissed') === 'true';
+
     if (savedPincode) {
       setStorePincode(savedPincode);
       // If controlledIsOpen is explicitly true, respect it; otherwise keep closed
@@ -49,10 +51,10 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
         setIsOpen(false);
       }
     } else {
-      // No saved pincode: automatically open modal on first visit unless controlled
+      // No saved pincode: automatically open modal on first visit unless dismissed in session or controlled
       if (controlledIsOpen !== undefined) {
         setIsOpen(controlledIsOpen);
-      } else {
+      } else if (!isSessionDismissed) {
         const timer = setTimeout(() => setIsOpen(true), 800);
         return () => clearTimeout(timer);
       }
@@ -67,6 +69,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
   }, [controlledIsOpen]);
 
   const handleClose = () => {
+    sessionStorage.setItem('thebloomaa_pincode_dismissed', 'true');
     setIsOpen(false);
     if (onClose) onClose();
   };

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
 import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 
@@ -14,6 +15,7 @@ const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discoun
 
 export default function CheckoutPage() {
   const router = useRouter();
+  const { data: session } = useSession();
   const {
     selectedProduct,
     bundleType,
@@ -52,6 +54,39 @@ export default function CheckoutPage() {
     deliveryTime: deliveryTime || '07:00',
     deliveryNote: deliveryNote || '',
   });
+
+  // Prefill from user session / profile if available
+  useEffect(() => {
+    if (session?.user) {
+      setForm((prev) => ({
+        ...prev,
+        name: prev.name || session.user?.name || '',
+        email: prev.email || session.user?.email || '',
+      }));
+
+      fetch('/api/user/profile')
+        .then((res) => (res.ok ? res.json() : null))
+        .then((data) => {
+          if (data?.user) {
+            const defaultAddr =
+              data.user.addresses?.find((a: any) => a.isDefault) ||
+              data.user.addresses?.[0];
+
+            setForm((prev) => ({
+              ...prev,
+              name: prev.name || data.user.name || '',
+              phone: prev.phone || data.user.phone || '',
+              email: prev.email || data.user.email || '',
+              street: prev.street || defaultAddr?.street || '',
+              city: defaultAddr?.city || prev.city || 'Patna',
+              state: defaultAddr?.state || prev.state || 'Bihar',
+              pincode: prev.pincode || defaultAddr?.pincode || '',
+            }));
+          }
+        })
+        .catch((err) => console.error('Error fetching profile for checkout:', err));
+    }
+  }, [session]);
 
   const [utr, setUtr] = useState('');
 
@@ -104,7 +139,16 @@ export default function CheckoutPage() {
 
   const handleLaunchApp = (appName: string, uri: string) => {
     setLaunchedApp(appName);
-    window.location.href = uri;
+    try {
+      const a = document.createElement('a');
+      a.href = uri;
+      a.style.display = 'none';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+    } catch {
+      window.location.href = uri;
+    }
   };
 
   const handlePasteClipboard = async () => {
@@ -182,6 +226,7 @@ export default function CheckoutPage() {
       if (res.ok && data.success) {
         setOrderSuccess(true);
         setTimeout(() => {
+          useBundleStore.getState().reset();
           router.push('/dashboard');
           router.refresh();
         }, 2000);
@@ -464,6 +509,26 @@ export default function CheckoutPage() {
               </div>
 
               <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-5">
+                {/* User Session Autofill Notice */}
+                {session?.user ? (
+                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                    <span>
+                      Logged in as <strong>{session.user.name || session.user.email}</strong>. Details auto-filled from your profile.
+                    </span>
+                  </div>
+                ) : (
+                  <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300 flex items-center justify-between">
+                    <span>Already a member?</span>
+                    <Link
+                      href="/login?callbackUrl=/checkout"
+                      className="text-emerald-400 hover:text-emerald-300 font-bold underline transition-colors"
+                    >
+                      Log in to auto-fill address →
+                    </Link>
+                  </div>
+                )}
+
                 {/* Name & Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>

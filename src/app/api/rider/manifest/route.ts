@@ -177,10 +177,24 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
     }
 
+    const data: any = { status };
+    if (status === 'DELIVERED') {
+      data.deliveredAt = new Date();
+    }
+
     const updatedOrder = await prisma.order.update({
       where: { id: orderId },
-      data: { status },
+      data,
+      include: { subscription: true },
     });
+
+    // If subscription was PENDING, promote to ACTIVE on delivery
+    if (updatedOrder.subscriptionId && status === 'DELIVERED') {
+      await prisma.subscription.update({
+        where: { id: updatedOrder.subscriptionId },
+        data: { status: 'ACTIVE' },
+      });
+    }
 
     return NextResponse.json({ success: true, order: updatedOrder });
   } catch (error) {

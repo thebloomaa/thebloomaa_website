@@ -19,10 +19,13 @@ export async function processDailyCutoff() {
   tomorrow.setDate(now.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0); // Normalized start of tomorrow
 
-  // Fetch all active subscriptions eligible for next-day delivery
+  const dayAfterTomorrow = new Date(tomorrow);
+  dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
+
+  // Fetch all active or pending subscriptions eligible for next-day delivery
   const eligibleSubscriptions = await prisma.subscription.findMany({
     where: {
-      status: 'ACTIVE',
+      status: { in: ['ACTIVE', 'PENDING'] },
       deliveriesLeft: {
         gt: 0,
       },
@@ -32,6 +35,15 @@ export async function processDailyCutoff() {
     },
     include: {
       product: true,
+      orders: {
+        where: {
+          deliveryDate: {
+            gte: tomorrow,
+            lt: dayAfterTomorrow,
+          },
+          status: { in: ['QUEUED', 'PACKED', 'OUT_FOR_DELIVERY', 'DELIVERED'] },
+        },
+      },
       pauses: {
         where: {
           startDate: { lte: tomorrow },
@@ -56,13 +68,24 @@ export async function processDailyCutoff() {
       continue;
     }
 
+    // 2. If tomorrow's order already exists (e.g. Day 1 placed at checkout), ensure subscription is ACTIVE
+    if (sub.orders && sub.orders.length > 0) {
+      if (sub.status === 'PENDING') {
+        await prisma.subscription.update({
+          where: { id: sub.id },
+          data: { status: 'ACTIVE' },
+        });
+      }
+      continue;
+    }
+
     const isJustBloomedTrial = 
       sub.product.name.toLowerCase().includes('just bloomed') ||
       sub.product.dietaryPreference === 'LIVING_RAW' ||
       sub.product.type === 'TRIAL_PLAN';
 
     await prisma.$transaction(async (tx) => {
-      // 2. Determine if 6+1 Double Drop applies (ONLY on Just Bloomed Trial when deliveriesLeft === 2)
+      // 3. Determine if 6+1 Double Drop applies (ONLY on Just Bloomed Trial when deliveriesLeft === 2)
       if (isJustBloomedTrial && sub.deliveriesLeft === 2) {
         // This is delivery day 6 of the 6 active days: deliver Box 6 + Box 7 together
         await tx.order.create({
@@ -88,7 +111,7 @@ export async function processDailyCutoff() {
 
         doubleDropCount++;
       } else {
-        // 3. Standard Delivery: Decrement exactly by 1 (For standard 7/15/30D plans, or earlier trial days)
+        // 4. Standard Delivery: Decrement exactly by 1 (For standard 7/15/30D plans, or earlier trial days)
         await tx.order.create({
           data: {
             subscriptionId: sub.id,

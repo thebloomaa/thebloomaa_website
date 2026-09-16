@@ -77,12 +77,24 @@ export default function OrdersPage() {
             <div className="text-center py-10 text-[var(--text-muted)]">No orders found.</div>
           ) : orders.map((order, i) => {
             const status = statusConfig[order.status] || statusConfig.PENDING;
-            const dateStr = format(parseISO(order.deliveryDate), 'MMM d, yyyy');
-            const mealName = order.subscription?.product?.name || 'Unknown Diet';
-            const timeStr = order.deliveredAt ? format(parseISO(order.deliveredAt), 'h:mm a') : '—';
+            const dateStr = order.deliveryDate ? format(parseISO(order.deliveryDate), 'MMM d, yyyy') : '—';
+            const mealName = order.subscription?.product?.name || 'Chef Diet Prep';
+            const timeStr = order.deliveredAt
+              ? format(parseISO(order.deliveredAt), 'h:mm a')
+              : order.deliveryTime || '07:00 AM';
             
             // Sub string for ID ORD-XXXX
             const shortId = `ORD-${order.id.substring(order.id.length - 4).toUpperCase()}`;
+
+            const isTrial =
+              order.subscription?.product?.type === 'TRIAL_PLAN' ||
+              order.subscription?.bundleType === 'DAYS_7' ||
+              order.subscription?.product?.dietaryPreference === 'LIVING_RAW' ||
+              Boolean(order.subscription?.product?.name?.toLowerCase().includes('trial'));
+
+            const dropPrice = isTrial
+              ? Math.round(451 / 7)
+              : Math.round(order.subscription?.product?.price || 299);
 
             return (
               <div key={order.id} className="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors">
@@ -96,7 +108,7 @@ export default function OrdersPage() {
                 </div>
                 <span className="text-sm hidden sm:block" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{timeStr}</span>
                 <span className="text-sm font-semibold text-right" style={{ fontFamily: 'var(--font-mono)', color: order.status === 'SKIPPED' ? 'var(--text-muted)' : 'var(--text-primary)' }}>
-                  {order.status === 'SKIPPED' ? '—' : `₹${Math.round(order.subscription?.totalAmount / order.subscription?.totalDays) || 0}`}
+                  {order.status === 'SKIPPED' ? '—' : `₹${dropPrice}`}
                 </span>
               </div>
             );
