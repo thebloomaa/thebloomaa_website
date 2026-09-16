@@ -448,14 +448,14 @@ export default function AdminDashboard() {
       )}
 
       {/* Quick Action Telemetry Strip */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-3.5">
         {/* Unassigned Action Card */}
         <button
           onClick={() => {
             setActiveTab('ORDERS');
             setOrderFilter('UNASSIGNED');
           }}
-          className={`text-left rounded-2xl p-4 bg-slate-900/90 border transition-all cursor-pointer ${
+          className={`text-left rounded-2xl p-3 sm:p-4 bg-slate-900/90 border transition-all cursor-pointer ${
             data.metrics.unassignedOrdersCount > 0
               ? 'border-amber-500/40 hover:border-amber-400 shadow-lg shadow-amber-500/5'
               : 'border-slate-800 hover:border-slate-700'
@@ -478,7 +478,7 @@ export default function AdminDashboard() {
             setActiveTab('ORDERS');
             setOrderFilter('RIDER_DELIVERED');
           }}
-          className={`text-left rounded-2xl p-4 bg-slate-900/90 border transition-all cursor-pointer ${
+          className={`text-left rounded-2xl p-3 sm:p-4 bg-slate-900/90 border transition-all cursor-pointer ${
             data.metrics.needsVerificationCount > 0
               ? 'border-yellow-400/50 hover:border-yellow-300 shadow-lg shadow-yellow-500/10 animate-pulse'
               : 'border-slate-800 hover:border-slate-700'
@@ -529,7 +529,7 @@ export default function AdminDashboard() {
       </div>
 
       {/* Systematic 4-Tab Navigation */}
-      <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5 overflow-x-auto">
+      <div className="flex items-center gap-2 border-b border-slate-800 pb-2.5 overflow-x-auto no-scrollbar">
         {[
           { id: 'ORDERS', label: '📦 Live Order Dispatch & Verification', count: data.orders.length },
           { id: 'RIDERS', label: '🚴 Fleet & Riders', count: data.riders.length },
@@ -565,7 +565,7 @@ export default function AdminDashboard() {
           {/* Controls Bar */}
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 rounded-2xl bg-slate-900/90 border border-slate-800">
             {/* Filter Pills */}
-            <div className="flex flex-wrap gap-1.5">
+            <div className="flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
               {[
                 { id: 'ALL', label: 'All Orders' },
                 { id: 'UNASSIGNED', label: `🚨 Unassigned (${data.metrics.unassignedOrdersCount})` },
@@ -576,7 +576,7 @@ export default function AdminDashboard() {
                 <button
                   key={pill.id}
                   onClick={() => setOrderFilter(pill.id as any)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+                  className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap min-h-[38px] ${
                     orderFilter === pill.id
                       ? 'bg-emerald-500 text-slate-950 shadow-sm'
                       : 'bg-slate-950 text-slate-400 hover:text-slate-200 border border-slate-800'
@@ -588,13 +588,13 @@ export default function AdminDashboard() {
             </div>
 
             {/* Search Box */}
-            <div className="relative">
+            <div className="relative w-full sm:w-auto">
               <input
                 type="text"
                 placeholder="Search order, customer, phone, PIN..."
                 value={orderSearch}
                 onChange={(e) => setOrderSearch(e.target.value)}
-                className="w-full sm:w-72 px-3.5 py-1.5 pl-8 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
+                className="w-full sm:w-72 px-3.5 py-2 pl-8 rounded-xl bg-slate-950 border border-slate-700 text-base sm:text-xs text-slate-200 placeholder:text-slate-500 focus:outline-none focus:border-amber-400 min-h-[40px]"
               />
               <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-slate-500">🔍</span>
             </div>

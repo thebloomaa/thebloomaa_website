@@ -655,7 +655,7 @@ function CheckoutPageInner() {
                       placeholder="e.g. Aditi Sharma"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     />
                   </div>
                   <div>
@@ -668,7 +668,7 @@ function CheckoutPageInner() {
                       placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     />
                   </div>
                 </div>
@@ -683,7 +683,7 @@ function CheckoutPageInner() {
                     placeholder="aditi@example.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                   />
                 </div>
 
@@ -698,7 +698,7 @@ function CheckoutPageInner() {
                       placeholder="e.g. Flat 402, Block B"
                       value={form.houseNo}
                       onChange={(e) => setForm({ ...form, houseNo: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     />
                   </div>
                   <div className="sm:col-span-2">
@@ -711,7 +711,7 @@ function CheckoutPageInner() {
                       placeholder="e.g. Boring Road, near Alankar Jewellers"
                       value={form.street}
                       onChange={(e) => setForm({ ...form, street: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     />
                   </div>
                 </div>
@@ -726,7 +726,7 @@ function CheckoutPageInner() {
                       type="text"
                       value={form.city}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-sm text-slate-400 cursor-not-allowed"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-base sm:text-sm text-slate-400 cursor-not-allowed min-h-[46px]"
                     />
                   </div>
                   <div>
@@ -737,7 +737,7 @@ function CheckoutPageInner() {
                       type="text"
                       value={form.state}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-sm text-slate-400 cursor-not-allowed"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-base sm:text-sm text-slate-400 cursor-not-allowed min-h-[46px]"
                     />
                   </div>
                   <div>
@@ -754,7 +754,7 @@ function CheckoutPageInner() {
                         const val = e.target.value.replace(/\D/g, '');
                         setForm({ ...form, pincode: val });
                       }}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono min-h-[46px]"
                     />
                     {pincodeError && (
                       <p className="text-[11px] text-red-400 mt-1">{pincodeError}</p>
@@ -771,7 +771,7 @@ function CheckoutPageInner() {
                     <select
                       value={form.deliveryTime}
                       onChange={(e) => setForm({ ...form, deliveryTime: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     >
                       <option value="06:00">06:00 AM (Early Riser)</option>
                       <option value="06:30">06:30 AM</option>
@@ -789,7 +789,7 @@ function CheckoutPageInner() {
                       placeholder="e.g. Leave with guard / Ring bell once"
                       value={form.deliveryNote}
                       onChange={(e) => setForm({ ...form, deliveryNote: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500"
+                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
                     />
                   </div>
                 </div>
@@ -922,7 +922,7 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('Google Pay', gpayUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-blue-400 group-hover:scale-110 transition-transform">G</span>
                           <span className="text-xs font-bold text-slate-200">Google Pay</span>
@@ -932,7 +932,7 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('PhonePe', phonepeUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-purple-400 group-hover:scale-110 transition-transform">पे</span>
                           <span className="text-xs font-bold text-slate-200">PhonePe</span>
@@ -942,7 +942,7 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('Paytm', paytmUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-sky-400 group-hover:scale-110 transition-transform">P</span>
                           <span className="text-xs font-bold text-slate-200">Paytm</span>
@@ -952,7 +952,7 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('UPI App', universalUpiUri)}
-                          className="p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer"
+                          className="p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-emerald-400 group-hover:scale-110 transition-transform">📲</span>
                           <span className="text-xs font-bold text-emerald-300">Any UPI App</span>
@@ -1044,7 +1044,7 @@ function CheckoutPageInner() {
                             placeholder="e.g. 325498712345 (or 1-click confirm below)"
                             value={utr}
                             onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
-                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-sm font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500"
+                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-base sm:text-sm font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500 min-h-[46px]"
                           />
                           <p className="text-[10px] text-slate-400 mt-1">
                             Tip: You can 1-tap paste from your clipboard, or click &quot;I Have Paid&quot; below.

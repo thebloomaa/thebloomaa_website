@@ -570,7 +570,7 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Rahul Sharma"
                   value={regForm.name}
                   onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
                 />
               </div>
 
@@ -579,7 +579,7 @@ export default function CustomerAuthForm() {
                   WhatsApp Mobile Number (+91) *
                 </label>
                 <div className="flex gap-2">
-                  <span className="px-3.5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-400 font-mono text-sm flex items-center">
+                  <span className="px-3.5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-400 font-mono text-sm flex items-center min-h-[46px]">
                     +91
                   </span>
                   <input
@@ -589,7 +589,7 @@ export default function CustomerAuthForm() {
                     placeholder="98765 43210"
                     value={regForm.phone}
                     onChange={(e) => setRegForm({ ...regForm, phone: e.target.value.replace(/\D/g, '') })}
-                    className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm font-mono tracking-wider focus:outline-none focus:border-emerald-500"
+                    className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm font-mono tracking-wider focus:outline-none focus:border-emerald-500 min-h-[46px]"
                   />
                 </div>
                 <p className="text-[10px] text-slate-400 mt-1">
@@ -607,7 +607,7 @@ export default function CustomerAuthForm() {
                   placeholder="rahul@example.com"
                   value={regForm.email}
                   onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-sm focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
                 />
               </div>
 
@@ -783,7 +783,7 @@ export default function CustomerAuthForm() {
                     required
                     value={regForm.pincode}
                     onChange={(e) => setRegForm({ ...regForm, pincode: e.target.value.replace(/\D/g, '') })}
-                    className="w-36 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 font-mono text-sm tracking-widest focus:outline-none focus:border-emerald-500"
+                    className="w-36 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 font-mono text-base sm:text-sm tracking-widest focus:outline-none focus:border-emerald-500 min-h-[46px]"
                   />
                   <div className="flex-1 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
                     <span>📍</span>
@@ -802,7 +802,7 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Flat 302, Shanti Vihar Apartment"
                   value={regForm.street}
                   onChange={(e) => setRegForm({ ...regForm, street: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
                 />
               </div>
 
@@ -815,7 +815,7 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Near Boring Canal Road Petrol Pump"
                   value={regForm.landmark}
                   onChange={(e) => setRegForm({ ...regForm, landmark: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
                 />
               </div>
 
