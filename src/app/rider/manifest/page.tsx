@@ -18,7 +18,7 @@ interface StopItem {
   dietary: string;
   time: string;
   deliveryNote?: string | null;
-  status: 'QUEUED' | 'DELIVERED' | 'FAILED';
+  status: 'QUEUED' | 'DELIVERED' | 'RIDER_DELIVERED' | 'FAILED';
 }
 
 interface RiderManifestData {
@@ -72,12 +72,13 @@ export default function RiderManifestPage() {
       });
 
       if (res.ok) {
+        const finalStatus: StopItem['status'] = newStatus === 'DELIVERED' ? 'RIDER_DELIVERED' : newStatus;
         setData((prev) => {
           if (!prev) return null;
           const updatedStops = prev.stops.map((s) =>
-            s.id === orderId ? { ...s, status: newStatus } : s
+            s.id === orderId ? { ...s, status: finalStatus } : s
           );
-          const deliveredCount = updatedStops.filter((s) => s.status === 'DELIVERED').length;
+          const deliveredCount = updatedStops.filter((s) => s.status === 'DELIVERED' || s.status === 'RIDER_DELIVERED').length;
           const failedCount = updatedStops.filter((s) => s.status === 'FAILED').length;
           const pendingCount = updatedStops.filter((s) => s.status === 'QUEUED').length;
 
@@ -119,7 +120,7 @@ export default function RiderManifestPage() {
   const stops = data?.stops || [];
   const filteredStops = stops.filter((s) => {
     if (filter === 'PENDING') return s.status === 'QUEUED';
-    if (filter === 'DELIVERED') return s.status === 'DELIVERED';
+    if (filter === 'DELIVERED') return s.status === 'DELIVERED' || s.status === 'RIDER_DELIVERED';
     return true;
   });
 
@@ -241,15 +242,17 @@ export default function RiderManifestPage() {
       ) : (
         <div className="space-y-3">
           {filteredStops.map((stop) => {
-            const isDelivered = stop.status === 'DELIVERED';
+            const isDelivered = stop.status === 'DELIVERED' || stop.status === 'RIDER_DELIVERED';
             const isFailed = stop.status === 'FAILED';
 
             return (
               <div
                 key={stop.id}
                 className={`rounded-3xl p-5 border transition-all ${
-                  isDelivered
-                    ? 'bg-emerald-950/20 border-emerald-500/30'
+                  stop.status === 'DELIVERED'
+                    ? 'bg-emerald-950/30 border-emerald-500/40'
+                    : stop.status === 'RIDER_DELIVERED'
+                    ? 'bg-amber-950/20 border-amber-500/30'
                     : isFailed
                     ? 'bg-red-950/20 border-red-500/30'
                     : 'bg-slate-900/90 border-slate-800 shadow-md'
@@ -265,15 +268,21 @@ export default function RiderManifestPage() {
                   </div>
 
                   <span
-                    className={`px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                      isDelivered
+                    className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      stop.status === 'DELIVERED'
                         ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                        : stop.status === 'RIDER_DELIVERED'
+                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
                         : isFailed
                         ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                         : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
                     }`}
                   >
-                    {stop.status}
+                    {stop.status === 'RIDER_DELIVERED'
+                      ? 'Dropped Off ✓ (Pending Admin)'
+                      : stop.status === 'DELIVERED'
+                      ? 'Verified ✓✓'
+                      : stop.status}
                   </span>
                 </div>
 

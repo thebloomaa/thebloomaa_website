@@ -156,9 +156,9 @@ export async function GET(request: Request) {
         : null,
       stops,
       totalStops: stops.length,
-      deliveredCount: stops.filter((s) => s.status === 'DELIVERED').length,
+      deliveredCount: stops.filter((s) => s.status === 'DELIVERED' || s.status === 'RIDER_DELIVERED').length,
       failedCount: stops.filter((s) => s.status === 'FAILED').length,
-      pendingCount: stops.filter((s) => s.status === 'QUEUED').length,
+      pendingCount: stops.filter((s) => s.status === 'QUEUED' || s.status === 'OUT_FOR_DELIVERY').length,
     });
   } catch (error) {
     console.error('Manifest API error:', error);
@@ -167,7 +167,7 @@ export async function GET(request: Request) {
 }
 
 // PATCH /api/rider/manifest
-// Update order status from rider mobile interface
+// Update order status from rider mobile interface: transitions to RIDER_DELIVERED
 export async function PATCH(request: Request) {
   try {
     const body = await request.json();
@@ -177,8 +177,12 @@ export async function PATCH(request: Request) {
       return NextResponse.json({ error: 'Missing orderId or status' }, { status: 400 });
     }
 
-    const data: any = { status };
+    // When rider marks delivered, transition to RIDER_DELIVERED for admin double-verification
+    const effectiveStatus = status === 'DELIVERED' ? 'RIDER_DELIVERED' : status;
+    const data: any = { status: effectiveStatus };
+
     if (status === 'DELIVERED') {
+      data.riderDeliveredAt = new Date();
       data.deliveredAt = new Date();
     }
 
@@ -188,7 +192,7 @@ export async function PATCH(request: Request) {
       include: { subscription: true },
     });
 
-    // If subscription was PENDING, promote to ACTIVE on delivery
+    // If subscription was PENDING, promote to ACTIVE once delivered
     if (updatedOrder.subscriptionId && status === 'DELIVERED') {
       await prisma.subscription.update({
         where: { id: updatedOrder.subscriptionId },

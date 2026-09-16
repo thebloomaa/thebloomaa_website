@@ -129,11 +129,15 @@ model Order {
   deliveryDate     DateTime           
   deliveryTime     String?
   deliveryNote     String?
+  deliveredAt      DateTime?
+  riderDeliveredAt DateTime?
+  adminVerifiedAt  DateTime?
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
 
   @@index([deliveryDate, riderId])
   @@index([userId])
+  @@index([status])
 }
 
 model Payment {

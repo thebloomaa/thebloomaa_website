@@ -3,6 +3,8 @@ import { prisma } from '@/lib/prisma';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -16,83 +18,182 @@ export async function GET() {
     const tomorrow = new Date(today);
     tomorrow.setDate(today.getDate() + 1);
 
-    // 1. Key Metrics
-    const totalCustomers = await prisma.user.count({ where: { role: 'CUSTOMER' } });
-    const activeSubs = await prisma.subscription.count({ where: { status: 'ACTIVE' } });
-    const todaysOrders = await prisma.order.count({
-      where: {
-        deliveryDate: { gte: today, lt: tomorrow },
-      },
-    });
+    // 1. Key Metrics & Action Counters
+    const [
+      totalCustomers,
+      activeSubs,
+      todaysOrders,
+      deliveredToday,
+      failedToday,
+      unassignedOrdersCount,
+      needsVerificationCount,
+      doubleVerifiedCount,
+      activeRidersCount,
+      allActiveSubs,
+    ] = await Promise.all([
+      prisma.user.count({ where: { role: 'CUSTOMER' } }),
+      prisma.subscription.count({ where: { status: 'ACTIVE' } }),
+      prisma.order.count({
+        where: {
+          deliveryDate: { gte: today, lt: tomorrow },
+        },
+      }),
+      prisma.order.count({
+        where: {
+          deliveryDate: { gte: today, lt: tomorrow },
+          status: 'DELIVERED',
+        },
+      }),
+      prisma.order.count({
+        where: {
+          deliveryDate: { gte: today, lt: tomorrow },
+          status: 'FAILED',
+        },
+      }),
+      prisma.order.count({
+        where: {
+          riderId: null,
+          status: { in: ['QUEUED', 'PENDING'] },
+        },
+      }),
+      prisma.order.count({
+        where: {
+          status: 'RIDER_DELIVERED',
+        },
+      }),
+      prisma.order.count({
+        where: {
+          status: 'DELIVERED',
+          adminVerifiedAt: { not: null },
+        },
+      }),
+      prisma.rider.count({ where: { active: true } }),
+      prisma.subscription.findMany({
+        where: { status: 'ACTIVE' },
+        include: { product: true },
+      }),
+    ]);
 
-    const deliveredToday = await prisma.order.count({
-      where: {
-        deliveryDate: { gte: today, lt: tomorrow },
-        status: 'DELIVERED',
-      },
-    });
-    const failedToday = await prisma.order.count({
-      where: {
-        deliveryDate: { gte: today, lt: tomorrow },
-        status: 'FAILED',
-      },
-    });
     const deliveryRate = todaysOrders > 0 ? ((deliveredToday / todaysOrders) * 100).toFixed(1) : '100.0';
 
-    // Approximate Monthly Revenue
-    const allActiveSubs = await prisma.subscription.findMany({
-      where: { status: 'ACTIVE' },
-      include: { product: true },
-    });
     let monthlyRevenue = 0;
     allActiveSubs.forEach((sub) => {
       monthlyRevenue += sub.product.price;
     });
 
-    // 2. Recent Orders
-    const recentOrders = await prisma.order.findMany({
-      take: 8,
+    // 2. Systematic Orders List (with rider assignments, verification timestamps & status)
+    const rawOrders = await prisma.order.findMany({
+      take: 100,
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { name: true, phone: true } },
-        subscription: { include: { product: { select: { name: true } } } },
+        user: { select: { id: true, name: true, phone: true, email: true } },
+        address: true,
+        subscription: {
+          include: {
+            product: { select: { name: true, calories: true, type: true } },
+          },
+        },
+        rider: { select: { id: true, name: true, phone: true, vehicleType: true } },
       },
     });
 
-    // 3. Top Meals (Aggregation)
-    const productStats = await prisma.subscription.groupBy({
-      by: ['productId'],
-      where: { status: 'ACTIVE' },
-      _count: { productId: true },
-      orderBy: { _count: { productId: 'desc' } },
-      take: 4,
+    const orders = rawOrders.map((o) => {
+      const street = o.address?.street || 'Patna Hub';
+      const mapsMatch = street.match(/https:\/\/maps\.google\.com\/\?q=[^\]\s]+/);
+      let mapsUrl = mapsMatch ? mapsMatch[0] : null;
+
+      const gpsMatch = street.match(/📍 GPS:\s*([0-9.-]+),\s*([0-9.-]+)/);
+      let gpsCoords = null;
+      if (gpsMatch) {
+        gpsCoords = `${gpsMatch[1]}, ${gpsMatch[2]}`;
+        if (!mapsUrl) {
+          mapsUrl = `https://www.google.com/maps/search/?api=1&query=${gpsMatch[1]},${gpsMatch[2]}`;
+        }
+      }
+      const cleanStreet = street.replace(/\s*\[📍 GPS:.*?\]/, '').trim();
+
+      return {
+        id: o.id,
+        status: o.status,
+        deliveryDate: o.deliveryDate.toISOString(),
+        deliveryTime: o.deliveryTime || '07:00 AM',
+        deliveryNote: o.deliveryNote,
+        deliveredAt: o.deliveredAt?.toISOString() || null,
+        riderDeliveredAt: o.riderDeliveredAt?.toISOString() || null,
+        adminVerifiedAt: o.adminVerifiedAt?.toISOString() || null,
+        user: {
+          id: o.user.id,
+          name: o.user.name || 'Patna Customer',
+          phone: o.user.phone || '',
+          email: o.user.email,
+        },
+        address: {
+          id: o.address?.id,
+          street: cleanStreet,
+          pincode: o.address?.pincode || '800001',
+          city: o.address?.city || 'Patna',
+          gpsCoords,
+          mapsUrl,
+        },
+        subscription: o.subscription
+          ? {
+              id: o.subscription.id,
+              status: o.subscription.status,
+              bundleType: o.subscription.bundleType,
+              deliveriesLeft: o.subscription.deliveriesLeft,
+              utr: o.subscription.utr,
+              product: o.subscription.product,
+            }
+          : null,
+        riderId: o.riderId,
+        rider: o.rider,
+      };
     });
 
-    const topMeals = [];
-    const totalActive = activeSubs > 0 ? activeSubs : 1;
-    for (const stat of productStats) {
-      const prod = await prisma.product.findUnique({ where: { id: stat.productId }, select: { name: true } });
-      topMeals.push({
-        name: prod?.name || 'Meal Plan',
-        subs: stat._count.productId,
-        pct: Math.round((stat._count.productId / totalActive) * 100),
-      });
-    }
+    // 3. Fleet & Riders Roster (with today's workload and status)
+    const rawRiders = await prisma.rider.findMany({
+      include: {
+        assignedZone: true,
+        deliveries: {
+          where: {
+            deliveryDate: { gte: today, lt: tomorrow },
+          },
+          select: { id: true, status: true },
+        },
+      },
+      orderBy: { name: 'asc' },
+    });
 
-    // 4. Orders by Zone (Pincode)
-    const todayOrdersAll = await prisma.order.findMany({
-      where: { deliveryDate: { gte: today, lt: tomorrow } },
-      include: { address: { select: { pincode: true } } },
+    const riders = rawRiders.map((r) => ({
+      id: r.id,
+      name: r.name,
+      phone: r.phone,
+      vehicleType: r.vehicleType || 'Bike',
+      vehicleNumber: r.vehicleNumber || 'BR-01-XX',
+      active: r.active,
+      assignedZone: r.assignedZone ? { pincode: r.assignedZone.pincode, neighborhood: r.assignedZone.neighborhood } : null,
+      todayTotalDrops: r.deliveries.length,
+      todayCompletedDrops: r.deliveries.filter((d) => d.status === 'DELIVERED' || d.status === 'RIDER_DELIVERED').length,
+    }));
+
+    // 4. Delivery Zones
+    const rawZones = await prisma.deliveryZone.findMany({
+      include: {
+        riders: { select: { id: true, name: true } },
+      },
+      orderBy: { pincode: 'asc' },
     });
-    const zoneCounts: Record<string, number> = {};
-    todayOrdersAll.forEach((o) => {
-      const pin = o.address.pincode;
-      zoneCounts[pin] = (zoneCounts[pin] || 0) + 1;
-    });
-    const topZones = Object.entries(zoneCounts)
-      .map(([zone, orders]) => ({ zone, orders }))
-      .sort((a, b) => b.orders - a.orders)
-      .slice(0, 4);
+
+    const zones = rawZones.map((z) => ({
+      id: z.id,
+      pincode: z.pincode,
+      neighborhood: z.neighborhood || 'Patna Zone',
+      city: z.city,
+      state: z.state,
+      isActive: z.isActive,
+      ridersCount: z.riders.length,
+      riders: z.riders,
+    }));
 
     // 5. Customer Directory (All Registered Members)
     const rawCustomers = await prisma.user.findMany({
@@ -105,8 +206,9 @@ export async function GET() {
         },
         subscriptions: {
           include: {
-            product: { select: { name: true } },
+            product: { select: { name: true, price: true, calories: true } },
           },
+          orderBy: { createdAt: 'desc' },
         },
         orders: {
           orderBy: { createdAt: 'desc' },
@@ -119,7 +221,6 @@ export async function GET() {
       const addr = c.addresses[0];
       const street = addr?.street || 'No street saved';
 
-      // Parse GPS link or coordinates if embedded
       let mapsUrl: string | null = null;
       let cleanStreet = street;
 
@@ -137,8 +238,9 @@ export async function GET() {
         }
       }
 
-      // Remove the bracketed GPS metadata for clean street display
       cleanStreet = cleanStreet.replace(/\s*\[📍 GPS:.*?\]/, '').trim();
+
+      const latestSub = c.subscriptions[0] || null;
 
       return {
         id: c.id,
@@ -158,10 +260,54 @@ export async function GET() {
           gpsCoords,
           mapsUrl,
         },
-        activeSubscription: c.subscriptions[0]?.product?.name || null,
+        subscription: latestSub
+          ? {
+              id: latestSub.id,
+              status: latestSub.status,
+              planName: latestSub.product?.name || 'Diet Bundle',
+              utr: latestSub.utr,
+              deliveriesLeft: latestSub.deliveriesLeft,
+            }
+          : null,
+        activeSubscription: latestSub?.product?.name || null,
         totalOrders: c.orders.length,
       };
     });
+
+    // 6. Top Meals (Aggregation)
+    const productStats = await prisma.subscription.groupBy({
+      by: ['productId'],
+      where: { status: 'ACTIVE' },
+      _count: { productId: true },
+      orderBy: { _count: { productId: 'desc' } },
+      take: 4,
+    });
+
+    const topMeals = [];
+    const totalActive = activeSubs > 0 ? activeSubs : 1;
+    for (const stat of productStats) {
+      const prod = await prisma.product.findUnique({ where: { id: stat.productId }, select: { name: true } });
+      topMeals.push({
+        name: prod?.name || 'Meal Plan',
+        subs: stat._count.productId,
+        pct: Math.round((stat._count.productId / totalActive) * 100),
+      });
+    }
+
+    // 7. Orders by Zone (Pincode)
+    const todayOrdersAll = await prisma.order.findMany({
+      where: { deliveryDate: { gte: today, lt: tomorrow } },
+      include: { address: { select: { pincode: true } } },
+    });
+    const zoneCounts: Record<string, number> = {};
+    todayOrdersAll.forEach((o) => {
+      const pin = o.address.pincode;
+      zoneCounts[pin] = (zoneCounts[pin] || 0) + 1;
+    });
+    const topZones = Object.entries(zoneCounts)
+      .map(([zone, ordersCount]) => ({ zone, orders: ordersCount }))
+      .sort((a, b) => b.orders - a.orders)
+      .slice(0, 4);
 
     return NextResponse.json({
       metrics: {
@@ -171,18 +317,17 @@ export async function GET() {
         monthlyRevenue,
         deliveryRate,
         failedToday,
+        unassignedOrdersCount,
+        needsVerificationCount,
+        doubleVerifiedCount,
+        activeRidersCount,
       },
-      recentOrders: recentOrders.map((o) => ({
-        id: o.id,
-        customer: o.user.name || 'Member',
-        phone: o.user.phone || '',
-        meal: o.subscription?.product.name || 'Macro Meal',
-        status: o.status,
-        time: o.deliveryTime || '07:00 AM',
-      })),
+      orders,
+      riders,
+      customers,
+      zones,
       topMeals,
       topZones,
-      customers,
     });
   } catch (error) {
     console.error('Admin Dashboard API Error:', error);

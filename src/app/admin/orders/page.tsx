@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 
-type OrderStatus = 'QUEUED' | 'DELIVERED' | 'FAILED' | 'SKIPPED';
+type OrderStatus = 'QUEUED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'FAILED' | 'SKIPPED';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -75,8 +75,36 @@ export default function AdminOrdersPage() {
           )
         );
       }
-    } catch (err) {
+    } catch {
       alert('Failed to activate subscription');
+    }
+  };
+
+  const handleDoubleVerify = async (orderId: string) => {
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, doubleVerify: true }),
+      });
+      if (res.ok) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === orderId
+              ? {
+                  ...o,
+                  status: 'DELIVERED',
+                  adminVerifiedAt: new Date().toISOString(),
+                  subscription: o.subscription
+                    ? { ...o.subscription, status: 'ACTIVE' }
+                    : o.subscription,
+                }
+              : o
+          )
+        );
+      }
+    } catch {
+      alert('Failed to double-verify order');
     }
   };
 
@@ -138,7 +166,7 @@ export default function AdminOrdersPage() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-black text-slate-100">Order Management</h1>
           <p className="text-xs text-slate-400 mt-1">
-            Monitor daily morning deliveries, 6+1 physical drop notes, and rider statuses.
+            Assign orders to riders, verify morning doorstep drops, and double-mark delivery completion.
           </p>
         </div>
 
@@ -178,17 +206,24 @@ export default function AdminOrdersPage() {
 
       {/* Filter Tabs */}
       <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
-        {['ALL', 'QUEUED', 'DELIVERED', 'FAILED', 'SKIPPED'].map((st) => (
+        {[
+          { id: 'ALL', label: 'All Orders' },
+          { id: 'QUEUED', label: 'Queued' },
+          { id: 'RIDER_DELIVERED', label: '🚴 Rider Delivered (Needs Verification)' },
+          { id: 'DELIVERED', label: '✓✓ Double Verified' },
+          { id: 'FAILED', label: 'Failed' },
+          { id: 'SKIPPED', label: 'Skipped' },
+        ].map((tab) => (
           <button
-            key={st}
-            onClick={() => setStatusFilter(st)}
-            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-              statusFilter === st
+            key={tab.id}
+            onClick={() => setStatusFilter(tab.id)}
+            className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
+              statusFilter === tab.id
                 ? 'bg-emerald-500 text-slate-950 shadow-sm'
                 : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
             }`}
           >
-            {st}
+            {tab.label}
           </button>
         ))}
       </div>
@@ -232,9 +267,26 @@ export default function AdminOrdersPage() {
                         <span className="font-semibold text-slate-300 block mt-0.5">
                           {order.user?.name || 'Patna Customer'}
                         </span>
-                        <span className="text-[11px] text-slate-400 block font-mono">
-                          {order.user?.phone || 'No phone'}
-                        </span>
+                        {order.user?.phone ? (
+                          <div className="flex items-center gap-1.5 mt-0.5">
+                            <span className="text-[11px] text-slate-400 font-mono">
+                              📱 {order.user.phone}
+                            </span>
+                            <a
+                              href={`https://wa.me/91${order.user.phone.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[10px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                              title="Chat with customer on WhatsApp to confirm delivery"
+                            >
+                              (WA)
+                            </a>
+                          </div>
+                        ) : (
+                          <span className="text-[11px] text-slate-500 block font-mono">
+                            No phone
+                          </span>
+                        )}
                       </td>
 
                       <td className="p-4">
@@ -281,37 +333,70 @@ export default function AdminOrdersPage() {
                           ))}
                         </select>
                         {order.rider && (
-                          <span className="block text-[10px] font-mono text-emerald-400 mt-1">
-                            📱 {order.rider.phone}
-                          </span>
+                          <div className="flex items-center gap-1.5 mt-1">
+                            <span className="text-[10px] font-mono text-emerald-400">
+                              📱 {order.rider.phone}
+                            </span>
+                            <a
+                              href={`https://wa.me/91${order.rider.phone.replace(/\D/g, '')}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                              title="Chat with rider on WhatsApp"
+                            >
+                              (WA)
+                            </a>
+                          </div>
                         )}
                       </td>
 
                       <td className="p-4">
-                        <div className="flex items-center gap-1.5 flex-wrap">
-                          <span
-                            className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
-                              order.status === 'DELIVERED'
-                                ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
-                                : order.status === 'FAILED'
-                                ? 'bg-red-500/15 text-red-400 border border-red-500/30'
-                                : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
-                            }`}
-                          >
-                            {order.status}
-                          </span>
-                          {order.subscription?.status && (
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-1.5 flex-wrap">
                             <span
-                              className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
-                                order.subscription.status === 'ACTIVE'
-                                  ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                  : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                              className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                                order.status === 'DELIVERED'
+                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                                  : order.status === 'RIDER_DELIVERED'
+                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                                  : order.status === 'FAILED'
+                                  ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                                  : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
                               }`}
                             >
-                              Plan: {order.subscription.status}
+                              {order.status === 'RIDER_DELIVERED'
+                                ? '🚴 Rider Delivered (Needs Check)'
+                                : order.status === 'DELIVERED'
+                                ? '✓✓ Double Verified'
+                                : order.status}
+                            </span>
+                            {order.subscription?.status && (
+                              <span
+                                className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
+                                  order.subscription.status === 'ACTIVE'
+                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
+                                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                }`}
+                              >
+                                Plan: {order.subscription.status}
+                              </span>
+                            )}
+                          </div>
+
+                          {order.riderDeliveredAt && (
+                            <span className="text-[10px] font-mono text-amber-300/90 flex items-center gap-1">
+                              <span>🚴 Drop-off:</span>
+                              <span>{new Date(order.riderDeliveredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                            </span>
+                          )}
+                          {order.adminVerifiedAt && (
+                            <span className="text-[10px] font-mono text-emerald-400/90 flex items-center gap-1">
+                              <span>🛡️ Admin verified:</span>
+                              <span>{new Date(order.adminVerifiedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </span>
                           )}
                         </div>
+
                         {order.subscription?.utr && (
                           <div className="mt-1.5">
                             {order.subscription.utr.startsWith('DIRECT_UPI_') ? (
@@ -328,7 +413,7 @@ export default function AdminOrdersPage() {
                       </td>
 
                       <td className="p-4 text-right">
-                        <div className="flex items-center justify-end gap-1.5">
+                        <div className="flex items-center justify-end gap-1.5 flex-wrap">
                           {order.subscription?.status === 'PENDING' && (
                             <button
                               type="button"
@@ -339,22 +424,39 @@ export default function AdminOrdersPage() {
                               Verify Plan ⚡
                             </button>
                           )}
-                          {!isDelivered && (
+
+                          {order.status === 'RIDER_DELIVERED' && (
+                            <button
+                              type="button"
+                              onClick={() => handleDoubleVerify(order.id)}
+                              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-[11px] cursor-pointer transition-all shadow-md flex items-center gap-1 whitespace-nowrap animate-bounce"
+                              title="Confirm doorstep delivery and double-mark complete"
+                            >
+                              <span>Double-Mark Verified</span>
+                              <span>✓✓</span>
+                            </button>
+                          )}
+
+                          {order.status === 'QUEUED' && (
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-[11px] hover:bg-emerald-400 cursor-pointer transition-all"
+                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-[11px] hover:bg-emerald-400 cursor-pointer transition-all whitespace-nowrap"
+                              title="Admin direct mark delivered"
                             >
                               Delivered ✓
                             </button>
                           )}
-                          <button
-                            type="button"
-                            onClick={() => handleUpdateStatus(order.id, 'FAILED')}
-                            className="px-2.5 py-1.5 rounded-lg bg-slate-800 text-red-400 font-bold text-[11px] hover:bg-slate-700 cursor-pointer transition-all"
-                          >
-                            Fail
-                          </button>
+
+                          {order.status !== 'DELIVERED' && (
+                            <button
+                              type="button"
+                              onClick={() => handleUpdateStatus(order.id, 'FAILED')}
+                              className="px-2 py-1.5 rounded-lg bg-slate-800 text-red-400 font-bold text-[11px] hover:bg-slate-700 cursor-pointer transition-all"
+                            >
+                              Fail
+                            </button>
+                          )}
                         </div>
                       </td>
                     </tr>

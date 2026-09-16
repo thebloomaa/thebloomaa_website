@@ -64,7 +64,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { orderId, status, riderId, activateSubscription } = body;
+    const { orderId, status, riderId, activateSubscription, doubleVerify } = body;
 
     if (!orderId) {
       return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
@@ -75,7 +75,13 @@ export async function PATCH(request: Request) {
       data.status = status;
       if (status === 'DELIVERED') {
         data.deliveredAt = new Date();
+        data.adminVerifiedAt = new Date();
       }
+    }
+    if (doubleVerify) {
+      data.status = 'DELIVERED';
+      data.adminVerifiedAt = new Date();
+      data.deliveredAt = new Date();
     }
     if (riderId !== undefined) data.riderId = riderId || null;
 
@@ -88,8 +94,8 @@ export async function PATCH(request: Request) {
       },
     });
 
-    // Auto-promote subscription to ACTIVE upon delivery or explicit admin activation
-    if (order.subscriptionId && (activateSubscription || status === 'DELIVERED')) {
+    // Auto-promote subscription to ACTIVE upon delivery verification or explicit admin activation
+    if (order.subscriptionId && (activateSubscription || status === 'DELIVERED' || doubleVerify)) {
       await prisma.subscription.update({
         where: { id: order.subscriptionId },
         data: { status: 'ACTIVE' },

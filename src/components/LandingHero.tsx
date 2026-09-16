@@ -93,45 +93,6 @@ export default function LandingHero() {
             </span>
           </Link>
         </div>
-
-        {/* 3-Step Process Highlights */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left pt-6 border-t border-slate-800/80">
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-              🎯
-            </div>
-            <h3 className="text-sm font-black text-slate-100 uppercase tracking-wider">
-              1. Pick Your Goal
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Lean muscle, fat loss, or living gut reset. Every dish is weighed and macro-calibrated.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 bg-amber-500/10 text-amber-400 border border-amber-500/20">
-              📦
-            </div>
-            <h3 className="text-sm font-black text-slate-100 uppercase tracking-wider">
-              2. Choose Your Bundle
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Select a 7, 15, or 30-day prepaid pack. Pause or skip any morning directly from your phone.
-            </p>
-          </div>
-
-          <div className="p-5 rounded-2xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-md">
-            <div className="w-10 h-10 rounded-xl flex items-center justify-center text-lg mb-3 bg-blue-500/10 text-blue-400 border border-blue-500/20">
-              🚀
-            </div>
-            <h3 className="text-sm font-black text-slate-100 uppercase tracking-wider">
-              3. We Cook &amp; Deliver (6 AM - 9 AM)
-            </h3>
-            <p className="text-xs text-slate-400 mt-1 leading-relaxed">
-              Chef-prepared same morning in our cloud kitchen. Delivered before your day begins.
-            </p>
-          </div>
-        </div>
       </div>
 
       {/* Embedded Pincode Modal (Automatically prompts or opens on trigger) */}
