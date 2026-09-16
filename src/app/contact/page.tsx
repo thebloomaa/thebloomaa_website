@@ -86,7 +86,7 @@ export default function ContactPage() {
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-slate-800">
+              <div className="pt-4 border-t border-slate-800 space-y-3">
                 <a
                   href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                   target="_blank"
@@ -95,6 +95,27 @@ export default function ContactPage() {
                 >
                   <span>💬 Chat on WhatsApp (+91 62076 54684)</span>
                 </a>
+
+                <div className="grid grid-cols-2 gap-2.5 pt-1">
+                  <a
+                    href="https://www.instagram.com/thebloomaa_official?stkn=MW15ZXYyZ2ZtdmwxYg%3D%3D"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2.5 px-3 rounded-xl font-bold text-xs bg-gradient-to-r from-pink-500/15 via-purple-500/15 to-amber-500/15 border border-pink-500/30 text-pink-300 hover:border-pink-400 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>📸</span>
+                    <span>@thebloomaa_official</span>
+                  </a>
+                  <a
+                    href="https://www.facebook.com/thebloomaa"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="py-2.5 px-3 rounded-xl font-bold text-xs bg-blue-600/15 border border-blue-500/30 text-blue-300 hover:border-blue-400 transition-all flex items-center justify-center gap-2"
+                  >
+                    <span>📘</span>
+                    <span>/thebloomaa</span>
+                  </a>
+                </div>
               </div>
             </div>
 
