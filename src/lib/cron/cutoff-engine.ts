@@ -80,9 +80,10 @@ export async function processDailyCutoff() {
     }
 
     const isJustBloomedTrial = 
-      sub.product.name.toLowerCase().includes('just bloomed') ||
-      sub.product.dietaryPreference === 'LIVING_RAW' ||
-      sub.product.type === 'TRIAL_PLAN';
+      sub.bundleType === 'DAYS_7' &&
+      (sub.product.name.toLowerCase().includes('just bloomed') ||
+        sub.product.dietaryPreference === 'LIVING_RAW' ||
+        sub.product.type === 'TRIAL_PLAN');
 
     await prisma.$transaction(async (tx) => {
       // 3. Determine if 6+1 Double Drop applies (ONLY on Just Bloomed Trial when deliveriesLeft === 2)

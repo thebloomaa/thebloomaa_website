@@ -141,6 +141,21 @@ export const JUST_BLOOMED_BOXES: TrialDayBox[] = [
 
 // Product definitions
 export const BLOOMAA_PRODUCTS = {
+  SINGLE_DAY_TRIAL: {
+    id: 'prod-single-day-diet-pack',
+    name: 'Single Day Living Diet Pack',
+    type: 'SINGLE_PACK',
+    price: 70,
+    description: '1 single fresh cold-prepared living enzyme box (sprouted seeds, microgreens & vitality nuts). Delivered morning 6:00 AM – 9:00 AM in Patna.',
+    calories: 420,
+    protein: 20,
+    carbs: 45,
+    fats: 15,
+    dietaryPreference: 'LIVING_RAW',
+    imageUrl: '/meals/vegan-keto.png',
+    isSinglePack: true,
+    logisticsNote: '1-DAY SINGLE DROP: Delivered next morning between 6:00 AM – 9:00 AM in Patna.',
+  },
   JUST_BLOOMED_TRIAL: {
     id: 'prod-just-bloomed-7d-trial',
     name: 'Just Bloomed 7D Trial',

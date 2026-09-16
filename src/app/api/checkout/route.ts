@@ -57,16 +57,31 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Product not found. Please re-select your diet plan.' }, { status: 404 });
     }
 
-    const bundleDays = bundleType === 'DAYS_30' ? 30 : bundleType === 'DAYS_15' ? 15 : 7;
+    const isSingleDay =
+      bundleType === 'DAYS_1' ||
+      productId === 'prod-single-day-diet-pack' ||
+      product.id === 'prod-single-day-diet-pack' ||
+      product.price === 70 ||
+      product.name.toLowerCase().includes('single');
+
+    const isTrial =
+      !isSingleDay &&
+      (product.type === 'TRIAL_PLAN' ||
+        product.dietaryPreference === 'LIVING_RAW' ||
+        product.name.toLowerCase().includes('trial'));
+
+    const bundleDays = isSingleDay
+      ? 1
+      : bundleType === 'DAYS_30'
+      ? 30
+      : bundleType === 'DAYS_15'
+      ? 15
+      : 7;
+
     const tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
 
-    const isTrial =
-      product.type === 'TRIAL_PLAN' ||
-      product.dietaryPreference === 'LIVING_RAW' ||
-      product.name.toLowerCase().includes('trial');
-
-    const totalAmount = isTrial ? 451 : Math.round(product.price * bundleDays);
+    const totalAmount = isSingleDay ? 70 : isTrial ? 451 : Math.round(product.price * bundleDays);
 
     const effectiveUtr =
       utr && utr.trim().length >= 6
@@ -93,8 +108,8 @@ export async function POST(req: Request) {
           userId: (session.user as any).id,
           productId: product.id,
           addressId: newAddress.id,
-          bundleType: isTrial ? 'DAYS_7' : (bundleType || 'DAYS_15'),
-          deliveriesLeft: isTrial ? 7 : bundleDays,
+          bundleType: isSingleDay ? 'DAYS_1' : isTrial ? 'DAYS_7' : (bundleType || 'DAYS_15'),
+          deliveriesLeft: isSingleDay ? 1 : isTrial ? 7 : bundleDays,
           status: 'PENDING', // Awaiting verification
           utr: effectiveUtr,
           startDate: new Date(),
@@ -112,7 +127,13 @@ export async function POST(req: Request) {
           status: 'QUEUED',
           deliveryDate: tomorrow,
           deliveryTime: deliveryTime || '07:00 AM',
-          deliveryNote: deliveryNote || (isTrial ? 'Just Bloomed 7D Trial Morning Delivery' : null),
+          deliveryNote:
+            deliveryNote ||
+            (isSingleDay
+              ? '1-DAY SINGLE DROP: Patna Morning Fresh Living Box (₹70)'
+              : isTrial
+              ? 'Just Bloomed 7D Trial Morning Delivery'
+              : null),
         },
       });
 

@@ -32,21 +32,23 @@ const stats = [
 
 const offerings = [
   {
-    name: 'Bio Calculator & Diet Assessment',
-    type: 'CALCULATOR',
-    tag: 'Free Tool',
-    perDay: '₹0',
-    total: '100% Free',
-    period: 'Instant Assessment',
+    name: 'Single Pack 1-Day Fresh Diet',
+    type: 'SINGLE_PACK',
+    tag: 'Starter Sampler',
+    perDay: '₹70',
+    total: '₹70 (Single Drop)',
+    period: '1-day fresh diet sampler',
     features: [
-      'Mifflin-St Jeor metabolic BMR & TDEE calculation',
-      'Biological Diet Age delta (+3 to +5 yr cooked penalty)',
-      'Raw living enzyme vs denatured food ratio audit',
-      'Custom Patna nutrition recommendation',
+      '1 goal-targeted cold-prepared living enzyme box',
+      'Fresh sprouted legumes, microgreens & raw vitality nuts',
+      'Chef cold-prepared daily at 5:00 AM, zero cooked oil',
+      'Morning 6:00 AM – 9:00 AM doorstep delivery in Patna',
+      'Taste test our living nutrition quality before committing',
+      'Bio-calculator nutrition analysis report included',
     ],
     popular: false,
-    ctaText: 'Run Free Calculator →',
-    ctaHref: '/calculator',
+    ctaText: 'Order 1-Day Pack (₹70) →',
+    ctaHref: '/checkout?plan=single',
   },
   {
     name: 'Just Bloomed 7-Day Living Trial',
@@ -65,7 +67,7 @@ const offerings = [
     ],
     popular: true,
     ctaText: 'Claim 7D Trial (₹451) →',
-    ctaHref: '#trial',
+    ctaHref: '/checkout?plan=trial',
   },
   {
     name: 'Corporate & Team Vitality Reset',
@@ -88,6 +90,10 @@ const offerings = [
 ];
 
 const faqs = [
+  {
+    q: 'Can I order a single 1-day pack before taking a full plan?',
+    a: 'Yes! You can order our Single Pack 1-Day Diet Order for just ₹70. We will deliver a complete fresh living nutrition box to your doorstep tomorrow morning between 6:00 AM and 9:00 AM across Patna with zero recurring commitments.',
+  },
   {
     q: 'What is the Just Bloomed 7D Trial Plan?',
     a: 'It is a 7-day cellular nutrition reset featuring 7 distinct, completely fresh & raw food boxes (sprouted seeds, microgreens, organic nuts, raw fruits) calibrated for enzyme vitality. Delivered over 6 delivery mornings with a double drop (6+1) on Day 6.',

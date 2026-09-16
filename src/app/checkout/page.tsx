@@ -1,11 +1,14 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
+import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
+
+export const dynamic = 'force-dynamic';
 
 const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discount: string; discountPct: number }[] = [
   { type: 'DAYS_7', label: 'Starter', days: 7, discount: '', discountPct: 0 },
@@ -13,11 +16,12 @@ const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discoun
   { type: 'DAYS_30', label: 'All-In', days: 30, discount: '20% OFF', discountPct: 20 },
 ];
 
-export default function CheckoutPage() {
+function CheckoutPageInner() {
   const router = useRouter();
   const { data: session } = useSession();
   const {
     selectedProduct,
+    selectProduct,
     bundleType,
     selectBundle,
     getTotalPrice,
@@ -110,7 +114,56 @@ export default function CheckoutPage() {
     };
   }, [launchedApp]);
 
+  const searchParams = useSearchParams();
+  const planParam = searchParams ? searchParams.get('plan') : null;
+
+  useEffect(() => {
+    if (planParam === 'single') {
+      const singleProd = BLOOMAA_PRODUCTS.SINGLE_DAY_TRIAL;
+      selectProduct({
+        id: singleProd.id,
+        name: singleProd.name,
+        description: singleProd.description,
+        price: singleProd.price,
+        imageUrl: singleProd.imageUrl,
+        type: singleProd.type,
+        calories: singleProd.calories,
+        protein: singleProd.protein,
+        carbs: singleProd.carbs,
+        fats: singleProd.fats,
+        dietaryPreference: singleProd.dietaryPreference,
+      });
+      selectBundle('DAYS_1');
+    } else if (planParam === 'trial') {
+      const trialProd = BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL;
+      selectProduct({
+        id: trialProd.id,
+        name: trialProd.name,
+        description: trialProd.description,
+        price: trialProd.price,
+        imageUrl: trialProd.imageUrl,
+        type: trialProd.type,
+        calories: trialProd.calories,
+        protein: trialProd.protein,
+        carbs: trialProd.carbs,
+        fats: trialProd.fats,
+        dietaryPreference: trialProd.dietaryPreference,
+      });
+      selectBundle('DAYS_7');
+    }
+  }, [planParam, selectProduct, selectBundle]);
+
+  const isSingleProduct = Boolean(
+    selectedProduct &&
+      (selectedProduct.id === 'prod-single-day-diet-pack' ||
+        selectedProduct.price === 70 ||
+        bundleType === 'DAYS_1' ||
+        (selectedProduct as any).isSinglePack ||
+        selectedProduct.name.toLowerCase().includes('single'))
+  );
+
   const isTrialProduct = Boolean(
+    !isSingleProduct &&
     selectedProduct &&
     (selectedProduct.name.toLowerCase().includes('just bloomed') ||
       selectedProduct.type === 'TRIAL_PLAN' ||
@@ -119,15 +172,17 @@ export default function CheckoutPage() {
   );
 
   // Calculate strict checkout total
-  const finalTotal = isTrialProduct ? 451 : getTotalPrice();
-  const finalDays = isTrialProduct ? 7 : getBundleDays();
-  const finalPerDay = isTrialProduct ? Math.round(451 / 7) : getPerDayPrice();
+  const finalTotal = isSingleProduct ? 70 : isTrialProduct ? 451 : getTotalPrice();
+  const finalDays = isSingleProduct ? 1 : isTrialProduct ? 7 : getBundleDays();
+  const finalPerDay = isSingleProduct ? 70 : isTrialProduct ? Math.round(451 / 7) : getPerDayPrice();
 
   useEffect(() => {
-    if (isTrialProduct && bundleType !== 'DAYS_7') {
+    if (isSingleProduct && bundleType !== 'DAYS_1') {
+      selectBundle('DAYS_1');
+    } else if (isTrialProduct && bundleType !== 'DAYS_7') {
       selectBundle('DAYS_7');
     }
-  }, [isTrialProduct, bundleType, selectBundle]);
+  }, [isSingleProduct, isTrialProduct, bundleType, selectBundle]);
 
   // Unique Order Reference for UPI Transaction Note
   const orderRefNote = `BLM-${(selectedProduct?.name || 'Diet').replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)}-${finalTotal}`;
@@ -202,9 +257,11 @@ export default function CheckoutPage() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: selectedProduct.id,
-          bundleType: isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
+          bundleType: isSingleProduct ? 'DAYS_1' : isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
           deliveryTime: form.deliveryTime,
-          deliveryNote: isTrialProduct
+          deliveryNote: isSingleProduct
+            ? `1-DAY SINGLE PACK: Morning doorstep fresh diet box. Customer Note: ${form.deliveryNote}`
+            : isTrialProduct
             ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. Customer Note: ${form.deliveryNote}`
             : form.deliveryNote,
           utr: effectiveUtr,
@@ -277,20 +334,60 @@ export default function CheckoutPage() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-slate-100">No Plan Selected</h1>
             <p className="text-sm mb-6 text-slate-400 leading-relaxed">
-              Claim the Just Bloomed 7-Day Living Food Trial (₹451) or run the Bio Calculator to discover your biological diet score.
+              Order our Single Day Pack (₹70) to try tomorrow morning, claim the 7-Day Living Reset (₹451), or run the Bio Calculator.
             </p>
-            <div className="flex flex-col sm:flex-row gap-3 justify-center">
-              <Link
-                href="/#trial"
-                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20"
+            <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
+              <button
+                type="button"
+                onClick={() => {
+                  const p = BLOOMAA_PRODUCTS.SINGLE_DAY_TRIAL;
+                  selectProduct({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    price: p.price,
+                    imageUrl: p.imageUrl,
+                    type: p.type,
+                    calories: p.calories,
+                    protein: p.protein,
+                    carbs: p.carbs,
+                    fats: p.fats,
+                    dietaryPreference: p.dietaryPreference,
+                  });
+                  selectBundle('DAYS_1');
+                }}
+                className="px-5 py-3 rounded-xl text-xs font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all shadow-md cursor-pointer"
               >
-                Claim 7D Trial (₹451)
-              </Link>
+                1-Day Pack (₹70)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const p = BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL;
+                  selectProduct({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    price: p.price,
+                    imageUrl: p.imageUrl,
+                    type: p.type,
+                    calories: p.calories,
+                    protein: p.protein,
+                    carbs: p.carbs,
+                    fats: p.fats,
+                    dietaryPreference: p.dietaryPreference,
+                  });
+                  selectBundle('DAYS_7');
+                }}
+                className="px-5 py-3 rounded-xl text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-md cursor-pointer"
+              >
+                7-Day Trial (₹451)
+              </button>
               <Link
                 href="/calculator"
-                className="px-6 py-3 rounded-xl text-sm font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-all"
+                className="px-4 py-3 rounded-xl text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-all flex items-center justify-center"
               >
-                Bio Calculator
+                Calculator
               </Link>
             </div>
           </div>
@@ -382,7 +479,11 @@ export default function CheckoutPage() {
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                       <h3 className="text-xl sm:text-2xl font-black text-slate-100">{selectedProduct.name}</h3>
                       <div className="text-xl font-black text-emerald-400 font-mono">
-                        {isTrialProduct ? '₹451 (Flat 7D Trial)' : `₹${selectedProduct.price}/diet`}
+                        {isSingleProduct
+                          ? '₹70 (Single Day Diet Pack)'
+                          : isTrialProduct
+                          ? '₹451 (Flat 7D Trial)'
+                          : `₹${selectedProduct.price}/diet`}
                       </div>
                     </div>
 
@@ -408,6 +509,19 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
+                {/* Single Pack 1-Day Logistics Alert */}
+                {isSingleProduct && (
+                  <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 space-y-1">
+                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
+                      <span>🌱</span>
+                      <span>1-Day Single Drop Logistics Protocol</span>
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                      Delivered tomorrow morning between <strong>6:00 AM – 9:00 AM</strong> at your Patna address with dedicated doorstep delivery and zero recurring commitments.
+                    </p>
+                  </div>
+                )}
+
                 {/* Trial Plan 6+1 Logistics Alert */}
                 {isTrialProduct && (
                   <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-1">
@@ -422,8 +536,8 @@ export default function CheckoutPage() {
                 )}
               </div>
 
-              {/* Standard Meal Plan Bundle Selector (Hidden for Trial Plan) */}
-              {!isTrialProduct && (
+              {/* Standard Meal Plan Bundle Selector (Hidden for Trial & Single Pack) */}
+              {!isTrialProduct && !isSingleProduct && (
                 <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/80 border border-slate-800">
                   <h4 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-4">
                     Subscription Duration
@@ -772,16 +886,16 @@ export default function CheckoutPage() {
                     </div>
                   )}
 
-                  {/* Strict COD Disabled Alert for Just Bloomed 7D Trial */}
-                  {isTrialProduct && (
+                  {/* Strict COD Disabled Alert for Just Bloomed 7D Trial & Single Pack */}
+                  {(isTrialProduct || isSingleProduct) && (
                     <div className="rounded-2xl p-4 bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 flex items-start gap-3">
                       <span className="text-xl">🔒</span>
                       <div>
                         <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
-                          Prepaid Living Raw Order Enforced
+                          Prepaid Fresh Living Order Enforced
                         </h4>
                         <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
-                          Cash on Delivery is <strong>strictly disabled</strong> for the Just Bloomed 7D Trial to guarantee continuous morning cold-chain logistics. Total fixed package price: <strong>₹451</strong>.
+                          Cash on Delivery is <strong>strictly disabled</strong> to guarantee continuous morning cold-chain logistics in Patna. Total fixed package price: <strong>₹{finalTotal}</strong>.
                         </p>
                       </div>
                     </div>
@@ -987,5 +1101,19 @@ export default function CheckoutPage() {
         </div>
       </main>
     </>
+  );
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 font-mono text-sm">
+          Loading Checkout...
+        </div>
+      }
+    >
+      <CheckoutPageInner />
+    </Suspense>
   );
 }

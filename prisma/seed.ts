@@ -70,6 +70,18 @@ async function main() {
       carbs: 48,
       fats: 16,
       dietaryPreference: 'LIVING_RAW'
+    },
+    { 
+      id: 'prod-single-day-diet-pack',
+      name: 'Single Day Living Diet Pack', 
+      type: 'SINGLE_PACK', 
+      price: 70, 
+      description: '1 single fresh cold-prepared living enzyme box (sprouted seeds, microgreens & vitality nuts). Delivered morning 6:00 AM – 9:00 AM across Patna.',
+      calories: 420,
+      protein: 20,
+      carbs: 45,
+      fats: 15,
+      dietaryPreference: 'LIVING_RAW'
     }
   ];
 

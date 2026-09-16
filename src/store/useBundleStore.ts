@@ -16,7 +16,7 @@ export interface Product {
   isTrialPlan?: boolean;
 }
 
-export type BundleType = 'DAYS_7' | 'DAYS_15' | 'DAYS_30';
+export type BundleType = 'DAYS_1' | 'DAYS_7' | 'DAYS_15' | 'DAYS_30';
 
 interface BundleState {
   // State
@@ -51,6 +51,7 @@ interface BundleState {
 }
 
 const BUNDLE_DAYS: Record<BundleType, number> = {
+  DAYS_1: 1,
   DAYS_7: 7,
   DAYS_15: 15,
   DAYS_30: 30,
@@ -58,6 +59,7 @@ const BUNDLE_DAYS: Record<BundleType, number> = {
 
 // Discount multiplier: longer bundles get better per-day pricing
 const BUNDLE_DISCOUNT: Record<BundleType, number> = {
+  DAYS_1: 1.0,
   DAYS_7: 1.0,
   DAYS_15: 0.92,
   DAYS_30: 0.8,
@@ -82,6 +84,14 @@ export const useBundleStore = create<BundleState>()(
       getPerDayPrice: () => {
         const { selectedProduct, bundleType } = get();
         if (!selectedProduct) return 0;
+        if (
+          selectedProduct.id === 'prod-single-day-diet-pack' ||
+          selectedProduct.price === 70 ||
+          bundleType === 'DAYS_1' ||
+          selectedProduct.name.toLowerCase().includes('single')
+        ) {
+          return 70;
+        }
         if (selectedProduct.type === 'TRIAL_PLAN' || selectedProduct.dietaryPreference === 'LIVING_RAW' || selectedProduct.isTrialPlan) {
           return Math.round(451 / 7);
         }
@@ -91,7 +101,16 @@ export const useBundleStore = create<BundleState>()(
 
       getTotalPrice: () => {
         const state = get();
-        const { selectedProduct } = state;
+        const { selectedProduct, bundleType } = state;
+        if (
+          selectedProduct &&
+          (selectedProduct.id === 'prod-single-day-diet-pack' ||
+            selectedProduct.price === 70 ||
+            bundleType === 'DAYS_1' ||
+            selectedProduct.name.toLowerCase().includes('single'))
+        ) {
+          return 70;
+        }
         if (selectedProduct && (selectedProduct.type === 'TRIAL_PLAN' || selectedProduct.dietaryPreference === 'LIVING_RAW' || selectedProduct.isTrialPlan)) {
           return 451;
         }
@@ -99,10 +118,19 @@ export const useBundleStore = create<BundleState>()(
       },
 
       selectProduct: (product) => {
-        const isTrial = product.type === 'TRIAL_PLAN' || product.dietaryPreference === 'LIVING_RAW' || Boolean(product.isTrialPlan);
+        const isSingle =
+          product.id === 'prod-single-day-diet-pack' ||
+          product.price === 70 ||
+          product.type === 'SINGLE_PACK' ||
+          product.name.toLowerCase().includes('single');
+        const isTrial =
+          !isSingle &&
+          (product.type === 'TRIAL_PLAN' || product.dietaryPreference === 'LIVING_RAW' || Boolean(product.isTrialPlan));
+
         set({ 
           selectedProduct: { ...product, isTrialPlan: isTrial },
-          bundleType: isTrial ? 'DAYS_7' : get().bundleType,
+          bundleType: isSingle ? 'DAYS_1' : isTrial ? 'DAYS_7' : get().bundleType,
+          isDrawerOpen: true,
         });
       },
       selectBundle: (type) => set({ bundleType: type }),
