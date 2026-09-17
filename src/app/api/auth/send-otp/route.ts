@@ -56,10 +56,7 @@ export async function POST(req: Request) {
       );
     }
 
-    // If caller only wanted to verify user existence prior to Firebase SMS dispatch
-    if (checkOnly) {
-      return NextResponse.json({ success: true, verified: true });
-    }
+    // Firebase checkOnly removed
 
     // Generate a 6-digit numeric OTP
     const code = Math.floor(100000 + Math.random() * 900000).toString();
