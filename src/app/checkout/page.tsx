@@ -904,7 +904,7 @@ function CheckoutPageInner() {
                   {/* UPI Payment Container Card */}
                   <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-6">
                     {/* SECTION 1: ONE-TAP MOBILE UPI LAUNCHER */}
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-950 to-slate-900 border border-brand-border space-y-3">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-brand-card to-brand-cream border border-brand-border space-y-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
                         <span className="text-xs font-black uppercase tracking-wider text-brand-forest flex items-center gap-1.5">
                           <span>⚡</span> 1-Click UPI App Payment
@@ -1081,7 +1081,7 @@ function CheckoutPageInner() {
                         >
                           {submitting ? (
                             <>
-                              <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                              <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                               <span>Scheduling Prep...</span>
                             </>
                           ) : (

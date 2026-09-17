@@ -252,7 +252,7 @@ export default function AdminOrdersPage() {
                   <th className="p-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/80">
+              <tbody className="divide-y divide-brand-border/80">
                 {filteredOrders.map((order) => {
                   const shortId = `ORD-${order.id.slice(-5).toUpperCase()}`;
                   const isDelivered = order.status === 'DELIVERED';

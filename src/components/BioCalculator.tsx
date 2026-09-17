@@ -633,7 +633,7 @@ export default function BioCalculator() {
 
             {/* Side-by-Side Diet Comparison Matrix */}
             <div className="rounded-2xl overflow-hidden border border-brand-border bg-brand-cream/60">
-              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
+              <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-brand-border">
                 {/* Current Diet Column */}
                 <div className="p-6 bg-red-950/10">
                   <div className="flex items-center gap-2 mb-4">
@@ -717,7 +717,7 @@ export default function BioCalculator() {
             </div>
 
             {/* Matched Product Recommendation Card */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-brand-mustard/50 shadow-2xl relative overflow-hidden">
+            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-brand-card via-brand-cream to-brand-cream border-2 border-brand-mustard/50 shadow-2xl relative overflow-hidden">
               <div className="absolute top-3 right-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-mustard text-brand-forest">
                 Recommended Solution
               </div>

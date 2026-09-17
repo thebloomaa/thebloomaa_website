@@ -202,7 +202,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                 className="px-6 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer min-w-[100px]"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   'Check →'
                 )}

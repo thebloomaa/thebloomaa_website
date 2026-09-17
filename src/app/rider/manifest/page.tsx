@@ -333,7 +333,7 @@ export default function RiderManifestPage() {
                     <>
                       <a
                         href={`tel:${stop.phone}`}
-                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-brand-cream border border-brand-border hover:border-slate-500 text-brand-forest transition-all flex items-center justify-center gap-1"
+                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-brand-cream border border-brand-border hover:border-brand-border text-brand-forest transition-all flex items-center justify-center gap-1"
                       >
                         <span>📞</span>
                         <span>Call</span>

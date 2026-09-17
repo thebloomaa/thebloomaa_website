@@ -102,7 +102,7 @@ export default function AdminLoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Enter admin email..."
-                className="w-full px-4 py-3.5 rounded-2xl bg-brand-cream/80 border border-brand-border text-brand-forest text-sm placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard transition-all font-mono"
+                className="w-full px-4 py-3.5 rounded-2xl bg-brand-cream/80 border border-brand-border text-brand-forest text-sm placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-brand-mustard transition-all font-mono"
               />
             </div>
 
@@ -117,7 +117,7 @@ export default function AdminLoginPage() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••••••"
-                  className="w-full px-4 py-3.5 pr-12 rounded-2xl bg-brand-cream/80 border border-brand-border text-brand-forest text-sm placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard transition-all font-mono"
+                  className="w-full px-4 py-3.5 pr-12 rounded-2xl bg-brand-cream/80 border border-brand-border text-brand-forest text-sm placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-brand-mustard transition-all font-mono"
                 />
                 <button
                   type="button"
@@ -138,7 +138,7 @@ export default function AdminLoginPage() {
               className="w-full py-3.5 px-4 rounded-2xl font-black text-sm bg-gradient-to-r from-brand-mustard to-brand-mustard hover:from-brand-forest-muted hover:to-brand-mustard text-brand-forest shadow-lg shadow-brand-mustard/20 transition-all disabled:opacity-50 cursor-pointer flex items-center justify-center gap-2"
             >
               {loading ? (
-                <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
               ) : (
                 <>
                   <span>Unlock Admin Operations</span>

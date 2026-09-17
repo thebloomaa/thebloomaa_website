@@ -154,7 +154,7 @@ export default function RiderLoginPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="98765 00001"
-                    className="flex-1 px-4 py-3 rounded-2xl bg-brand-cream border border-brand-border text-sm font-mono text-brand-forest placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard transition-all font-bold"
+                    className="flex-1 px-4 py-3 rounded-2xl bg-brand-cream border border-brand-border text-sm font-mono text-brand-forest placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-brand-mustard transition-all font-bold"
                   />
                 </div>
                 <p className="text-[11px] text-brand-forest-muted/70 mt-1.5">
@@ -168,7 +168,7 @@ export default function RiderLoginPage() {
                 className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-brand-mustard to-brand-mustard hover:from-brand-forest-muted hover:to-brand-mustard text-brand-forest shadow-lg shadow-brand-mustard/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   'Continue to Passcode →'
                 )}
@@ -214,7 +214,7 @@ export default function RiderLoginPage() {
                 className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-brand-mustard hover:bg-brand-mustard-hover text-brand-forest shadow-lg shadow-brand-mustard/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   'Verify Passcode & Open Manifest →'
                 )}

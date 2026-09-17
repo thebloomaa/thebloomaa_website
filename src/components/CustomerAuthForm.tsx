@@ -434,7 +434,7 @@ export default function CustomerAuthForm() {
                 className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   'Send Verification Code →'
                 )}
@@ -497,7 +497,7 @@ export default function CustomerAuthForm() {
                 className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   'Verify & Access Dashboard →'
                 )}
@@ -684,7 +684,7 @@ export default function CustomerAuthForm() {
                       className={`p-3.5 rounded-2xl text-left transition-all border cursor-pointer ${
                         regForm.fitnessGoal === goal.id
                           ? 'bg-brand-mustard/15 border-brand-mustard text-brand-forest ring-2 ring-brand-mustard/20 shadow-md'
-                          : 'bg-brand-cream/70 border-brand-border text-brand-forest-muted hover:border-slate-600'
+                          : 'bg-brand-cream/70 border-brand-border text-brand-forest-muted hover:border-brand-border'
                       }`}
                     >
                       <strong className="block text-xs font-bold text-brand-forest">{goal.title}</strong>
@@ -924,7 +924,7 @@ export default function CustomerAuthForm() {
                 className="w-full py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
-                  <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
+                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
                 ) : (
                   '🎉 Activate Profile & Browse Diets →'
                 )}

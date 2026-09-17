@@ -11,7 +11,7 @@ export default function BioCalculatorTeaser() {
       <div className="absolute bottom-0 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl pointer-events-none bg-brand-mustard" />
 
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="rounded-3xl p-8 sm:p-12 backdrop-blur-xl bg-gradient-to-br from-slate-900/90 via-slate-800/80 to-slate-900/90 border border-brand-border/60 shadow-2xl relative overflow-hidden">
+        <div className="rounded-3xl p-8 sm:p-12 backdrop-blur-xl bg-gradient-to-br from-brand-card/90 via-brand-cream/80 to-brand-card/90 border border-brand-border/60 shadow-2xl relative overflow-hidden">
           {/* Subtle Top Border Highlight */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-mustard via-brand-mustard to-brand-mustard" />
 
@@ -42,7 +42,7 @@ export default function BioCalculatorTeaser() {
                   🧬 <strong className="text-brand-mustard">Biological Diet Age</strong>
                 </span>
                 <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-cream/90 text-brand-forest border border-brand-border flex items-center gap-1.5 shadow-sm">
-                  🥗 <strong className="text-blue-400">Mifflin-St Jeor TDEE</strong>
+                  🥗 <strong className="text-brand-forest">Mifflin-St Jeor TDEE</strong>
                 </span>
                 <span className="px-3.5 py-1.5 rounded-xl text-xs font-semibold bg-brand-cream/90 text-brand-forest border border-brand-border flex items-center gap-1.5 shadow-sm">
                   🌱 <strong className="text-brand-mustard-hover">Patna Fresh Prep Match</strong>
@@ -77,7 +77,7 @@ export default function BioCalculatorTeaser() {
                 <div className="py-5 space-y-4">
                   {/* Gauge Mockup */}
                   <div className="flex items-center gap-4">
-                    <div className="w-16 h-16 rounded-full border-4 border-brand-mustard border-t-slate-800 flex items-center justify-center font-mono font-black text-lg text-brand-mustard bg-brand-card shadow-inner">
+                    <div className="w-16 h-16 rounded-full border-4 border-brand-mustard border-t-brand-border flex items-center justify-center font-mono font-black text-lg text-brand-mustard bg-brand-card shadow-inner">
                       78%
                     </div>
                     <div>

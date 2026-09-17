@@ -516,7 +516,7 @@ export default function AdminRidersPage() {
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 bg-brand-card/40">
+              <tbody className="divide-y divide-brand-border/60 bg-brand-card/40">
                 {riders.map((rider) => (
                   <tr key={rider.id} className="hover:bg-brand-cream/30 transition-colors">
                     {/* Rider details */}
@@ -744,7 +744,7 @@ export default function AdminRidersPage() {
                       passcode: e.target.value.replace(/\D/g, '').slice(0, 6),
                     })
                   }
-                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest-muted font-mono font-bold tracking-widest placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard"
+                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest-muted font-mono font-bold tracking-widest placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-brand-mustard"
                 />
                 <p className="text-[11px] text-brand-forest-muted/70 mt-1">
                   The rider will use this 6-digit code with their phone number to log into the Rider Portal.

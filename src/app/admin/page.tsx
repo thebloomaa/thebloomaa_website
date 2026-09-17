@@ -620,7 +620,7 @@ export default function AdminDashboard() {
                       <th className="p-3.5 text-right">Admin Verification</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-800/80">
+                  <tbody className="divide-y divide-brand-border/80">
                     {filteredOrders.map((order) => {
                       const shortId = `ORD-${order.id.slice(-5).toUpperCase()}`;
                       const isRiderDelivered = order.status === 'RIDER_DELIVERED';
@@ -993,7 +993,7 @@ export default function AdminDashboard() {
                     <th className="p-3.5 text-right">Registered</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-slate-800/80">
+                <tbody className="divide-y divide-brand-border/80">
                   {filteredCustomers.map((cust) => (
                     <tr key={cust.id} className="hover:bg-brand-cream/30 transition-colors">
                       <td className="p-3.5 align-top">
