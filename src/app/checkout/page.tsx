@@ -186,11 +186,11 @@ function CheckoutPageInner() {
 
   // Unique Order Reference for UPI Transaction Note
   const orderRefNote = `BLM-${(selectedProduct?.name || 'Diet').replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)}-${finalTotal}`;
-  const universalUpiUri = `upi://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const universalUpiUri = `upi://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
   const upiIntentUri = universalUpiUri;
-  const gpayUri = `gpay://upi/pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
-  const phonepeUri = `phonepe://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
-  const paytmUri = `paytmmp://pay?pa=thebloomaa@upi&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const gpayUri = `gpay://upi/pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const phonepeUri = `phonepe://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
+  const paytmUri = `paytmmp://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
 
   const handleLaunchApp = (appName: string, uri: string) => {
     setLaunchedApp(appName);
@@ -232,7 +232,7 @@ function CheckoutPageInner() {
   };
 
   const handleCopyUpiId = () => {
-    navigator.clipboard.writeText('thebloomaa@upi');
+    navigator.clipboard.writeText('8863002959@ptyes');
     setCopiedUpi(true);
     setTimeout(() => setCopiedUpi(false), 2500);
   };
@@ -966,9 +966,9 @@ function CheckoutPageInner() {
                       <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-brand-cream border border-brand-border">
                         <div className="p-3 bg-white rounded-2xl shadow-xl">
                           <img
-                            src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(universalUpiUri)}`}
+                            src="/upi-qr.jpg"
                             alt="Thebloomaa UPI Payment QR Code"
-                            className="w-48 h-48 rounded-lg"
+                            className="w-48 h-auto rounded-lg"
                           />
                         </div>
 
@@ -991,7 +991,7 @@ function CheckoutPageInner() {
                           </label>
                           <div className="flex items-center gap-2">
                             <div className="flex-1 px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border font-mono text-sm text-brand-forest flex items-center justify-between">
-                              <span>thebloomaa@upi</span>
+                              <span>8863002959@ptyes</span>
                               <span className="text-[10px] text-brand-mustard uppercase font-black">Verified</span>
                             </div>
                             <button
