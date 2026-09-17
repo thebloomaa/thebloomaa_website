@@ -18,7 +18,7 @@ export default function Navbar() {
             <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-brand-mustard/70 shadow-md shadow-brand-mustard/10 transition-transform group-hover:scale-105 shrink-0 bg-brand-card ring-2 ring-brand-mustard/20">
               <Image
                 src="/logo.jpg"
-                alt="Bloom your life with BlooMaa"
+                alt="Bloom your day with BlooMaa"
                 fill
                 sizes="40px"
                 className="object-cover"
@@ -32,7 +32,7 @@ export default function Navbar() {
                 </span>
               </div>
               <span className="text-[10px] text-brand-forest-muted font-serif italic tracking-wide hidden sm:block leading-none">
-                Bloom your life with BlooMaa
+                Bloom your day with BlooMaa
               </span>
             </div>
           </Link>

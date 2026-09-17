@@ -156,14 +156,14 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
           <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-brand-mustard/70 shadow-xl shadow-brand-mustard/10 mx-auto mb-3 bg-brand-card ring-4 ring-brand-mustard/20">
             <Image
               src="/logo.jpg"
-              alt="Bloom your life with BlooMaa"
+              alt="Bloom your day with BlooMaa"
               fill
               sizes="64px"
               className="object-cover"
             />
           </div>
           <span className="text-[11px] text-brand-forest-muted font-serif italic tracking-wide block mb-1">
-            Bloom your life with BlooMaa
+            Bloom your day with BlooMaa
           </span>
           <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
             Patna Delivery Zone Check

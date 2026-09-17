@@ -31,7 +31,7 @@ export default function ContactPage() {
               />
             </div>
             <span className="text-xs text-brand-forest-muted font-serif italic block">
-              Bloom your life with BlooMaa
+              Bloom your day with BlooMaa
             </span>
             <h1 className="text-3xl sm:text-5xl font-black tracking-tight">
               Get in Touch with Our Team

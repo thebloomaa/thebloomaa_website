@@ -88,12 +88,12 @@ export async function POST(req: Request) {
       const mailOptions = {
         from: `"thebloomaa" <${process.env.SMTP_USER}>`,
         to: identifier,
-        subject: 'Your Login OTP for thebloomaa — Bloom your life with BlooMaa',
+        subject: 'Your Login OTP for thebloomaa — Bloom your day with BlooMaa',
         html: `
           <div style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; max-width: 480px; margin: 0 auto; padding: 24px; text-align: center; background: #090D16; color: #F1F5F9; border-radius: 20px; border: 1px solid #1E293B;">
             <div style="margin-bottom: 16px;">
               <span style="font-size: 24px; font-weight: 900; color: #10B981; letter-spacing: -0.5px;">thebloo<span style="color: #34D399;">maa</span></span>
-              <p style="font-size: 11px; color: #FBBF24; font-style: italic; margin: 4px 0 0 0;">Bloom your life with BlooMaa</p>
+              <p style="font-size: 11px; color: #FBBF24; font-style: italic; margin: 4px 0 0 0;">Bloom your day with BlooMaa</p>
             </div>
             <p style="font-size: 14px; color: #94A3B8; margin-bottom: 20px;">Your secure one-time verification code to access fresh morning preps &amp; subscriptions:</p>
             <div style="font-size: 36px; font-weight: 900; letter-spacing: 6px; padding: 18px 24px; background: #0F172A; border: 1px solid #10B981; border-radius: 16px; color: #34D399; margin: 20px 0; font-family: monospace;">

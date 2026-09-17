@@ -12,9 +12,9 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXTAUTH_URL || 'http://localhost:3000'),
-  title: "thebloomaa — Bloom your life with BlooMaa | Macro-Tracked Diet Preps & Fresh Nutrition",
+  title: "thebloomaa — Bloom your day with BlooMaa | Macro-Tracked Diet Preps & Fresh Nutrition",
   description:
-    "Bloom your life with BlooMaa. Chef-prepared, macro-tracked fitness diet preps and fresh raw nutrition delivered fresh across Patna every morning between 6:00 AM – 9:00 AM.",
+    "Bloom your day with BlooMaa. Chef-prepared, macro-tracked fitness diet preps and fresh raw nutrition delivered fresh across Patna every morning between 6:00 AM – 9:00 AM.",
   keywords: [
     "thebloomaa",
     "bloom your life with BlooMaa",
@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     apple: "/logo.jpg",
   },
   openGraph: {
-    title: "thebloomaa — Bloom your life with BlooMaa",
+    title: "thebloomaa — Bloom your day with BlooMaa",
     description: "Nourished with motherly care. Macro-calibrated fitness preps and fresh raw nutrition delivered daily in Patna.",
     type: "website",
     images: [
@@ -38,7 +38,7 @@ export const metadata: Metadata = {
         url: "/logo.jpg",
         width: 1024,
         height: 1024,
-        alt: "Bloom your life with BlooMaa",
+        alt: "Bloom your day with BlooMaa",
       },
     ],
   },
