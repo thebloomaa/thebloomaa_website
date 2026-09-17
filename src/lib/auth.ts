@@ -9,6 +9,7 @@ export const authOptions: NextAuthOptions = {
       credentials: {
         email: { label: 'Email or Mobile', type: 'text' },
         otp: { label: 'OTP', type: 'text' },
+        firebaseToken: { label: 'Firebase Token', type: 'text' },
         name: { label: 'Full Name', type: 'text' },
         phone: { label: 'Phone', type: 'text' },
         fitnessGoal: { label: 'Fitness Goal', type: 'text' },
@@ -22,9 +23,9 @@ export const authOptions: NextAuthOptions = {
         password: { label: 'Password', type: 'password' },
       },
       async authorize(credentials) {
-        if (!credentials?.email) return null;
+        if (!credentials) return null;
 
-        const identifier = credentials.email.trim().toLowerCase();
+        const identifier = credentials.email ? credentials.email.trim().toLowerCase() : '';
 
         // -------------------------------------------------------------
         // A. ADMIN PASSWORD AUTHENTICATION
@@ -93,40 +94,89 @@ export const authOptions: NextAuthOptions = {
         }
 
         // -------------------------------------------------------------
-        // B. CUSTOMER OTP AUTHENTICATION
+        // B. CUSTOMER OTP & FIREBASE AUTHENTICATION
         // -------------------------------------------------------------
-        if (!credentials.otp) return null;
+        let verifiedPhone = '';
+        let validOtp = false;
 
-        const otpCode = credentials.otp.trim();
-
-        // 1. Verify OTP
-        const validOtp = await prisma.otp.findFirst({
-          where: {
-            email: identifier,
-            code: otpCode,
-            expiresAt: { gt: new Date() },
-          },
-        });
-
-        // Master bypass for local testing only (strictly disabled in production)
-        if (!validOtp) {
-          if (process.env.NODE_ENV === 'production' || otpCode !== '123456') {
-            return null;
+        // B1. Firebase Phone Token Auth
+        if (credentials.firebaseToken) {
+          const apiKey = process.env.FIREBASE_API_KEY || process.env.NEXT_PUBLIC_FIREBASE_API_KEY;
+          if (apiKey) {
+            try {
+              const cleanKey = apiKey.replace(/['"]/g, '').trim();
+              const verifyRes = await fetch(
+                `https://identitytoolkit.googleapis.com/v1/accounts:lookup?key=${cleanKey}`,
+                {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({ idToken: credentials.firebaseToken }),
+                }
+              );
+              if (verifyRes.ok) {
+                const verifyData = await verifyRes.json();
+                const googleUser = verifyData?.users?.[0];
+                if (googleUser?.phoneNumber) {
+                  verifiedPhone = googleUser.phoneNumber; // e.g. "+918319080781"
+                }
+              }
+            } catch (tokenErr) {
+              console.error('Firebase token verification error:', tokenErr);
+            }
           }
-        }
+          
+          // Graceful fallback for local development or if Google verification is bypassed (for dev only)
+          if (!verifiedPhone && process.env.NODE_ENV !== 'production' && credentials.firebaseToken === 'dev-bypass') {
+             verifiedPhone = credentials.phone || '';
+          }
+          
+          if (!verifiedPhone) {
+            return null; // Invalid token
+          }
+        } 
+        // B2. Email/Simulated OTP Auth
+        else if (credentials.otp) {
+          const otpCode = credentials.otp.trim();
+          const otpRecord = await prisma.otp.findFirst({
+            where: {
+              email: identifier,
+              code: otpCode,
+              expiresAt: { gt: new Date() },
+            },
+          });
 
-        // Delete used OTP
-        if (validOtp) {
-          await prisma.otp.delete({ where: { id: validOtp.id } });
+          // Master bypass for local testing only (strictly disabled in production)
+          if (!otpRecord) {
+            if (process.env.NODE_ENV === 'production' || otpCode !== '123456') {
+              return null;
+            } else {
+              validOtp = true;
+            }
+          } else {
+            validOtp = true;
+            await prisma.otp.delete({ where: { id: otpRecord.id } });
+          }
+        } else {
+          return null; // Neither OTP nor Firebase Token provided
         }
 
         // 2. Find or Create User
-        // Check by email or by phone
+        // Check by verified phone (Firebase), explicit phone, or email
+        const searchPhone = verifiedPhone || credentials.phone;
+        const cleanDigits = searchPhone ? searchPhone.replace(/\D/g, '').slice(-10) : '';
+
         let user = await prisma.user.findFirst({
           where: {
             OR: [
-              { email: identifier },
-              ...(credentials.phone ? [{ phone: credentials.phone }] : []),
+              ...(identifier ? [{ email: identifier }] : []),
+              ...(cleanDigits
+                ? [
+                    { phone: cleanDigits },
+                    { phone: `+91${cleanDigits}` },
+                    { phone: `+91 ${cleanDigits}` },
+                    { email: `${cleanDigits}@thebloomaa.customer` },
+                  ]
+                : []),
             ],
           },
         });
@@ -145,14 +195,14 @@ export const authOptions: NextAuthOptions = {
 
         if (!user) {
           // New subscriber creation
-          const effectiveEmail = identifier.includes('@')
+          const effectiveEmail = identifier && identifier.includes('@')
             ? identifier
-            : `${credentials.phone || identifier.replace(/\D/g, '')}@thebloomaa.customer`;
+            : `${cleanDigits || 'unknown'}@thebloomaa.customer`;
 
           user = await prisma.user.create({
             data: {
               email: effectiveEmail,
-              phone: credentials.phone || (!identifier.includes('@') ? identifier : null),
+              phone: cleanDigits ? `+91${cleanDigits}` : null,
               role: 'CUSTOMER',
               ...profileData,
             },

@@ -5,7 +5,7 @@ import nodemailer from 'nodemailer';
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { email, phone, action = 'signin' } = body;
+    const { email, phone, action = 'signin', checkOnly = false } = body;
 
     const identifier = (email || phone || '').trim().toLowerCase();
 
@@ -13,12 +13,22 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Please enter an email or mobile phone number' }, { status: 400 });
     }
 
+    const cleanDigits = identifier.replace(/\D/g, '').slice(-10);
+    const isPhone = !identifier.includes('@') && cleanDigits.length === 10;
+
     // 1. Database Existence Check
     const existingUser = await prisma.user.findFirst({
       where: {
         OR: [
           { email: identifier },
-          { phone: identifier },
+          ...(isPhone
+            ? [
+                { phone: cleanDigits },
+                { phone: `+91${cleanDigits}` },
+                { phone: `+91 ${cleanDigits}` },
+                { email: `${cleanDigits}@thebloomaa.customer` },
+              ]
+            : [{ phone: identifier }]),
           ...(phone ? [{ phone: phone.trim() }] : []),
         ],
       },
@@ -44,6 +54,11 @@ export async function POST(req: Request) {
         },
         { status: 409 }
       );
+    }
+
+    // If caller only wanted to verify user existence prior to Firebase SMS dispatch
+    if (checkOnly) {
+      return NextResponse.json({ success: true, verified: true });
     }
 
     // Generate a 6-digit numeric OTP

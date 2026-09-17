@@ -5,6 +5,8 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useBioCalcStore } from '@/store/useBioCalcStore';
 import LocationPickerMap from '@/components/LocationPickerMap';
+import { auth } from '@/lib/firebase';
+import { RecaptchaVerifier, signInWithPhoneNumber, type ConfirmationResult } from 'firebase/auth';
 
 export default function CustomerAuthForm() {
   const router = useRouter();
@@ -32,6 +34,17 @@ export default function CustomerAuthForm() {
   const [alreadyRegisteredNotice, setAlreadyRegisteredNotice] = useState(false);
   const [maskedTarget, setMaskedTarget] = useState('');
   const [resendTimer, setResendTimer] = useState(0);
+  const [confirmationResult, setConfirmationResult] = useState<ConfirmationResult | null>(null);
+
+  const setupRecaptcha = () => {
+    if (typeof window === 'undefined' || !auth) return null;
+    if (!(window as any).recaptchaVerifier) {
+      (window as any).recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {
+        size: 'invisible',
+      });
+    }
+    return (window as any).recaptchaVerifier;
+  };
 
   // Returning User State
   const [loginIdentifier, setLoginIdentifier] = useState('');
@@ -97,28 +110,51 @@ export default function CustomerAuthForm() {
     setErrorMsg(null);
     setNotRegisteredNotice(false);
 
+    const isPhone = !loginIdentifier.includes('@') && loginIdentifier.replace(/\D/g, '').length === 10;
+    const useFirebase = isPhone && auth;
+
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           action: 'signin',
-          email: loginIdentifier.includes('@') ? loginIdentifier : undefined,
-          phone: !loginIdentifier.includes('@') ? loginIdentifier : undefined,
+          email: !isPhone ? loginIdentifier : undefined,
+          phone: isPhone ? loginIdentifier : undefined,
+          checkOnly: useFirebase,
         }),
       });
 
       const data = await res.json();
-      if (res.ok) {
-        setMaskedTarget(data.masked || loginIdentifier);
-        setLoginStep('otp');
-        setResendTimer(30);
-      } else {
+      if (!res.ok) {
         if (data.notRegistered) {
           setNotRegisteredNotice(true);
         }
         setErrorMsg(data.error || 'Failed to send OTP. Please try again.');
+        setLoading(false);
+        return;
       }
+
+      if (useFirebase) {
+        try {
+          const recaptcha = setupRecaptcha();
+          const formattedPhone = '+91' + loginIdentifier.replace(/\D/g, '');
+          const confResult = await signInWithPhoneNumber(auth!, formattedPhone, recaptcha);
+          setConfirmationResult(confResult);
+          setMaskedTarget('+91 ' + loginIdentifier.replace(/(\d{2})\d+(\d{2})/, '$1****$2'));
+        } catch (fbErr: any) {
+          console.error('Firebase Auth Error:', fbErr);
+          setErrorMsg(fbErr.message || 'SMS delivery failed. Please try again or use email.');
+          setLoading(false);
+          return;
+        }
+      } else {
+        setConfirmationResult(null);
+        setMaskedTarget(data.masked || loginIdentifier);
+      }
+      
+      setLoginStep('otp');
+      setResendTimer(30);
     } catch {
       setErrorMsg('Network error. Please try again.');
     } finally {
@@ -137,11 +173,29 @@ export default function CustomerAuthForm() {
     setLoading(true);
     setErrorMsg(null);
 
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: loginIdentifier.trim().toLowerCase(),
-      otp: code,
-    });
+    let res;
+    if (confirmationResult) {
+      try {
+        const userCred = await confirmationResult.confirm(code);
+        const idToken = await userCred.user.getIdToken();
+        res = await signIn('credentials', {
+          redirect: false,
+          phone: loginIdentifier,
+          firebaseToken: idToken,
+        });
+      } catch (err: any) {
+        setErrorMsg('Invalid SMS verification code.');
+        setLoading(false);
+        return;
+      }
+    } else {
+      res = await signIn('credentials', {
+        redirect: false,
+        email: loginIdentifier.trim().toLowerCase(),
+        phone: loginIdentifier,
+        otp: code,
+      });
+    }
 
     setLoading(false);
 
@@ -189,6 +243,8 @@ export default function CustomerAuthForm() {
     setErrorMsg(null);
     setAlreadyRegisteredNotice(false);
 
+    const useFirebase = auth ? true : false;
+
     try {
       const res = await fetch('/api/auth/send-otp', {
         method: 'POST',
@@ -197,20 +253,40 @@ export default function CustomerAuthForm() {
           action: 'register',
           email: regForm.email,
           phone: regForm.phone,
+          checkOnly: useFirebase,
         }),
       });
 
       const data = await res.json();
-      if (res.ok) {
-        setMaskedTarget(data.masked || regForm.email);
-        setStep(4); // Move to OTP step
-        setResendTimer(30);
-      } else {
+      if (!res.ok) {
         if (data.alreadyRegistered) {
           setAlreadyRegisteredNotice(true);
         }
         setErrorMsg(data.error || 'Failed to dispatch verification code.');
+        setLoading(false);
+        return;
       }
+
+      if (useFirebase) {
+        try {
+          const recaptcha = setupRecaptcha();
+          const formattedPhone = '+91' + regForm.phone.replace(/\D/g, '');
+          const confResult = await signInWithPhoneNumber(auth!, formattedPhone, recaptcha);
+          setConfirmationResult(confResult);
+          setMaskedTarget('+91 ' + regForm.phone.replace(/(\d{2})\d+(\d{2})/, '$1****$2'));
+        } catch (fbErr: any) {
+          console.error('Firebase Auth Error:', fbErr);
+          setErrorMsg(fbErr.message || 'SMS delivery failed. Please try again.');
+          setLoading(false);
+          return;
+        }
+      } else {
+        setConfirmationResult(null);
+        setMaskedTarget(data.masked || regForm.email);
+      }
+      
+      setStep(4); // Move to OTP step
+      setResendTimer(30);
     } catch {
       setErrorMsg('Network error. Please try again.');
     } finally {
@@ -237,21 +313,48 @@ export default function CustomerAuthForm() {
         : ''
     }`;
 
-    const res = await signIn('credentials', {
-      redirect: false,
-      email: regForm.email.trim().toLowerCase(),
-      otp: code,
-      name: regForm.name.trim(),
-      phone: regForm.phone.trim(),
-      fitnessGoal: regForm.fitnessGoal,
-      dietaryPreference: regForm.dietaryPreference,
-      allergies: regForm.allergies,
-      gender: regForm.gender,
-      age: regForm.age ? String(regForm.age) : undefined,
-      deliveryTime: regForm.deliveryTime,
-      street: fullStreetAddress,
-      pincode: regForm.pincode,
-    });
+    let res;
+    if (confirmationResult) {
+      try {
+        const userCred = await confirmationResult.confirm(code);
+        const idToken = await userCred.user.getIdToken();
+        res = await signIn('credentials', {
+          redirect: false,
+          phone: regForm.phone.trim(),
+          firebaseToken: idToken,
+          name: regForm.name.trim(),
+          fitnessGoal: regForm.fitnessGoal,
+          dietaryPreference: regForm.dietaryPreference,
+          allergies: regForm.allergies,
+          gender: regForm.gender,
+          age: regForm.age ? String(regForm.age) : undefined,
+          deliveryTime: regForm.deliveryTime,
+          street: fullStreetAddress,
+          pincode: regForm.pincode,
+          email: regForm.email.trim().toLowerCase(), // passed for new profile linking
+        });
+      } catch (err: any) {
+        setErrorMsg('Invalid SMS verification code. Please check your code.');
+        setLoading(false);
+        return;
+      }
+    } else {
+      res = await signIn('credentials', {
+        redirect: false,
+        email: regForm.email.trim().toLowerCase(),
+        phone: regForm.phone.trim(),
+        otp: code,
+        name: regForm.name.trim(),
+        fitnessGoal: regForm.fitnessGoal,
+        dietaryPreference: regForm.dietaryPreference,
+        allergies: regForm.allergies,
+        gender: regForm.gender,
+        age: regForm.age ? String(regForm.age) : undefined,
+        deliveryTime: regForm.deliveryTime,
+        street: fullStreetAddress,
+        pincode: regForm.pincode,
+      });
+    }
 
     setLoading(false);
 
@@ -294,6 +397,7 @@ export default function CustomerAuthForm() {
 
   return (
     <div className="rounded-3xl p-6 sm:p-10 bg-slate-900/95 border border-slate-800 shadow-2xl backdrop-blur-xl relative">
+      <div id="recaptcha-container"></div>
       {/* Tab Switcher */}
       <div className="flex rounded-2xl bg-slate-950/80 p-1.5 border border-slate-800 mb-8">
         <button
