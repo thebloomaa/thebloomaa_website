@@ -4,7 +4,7 @@ import Image from 'next/image';
 
 export default function Footer() {
   return (
-    <footer style={{ background: '#0B1120', borderTop: '1px solid var(--border-subtle)' }}>
+    <footer className="bg-brand-card border-t border-brand-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
@@ -28,7 +28,7 @@ export default function Footer() {
                 </span>
               </div>
             </div>
-            <p className="text-sm leading-relaxed mb-4" style={{ color: 'var(--text-muted)' }}>
+            <p className="text-sm leading-relaxed mb-4 text-brand-forest-muted">
               Nourished with motherly care. Macro-calibrated, chef-prepared fitness diet preps, fresh sprouted salads, and natural raw nutrition delivered daily across Patna (6 AM – 9 AM).
             </p>
 
@@ -38,7 +38,7 @@ export default function Footer() {
                 href="https://www.instagram.com/thebloomaa_official?stkn=MW15ZXYyZ2ZtdmwxYg%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-mustard via-pink-500 to-purple-600 flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-brand-cream border border-brand-border flex items-center justify-center text-brand-forest-muted shadow-sm hover:text-brand-mustard hover:border-brand-mustard hover:scale-105 transition-all"
                 aria-label="Instagram"
                 title="Follow @thebloomaa_official on Instagram"
               >
@@ -50,7 +50,7 @@ export default function Footer() {
                 href="https://www.facebook.com/thebloomaa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#1877F2] flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-brand-cream border border-brand-border flex items-center justify-center text-brand-forest-muted shadow-sm hover:text-brand-mustard hover:border-brand-mustard hover:scale-105 transition-all"
                 aria-label="Facebook"
                 title="Follow thebloomaa on Facebook"
               >
@@ -62,7 +62,7 @@ export default function Footer() {
                 href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#25D366] flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-brand-cream border border-brand-border flex items-center justify-center text-brand-forest-muted shadow-sm hover:text-brand-mustard hover:border-brand-mustard hover:scale-105 transition-all"
                 aria-label="WhatsApp"
                 title="Chat with us on WhatsApp"
               >
@@ -128,7 +128,7 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 text-center text-xs" style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+        <div className="mt-12 pt-8 text-center text-xs text-brand-forest-muted border-t border-brand-border/60">
           © {new Date().getFullYear()} thebloomaa · <span className="text-brand-forest-muted/80 italic">Bloom your day with BlooMaa</span>. Made with 💚 in Patna.
         </div>
       </div>

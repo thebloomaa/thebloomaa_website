@@ -150,19 +150,19 @@ export default function Home() {
       <section id="how-it-works" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Simple Process</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-mustard">Simple Process</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">How It Works</h2>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {steps.map((step, i) => (
-              <div key={i} className="glow-card rounded-2xl p-7 text-center" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
+              <div key={i} className="glow-card rounded-2xl p-7 text-center bg-brand-cream border border-brand-border">
                 <div className="text-4xl mb-4">{step.icon}</div>
-                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-3" style={{ background: 'var(--brand-primary)', color: 'white' }}>
+                <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black mx-auto mb-3 bg-brand-mustard text-brand-forest">
                   {i + 1}
                 </div>
                 <h3 className="text-lg font-bold mb-2">{step.title}</h3>
-                <p className="text-sm leading-relaxed" style={{ color: 'var(--text-muted)' }}>{step.description}</p>
+                <p className="text-sm leading-relaxed text-brand-forest-muted">{step.description}</p>
               </div>
             ))}
           </div>
@@ -183,9 +183,9 @@ export default function Home() {
       <section id="pricing" className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest" style={{ color: 'var(--brand-primary)' }}>Fresh Nutrition Plans</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-mustard">Fresh Nutrition Plans</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">Choose Your Vitality Reset</h2>
-            <p className="mt-3 text-sm max-w-lg mx-auto" style={{ color: 'var(--text-muted)' }}>
+            <p className="mt-3 text-sm max-w-lg mx-auto text-brand-forest-muted">
               Cold-prepared fresh &amp; raw diet boxes and personalized biological age analysis for Patna health-seekers.
             </p>
           </div>
@@ -194,11 +194,7 @@ export default function Home() {
             {offerings.map((plan, i) => (
               <div
                 key={i}
-                className="glow-card relative rounded-2xl p-7 flex flex-col"
-                style={{
-                  background: plan.popular ? 'linear-gradient(135deg, rgba(16, 185, 129, 0.09), rgba(16, 185, 129, 0.02))' : 'var(--bg-card)',
-                  border: plan.popular ? '2px solid var(--brand-primary)' : '1px solid var(--border-subtle)',
-                }}
+                className={`glow-card relative rounded-2xl p-7 flex flex-col ${plan.popular ? 'bg-gradient-to-br from-brand-mustard/10 to-brand-mustard/5 border-2 border-brand-mustard' : 'bg-brand-cream border border-brand-border'}`}
               >
                 {plan.popular && (
                   <span
@@ -208,19 +204,19 @@ export default function Home() {
                   </span>
                 )}
                 <h3 className="text-lg font-bold mb-1">{plan.name}</h3>
-                <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>{plan.period}</p>
+                <p className="text-xs mb-4 text-brand-forest-muted">{plan.period}</p>
                 <div className="mb-5">
-                  <span className="text-3xl font-black" style={{ fontFamily: 'var(--font-mono)', color: 'var(--brand-primary)' }}>{plan.perDay}</span>
+                  <span className="text-3xl font-black font-mono text-brand-mustard">{plan.perDay}</span>
                   {plan.perDay !== 'Free' && plan.perDay !== 'Custom' && (
-                    <span className="text-sm ml-1" style={{ color: 'var(--text-muted)' }}>/day</span>
+                    <span className="text-sm ml-1 text-brand-forest-muted">/day</span>
                   )}
                 </div>
-                <p className="text-xs font-medium mb-5" style={{ color: 'var(--text-muted)' }}>
-                  Total Commitment: <span className="font-bold" style={{ color: 'var(--text-secondary)' }}>{plan.total}</span>
+                <p className="text-xs font-medium mb-5 text-brand-forest-muted">
+                  Total Commitment: <span className="font-bold text-brand-forest">{plan.total}</span>
                 </p>
                 <ul className="space-y-2.5 mb-7 flex-grow">
                   {plan.features.map((feat, j) => (
-                    <li key={j} className="flex items-start gap-2.5 text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
+                    <li key={j} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-forest">
                       <span className="text-brand-mustard shrink-0 mt-0.5">✓</span>
                       <span>{feat}</span>
                     </li>
@@ -228,12 +224,7 @@ export default function Home() {
                 </ul>
                 <a
                   href={plan.ctaHref}
-                  className="w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer"
-                  style={{
-                    background: plan.popular ? 'var(--brand-primary)' : 'rgba(255,255,255,0.05)',
-                    color: plan.popular ? '#020617' : 'var(--text-primary)',
-                    border: plan.popular ? 'none' : '1.5px solid var(--border-subtle)',
-                  }}
+                  className={`w-full py-3.5 rounded-xl text-sm font-bold transition-all hover:scale-[1.02] active:scale-[0.98] text-center block cursor-pointer ${plan.popular ? 'bg-brand-mustard text-brand-forest border-none' : 'bg-brand-cream border border-brand-border text-brand-forest'}`}
                 >
                   {plan.ctaText}
                 </a>
@@ -244,7 +235,7 @@ export default function Home() {
       </section>
 
       {/* ===== WHY CHOOSE US ===== */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-card)' }}>
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-brand-cream">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-mustard">The thebloomaa Difference</span>
