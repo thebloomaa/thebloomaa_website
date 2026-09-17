@@ -674,7 +674,7 @@ export default function AdminDashboard() {
                           {/* Diet Plan */}
                           <td className="p-3.5 align-top">
                             <span className="font-bold text-brand-forest block">
-                              {order.subscription?.product?.name || 'Fresh Macro Prep'}
+                              {order.subscription?.product?.name || 'Fresh Bloom Prep'}
                             </span>
                             <span className="text-[10px] text-brand-forest-muted block mt-0.5">
                               🔥 {order.subscription?.product?.calories || 520} kcal

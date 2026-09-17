@@ -105,15 +105,15 @@ body {
   box-shadow: 0 12px 40px rgba(16, 185, 129, 0.12);
 }
 
-/* Macro bar fills */
-.macro-bar {
+/* Bloom bar fills */
+.bloom-bar {
   height: 6px;
   border-radius: 3px;
   background: var(--bg-surface);
   overflow: hidden;
 }
 
-.macro-bar-fill {
+.bloom-bar-fill {
   height: 100%;
   border-radius: 3px;
   transition: width 0.8s ease-out;

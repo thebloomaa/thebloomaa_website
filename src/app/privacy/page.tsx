@@ -44,7 +44,7 @@ export default function PrivacyPage() {
             </section>
 
             <section className="space-y-2">
-              <h2 className="text-base font-bold text-brand-forest">4. Bio Calculator &amp; Macro Data</h2>
+              <h2 className="text-base font-bold text-brand-forest">4. Bio Calculator &amp; Bloom Data</h2>
               <p>
                 Nutritional metrics entered into our Bio Calculator (such as cooked food percentages, living enzyme scores, and biological diet age deltas) are processed in real-time to personalize your diet recommendations and may be stored locally in your browser for convenience.
               </p>

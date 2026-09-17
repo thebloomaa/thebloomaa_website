@@ -503,7 +503,7 @@ export default function BioCalculator() {
                 </div>
               </div>
 
-              {/* Visual Age Comparison Timeline & Target Macros */}
+              {/* Visual Age Comparison Timeline & Target Blooms */}
               <div className="md:col-span-6 space-y-4">
                 {/* Visual Age Comparison Card */}
                 <div className="p-5 rounded-2xl bg-brand-cream/40 border border-brand-border">
@@ -553,7 +553,7 @@ export default function BioCalculator() {
                   </p>
                 </div>
 
-                {/* Energy & Macros Target */}
+                {/* Energy & Blooms Target */}
                 <div className="p-5 rounded-2xl bg-brand-cream/40 border border-brand-border">
                   <div className="flex justify-between items-center mb-2">
                     <span className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
@@ -564,31 +564,31 @@ export default function BioCalculator() {
                     </span>
                   </div>
                   <div className="text-2xl font-black text-brand-mustard font-mono">
-                    {results.targetMacros.calories} kcal / day
+                    {results.targetBlooms.calories} kcal / day
                   </div>
                   <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-brand-border text-center">
                     <div>
                       <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Protein</span>
                       <p className="text-xs font-bold text-blue-400 font-mono mt-0.5">
-                        {results.targetMacros.protein}g
+                        {results.targetBlooms.protein}g
                       </p>
                     </div>
                     <div>
                       <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Carbs</span>
                       <p className="text-xs font-bold text-brand-mustard font-mono mt-0.5">
-                        {results.targetMacros.carbs}g
+                        {results.targetBlooms.carbs}g
                       </p>
                     </div>
                     <div>
                       <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Fats</span>
                       <p className="text-xs font-bold text-brand-mustard font-mono mt-0.5">
-                        {results.targetMacros.fats}g
+                        {results.targetBlooms.fats}g
                       </p>
                     </div>
                     <div>
                       <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Fiber</span>
                       <p className="text-xs font-bold text-purple-400 font-mono mt-0.5">
-                        {results.targetMacros.fiber}g
+                        {results.targetBlooms.fiber}g
                       </p>
                     </div>
                   </div>

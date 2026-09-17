@@ -57,7 +57,7 @@ export async function POST(
       return NextResponse.json(
         {
           error:
-            'Orders cannot be skipped after 8:30 PM on the evening prior to morning delivery, as kitchen macro-prep and cold-chain pack have commenced.',
+            'Orders cannot be skipped after 8:30 PM on the evening prior to morning delivery, as kitchen bloom-prep and cold-chain pack have commenced.',
         },
         { status: 400 }
       );

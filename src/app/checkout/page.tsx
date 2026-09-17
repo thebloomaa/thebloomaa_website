@@ -457,7 +457,7 @@ function CheckoutPageInner() {
                 </span>
                 <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Review Your Diet Plan</h2>
                 <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
-                  Macro-tracked, chef-crafted, and delivered fresh to your door every morning.
+                  Bloom-tracked, chef-crafted, and delivered fresh to your door every morning.
                 </p>
               </div>
 
@@ -491,7 +491,7 @@ function CheckoutPageInner() {
                       {selectedProduct.description}
                     </p>
 
-                    {/* Macro Badges */}
+                    {/* Bloom Badges */}
                     <div className="flex flex-wrap gap-2.5 mt-4 justify-center sm:justify-start">
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20 font-mono">
                         🔥 {selectedProduct.calories} kcal

@@ -239,13 +239,13 @@ export default function Home() {
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
             <span className="text-xs font-bold uppercase tracking-widest text-brand-mustard">The thebloomaa Difference</span>
-            <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Macro Precision.</h2>
+            <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Bloom Precision.</h2>
             <p className="text-sm text-brand-forest-muted/80 font-serif italic mt-1">Bloom your day with BlooMaa</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[
-              { icon: '🏋️', title: 'Macro Precision', desc: 'Every diet is weighed and tracked — calories, protein, carbs, and fats down to the gram.' },
+              { icon: '🏋️', title: 'Bloom Precision', desc: 'Every diet is weighed and tracked — calories, protein, carbs, and fats down to the gram.' },
               { icon: '⏰', title: 'Scheduled Delivery', desc: 'Set your preferred time in the planner, and our in-house fleet will deliver your diet at that specific time for the entire plan duration.' },
               { icon: '🌿', title: 'Motherly Nourishment', desc: 'Prepared with whole living ingredients and motherly care. Never frozen, never reheated. Fresh every morning.' },
               { icon: '⏸️', title: 'Skip Anytime', desc: 'Cheat day? Traveling? Pause or skip any delivery day directly from your subscriber dashboard.' },

@@ -126,7 +126,7 @@ export async function GET(request: Request) {
         city: o.address?.city || 'Patna',
         gpsCoords,
         mapsUrl,
-        meal: o.subscription?.product?.name || 'Custom Macro Prep',
+        meal: o.subscription?.product?.name || 'Custom Bloom Prep',
         calories: o.subscription?.product?.calories || 520,
         dietary: o.subscription?.product?.dietaryPreference || o.user?.dietaryPreference || 'VEG',
         time: o.deliveryTime || '07:00 AM',

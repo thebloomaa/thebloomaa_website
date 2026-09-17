@@ -44,7 +44,7 @@ export interface BioCalculatorInputs {
   activityLevel?: ActivityLevel;
 }
 
-export interface MacroBreakdown {
+export interface BloomBreakdown {
   calories: number;
   protein: number; // in grams
   carbs: number;   // in grams
@@ -98,7 +98,7 @@ export interface MatchedProduct {
 export interface BioCalculatorResults {
   bmr: number;
   tdee: number;
-  targetMacros: MacroBreakdown;
+  targetBlooms: BloomBreakdown;
   livingFoodVitalityScore: number; // 0 - 100
   vitalityTier: VitalityTier;
   biologicalDietAgeDelta: number; // e.g. -4 or +5
@@ -358,7 +358,7 @@ export function calculateBioProfile(inputs: BioCalculatorInputs): BioCalculatorR
   const activityMultiplier = ACTIVITY_MULTIPLIERS[activityLevel] || 1.55;
   const tdee = Math.round(bmr * activityMultiplier);
 
-  // 2. Goal-adjusted Calorie & Macro distribution
+  // 2. Goal-adjusted Calorie & Bloom distribution
   let targetCalories = tdee;
   let proteinRatio = 0.25;
   let carbRatio = 0.50;
@@ -485,7 +485,7 @@ export function calculateBioProfile(inputs: BioCalculatorInputs): BioCalculatorR
   return {
     bmr,
     tdee,
-    targetMacros: {
+    targetBlooms: {
       calories: targetCalories,
       protein: targetProteinGrams,
       carbs: targetCarbsGrams,

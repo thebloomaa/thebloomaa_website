@@ -45,7 +45,7 @@ export default function LoginPage() {
               </div>
 
               <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-brand-forest leading-tight">
-                Your Morning Macros, <br className="hidden lg:block" />
+                Your Morning Blooms, <br className="hidden lg:block" />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-mustard to-brand-mustard-hover">
                   Delivered Fresh.
                 </span>
@@ -88,7 +88,7 @@ export default function LoginPage() {
                       Living Enzymes &amp; Motherly Care
                     </strong>
                     <span className="text-[11px] text-brand-forest-muted leading-normal block">
-                      Macro-weighed protein, sprouted seeds, and raw living nutrition. Zero reheated grease, zero preservatives.
+                      Bloom-weighed protein, sprouted seeds, and raw living nutrition. Zero reheated grease, zero preservatives.
                     </span>
                   </div>
                 </div>

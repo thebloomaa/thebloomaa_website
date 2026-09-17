@@ -352,7 +352,7 @@ export default function CustomerAuthForm() {
               <p className="font-semibold text-sm leading-snug">{errorMsg}</p>
               {notRegisteredNotice && (
                 <p className="text-[11px] text-brand-forest-muted/80 mt-1">
-                  To get fresh macro-tailored diets delivered in Patna, please create your member profile.
+                  To get fresh bloom-tailored diets delivered in Patna, please create your member profile.
                 </p>
               )}
               {alreadyRegisteredNotice && (
@@ -533,7 +533,7 @@ export default function CustomerAuthForm() {
           <div className="mb-6">
             <div className="flex justify-between text-[11px] font-black uppercase tracking-wider mb-2 text-brand-forest-muted">
               <span className={step >= 1 ? 'text-brand-mustard' : ''}>1. Identity</span>
-              <span className={step >= 2 ? 'text-brand-mustard' : ''}>2. Macro Goals</span>
+              <span className={step >= 2 ? 'text-brand-mustard' : ''}>2. Bloom Goals</span>
               <span className={step >= 3 ? 'text-brand-mustard' : ''}>3. Delivery Slot</span>
               <span className={step >= 4 ? 'text-brand-mustard' : ''}>4. Verify</span>
             </div>
@@ -624,7 +624,7 @@ export default function CustomerAuthForm() {
                   }}
                   className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 cursor-pointer"
                 >
-                  Continue to Macro &amp; Nutrition Target →
+                  Continue to Bloom &amp; Nutrition Target →
                 </button>
               </div>
 

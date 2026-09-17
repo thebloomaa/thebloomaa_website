@@ -244,7 +244,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                   <span>We deliver to your neighborhood!</span>
                 </div>
                 <p className="text-xs text-brand-forest-muted leading-relaxed">
-                  {result.message} Your fresh chef prep will arrive hot and macro-tracked between 6:00 AM – 9:00 AM daily.
+                  {result.message} Your fresh chef prep will arrive hot and bloom-tracked between 6:00 AM – 9:00 AM daily.
                 </p>
                 <div className="pt-2 flex justify-between items-center">
                   <span className="text-[10px] uppercase font-black tracking-wider text-brand-mustard">

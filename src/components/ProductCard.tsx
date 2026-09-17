@@ -27,7 +27,7 @@ const getBadgeStyle = (pref: string) => {
 
 const getBadgeLabel = (pref: string) => pref.replace('_', ' ');
 
-// Calculate macro bar widths as percentage (max value for context)
+// Calculate bloom bar widths as percentage (max value for context)
 const getBarWidth = (value: number, max: number) => Math.min((value / max) * 100, 100);
 
 export default function ProductCard({
@@ -42,7 +42,7 @@ export default function ProductCard({
   image,
 }: ProductCardProps) {
   const badge = getBadgeStyle(dietaryPreference);
-  const totalMacros = protein + carbs + fats;
+  const totalBlooms = protein + carbs + fats;
 
   return (
     <div className="glow-card flex flex-col rounded-2xl overflow-hidden" style={{ background: 'var(--bg-card)', border: '1px solid var(--border-subtle)' }}>
@@ -86,7 +86,7 @@ export default function ProductCard({
           {description}
         </p>
 
-        {/* Macro Bars */}
+        {/* Bloom Bars */}
         <div className="rounded-xl p-3.5 mb-4" style={{ background: 'var(--bg-dark)', border: '1px solid var(--border-subtle)' }}>
           {/* Protein */}
           <div className="flex items-center justify-between mb-2.5">
@@ -96,8 +96,8 @@ export default function ProductCard({
             </div>
             <span className="text-xs font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#60A5FA' }}>{protein}g</span>
           </div>
-          <div className="macro-bar mb-3">
-            <div className="macro-bar-fill" style={{ width: `${getBarWidth(protein, 60)}%`, background: 'linear-gradient(90deg, #3B82F6, #60A5FA)' }} />
+          <div className="bloom-bar mb-3">
+            <div className="bloom-bar-fill" style={{ width: `${getBarWidth(protein, 60)}%`, background: 'linear-gradient(90deg, #3B82F6, #60A5FA)' }} />
           </div>
 
           {/* Carbs */}
@@ -108,8 +108,8 @@ export default function ProductCard({
             </div>
             <span className="text-xs font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#FBBF24' }}>{carbs}g</span>
           </div>
-          <div className="macro-bar mb-3">
-            <div className="macro-bar-fill" style={{ width: `${getBarWidth(carbs, 80)}%`, background: 'linear-gradient(90deg, #F59E0B, #FBBF24)' }} />
+          <div className="bloom-bar mb-3">
+            <div className="bloom-bar-fill" style={{ width: `${getBarWidth(carbs, 80)}%`, background: 'linear-gradient(90deg, #F59E0B, #FBBF24)' }} />
           </div>
 
           {/* Fats */}
@@ -120,8 +120,8 @@ export default function ProductCard({
             </div>
             <span className="text-xs font-bold" style={{ fontFamily: 'var(--font-mono)', color: '#34D399' }}>{fats}g</span>
           </div>
-          <div className="macro-bar">
-            <div className="macro-bar-fill" style={{ width: `${getBarWidth(fats, 50)}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
+          <div className="bloom-bar">
+            <div className="bloom-bar-fill" style={{ width: `${getBarWidth(fats, 50)}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }} />
           </div>
         </div>
 
