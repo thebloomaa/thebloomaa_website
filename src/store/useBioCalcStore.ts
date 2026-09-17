@@ -5,7 +5,7 @@ import {
   type BioCalculatorResults,
 } from '@/lib/bioCalculator';
 
-export type CalculatorStep = 1 | 2 | 3 | 4;
+export type CalculatorStep = 1 | 2 | 3 | 4 | 5;
 
 interface BioCalcState {
   // Navigation & Step Control
@@ -36,7 +36,15 @@ const DEFAULT_INPUTS: BioCalculatorInputs = {
   veggieFrequency: 'rarely',
   weight: 70,
   height: 175,
+  waistCircumference: undefined,
   activityLevel: 'moderate',
+  // V2 Lifestyle defaults
+  waterIntake: 'low',
+  sleepQuality: 'average',
+  stressLevel: 'moderate',
+  oilUsage: 'moderate',
+  sugarIntake: 'few_weekly',
+  mealTiming: 'mostly_regular',
 };
 
 export const useBioCalcStore = create<BioCalcState>((set, get) => ({
@@ -48,10 +56,10 @@ export const useBioCalcStore = create<BioCalcState>((set, get) => ({
     const currentInputs = get().inputs;
     const updatedInputs = { ...currentInputs, ...partial };
     
-    // Auto-recalculate results if results are already generated or on step 3+
+    // Auto-recalculate results if results are already generated or on step 4+
     const currentResults = get().results;
     let newResults = currentResults;
-    if (currentResults !== null || get().currentStep >= 3) {
+    if (currentResults !== null || get().currentStep >= 4) {
       newResults = calculateBioProfile(updatedInputs);
     }
 
@@ -71,14 +79,14 @@ export const useBioCalcStore = create<BioCalcState>((set, get) => ({
 
   nextStep: () => {
     const { currentStep, inputs } = get();
-    if (currentStep === 2) {
-      // Transitioning to Step 3 (Dashboard): Ensure calculations are freshly computed
+    if (currentStep === 3) {
+      // Transitioning to Step 4 (Vitality Dashboard): Ensure calculations are freshly computed
       const freshResults = calculateBioProfile(inputs);
       set({
-        currentStep: 3,
+        currentStep: 4,
         results: freshResults,
       });
-    } else if (currentStep < 4) {
+    } else if (currentStep < 5) {
       set({ currentStep: (currentStep + 1) as CalculatorStep });
     }
   },
@@ -92,7 +100,7 @@ export const useBioCalcStore = create<BioCalcState>((set, get) => ({
 
   goToStep: (step) => {
     const { inputs } = get();
-    if (step >= 3 && !get().results) {
+    if (step >= 4 && !get().results) {
       set({
         currentStep: step,
         results: calculateBioProfile(inputs),
