@@ -59,7 +59,7 @@ export default function Footer() {
                 </svg>
               </a>
               <a
-                href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
+                href="https://wa.me/919117501404?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-xl bg-brand-cream border border-brand-border flex items-center justify-center text-brand-forest-muted shadow-sm hover:text-brand-mustard hover:border-brand-mustard hover:scale-105 transition-all"
@@ -100,9 +100,9 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-brand-forest-muted">Patna Kitchen</h4>
             <ul className="space-y-2.5">
-              <li className="text-sm text-brand-forest-muted">📍 Boring Road, Patna, Bihar</li>
+              <li className="text-sm text-brand-forest-muted">📍 Sharma lodge punaichak pumphouse, Patna</li>
               <li className="text-sm text-brand-forest-muted">
-                <a href="tel:+916207654684" className="hover:text-brand-mustard transition-colors">📞 +91 62076 54684</a>
+                <a href="tel:+919117501404" className="hover:text-brand-mustard transition-colors">📞 +91 91175 01404</a>
               </li>
               <li className="text-sm text-brand-forest-muted">
                 <a href="mailto:admin@thebloomaa.com" className="hover:text-brand-mustard transition-colors">✉️ admin@thebloomaa.com</a>
@@ -110,7 +110,7 @@ export default function Footer() {
             </ul>
             <div className="flex gap-2.5 mt-5">
               <a
-                href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
+                href="https://wa.me/919117501404?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard hover:bg-brand-mustard/25 transition-all flex items-center gap-1.5"

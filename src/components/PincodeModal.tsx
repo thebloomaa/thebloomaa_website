@@ -187,7 +187,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                 type="text"
                 maxLength={6}
                 autoFocus
-                placeholder="e.g. 800001 (Boring Road)"
+                placeholder="e.g. 800023 (Punaichak)"
                 value={pincode}
                 onChange={(e) => {
                   setPincode(e.target.value.replace(/\D/g, ''));

@@ -33,7 +33,7 @@ interface PlaceSuggestion {
 
 // Patna Central Coordinates & Neighborhood Presets
 const PATNA_PRESETS = [
-  { name: 'Boring Road', lat: 25.6133, lng: 85.1147, pincode: '800001' },
+  { name: 'Punaichak', lat: 25.6133, lng: 85.1147, pincode: '800023' },
   { name: 'Patliputra Colony', lat: 25.6263, lng: 85.1092, pincode: '800013' },
   { name: 'Kankarbagh', lat: 25.5973, lng: 85.1585, pincode: '800020' },
   { name: 'Bailey Road', lat: 25.6111, lng: 85.0934, pincode: '800014' },
@@ -52,7 +52,7 @@ export default function LocationPickerMap({
     lng: initialLng,
   });
   const [searchQuery, setSearchQuery] = useState('');
-  const [activePinLabel, setActivePinLabel] = useState('Boring Road, Patna');
+  const [activePinLabel, setActivePinLabel] = useState('Punaichak, Patna');
   const [isDetectingGps, setIsDetectingGps] = useState(false);
   const [gpsError, setGpsError] = useState<string | null>(null);
   const [reverseAddress, setReverseAddress] = useState<string | null>(null);

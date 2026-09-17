@@ -708,7 +708,7 @@ function CheckoutPageInner() {
                     <input
                       type="text"
                       required
-                      placeholder="e.g. Boring Road, near Alankar Jewellers"
+                      placeholder="e.g. Punaichak, near Pumphouse"
                       value={form.street}
                       onChange={(e) => setForm({ ...form, street: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"

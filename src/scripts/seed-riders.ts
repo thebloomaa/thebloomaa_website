@@ -5,7 +5,7 @@ async function seedRiders() {
 
   // 1. Ensure Patna Delivery Zones exist
   const zonesData = [
-    { pincode: '800001', neighborhood: 'Boring Road', city: 'Patna', state: 'Bihar' },
+    { pincode: '800023', neighborhood: 'Punaichak', city: 'Patna', state: 'Bihar' },
     { pincode: '800013', neighborhood: 'Patliputra', city: 'Patna', state: 'Bihar' },
     { pincode: '800020', neighborhood: 'Kankarbagh', city: 'Patna', state: 'Bihar' },
   ];
@@ -33,7 +33,7 @@ async function seedRiders() {
       vehicleType: 'EV Scooter',
       vehicleNumber: 'BR 01 EA 1101',
       active: true,
-      pincode: '800001', // Boring Road
+      pincode: '800023', // Punaichak
     },
     {
       name: 'Amit Singh',

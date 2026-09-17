@@ -53,7 +53,7 @@ export default function ContactPage() {
                   <span className="text-xl">📍</span>
                   <div>
                     <strong className="block text-brand-forest">Central Kitchen Location</strong>
-                    <span className="text-brand-forest-muted">Boring Road, Patna, Bihar — 800001</span>
+                    <span className="text-brand-forest-muted">Sharma lodge punaichak pumphouse, Patna — 800023</span>
                   </div>
                 </div>
 
@@ -69,8 +69,8 @@ export default function ContactPage() {
                   <span className="text-xl">📞</span>
                   <div>
                     <strong className="block text-brand-forest">Phone Support</strong>
-                    <a href="tel:+916207654684" className="text-brand-mustard hover:underline">
-                      +91 62076 54684
+                    <a href="tel:+919117501404" className="text-brand-mustard hover:underline">
+                      +91 91175 01404
                     </a>
                   </div>
                 </div>
@@ -88,12 +88,12 @@ export default function ContactPage() {
 
               <div className="pt-4 border-t border-brand-border space-y-3">
                 <a
-                  href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
+                  href="https://wa.me/919117501404?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all flex items-center justify-center gap-2 shadow-lg shadow-brand-mustard/20"
                 >
-                  <span>💬 Chat on WhatsApp (+91 62076 54684)</span>
+                  <span>💬 Chat on WhatsApp (+91 91175 01404)</span>
                 </a>
 
                 <div className="grid grid-cols-2 gap-2.5 pt-1">

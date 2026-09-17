@@ -57,7 +57,7 @@ export default function PrivacyPage() {
                 <a href="mailto:admin@thebloomaa.com" className="text-brand-mustard underline">
                   admin@thebloomaa.com
                 </a>{' '}
-                or visit our Boring Road kitchen hub in Patna.
+                or visit our Punaichak kitchen hub in Patna.
               </p>
             </section>
           </div>

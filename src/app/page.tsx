@@ -85,7 +85,7 @@ const offerings = [
     ],
     popular: false,
     ctaText: 'Inquire on WhatsApp →',
-    ctaHref: 'https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20am%20interested%20in%20a%20Corporate%20Living%20Food%20Reset%20for%20our%20team%20in%20Patna.',
+    ctaHref: 'https://wa.me/919117501404?text=Hi%20Thebloomaa%2C%20I%20am%20interested%20in%20a%20Corporate%20Living%20Food%20Reset%20for%20our%20team%20in%20Patna.',
   },
 ];
 
@@ -112,7 +112,7 @@ const faqs = [
   },
   {
     q: 'What areas do you deliver to in Patna?',
-    a: 'We currently serve central Patna neighborhoods including Boring Road (800001), Kankarbagh (800020), and Patliputra (800013). Use the pincode checker on this page to confirm your address.',
+    a: 'We currently serve central Patna neighborhoods including Punaichak (800023), Kankarbagh (800020), and Patliputra (800013). Use the pincode checker on this page to confirm your address.',
   },
   {
     q: 'Are the items cooked or processed?',
