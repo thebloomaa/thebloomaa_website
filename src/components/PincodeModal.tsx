@@ -194,7 +194,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                   setResult(null);
                   setNotifySubmitted(false);
                 }}
-                className="flex-1 px-4 py-3.5 rounded-2xl bg-brand-cream border border-brand-border text-brand-forest text-sm font-mono tracking-widest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard focus:ring-2 focus:ring-brand-mustard/20 transition-all"
+                className="flex-1 w-full min-w-0 px-4 py-3.5 rounded-2xl bg-brand-cream border border-brand-border text-brand-forest text-sm font-mono tracking-widest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard focus:ring-2 focus:ring-brand-mustard/20 transition-all"
               />
               <button
                 type="submit"
