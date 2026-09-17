@@ -293,9 +293,9 @@ export default function CustomerAuthForm() {
   };
 
   return (
-    <div className="rounded-3xl p-6 sm:p-10 bg-slate-900/95 border border-slate-800 shadow-2xl backdrop-blur-xl relative">
+    <div className="rounded-3xl p-6 sm:p-10 bg-brand-card/95 border border-brand-border shadow-2xl backdrop-blur-xl relative">
       {/* Tab Switcher */}
-      <div className="flex rounded-2xl bg-slate-950/80 p-1.5 border border-slate-800 mb-8">
+      <div className="flex rounded-2xl bg-brand-cream/80 p-1.5 border border-brand-border mb-8">
         <button
           type="button"
           onClick={() => {
@@ -306,8 +306,8 @@ export default function CustomerAuthForm() {
           }}
           className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'register'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-brand-mustard text-brand-forest shadow-lg shadow-brand-mustard/20'
+              : 'text-brand-forest-muted hover:text-brand-forest'
           }`}
         >
           <span>✨</span>
@@ -324,8 +324,8 @@ export default function CustomerAuthForm() {
           }}
           className={`flex-1 py-3 px-2 rounded-xl text-xs sm:text-sm font-bold transition-all cursor-pointer flex items-center justify-center gap-2 ${
             mode === 'signin'
-              ? 'bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20'
-              : 'text-slate-400 hover:text-slate-200'
+              ? 'bg-brand-mustard text-brand-forest shadow-lg shadow-brand-mustard/20'
+              : 'text-brand-forest-muted hover:text-brand-forest'
           }`}
         >
           <span>🔐</span>
@@ -338,7 +338,7 @@ export default function CustomerAuthForm() {
         <div
           className={`mb-6 p-4 rounded-2xl border text-xs flex flex-col gap-3 animate-fade-in ${
             notRegisteredNotice
-              ? 'bg-amber-950/40 border-amber-500/50 text-amber-200'
+              ? 'bg-amber-950/40 border-brand-mustard/50 text-amber-200'
               : alreadyRegisteredNotice
               ? 'bg-blue-950/40 border-blue-500/50 text-blue-200'
               : 'bg-red-950/40 border-red-500/40 text-red-300'
@@ -351,7 +351,7 @@ export default function CustomerAuthForm() {
             <div className="flex-1">
               <p className="font-semibold text-sm leading-snug">{errorMsg}</p>
               {notRegisteredNotice && (
-                <p className="text-[11px] text-amber-300/80 mt-1">
+                <p className="text-[11px] text-brand-forest-muted/80 mt-1">
                   To get fresh macro-tailored diets delivered in Patna, please create your member profile.
                 </p>
               )}
@@ -377,7 +377,7 @@ export default function CustomerAuthForm() {
                 setErrorMsg(null);
                 setNotRegisteredNotice(false);
               }}
-              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-amber-400/20"
+              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-brand-mustard text-brand-forest hover:bg-brand-forest-muted transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-brand-mustard/20"
             >
               <span>✨ Create New Member Profile (Sign Up)</span>
               <span>→</span>
@@ -394,7 +394,7 @@ export default function CustomerAuthForm() {
                 setErrorMsg(null);
                 setAlreadyRegisteredNotice(false);
               }}
-              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-emerald-400 text-slate-950 hover:bg-emerald-300 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-emerald-400/20"
+              className="w-full py-2.5 px-4 rounded-xl font-black text-xs bg-brand-mustard text-brand-forest hover:bg-brand-mustard-hover transition-all flex items-center justify-center gap-2 cursor-pointer shadow-md shadow-brand-mustard/20"
             >
               <span>🔐 Switch to Log In (Returning User)</span>
               <span>→</span>
@@ -411,7 +411,7 @@ export default function CustomerAuthForm() {
           {loginStep === 'input' ? (
             <form onSubmit={handleSendLoginOtp} className="space-y-5">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                   Email Address
                 </label>
                 <input
@@ -421,9 +421,9 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. rahul@gmail.com"
                   value={loginIdentifier}
                   onChange={(e) => setLoginIdentifier(e.target.value)}
-                  className="w-full px-4 py-3.5 rounded-2xl bg-slate-800 border border-slate-700 text-slate-100 text-sm placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 transition-all font-medium"
+                  className="w-full px-4 py-3.5 rounded-2xl bg-brand-cream border border-brand-border text-brand-forest text-sm placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard transition-all font-medium"
                 />
-                <p className="text-[11px] text-slate-400 mt-1.5">
+                <p className="text-[11px] text-brand-forest-muted mt-1.5">
                   We'll send a 6-digit one-time code to authenticate your account.
                 </p>
               </div>
@@ -431,7 +431,7 @@ export default function CustomerAuthForm() {
               <button
                 type="submit"
                 disabled={loading || !loginIdentifier.trim()}
-                className="w-full py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -443,11 +443,11 @@ export default function CustomerAuthForm() {
           ) : (
             <form onSubmit={handleVerifyLoginOtp} className="space-y-6 animate-fade-in">
               <div className="text-center space-y-1">
-                <span className="text-xs uppercase font-black text-emerald-400 tracking-wider">
+                <span className="text-xs uppercase font-black text-brand-mustard tracking-wider">
                   Verification Code Sent
                 </span>
-                <p className="text-xs text-slate-300">
-                  Enter the 6-digit code sent to <strong className="text-slate-100 font-mono">{maskedTarget}</strong>
+                <p className="text-xs text-brand-forest-muted">
+                  Enter the 6-digit code sent to <strong className="text-brand-forest font-mono">{maskedTarget}</strong>
                 </p>
               </div>
 
@@ -464,16 +464,16 @@ export default function CustomerAuthForm() {
                     autoFocus={i === 0}
                     onChange={(e) => handleOtpInput(i, e.target.value, loginOtp, setLoginOtp, 'l-otp')}
                     onKeyDown={(e) => handleOtpKeyDown(i, e, loginOtp, 'l-otp')}
-                    className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-mono font-black rounded-2xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
+                    className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-mono font-black rounded-2xl bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard focus:ring-2 focus:ring-brand-mustard/30"
                   />
                 ))}
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center justify-between text-xs text-brand-forest-muted">
                 <button
                   type="button"
                   onClick={() => setLoginStep('input')}
-                  className="hover:text-slate-200 underline underline-offset-2"
+                  className="hover:text-brand-forest underline underline-offset-2"
                 >
                   ← Change email/phone
                 </button>
@@ -484,7 +484,7 @@ export default function CustomerAuthForm() {
                   <button
                     type="button"
                     onClick={handleSendLoginOtp}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold"
+                    className="text-brand-mustard hover:text-brand-mustard-hover font-bold"
                   >
                     Resend Code
                   </button>
@@ -494,7 +494,7 @@ export default function CustomerAuthForm() {
               <button
                 type="submit"
                 disabled={loading || loginOtp.join('').length !== 6}
-                className="w-full py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -506,8 +506,8 @@ export default function CustomerAuthForm() {
           )}
 
           {/* Quick switch to Sign Up */}
-          <div className="pt-5 mt-6 border-t border-slate-800/80 text-center">
-            <p className="text-xs text-slate-400">
+          <div className="pt-5 mt-6 border-t border-brand-border/80 text-center">
+            <p className="text-xs text-brand-forest-muted">
               New to thebloomaa?{' '}
               <button
                 type="button"
@@ -515,7 +515,7 @@ export default function CustomerAuthForm() {
                   setMode('register');
                   setErrorMsg(null);
                 }}
-                className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+                className="text-brand-mustard hover:text-brand-mustard-hover font-bold underline underline-offset-4 cursor-pointer transition-colors"
               >
                 Create your detailed member profile (Sign Up) →
               </button>
@@ -531,15 +531,15 @@ export default function CustomerAuthForm() {
         <div>
           {/* Progress Indicator */}
           <div className="mb-6">
-            <div className="flex justify-between text-[11px] font-black uppercase tracking-wider mb-2 text-slate-400">
-              <span className={step >= 1 ? 'text-emerald-400' : ''}>1. Identity</span>
-              <span className={step >= 2 ? 'text-emerald-400' : ''}>2. Macro Goals</span>
-              <span className={step >= 3 ? 'text-emerald-400' : ''}>3. Delivery Slot</span>
-              <span className={step >= 4 ? 'text-emerald-400' : ''}>4. Verify</span>
+            <div className="flex justify-between text-[11px] font-black uppercase tracking-wider mb-2 text-brand-forest-muted">
+              <span className={step >= 1 ? 'text-brand-mustard' : ''}>1. Identity</span>
+              <span className={step >= 2 ? 'text-brand-mustard' : ''}>2. Macro Goals</span>
+              <span className={step >= 3 ? 'text-brand-mustard' : ''}>3. Delivery Slot</span>
+              <span className={step >= 4 ? 'text-brand-mustard' : ''}>4. Verify</span>
             </div>
-            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+            <div className="h-1.5 w-full bg-brand-cream rounded-full overflow-hidden">
               <div
-                className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300 rounded-full"
+                className="h-full bg-gradient-to-r from-brand-mustard to-teal-400 transition-all duration-300 rounded-full"
                 style={{ width: `${(step / 4) * 100}%` }}
               />
             </div>
@@ -547,11 +547,11 @@ export default function CustomerAuthForm() {
 
           {/* Bio Calculator Pre-Fill Sync Banner */}
           {bioStore.results && (
-            <div className="mb-6 p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex items-center gap-2 text-xs text-emerald-300">
+            <div className="mb-6 p-3 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 flex items-center gap-2 text-xs text-brand-mustard-hover">
               <span>🧬</span>
               <span>
                 <strong>Bio Calculator Synced:</strong> Vitality Score{' '}
-                <strong className="text-emerald-400">{bioStore.results.livingFoodVitalityScore}%</strong> · Target:{' '}
+                <strong className="text-brand-mustard">{bioStore.results.livingFoodVitalityScore}%</strong> · Target:{' '}
                 {regForm.fitnessGoal.replace('_', ' ')}
               </span>
             </div>
@@ -561,7 +561,7 @@ export default function CustomerAuthForm() {
           {step === 1 && (
             <div className="space-y-4 animate-fade-in text-xs">
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   Full Name *
                 </label>
                 <input
@@ -570,16 +570,16 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Rahul Sharma"
                   value={regForm.name}
                   onChange={(e) => setRegForm({ ...regForm, name: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest text-base sm:text-sm focus:outline-none focus:border-brand-mustard min-h-[46px]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   WhatsApp Mobile Number (+91) *
                 </label>
                 <div className="flex gap-2">
-                  <span className="px-3.5 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-slate-400 font-mono text-sm flex items-center min-h-[46px]">
+                  <span className="px-3.5 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-brand-forest-muted font-mono text-sm flex items-center min-h-[46px]">
                     +91
                   </span>
                   <input
@@ -589,16 +589,16 @@ export default function CustomerAuthForm() {
                     placeholder="98765 43210"
                     value={regForm.phone}
                     onChange={(e) => setRegForm({ ...regForm, phone: e.target.value.replace(/\D/g, '') })}
-                    className="flex-1 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm font-mono tracking-wider focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                    className="flex-1 px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest text-base sm:text-sm font-mono tracking-wider focus:outline-none focus:border-brand-mustard min-h-[46px]"
                   />
                 </div>
-                <p className="text-[10px] text-slate-400 mt-1">
+                <p className="text-[10px] text-brand-forest-muted mt-1">
                   Required for morning 6:00 AM – 9:00 AM delivery dispatch &amp; gate drop photo confirmation.
                 </p>
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   Email Address *
                 </label>
                 <input
@@ -607,7 +607,7 @@ export default function CustomerAuthForm() {
                   placeholder="rahul@example.com"
                   value={regForm.email}
                   onChange={(e) => setRegForm({ ...regForm, email: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest text-base sm:text-sm focus:outline-none focus:border-brand-mustard min-h-[46px]"
                 />
               </div>
 
@@ -622,15 +622,15 @@ export default function CustomerAuthForm() {
                     setErrorMsg(null);
                     setStep(2);
                   }}
-                  className="w-full py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  className="w-full py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 cursor-pointer"
                 >
                   Continue to Macro &amp; Nutrition Target →
                 </button>
               </div>
 
               {/* Quick switch to Log In */}
-              <div className="pt-4 border-t border-slate-800/80 text-center">
-                <p className="text-xs text-slate-400">
+              <div className="pt-4 border-t border-brand-border/80 text-center">
+                <p className="text-xs text-brand-forest-muted">
                   Already have an account?{' '}
                   <button
                     type="button"
@@ -638,7 +638,7 @@ export default function CustomerAuthForm() {
                       setMode('signin');
                       setErrorMsg(null);
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+                    className="text-brand-mustard hover:text-brand-mustard-hover font-bold underline underline-offset-4 cursor-pointer transition-colors"
                   >
                     Log In with OTP →
                   </button>
@@ -651,7 +651,7 @@ export default function CustomerAuthForm() {
           {step === 2 && (
             <div className="space-y-5 animate-fade-in text-xs">
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-2 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-2 text-[11px]">
                   Primary Health &amp; Body Objective
                 </label>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
@@ -683,12 +683,12 @@ export default function CustomerAuthForm() {
                       onClick={() => setRegForm({ ...regForm, fitnessGoal: goal.id })}
                       className={`p-3.5 rounded-2xl text-left transition-all border cursor-pointer ${
                         regForm.fitnessGoal === goal.id
-                          ? 'bg-emerald-500/15 border-emerald-500 text-slate-100 ring-2 ring-emerald-500/20 shadow-md'
-                          : 'bg-slate-800/70 border-slate-700 text-slate-300 hover:border-slate-600'
+                          ? 'bg-brand-mustard/15 border-brand-mustard text-brand-forest ring-2 ring-brand-mustard/20 shadow-md'
+                          : 'bg-brand-cream/70 border-brand-border text-brand-forest-muted hover:border-slate-600'
                       }`}
                     >
-                      <strong className="block text-xs font-bold text-slate-100">{goal.title}</strong>
-                      <span className="text-[10px] text-slate-400 mt-1 block leading-relaxed">
+                      <strong className="block text-xs font-bold text-brand-forest">{goal.title}</strong>
+                      <span className="text-[10px] text-brand-forest-muted mt-1 block leading-relaxed">
                         {goal.desc}
                       </span>
                     </button>
@@ -697,8 +697,8 @@ export default function CustomerAuthForm() {
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
-                  Dietary Preference <span className="text-emerald-400 font-normal lowercase">(100% pure veg kitchen)</span>
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
+                  Dietary Preference <span className="text-brand-mustard font-normal lowercase">(100% pure veg kitchen)</span>
                 </label>
                 <div className="flex flex-wrap gap-2">
                   {[
@@ -714,8 +714,8 @@ export default function CustomerAuthForm() {
                       onClick={() => setRegForm({ ...regForm, dietaryPreference: diet.id })}
                       className={`px-3 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                         regForm.dietaryPreference === diet.id
-                          ? 'bg-amber-400 text-slate-950 font-black shadow-md'
-                          : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                          ? 'bg-brand-mustard text-brand-forest font-black shadow-md'
+                          : 'bg-brand-cream text-brand-forest-muted hover:bg-brand-border border border-brand-border'
                       }`}
                     >
                       {diet.label}
@@ -725,7 +725,7 @@ export default function CustomerAuthForm() {
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1 text-[11px]">
                   Allergies or Disliked Ingredients (Optional)
                 </label>
                 <input
@@ -733,7 +733,7 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Peanuts, Dairy, Gluten, Extra Spicy"
                   value={regForm.allergies}
                   onChange={(e) => setRegForm({ ...regForm, allergies: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                 />
               </div>
 
@@ -741,14 +741,14 @@ export default function CustomerAuthForm() {
                 <button
                   type="button"
                   onClick={() => setStep(1)}
-                  className="px-5 py-3.5 rounded-2xl font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all cursor-pointer"
+                  className="px-5 py-3.5 rounded-2xl font-bold bg-brand-cream text-brand-forest-muted hover:bg-brand-border transition-all cursor-pointer"
                 >
                   ← Back
                 </button>
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="flex-1 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer"
+                  className="flex-1 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 cursor-pointer"
                 >
                   Continue to Delivery Slot →
                 </button>
@@ -773,7 +773,7 @@ export default function CustomerAuthForm() {
               />
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   Patna Delivery Pincode *
                 </label>
                 <div className="flex gap-2">
@@ -783,9 +783,9 @@ export default function CustomerAuthForm() {
                     required
                     value={regForm.pincode}
                     onChange={(e) => setRegForm({ ...regForm, pincode: e.target.value.replace(/\D/g, '') })}
-                    className="w-36 px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 font-mono text-base sm:text-sm tracking-widest focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                    className="w-36 px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest font-mono text-base sm:text-sm tracking-widest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                   />
-                  <div className="flex-1 p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-1.5 text-[11px] text-emerald-400 font-semibold">
+                  <div className="flex-1 p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20 flex items-center gap-1.5 text-[11px] text-brand-mustard font-semibold">
                     <span>📍</span>
                     <span>Patna Central Fleet (Boring Rd, Kankarbagh, Patliputra)</span>
                   </div>
@@ -793,7 +793,7 @@ export default function CustomerAuthForm() {
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   House / Flat / Building Address *
                 </label>
                 <input
@@ -802,12 +802,12 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Flat 302, Shanti Vihar Apartment"
                   value={regForm.street}
                   onChange={(e) => setRegForm({ ...regForm, street: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest text-base sm:text-sm focus:outline-none focus:border-brand-mustard min-h-[46px]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-1.5 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5 text-[11px]">
                   Landmark (Optional)
                 </label>
                 <input
@@ -815,12 +815,12 @@ export default function CustomerAuthForm() {
                   placeholder="e.g. Near Boring Canal Road Petrol Pump"
                   value={regForm.landmark}
                   onChange={(e) => setRegForm({ ...regForm, landmark: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 text-base sm:text-sm focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest text-base sm:text-sm focus:outline-none focus:border-brand-mustard min-h-[46px]"
                 />
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-slate-300 mb-2 text-[11px]">
+                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-2 text-[11px]">
                   Preferred Morning Delivery Window (6:00 AM – 9:00 AM)
                 </label>
                 <div className="grid grid-cols-3 gap-2">
@@ -835,8 +835,8 @@ export default function CustomerAuthForm() {
                       onClick={() => setRegForm({ ...regForm, deliveryTime: s.slot })}
                       className={`p-2.5 rounded-xl text-center transition-all border cursor-pointer ${
                         regForm.deliveryTime === s.slot
-                          ? 'bg-emerald-500 text-slate-950 font-black border-emerald-400 shadow-md'
-                          : 'bg-slate-800 text-slate-300 border-slate-700 hover:bg-slate-700'
+                          ? 'bg-brand-mustard text-brand-forest font-black border-brand-mustard shadow-md'
+                          : 'bg-brand-cream text-brand-forest-muted border-brand-border hover:bg-brand-border'
                       }`}
                     >
                       <strong className="block text-xs font-mono">{s.label}</strong>
@@ -850,7 +850,7 @@ export default function CustomerAuthForm() {
                 <button
                   type="button"
                   onClick={() => setStep(2)}
-                  className="px-5 py-3.5 rounded-2xl font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 transition-all cursor-pointer"
+                  className="px-5 py-3.5 rounded-2xl font-bold bg-brand-cream text-brand-forest-muted hover:bg-brand-border transition-all cursor-pointer"
                 >
                   ← Back
                 </button>
@@ -858,7 +858,7 @@ export default function CustomerAuthForm() {
                   type="button"
                   onClick={handleRegSendOtp}
                   disabled={loading || !regForm.street || regForm.pincode.length !== 6}
-                  className="flex-1 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer disabled:opacity-40"
+                  className="flex-1 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 cursor-pointer disabled:opacity-40"
                 >
                   {loading ? 'Sending Code...' : 'Complete Profile & Send OTP →'}
                 </button>
@@ -870,11 +870,11 @@ export default function CustomerAuthForm() {
           {step === 4 && (
             <form onSubmit={handleVerifyRegistration} className="space-y-6 animate-fade-in text-xs">
               <div className="text-center space-y-1">
-                <span className="text-xs uppercase font-black text-emerald-400 tracking-wider">
+                <span className="text-xs uppercase font-black text-brand-mustard tracking-wider">
                   Final Verification
                 </span>
-                <p className="text-xs text-slate-300">
-                  Enter the 6-digit code sent to <strong className="text-slate-100 font-mono">{maskedTarget}</strong>
+                <p className="text-xs text-brand-forest-muted">
+                  Enter the 6-digit code sent to <strong className="text-brand-forest font-mono">{maskedTarget}</strong>
                 </p>
               </div>
 
@@ -891,16 +891,16 @@ export default function CustomerAuthForm() {
                     autoFocus={i === 0}
                     onChange={(e) => handleOtpInput(i, e.target.value, regOtp, setRegOtp, 'r-otp')}
                     onKeyDown={(e) => handleOtpKeyDown(i, e, regOtp, 'r-otp')}
-                    className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-mono font-black rounded-2xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/30"
+                    className="w-11 h-14 sm:w-12 sm:h-14 text-center text-xl font-mono font-black rounded-2xl bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard focus:ring-2 focus:ring-brand-mustard/30"
                   />
                 ))}
               </div>
 
-              <div className="flex items-center justify-between text-xs text-slate-400">
+              <div className="flex items-center justify-between text-xs text-brand-forest-muted">
                 <button
                   type="button"
                   onClick={() => setStep(3)}
-                  className="hover:text-slate-200 underline underline-offset-2"
+                  className="hover:text-brand-forest underline underline-offset-2"
                 >
                   ← Edit details
                 </button>
@@ -911,7 +911,7 @@ export default function CustomerAuthForm() {
                   <button
                     type="button"
                     onClick={handleRegSendOtp}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold"
+                    className="text-brand-mustard hover:text-brand-mustard-hover font-bold"
                   >
                     Resend Code
                   </button>
@@ -921,7 +921,7 @@ export default function CustomerAuthForm() {
               <button
                 type="submit"
                 disabled={loading || regOtp.join('').length !== 6}
-                className="w-full py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -931,8 +931,8 @@ export default function CustomerAuthForm() {
               </button>
 
               {/* Quick switch to Log In */}
-              <div className="pt-4 border-t border-slate-800/80 text-center">
-                <p className="text-xs text-slate-400">
+              <div className="pt-4 border-t border-brand-border/80 text-center">
+                <p className="text-xs text-brand-forest-muted">
                   Already a subscriber?{' '}
                   <button
                     type="button"
@@ -940,7 +940,7 @@ export default function CustomerAuthForm() {
                       setMode('signin');
                       setErrorMsg(null);
                     }}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold underline underline-offset-4 cursor-pointer transition-colors"
+                    className="text-brand-mustard hover:text-brand-mustard-hover font-bold underline underline-offset-4 cursor-pointer transition-colors"
                   >
                     Log In with OTP →
                   </button>

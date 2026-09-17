@@ -69,7 +69,7 @@ export default function AdminProductsPage() {
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage your diet plans and beverages.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-xl text-sm font-bold text-white"
+          className="px-4 py-2 rounded-xl text-sm font-bold text-brand-forest"
           style={{ background: showForm ? 'var(--danger)' : 'var(--brand-primary)' }}>
           {showForm ? '✕ Cancel' : '+ Add Product'}
         </button>
@@ -101,7 +101,7 @@ export default function AdminProductsPage() {
             <input type="number" placeholder="Carbs (g)" value={form.carbs} onChange={(e) => setForm({ ...form, carbs: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle} />
             <input type="number" placeholder="Fats (g)" value={form.fats} onChange={(e) => setForm({ ...form, fats: e.target.value })} className="px-4 py-2.5 rounded-xl text-sm" style={inputStyle} />
           </div>
-          <button onClick={handleAdd} disabled={!form.name || !form.price} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
+          <button onClick={handleAdd} disabled={!form.name || !form.price} className="px-6 py-2.5 rounded-xl text-sm font-bold text-brand-forest disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
             Save Product
           </button>
         </div>

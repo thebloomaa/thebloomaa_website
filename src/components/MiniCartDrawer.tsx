@@ -80,26 +80,26 @@ export default function MiniCartDrawer() {
       {/* Backdrop */}
       <div
         onClick={closeDrawer}
-        className="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity duration-300"
+        className="absolute inset-0 bg-brand-cream/70 backdrop-blur-sm transition-opacity duration-300"
       />
 
       {/* Drawer Container */}
       <div className="fixed inset-y-0 right-0 max-w-full flex pl-10">
-        <div className="w-screen max-w-md bg-slate-900 border-l border-slate-800 shadow-2xl flex flex-col justify-between overflow-y-auto">
+        <div className="w-screen max-w-md bg-brand-card border-l border-brand-border shadow-2xl flex flex-col justify-between overflow-y-auto">
           {/* Top Header */}
-          <div className="p-6 border-b border-slate-800 flex items-center justify-between">
+          <div className="p-6 border-b border-brand-border flex items-center justify-between">
             <div className="flex items-center gap-2.5">
               <span className="text-xl">🥗</span>
               <div>
-                <h3 className="text-base font-black text-slate-100">Bundle Builder</h3>
-                <p className="text-xs text-slate-400">Choose your commitment &amp; savings</p>
+                <h3 className="text-base font-black text-brand-forest">Bundle Builder</h3>
+                <p className="text-xs text-brand-forest-muted">Choose your commitment &amp; savings</p>
               </div>
             </div>
 
             <button
               type="button"
               onClick={closeDrawer}
-              className="p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+              className="p-2 rounded-xl text-brand-forest-muted hover:text-brand-forest hover:bg-brand-cream transition-colors"
               aria-label="Close drawer"
             >
               ✕
@@ -109,8 +109,8 @@ export default function MiniCartDrawer() {
           {/* Body Content */}
           <div className="p-6 space-y-6 flex-grow">
             {/* Selected Product Summary Card */}
-            <div className="rounded-2xl p-4 bg-slate-800/50 border border-slate-800 flex items-center gap-4">
-              <div className="w-16 h-16 rounded-xl overflow-hidden relative flex-shrink-0 bg-slate-900 border border-slate-700">
+            <div className="rounded-2xl p-4 bg-brand-cream/50 border border-brand-border flex items-center gap-4">
+              <div className="w-16 h-16 rounded-xl overflow-hidden relative flex-shrink-0 bg-brand-card border border-brand-border">
                 <img
                   src={selectedProduct.imageUrl || '/meals/vegan-keto.png'}
                   alt={selectedProduct.name}
@@ -119,11 +119,11 @@ export default function MiniCartDrawer() {
               </div>
 
               <div className="flex-grow min-w-0">
-                <h4 className="text-sm font-bold text-slate-100 truncate">{selectedProduct.name}</h4>
-                <p className="text-[11px] text-slate-400 mt-0.5">
+                <h4 className="text-sm font-bold text-brand-forest truncate">{selectedProduct.name}</h4>
+                <p className="text-[11px] text-brand-forest-muted mt-0.5">
                   🔥 {selectedProduct.calories} kcal · 💪 {selectedProduct.protein}g P · 🥑 {selectedProduct.fats}g F
                 </p>
-                <span className="text-xs font-bold text-emerald-400 font-mono mt-1 block">
+                <span className="text-xs font-bold text-brand-mustard font-mono mt-1 block">
                   ₹{selectedProduct.price} / diet
                 </span>
               </div>
@@ -132,10 +132,10 @@ export default function MiniCartDrawer() {
             {/* Bundle Selection Options */}
             <div>
               <div className="flex items-center justify-between mb-3">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                   Select Subscription Bundle
                 </label>
-                <span className="text-[11px] text-emerald-400 font-semibold">Skip any day anytime</span>
+                <span className="text-[11px] text-brand-mustard font-semibold">Skip any day anytime</span>
               </div>
 
               <div className="space-y-3">
@@ -154,12 +154,12 @@ export default function MiniCartDrawer() {
                       onClick={() => selectBundle(opt.type)}
                       className={`w-full p-4 rounded-2xl text-left transition-all border relative cursor-pointer ${
                         isSelected
-                          ? 'bg-emerald-500/15 border-emerald-500 shadow-md shadow-emerald-500/10'
-                          : 'bg-slate-800/40 border-slate-800 hover:bg-slate-800/80 text-slate-300'
+                          ? 'bg-brand-mustard/15 border-brand-mustard shadow-md shadow-brand-mustard/10'
+                          : 'bg-brand-cream/40 border-brand-border hover:bg-brand-cream/80 text-brand-forest-muted'
                       }`}
                     >
                       {opt.badge && (
-                        <span className="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950 shadow-sm">
+                        <span className="absolute -top-2.5 right-4 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-brand-mustard text-brand-forest shadow-sm">
                           {opt.badge}
                         </span>
                       )}
@@ -167,29 +167,29 @@ export default function MiniCartDrawer() {
                       <div className="flex justify-between items-start">
                         <div>
                           <div className="flex items-center gap-2">
-                            <span className="text-sm font-black text-slate-100">{opt.label}</span>
-                            <span className="text-xs font-bold text-slate-400">({opt.days} Days)</span>
+                            <span className="text-sm font-black text-brand-forest">{opt.label}</span>
+                            <span className="text-xs font-bold text-brand-forest-muted">({opt.days} Days)</span>
                             {opt.discountLabel && (
-                              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30">
+                              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase bg-brand-mustard/20 text-brand-mustard border border-brand-mustard/30">
                                 {opt.discountLabel}
                               </span>
                             )}
                           </div>
-                          <p className="text-[11px] text-slate-400 mt-1">
+                          <p className="text-[11px] text-brand-forest-muted mt-1">
                             Daily morning delivery (6 AM – 9 AM)
                           </p>
                         </div>
 
                         <div className="text-right">
-                          <div className="text-base font-black text-emerald-400 font-mono">₹{total}</div>
-                          <div className="text-[10px] text-slate-400 font-mono">₹{perDay}/day</div>
+                          <div className="text-base font-black text-brand-mustard font-mono">₹{total}</div>
+                          <div className="text-[10px] text-brand-forest-muted font-mono">₹{perDay}/day</div>
                         </div>
                       </div>
 
                       {savings > 0 && (
-                        <div className="mt-2 pt-2 border-t border-slate-700/60 flex items-center justify-between text-[11px]">
-                          <span className="text-slate-400">Total Bundle Savings:</span>
-                          <span className="font-bold text-amber-400 font-mono">Save ₹{savings}</span>
+                        <div className="mt-2 pt-2 border-t border-brand-border/60 flex items-center justify-between text-[11px]">
+                          <span className="text-brand-forest-muted">Total Bundle Savings:</span>
+                          <span className="font-bold text-brand-mustard font-mono">Save ₹{savings}</span>
                         </div>
                       )}
                     </button>
@@ -199,39 +199,39 @@ export default function MiniCartDrawer() {
             </div>
 
             {/* Price Summary Breakdown */}
-            <div className="rounded-2xl p-4 bg-slate-950/60 border border-slate-800/80 space-y-2 text-xs">
-              <div className="flex justify-between text-slate-400">
+            <div className="rounded-2xl p-4 bg-brand-cream/60 border border-brand-border/80 space-y-2 text-xs">
+              <div className="flex justify-between text-brand-forest-muted">
                 <span>Per-day rate:</span>
-                <span className="font-bold text-slate-200 font-mono">₹{getPerDayPrice()}</span>
+                <span className="font-bold text-brand-forest font-mono">₹{getPerDayPrice()}</span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-brand-forest-muted">
                 <span>Scheduled duration:</span>
-                <span className="font-bold text-slate-200 font-mono">
+                <span className="font-bold text-brand-forest font-mono">
                   {bundleType === 'DAYS_30' ? 30 : bundleType === 'DAYS_15' ? 15 : 7} days
                 </span>
               </div>
-              <div className="flex justify-between text-slate-400">
+              <div className="flex justify-between text-brand-forest-muted">
                 <span>Morning doorstep delivery:</span>
-                <span className="font-bold text-emerald-400 font-mono">FREE (Included)</span>
+                <span className="font-bold text-brand-mustard font-mono">FREE (Included)</span>
               </div>
-              <div className="pt-2 border-t border-slate-800 flex justify-between items-baseline">
-                <span className="text-sm font-bold text-slate-100">Total Upfront:</span>
-                <span className="text-xl font-black text-emerald-400 font-mono">₹{getTotalPrice()}</span>
+              <div className="pt-2 border-t border-brand-border flex justify-between items-baseline">
+                <span className="text-sm font-bold text-brand-forest">Total Upfront:</span>
+                <span className="text-xl font-black text-brand-mustard font-mono">₹{getTotalPrice()}</span>
               </div>
             </div>
           </div>
 
           {/* Bottom Sticky Actions */}
-          <div className="p-6 border-t border-slate-800 bg-slate-900/90 backdrop-blur-md">
+          <div className="p-6 border-t border-brand-border bg-brand-card/90 backdrop-blur-md">
             <button
               type="button"
               onClick={handleProceedToCheckout}
-              className="w-full py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Proceed to Checkout</span>
               <span>→</span>
             </button>
-            <p className="text-[10px] text-center text-slate-400 mt-2">
+            <p className="text-[10px] text-center text-brand-forest-muted mt-2">
               Skip any delivery date with 1 click from your subscriber dashboard.
             </p>
           </div>

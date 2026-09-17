@@ -274,17 +274,17 @@ export default function LocationPickerMap({
     : `https://www.google.com/maps?q=${coords.lat},${coords.lng}`;
 
   return (
-    <div className={`space-y-3.5 rounded-2xl p-4 sm:p-5 bg-slate-950/85 border border-slate-800 shadow-2xl backdrop-blur-md ${className}`}>
+    <div className={`space-y-3.5 rounded-2xl p-4 sm:p-5 bg-brand-cream/85 border border-brand-border shadow-2xl backdrop-blur-md ${className}`}>
       {/* Header & GPS Action */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div>
           <div className="flex items-center gap-1.5">
             <span className="text-base">🗺️</span>
-            <span className="text-xs font-black uppercase tracking-wider text-slate-100">
+            <span className="text-xs font-black uppercase tracking-wider text-brand-forest">
               Pin Exact Morning Delivery Gate
             </span>
           </div>
-          <p className="text-[11px] text-slate-400 mt-0.5">
+          <p className="text-[11px] text-brand-forest-muted mt-0.5">
             Search your apartment or detect GPS so your 6 AM – 9 AM driver drops your box at your exact gate.
           </p>
         </div>
@@ -293,7 +293,7 @@ export default function LocationPickerMap({
           type="button"
           onClick={handleDetectLocation}
           disabled={isDetectingGps}
-          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition-all shadow-md shadow-emerald-500/20 flex items-center justify-center gap-1.5 shrink-0 disabled:opacity-50 cursor-pointer active:scale-95"
+          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-mustard hover:bg-brand-mustard text-brand-forest transition-all shadow-md shadow-brand-mustard/20 flex items-center justify-center gap-1.5 shrink-0 disabled:opacity-50 cursor-pointer active:scale-95"
         >
           {isDetectingGps ? (
             <>
@@ -311,7 +311,7 @@ export default function LocationPickerMap({
 
       {/* GPS Error notice */}
       {gpsError && (
-        <div className="p-2.5 rounded-xl bg-amber-950/40 border border-amber-500/40 text-amber-300 text-[11px] flex items-center gap-2">
+        <div className="p-2.5 rounded-xl bg-amber-950/40 border border-brand-mustard/40 text-brand-forest-muted text-[11px] flex items-center gap-2">
           <span>⚠️</span>
           <span>{gpsError}</span>
         </div>
@@ -321,7 +321,7 @@ export default function LocationPickerMap({
       <div ref={searchContainerRef} className="relative">
         <form onSubmit={handleSearchSubmit} className="flex gap-2">
           <div className="relative flex-1">
-            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs">🔍</span>
+            <span className="absolute left-3 top-1/2 -translate-y-1/2 text-brand-forest-muted text-xs">🔍</span>
             <input
               type="text"
               placeholder="Search apartment, building, society, or hospital in Patna..."
@@ -330,7 +330,7 @@ export default function LocationPickerMap({
               onFocus={() => {
                 if (suggestions.length > 0) setShowDropdown(true);
               }}
-              className="w-full pl-8 pr-8 py-2.5 rounded-xl bg-slate-900 border border-slate-700/80 text-slate-100 text-xs placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500/30 transition-all"
+              className="w-full pl-8 pr-8 py-2.5 rounded-xl bg-brand-card border border-brand-border/80 text-brand-forest text-xs placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard focus:ring-1 focus:ring-brand-mustard/30 transition-all"
             />
             {searchQuery && (
               <button
@@ -340,7 +340,7 @@ export default function LocationPickerMap({
                   setSuggestions([]);
                   setShowDropdown(false);
                 }}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 text-xs cursor-pointer p-1"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-brand-forest-muted hover:text-brand-forest text-xs cursor-pointer p-1"
                 title="Clear search"
               >
                 ✕
@@ -350,7 +350,7 @@ export default function LocationPickerMap({
 
           <button
             type="submit"
-            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all shrink-0 cursor-pointer flex items-center gap-1.5"
+            className="px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all shrink-0 cursor-pointer flex items-center gap-1.5"
           >
             {isSearchingPlaces ? (
               <span className="w-3 h-3 border-2 border-slate-200 border-t-transparent rounded-full animate-spin" />
@@ -362,8 +362,8 @@ export default function LocationPickerMap({
 
         {/* Live Autocomplete Dropdown */}
         {showDropdown && suggestions.length > 0 && (
-          <div className="absolute top-full left-0 right-0 mt-1.5 bg-slate-900 border border-slate-700/90 rounded-xl shadow-2xl z-30 max-h-60 overflow-y-auto divide-y divide-slate-800/80">
-            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 bg-slate-950/70">
+          <div className="absolute top-full left-0 right-0 mt-1.5 bg-brand-card border border-brand-border/90 rounded-xl shadow-2xl z-30 max-h-60 overflow-y-auto divide-y divide-slate-800/80">
+            <div className="px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted bg-brand-cream/70">
               Matching Patna Places &amp; Apartments
             </div>
             {suggestions.map((item) => (
@@ -371,14 +371,14 @@ export default function LocationPickerMap({
                 key={item.place_id}
                 type="button"
                 onClick={() => handleSelectSuggestion(item)}
-                className="w-full text-left px-3.5 py-2.5 hover:bg-slate-800/90 transition-colors flex items-start gap-2.5 cursor-pointer text-xs group"
+                className="w-full text-left px-3.5 py-2.5 hover:bg-brand-cream/90 transition-colors flex items-start gap-2.5 cursor-pointer text-xs group"
               >
-                <span className="text-emerald-400 mt-0.5 shrink-0 group-hover:scale-110 transition-transform">🏢</span>
+                <span className="text-brand-mustard mt-0.5 shrink-0 group-hover:scale-110 transition-transform">🏢</span>
                 <div className="min-w-0 flex-1">
-                  <div className="font-bold text-slate-100 group-hover:text-emerald-300 transition-colors truncate">
+                  <div className="font-bold text-brand-forest group-hover:text-brand-mustard-hover transition-colors truncate">
                     {item.name || item.display_name.split(',')[0]}
                   </div>
-                  <div className="text-[11px] text-slate-400 truncate mt-0.5">
+                  <div className="text-[11px] text-brand-forest-muted truncate mt-0.5">
                     {item.display_name}
                   </div>
                 </div>
@@ -391,10 +391,10 @@ export default function LocationPickerMap({
       {/* Quick Patna Neighborhood Chips */}
       <div>
         <div className="flex items-center justify-between mb-1.5">
-          <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted">
             Popular Patna Service Hubs:
           </span>
-          <span className="text-[10px] text-emerald-400/80 font-medium">6 AM Fleet Active</span>
+          <span className="text-[10px] text-brand-mustard/80 font-medium">6 AM Fleet Active</span>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {PATNA_PRESETS.map((preset) => {
@@ -406,8 +406,8 @@ export default function LocationPickerMap({
                 onClick={() => handleSelectPreset(preset)}
                 className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
                   isSelected
-                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50 shadow-sm'
-                    : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                    ? 'bg-brand-mustard/20 text-brand-mustard-hover border border-brand-mustard/50 shadow-sm'
+                    : 'bg-brand-card text-brand-forest-muted hover:text-brand-forest border border-brand-border'
                 }`}
               >
                 📍 {preset.name}
@@ -418,7 +418,7 @@ export default function LocationPickerMap({
       </div>
 
       {/* Interactive Google Map Embed View */}
-      <div className="relative w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-slate-800 shadow-2xl bg-slate-900 group">
+      <div className="relative w-full h-52 sm:h-64 rounded-xl overflow-hidden border border-brand-border shadow-2xl bg-brand-card group">
         <iframe
           key={mapEmbedUrl}
           title="Google Map Exact Delivery Location"
@@ -433,8 +433,8 @@ export default function LocationPickerMap({
         />
 
         {/* Live Overlay Pin Badge */}
-        <div className="absolute top-2.5 left-2.5 px-3 py-1.5 rounded-lg bg-slate-950/90 border border-emerald-500/40 text-emerald-400 text-[10px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 backdrop-blur-md pointer-events-none">
-          <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
+        <div className="absolute top-2.5 left-2.5 px-3 py-1.5 rounded-lg bg-brand-cream/90 border border-brand-mustard/40 text-brand-mustard text-[10px] font-black uppercase tracking-wider shadow-lg flex items-center gap-1.5 backdrop-blur-md pointer-events-none">
+          <span className="w-2 h-2 rounded-full bg-brand-mustard animate-ping" />
           <span>📍 Gate Drop Location: {activePinLabel.split(',')[0]}</span>
         </div>
 
@@ -444,25 +444,25 @@ export default function LocationPickerMap({
             href={googleMapsDirectLink}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-xl bg-slate-950/95 hover:bg-slate-900 border border-slate-700 text-[11px] font-bold text-slate-100 hover:text-emerald-400 transition-all flex items-center gap-1.5 shadow-xl"
+            className="px-3 py-1.5 rounded-xl bg-brand-cream/95 hover:bg-brand-card border border-brand-border text-[11px] font-bold text-brand-forest hover:text-brand-mustard transition-all flex items-center gap-1.5 shadow-xl"
             title="Open in full Google Maps"
           >
             <span>View on Google Maps</span>
-            <span className="text-emerald-400">↗</span>
+            <span className="text-brand-mustard">↗</span>
           </a>
         </div>
       </div>
 
       {/* Coordinates & Reverse Geocoded Confirmation */}
-      <div className="p-2.5 rounded-xl bg-slate-900/90 border border-slate-800 flex items-center justify-between text-[11px] text-slate-300">
+      <div className="p-2.5 rounded-xl bg-brand-card/90 border border-brand-border flex items-center justify-between text-[11px] text-brand-forest-muted">
         <div className="flex items-center gap-2 truncate">
-          <span className="text-emerald-400 shrink-0">✓</span>
+          <span className="text-brand-mustard shrink-0">✓</span>
           <span className="truncate">
-            <strong className="text-slate-200">Active Gate Pin:</strong>{' '}
+            <strong className="text-brand-forest">Active Gate Pin:</strong>{' '}
             {activePinLabel || reverseAddress || `${coords.lat.toFixed(4)}° N, ${coords.lng.toFixed(4)}° E`}
           </span>
         </div>
-        <span className="text-[10px] text-slate-400 font-mono shrink-0 ml-2 hidden sm:inline">
+        <span className="text-[10px] text-brand-forest-muted font-mono shrink-0 ml-2 hidden sm:inline">
           {coords.lat.toFixed(4)}, {coords.lng.toFixed(4)}
         </span>
       </div>

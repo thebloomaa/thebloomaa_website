@@ -38,7 +38,7 @@ export default function BioCalculator() {
   if (!isMounted) {
     return (
       <div className="min-h-[520px] flex items-center justify-center">
-        <div className="w-8 h-8 border-2 border-emerald-500 border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-brand-mustard border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -73,9 +73,9 @@ export default function BioCalculator() {
       {/* Stepper Navigation */}
       <div className="mb-8">
         <div className="flex items-center justify-between relative max-w-lg mx-auto px-4">
-          <div className="absolute top-1/2 left-8 right-8 h-0.5 bg-slate-800 -translate-y-1/2 z-0" />
+          <div className="absolute top-1/2 left-8 right-8 h-0.5 bg-brand-cream -translate-y-1/2 z-0" />
           <div
-            className="absolute top-1/2 left-8 h-0.5 bg-emerald-500 transition-all duration-500 -translate-y-1/2 z-0"
+            className="absolute top-1/2 left-8 h-0.5 bg-brand-mustard transition-all duration-500 -translate-y-1/2 z-0"
             style={{ width: `${((currentStep - 1) / 3) * 85}%` }}
           />
           {[
@@ -96,17 +96,17 @@ export default function BioCalculator() {
                 <div
                   className={`w-9 h-9 rounded-full flex items-center justify-center text-xs font-black transition-all duration-300 ${
                     isActive
-                      ? 'bg-emerald-500 text-slate-950 ring-4 ring-emerald-500/20 scale-110 shadow-lg shadow-emerald-500/30'
+                      ? 'bg-brand-mustard text-brand-forest ring-4 ring-brand-mustard/20 scale-110 shadow-lg shadow-brand-mustard/30'
                       : isCompleted
-                      ? 'bg-emerald-600 text-white'
-                      : 'bg-slate-800 text-slate-400 group-hover:bg-slate-700'
+                      ? 'bg-brand-mustard-hover text-brand-forest'
+                      : 'bg-brand-cream text-brand-forest-muted group-hover:bg-brand-border'
                   }`}
                 >
                   {isCompleted ? '✓' : s.step}
                 </div>
                 <span
                   className={`text-[11px] font-semibold mt-2 transition-colors ${
-                    isActive ? 'text-emerald-400' : 'text-slate-400'
+                    isActive ? 'text-brand-mustard' : 'text-brand-forest-muted'
                   }`}
                 >
                   {s.label}
@@ -118,29 +118,29 @@ export default function BioCalculator() {
       </div>
 
       {/* Main Glassmorphic Container Card */}
-      <div className="rounded-3xl p-6 sm:p-10 relative overflow-hidden backdrop-blur-xl bg-slate-900/85 border border-slate-800 shadow-2xl">
+      <div className="rounded-3xl p-6 sm:p-10 relative overflow-hidden backdrop-blur-xl bg-brand-card/85 border border-brand-border shadow-2xl">
         {/* Subtle Ambient Light Effects */}
-        <div className="absolute top-0 right-0 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-0 w-72 h-72 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-0 w-80 h-80 bg-brand-mustard/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-72 h-72 bg-brand-mustard/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* STEP 1: Biological Profile & Health Goals */}
         {currentStep === 1 && (
           <div className="space-y-8 animate-fade-in-up">
             <div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                 Step 1 of 4 · Biological Baselines
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
+              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-brand-forest">
                 Tell us about your body &amp; goal
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-brand-forest-muted mt-1">
                 We calibrate your basal metabolic expenditure (Mifflin-St Jeor) and cellular nutritional targets.
               </p>
             </div>
 
             {/* Gender Selection */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-3">
                 Biological Gender
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -155,8 +155,8 @@ export default function BioCalculator() {
                     onClick={() => setInputs({ gender: g.id as Gender })}
                     className={`py-3.5 px-4 rounded-2xl flex items-center justify-center gap-2 font-semibold text-sm transition-all border ${
                       inputs.gender === g.id
-                        ? 'bg-emerald-500/15 border-emerald-500 text-emerald-300 shadow-sm shadow-emerald-500/20'
-                        : 'bg-slate-800/60 border-slate-700/80 text-slate-300 hover:bg-slate-800'
+                        ? 'bg-brand-mustard/15 border-brand-mustard text-brand-mustard-hover shadow-sm shadow-brand-mustard/20'
+                        : 'bg-brand-cream/60 border-brand-border/80 text-brand-forest-muted hover:bg-brand-cream'
                     }`}
                   >
                     <span>{g.icon}</span>
@@ -167,13 +167,13 @@ export default function BioCalculator() {
             </div>
 
             {/* Age Slider */}
-            <div className="rounded-2xl p-5 bg-slate-800/40 border border-slate-800">
+            <div className="rounded-2xl p-5 bg-brand-cream/40 border border-brand-border">
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                   Chronological Age
                 </label>
-                <span className="text-xl font-black text-emerald-400 font-mono">
-                  {inputs.age} <span className="text-xs text-slate-400">years</span>
+                <span className="text-xl font-black text-brand-mustard font-mono">
+                  {inputs.age} <span className="text-xs text-brand-forest-muted">years</span>
                 </span>
               </div>
               <input
@@ -182,9 +182,9 @@ export default function BioCalculator() {
                 max={80}
                 value={inputs.age}
                 onChange={(e) => setInputs({ age: Number(e.target.value) })}
-                className="w-full h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-emerald-500"
+                className="w-full h-2 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-mustard"
               />
-              <div className="flex justify-between text-[11px] text-slate-500 mt-1 font-mono">
+              <div className="flex justify-between text-[11px] text-brand-forest-muted/70 mt-1 font-mono">
                 <span>18 yrs</span>
                 <span>45 yrs</span>
                 <span>80 yrs</span>
@@ -193,7 +193,7 @@ export default function BioCalculator() {
 
             {/* Health Goal Cards */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-3">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-3">
                 Primary Health Goal
               </label>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -206,19 +206,19 @@ export default function BioCalculator() {
                       onClick={() => setInputs({ healthGoal: goal.id })}
                       className={`p-4 rounded-2xl text-left transition-all border ${
                         isSelected
-                          ? 'bg-emerald-500/15 border-emerald-500 shadow-md shadow-emerald-500/10'
-                          : 'bg-slate-800/50 border-slate-800 hover:bg-slate-800/90 text-slate-300'
+                          ? 'bg-brand-mustard/15 border-brand-mustard shadow-md shadow-brand-mustard/10'
+                          : 'bg-brand-cream/50 border-brand-border hover:bg-brand-cream/90 text-brand-forest-muted'
                       }`}
                     >
                       <div className="text-2xl mb-2">{goal.icon}</div>
                       <h4
                         className={`text-sm font-bold ${
-                          isSelected ? 'text-emerald-300' : 'text-slate-200'
+                          isSelected ? 'text-brand-mustard-hover' : 'text-brand-forest'
                         }`}
                       >
                         {goal.title}
                       </h4>
-                      <p className="text-xs text-slate-400 mt-1 leading-relaxed">{goal.subtitle}</p>
+                      <p className="text-xs text-brand-forest-muted mt-1 leading-relaxed">{goal.subtitle}</p>
                     </button>
                   );
                 })}
@@ -226,20 +226,20 @@ export default function BioCalculator() {
             </div>
 
             {/* Optional Body Metrics Accordion */}
-            <div className="rounded-2xl p-4 bg-slate-800/30 border border-slate-800">
+            <div className="rounded-2xl p-4 bg-brand-cream/30 border border-brand-border">
               <button
                 type="button"
                 onClick={() => setShowAdvancedBody(!showAdvancedBody)}
-                className="w-full flex items-center justify-between text-xs font-semibold text-slate-300 hover:text-emerald-400 transition-colors"
+                className="w-full flex items-center justify-between text-xs font-semibold text-brand-forest-muted hover:text-brand-mustard transition-colors"
               >
                 <span>⚙️ Precise Body Metrics (Optional Height &amp; Weight)</span>
-                <span className="text-slate-500">{showAdvancedBody ? '▲ Hide' : '▼ Expand'}</span>
+                <span className="text-brand-forest-muted/70">{showAdvancedBody ? '▲ Hide' : '▼ Expand'}</span>
               </button>
 
               {showAdvancedBody && (
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-slate-800/80">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 pt-4 border-t border-brand-border/80">
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1 font-medium">
+                    <label className="block text-xs text-brand-forest-muted mb-1 font-medium">
                       Body Weight (kg)
                     </label>
                     <input
@@ -247,11 +247,11 @@ export default function BioCalculator() {
                       placeholder="e.g. 70"
                       value={inputs.weight || ''}
                       onChange={(e) => setInputs({ weight: Number(e.target.value) || undefined })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono"
+                      className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-slate-400 mb-1 font-medium">
+                    <label className="block text-xs text-brand-forest-muted mb-1 font-medium">
                       Height (cm)
                     </label>
                     <input
@@ -259,7 +259,7 @@ export default function BioCalculator() {
                       placeholder="e.g. 175"
                       value={inputs.height || ''}
                       onChange={(e) => setInputs({ height: Number(e.target.value) || undefined })}
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono"
+                      className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono"
                     />
                   </div>
                 </div>
@@ -270,7 +270,7 @@ export default function BioCalculator() {
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 Next: Diet Habits →
               </button>
@@ -282,33 +282,33 @@ export default function BioCalculator() {
         {currentStep === 2 && (
           <div className="space-y-8 animate-fade-in-up">
             <div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-amber-500/10 text-amber-400 border border-amber-500/20">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                 Step 2 of 4 · Fresh &amp; Raw Food Intake
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
+              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-brand-forest">
                 How much fresh &amp; raw food do you eat?
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-brand-forest-muted mt-1">
                 Cooking at high heat removes natural digestive enzymes. Fresh fruits, sprouted seeds, and raw salads keep them intact.
               </p>
             </div>
 
             {/* Cooked Food % Slider */}
-            <div className="rounded-2xl p-6 bg-slate-800/40 border border-slate-800">
+            <div className="rounded-2xl p-6 bg-brand-cream/40 border border-brand-border">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-3 gap-2">
                 <div>
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                  <label className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                     Daily Cooked Food Intake
                   </label>
-                  <p className="text-xs text-slate-400 mt-0.5">
+                  <p className="text-xs text-brand-forest-muted mt-0.5">
                     Percentage of your daily diet cooked at high heat (roti, rice, gravies, fried foods).
                   </p>
                 </div>
                 <div className="text-right">
-                  <span className="text-2xl font-black text-amber-400 font-mono">
+                  <span className="text-2xl font-black text-brand-mustard font-mono">
                     {inputs.cookedFoodPercentage}%
                   </span>
-                  <span className="text-xs text-slate-400 block">
+                  <span className="text-xs text-brand-forest-muted block">
                     ({100 - inputs.cookedFoodPercentage}% Fresh &amp; Raw)
                   </span>
                 </div>
@@ -321,10 +321,10 @@ export default function BioCalculator() {
                 step={5}
                 value={inputs.cookedFoodPercentage}
                 onChange={(e) => setInputs({ cookedFoodPercentage: Number(e.target.value) })}
-                className="w-full h-3 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-amber-500"
+                className="w-full h-3 bg-brand-border rounded-lg appearance-none cursor-pointer accent-brand-mustard"
               />
-              <div className="flex justify-between text-[11px] text-slate-500 mt-2 font-mono">
-                <span className="text-emerald-400">0% (100% Fresh &amp; Raw)</span>
+              <div className="flex justify-between text-[11px] text-brand-forest-muted/70 mt-2 font-mono">
+                <span className="text-brand-mustard">0% (100% Fresh &amp; Raw)</span>
                 <span>50% Balanced</span>
                 <span className="text-red-400">100% (Strictly Cooked)</span>
               </div>
@@ -333,10 +333,10 @@ export default function BioCalculator() {
             {/* Fruit Servings */}
             <div>
               <div className="flex justify-between items-center mb-2">
-                <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                <label className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                   🍎 Fresh Fruit Servings (Daily)
                 </label>
-                <span className="text-xs text-slate-400">1 serving = 1 cup or whole fruit</span>
+                <span className="text-xs text-brand-forest-muted">1 serving = 1 cup or whole fruit</span>
               </div>
               <div className="grid grid-cols-5 gap-2.5">
                 {[0, 1, 2, 3, 4].map((num) => (
@@ -346,8 +346,8 @@ export default function BioCalculator() {
                     onClick={() => setInputs({ fruitServings: num })}
                     className={`py-3 rounded-2xl font-bold text-sm transition-all border ${
                       inputs.fruitServings === num
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300 shadow-md shadow-emerald-500/10'
-                        : 'bg-slate-800/60 border-slate-700/80 text-slate-400 hover:bg-slate-800'
+                        ? 'bg-brand-mustard/20 border-brand-mustard text-brand-mustard-hover shadow-md shadow-brand-mustard/10'
+                        : 'bg-brand-cream/60 border-brand-border/80 text-brand-forest-muted hover:bg-brand-cream'
                     }`}
                   >
                     {num === 4 ? '4+ bowls' : `${num} serv`}
@@ -358,7 +358,7 @@ export default function BioCalculator() {
 
             {/* Seeds & Sprouts Frequency */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-2">
                 🌱 Sprouted Seeds &amp; Microgreens Intake
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -374,12 +374,12 @@ export default function BioCalculator() {
                     onClick={() => setInputs({ seedFrequency: item.id as SeedFrequency })}
                     className={`p-3 rounded-2xl text-left transition-all border ${
                       inputs.seedFrequency === item.id
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                        : 'bg-slate-800/60 border-slate-700/80 text-slate-400 hover:bg-slate-800'
+                        ? 'bg-brand-mustard/20 border-brand-mustard text-brand-mustard-hover'
+                        : 'bg-brand-cream/60 border-brand-border/80 text-brand-forest-muted hover:bg-brand-cream'
                     }`}
                   >
-                    <div className="text-xs font-bold text-slate-200">{item.label}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">{item.subtitle}</div>
+                    <div className="text-xs font-bold text-brand-forest">{item.label}</div>
+                    <div className="text-[10px] text-brand-forest-muted mt-0.5">{item.subtitle}</div>
                   </button>
                 ))}
               </div>
@@ -387,7 +387,7 @@ export default function BioCalculator() {
 
             {/* Raw Veggies & Greens */}
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-2">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-2">
                 🥗 Raw Veggies &amp; Crisp Greens
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
@@ -403,12 +403,12 @@ export default function BioCalculator() {
                     onClick={() => setInputs({ veggieFrequency: item.id as VeggieFrequency })}
                     className={`p-3 rounded-2xl text-left transition-all border ${
                       inputs.veggieFrequency === item.id
-                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-300'
-                        : 'bg-slate-800/60 border-slate-700/80 text-slate-400 hover:bg-slate-800'
+                        ? 'bg-brand-mustard/20 border-brand-mustard text-brand-mustard-hover'
+                        : 'bg-brand-cream/60 border-brand-border/80 text-brand-forest-muted hover:bg-brand-cream'
                     }`}
                   >
-                    <div className="text-xs font-bold text-slate-200">{item.label}</div>
-                    <div className="text-[10px] text-slate-400 mt-0.5">{item.subtitle}</div>
+                    <div className="text-xs font-bold text-brand-forest">{item.label}</div>
+                    <div className="text-[10px] text-brand-forest-muted mt-0.5">{item.subtitle}</div>
                   </button>
                 ))}
               </div>
@@ -419,14 +419,14 @@ export default function BioCalculator() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-brand-border text-brand-forest-muted hover:bg-brand-cream transition-colors"
               >
                 ← Back
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 Analyze My Bio Profile →
               </button>
@@ -438,13 +438,13 @@ export default function BioCalculator() {
         {currentStep === 3 && results && (
           <div className="space-y-8 animate-fade-in-up">
             <div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                 Step 3 of 4 · Real-Time Vitality Dashboard
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
+              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-brand-forest">
                 Your Fresh &amp; Raw Vitality Profile
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-brand-forest-muted mt-1">
                 Calibrated against natural digestive enzymes, fresh raw nutrition, and daily metabolic energy.
               </p>
             </div>
@@ -452,7 +452,7 @@ export default function BioCalculator() {
             {/* Circular Progress Dial & Age Comparison Timeline */}
             <div className="grid grid-cols-1 md:grid-cols-12 gap-6 items-center">
               {/* SVG Animated Circular Gauge */}
-              <div className="md:col-span-6 flex flex-col items-center justify-center p-6 rounded-3xl bg-slate-800/40 border border-slate-800 shadow-inner">
+              <div className="md:col-span-6 flex flex-col items-center justify-center p-6 rounded-3xl bg-brand-cream/40 border border-brand-border shadow-inner">
                 <div className="relative w-48 h-48 flex items-center justify-center">
                   <svg className="w-full h-full -rotate-90" viewBox="0 0 160 160">
                     <circle
@@ -477,10 +477,10 @@ export default function BioCalculator() {
                     />
                   </svg>
                   <div className="absolute flex flex-col items-center text-center">
-                    <span className="text-4xl font-black font-mono text-slate-100 tracking-tight">
+                    <span className="text-4xl font-black font-mono text-brand-forest tracking-tight">
                       {results.livingFoodVitalityScore}%
                     </span>
-                    <span className="text-[10px] uppercase font-bold tracking-widest text-slate-400 mt-1">
+                    <span className="text-[10px] uppercase font-bold tracking-widest text-brand-forest-muted mt-1">
                       Vitality Index
                     </span>
                   </div>
@@ -497,7 +497,7 @@ export default function BioCalculator() {
                   >
                     {results.vitalityTier.label}
                   </span>
-                  <p className="text-xs text-slate-400 mt-2 max-w-xs leading-relaxed">
+                  <p className="text-xs text-brand-forest-muted mt-2 max-w-xs leading-relaxed">
                     {results.vitalityTier.description}
                   </p>
                 </div>
@@ -506,26 +506,26 @@ export default function BioCalculator() {
               {/* Visual Age Comparison Timeline & Target Macros */}
               <div className="md:col-span-6 space-y-4">
                 {/* Visual Age Comparison Card */}
-                <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-800">
-                  <span className="text-xs font-bold uppercase tracking-wider text-slate-400 block mb-2">
+                <div className="p-5 rounded-2xl bg-brand-cream/40 border border-brand-border">
+                  <span className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted block mb-2">
                     Biological Diet Age vs Chronological Age
                   </span>
 
                   {/* Comparative Visual Timeline Bar */}
                   <div className="space-y-2 mb-3">
                     <div className="flex justify-between text-xs">
-                      <span className="text-slate-400">Chronological Age:</span>
-                      <span className="font-bold text-slate-200 font-mono">{results.chronologicalAge} yrs</span>
+                      <span className="text-brand-forest-muted">Chronological Age:</span>
+                      <span className="font-bold text-brand-forest font-mono">{results.chronologicalAge} yrs</span>
                     </div>
-                    <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-2.5 bg-brand-cream rounded-full overflow-hidden">
                       <div
-                        className="h-full bg-slate-600 rounded-full"
+                        className="h-full bg-brand-border rounded-full"
                         style={{ width: `${Math.min(100, (results.chronologicalAge / 80) * 100)}%` }}
                       />
                     </div>
 
                     <div className="flex justify-between text-xs pt-1">
-                      <span className="text-slate-400">Biological Diet Age:</span>
+                      <span className="text-brand-forest-muted">Biological Diet Age:</span>
                       <span
                         className="font-bold font-mono"
                         style={{ color: results.biologicalDietAgeDelta > 0 ? '#F87171' : '#34D399' }}
@@ -533,7 +533,7 @@ export default function BioCalculator() {
                         {results.biologicalDietAge} yrs ({results.biologicalDietAgeDelta > 0 ? `+${results.biologicalDietAgeDelta} older` : `${results.biologicalDietAgeDelta} younger`})
                       </span>
                     </div>
-                    <div className="w-full h-2.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div className="w-full h-2.5 bg-brand-cream rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full transition-all duration-700"
                         style={{
@@ -546,7 +546,7 @@ export default function BioCalculator() {
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-400 leading-relaxed">
+                  <p className="text-xs text-brand-forest-muted leading-relaxed">
                     {results.biologicalDietAgeDelta > 0
                       ? 'High cooked food ratio accelerates cellular glycation (AGEs) and enzyme depletion.'
                       : 'High living raw enzyme intake protects mitochondrial function and cellular DNA integrity.'}
@@ -554,39 +554,39 @@ export default function BioCalculator() {
                 </div>
 
                 {/* Energy & Macros Target */}
-                <div className="p-5 rounded-2xl bg-slate-800/40 border border-slate-800">
+                <div className="p-5 rounded-2xl bg-brand-cream/40 border border-brand-border">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <span className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                       Mifflin-St Jeor Energy Baseline
                     </span>
-                    <span className="text-xs text-slate-400 font-mono">
+                    <span className="text-xs text-brand-forest-muted font-mono">
                       TDEE: {results.tdee} kcal
                     </span>
                   </div>
-                  <div className="text-2xl font-black text-amber-400 font-mono">
+                  <div className="text-2xl font-black text-brand-mustard font-mono">
                     {results.targetMacros.calories} kcal / day
                   </div>
-                  <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-slate-800 text-center">
+                  <div className="grid grid-cols-4 gap-2 mt-3 pt-3 border-t border-brand-border text-center">
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold">Protein</span>
+                      <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Protein</span>
                       <p className="text-xs font-bold text-blue-400 font-mono mt-0.5">
                         {results.targetMacros.protein}g
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold">Carbs</span>
-                      <p className="text-xs font-bold text-amber-400 font-mono mt-0.5">
+                      <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Carbs</span>
+                      <p className="text-xs font-bold text-brand-mustard font-mono mt-0.5">
                         {results.targetMacros.carbs}g
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold">Fats</span>
-                      <p className="text-xs font-bold text-emerald-400 font-mono mt-0.5">
+                      <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Fats</span>
+                      <p className="text-xs font-bold text-brand-mustard font-mono mt-0.5">
                         {results.targetMacros.fats}g
                       </p>
                     </div>
                     <div>
-                      <span className="text-[10px] text-slate-400 uppercase font-semibold">Fiber</span>
+                      <span className="text-[10px] text-brand-forest-muted uppercase font-semibold">Fiber</span>
                       <p className="text-xs font-bold text-purple-400 font-mono mt-0.5">
                         {results.targetMacros.fiber}g
                       </p>
@@ -601,14 +601,14 @@ export default function BioCalculator() {
               <button
                 type="button"
                 onClick={prevStep}
-                className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-brand-border text-brand-forest-muted hover:bg-brand-cream transition-colors"
               >
                 ← Adjust Habits
               </button>
               <button
                 type="button"
                 onClick={nextStep}
-                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                className="px-8 py-3.5 rounded-2xl font-bold text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-[1.02] active:scale-[0.98]"
               >
                 View Diet Comparison Matrix →
               </button>
@@ -620,19 +620,19 @@ export default function BioCalculator() {
         {currentStep === 4 && results && (
           <div className="space-y-8 animate-fade-in-up">
             <div>
-              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+              <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                 Step 4 of 4 · Diet Comparison &amp; Targeted Solution
               </span>
-              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-slate-100">
+              <h2 className="text-2xl sm:text-3xl font-black mt-3 text-brand-forest">
                 Current Diet vs. Optimal Living Diet
               </h2>
-              <p className="text-sm text-slate-400 mt-1">
+              <p className="text-sm text-brand-forest-muted mt-1">
                 Evaluate the physiological gap between your current habits and an enzymatically alive diet.
               </p>
             </div>
 
             {/* Side-by-Side Diet Comparison Matrix */}
-            <div className="rounded-2xl overflow-hidden border border-slate-800 bg-slate-950/60">
+            <div className="rounded-2xl overflow-hidden border border-brand-border bg-brand-cream/60">
               <div className="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-slate-800">
                 {/* Current Diet Column */}
                 <div className="p-6 bg-red-950/10">
@@ -642,34 +642,34 @@ export default function BioCalculator() {
                       <h3 className="text-sm font-black uppercase tracking-wider text-red-400">
                         Your Current Dietary Profile
                       </h3>
-                      <p className="text-xs text-slate-400">Estimated based on your habits</p>
+                      <p className="text-xs text-brand-forest-muted">Estimated based on your habits</p>
                     </div>
                   </div>
 
                   <div className="space-y-3.5 text-xs">
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Raw vs Cooked Balance:</span>
-                      <span className="font-bold text-slate-200">{results.dietComparison.currentDiet.rawCookedRatio}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Raw vs Cooked Balance:</span>
+                      <span className="font-bold text-brand-forest">{results.dietComparison.currentDiet.rawCookedRatio}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Active Digestive Enzymes:</span>
-                      <span className="font-bold text-amber-400">{results.dietComparison.currentDiet.activeDigestiveEnzymes}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Active Digestive Enzymes:</span>
+                      <span className="font-bold text-brand-mustard">{results.dietComparison.currentDiet.activeDigestiveEnzymes}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Estimated Daily Fiber:</span>
-                      <span className="font-bold text-slate-200 font-mono">{results.dietComparison.currentDiet.estimatedDailyFiber}g / day</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Estimated Daily Fiber:</span>
+                      <span className="font-bold text-brand-forest font-mono">{results.dietComparison.currentDiet.estimatedDailyFiber}g / day</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Antioxidant Capacity:</span>
-                      <span className="font-bold text-slate-300">{results.dietComparison.currentDiet.antioxidantCapacity}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Antioxidant Capacity:</span>
+                      <span className="font-bold text-brand-forest-muted">{results.dietComparison.currentDiet.antioxidantCapacity}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Digestion &amp; Transit Time:</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Digestion &amp; Transit Time:</span>
                       <span className="font-bold text-red-300">{results.dietComparison.currentDiet.digestionTransitTime}</span>
                     </div>
                     <div className="flex justify-between py-1.5">
-                      <span className="text-slate-400">Inflammatory Risk:</span>
-                      <span className="font-bold text-amber-300">{results.dietComparison.currentDiet.inflammatoryLoad}</span>
+                      <span className="text-brand-forest-muted">Inflammatory Risk:</span>
+                      <span className="font-bold text-brand-forest-muted">{results.dietComparison.currentDiet.inflammatoryLoad}</span>
                     </div>
                   </div>
                 </div>
@@ -679,37 +679,37 @@ export default function BioCalculator() {
                   <div className="flex items-center gap-2 mb-4">
                     <span className="text-xl">✨</span>
                     <div>
-                      <h3 className="text-sm font-black uppercase tracking-wider text-emerald-400">
+                      <h3 className="text-sm font-black uppercase tracking-wider text-brand-mustard">
                         Optimal Living Target Profile
                       </h3>
-                      <p className="text-xs text-slate-400">Thebloomaa cellular nutrition standard</p>
+                      <p className="text-xs text-brand-forest-muted">Thebloomaa cellular nutrition standard</p>
                     </div>
                   </div>
 
                   <div className="space-y-3.5 text-xs">
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Raw vs Cooked Balance:</span>
-                      <span className="font-bold text-emerald-300">{results.dietComparison.optimalDiet.rawCookedRatio}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Raw vs Cooked Balance:</span>
+                      <span className="font-bold text-brand-mustard-hover">{results.dietComparison.optimalDiet.rawCookedRatio}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Active Digestive Enzymes:</span>
-                      <span className="font-bold text-emerald-400">{results.dietComparison.optimalDiet.activeDigestiveEnzymes}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Active Digestive Enzymes:</span>
+                      <span className="font-bold text-brand-mustard">{results.dietComparison.optimalDiet.activeDigestiveEnzymes}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Estimated Daily Fiber:</span>
-                      <span className="font-bold text-emerald-400 font-mono">{results.dietComparison.optimalDiet.estimatedDailyFiber}g (Prebiotic)</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Estimated Daily Fiber:</span>
+                      <span className="font-bold text-brand-mustard font-mono">{results.dietComparison.optimalDiet.estimatedDailyFiber}g (Prebiotic)</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Antioxidant Capacity:</span>
-                      <span className="font-bold text-emerald-300">{results.dietComparison.optimalDiet.antioxidantCapacity}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Antioxidant Capacity:</span>
+                      <span className="font-bold text-brand-mustard-hover">{results.dietComparison.optimalDiet.antioxidantCapacity}</span>
                     </div>
-                    <div className="flex justify-between py-1.5 border-b border-slate-800/80">
-                      <span className="text-slate-400">Digestion &amp; Transit Time:</span>
-                      <span className="font-bold text-emerald-300">{results.dietComparison.optimalDiet.digestionTransitTime}</span>
+                    <div className="flex justify-between py-1.5 border-b border-brand-border/80">
+                      <span className="text-brand-forest-muted">Digestion &amp; Transit Time:</span>
+                      <span className="font-bold text-brand-mustard-hover">{results.dietComparison.optimalDiet.digestionTransitTime}</span>
                     </div>
                     <div className="flex justify-between py-1.5">
-                      <span className="text-slate-400">Inflammatory Risk:</span>
-                      <span className="font-bold text-emerald-300">{results.dietComparison.optimalDiet.inflammatoryLoad}</span>
+                      <span className="text-brand-forest-muted">Inflammatory Risk:</span>
+                      <span className="font-bold text-brand-mustard-hover">{results.dietComparison.optimalDiet.inflammatoryLoad}</span>
                     </div>
                   </div>
                 </div>
@@ -717,51 +717,51 @@ export default function BioCalculator() {
             </div>
 
             {/* Matched Product Recommendation Card */}
-            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-emerald-500/50 shadow-2xl relative overflow-hidden">
-              <div className="absolute top-3 right-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500 text-slate-950">
+            <div className="rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 border-2 border-brand-mustard/50 shadow-2xl relative overflow-hidden">
+              <div className="absolute top-3 right-4 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-mustard text-brand-forest">
                 Recommended Solution
               </div>
 
               <div className="flex flex-col md:flex-row gap-6 items-center">
-                <div className="w-full md:w-48 h-44 rounded-2xl overflow-hidden relative flex-shrink-0 bg-slate-800 border border-slate-700">
+                <div className="w-full md:w-48 h-44 rounded-2xl overflow-hidden relative flex-shrink-0 bg-brand-cream border border-brand-border">
                   <img
                     src={results.matchedProduct.imageUrl}
                     alt={results.matchedProduct.name}
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-slate-950/85 text-[10px] font-bold text-amber-400">
+                  <div className="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-brand-cream/85 text-[10px] font-bold text-brand-mustard">
                     🔥 {results.matchedProduct.calories} kcal
                   </div>
                 </div>
 
                 <div className="flex-grow text-center md:text-left">
-                  <span className="text-xs font-bold text-emerald-400 uppercase tracking-wider">
+                  <span className="text-xs font-bold text-brand-mustard uppercase tracking-wider">
                     Targeted Nutrition Solution
                   </span>
-                  <h3 className="text-xl sm:text-2xl font-black text-slate-100 mt-1">
+                  <h3 className="text-xl sm:text-2xl font-black text-brand-forest mt-1">
                     {results.matchedProduct.name}
                   </h3>
-                  <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+                  <p className="text-xs text-brand-forest-muted mt-2 leading-relaxed">
                     {results.matchedProduct.reason}
                   </p>
 
                   <div className="flex flex-wrap items-center justify-center md:justify-start gap-4 mt-3 text-xs">
                     <span className="font-bold text-blue-400 font-mono">💪 {results.matchedProduct.protein}g Protein</span>
-                    <span className="font-bold text-amber-400 font-mono">🍞 {results.matchedProduct.carbs}g Carbs</span>
-                    <span className="font-bold text-emerald-400 font-mono">🥑 {results.matchedProduct.fats}g Fats</span>
-                    <span className="font-black text-base text-slate-100 font-mono">
+                    <span className="font-bold text-brand-mustard font-mono">🍞 {results.matchedProduct.carbs}g Carbs</span>
+                    <span className="font-bold text-brand-mustard font-mono">🥑 {results.matchedProduct.fats}g Fats</span>
+                    <span className="font-black text-base text-brand-forest font-mono">
                       {results.matchedProduct.isTrialPlan ? '₹451 (7 Days Trial)' : `₹${results.matchedProduct.price}/diet`}
                     </span>
                   </div>
 
                   {results.matchedProduct.logisticsNote && (
-                    <div className="mt-3 p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-300">
+                    <div className="mt-3 p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/30 text-[11px] text-brand-forest-muted">
                       <strong>Logistics Protocol: </strong>
                       {results.matchedProduct.logisticsNote}
                     </div>
                   )}
 
-                  <div className="mt-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-emerald-500/30 text-[11px] text-emerald-300">
+                  <div className="mt-2.5 p-2.5 rounded-xl bg-emerald-950/20 border border-brand-mustard/30 text-[11px] text-brand-mustard-hover">
                     <span className="font-bold">Fresh Nutrition Tip: </span>
                     {results.matchedProduct.livingFoodSynergyTip}
                   </div>
@@ -769,11 +769,11 @@ export default function BioCalculator() {
               </div>
 
               {/* Conversion Buttons */}
-              <div className="mt-6 pt-5 border-t border-slate-800 flex flex-col sm:flex-row gap-3 items-center justify-between">
+              <div className="mt-6 pt-5 border-t border-brand-border flex flex-col sm:flex-row gap-3 items-center justify-between">
                 <button
                   type="button"
                   onClick={() => goToStep(1)}
-                  className="text-xs font-semibold text-slate-400 hover:text-slate-200 transition-colors"
+                  className="text-xs font-semibold text-brand-forest-muted hover:text-brand-forest transition-colors"
                 >
                   ↺ Recalculate with different inputs
                 </button>
@@ -781,7 +781,7 @@ export default function BioCalculator() {
                 <button
                   type="button"
                   onClick={handleSelectPlanAndOrder}
-                  className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
                   <span>Select This Plan &amp; Order</span>
                   <span>→</span>

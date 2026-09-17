@@ -229,7 +229,7 @@ export default function DashboardPage() {
         <p className="text-[var(--text-muted)] mb-8">You don&apos;t have any active diet plans right now.</p>
         <Link
           href="/#trial"
-          className="inline-block px-6 py-3 rounded-xl font-bold text-slate-950 transition-all hover:scale-105"
+          className="inline-block px-6 py-3 rounded-xl font-bold text-brand-forest transition-all hover:scale-105"
           style={{ background: 'var(--brand-primary)' }}
         >
           Explore Diet Plans &amp; 7D Trial
@@ -247,7 +247,7 @@ export default function DashboardPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-black">My Dashboard</h1>
-          <p className="text-xs text-slate-400 mt-1">Manage your living diet subscription and morning deliveries.</p>
+          <p className="text-xs text-brand-forest-muted mt-1">Manage your living diet subscription and morning deliveries.</p>
         </div>
 
         {/* WhatsApp Concierge Trigger */}
@@ -255,7 +255,7 @@ export default function DashboardPage() {
           href="https://wa.me/919999999999?text=Hi%20BlooMaa%20Team,%20I%20have%20a%20question%20about%20my%20morning%20diet%20delivery"
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 hover:bg-emerald-500/25 transition-all w-fit cursor-pointer"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard-hover hover:bg-brand-mustard/25 transition-all w-fit cursor-pointer"
         >
           <span>💬</span>
           <span>WhatsApp Concierge</span>
@@ -267,7 +267,7 @@ export default function DashboardPage() {
         <div
           className={`p-4 rounded-2xl text-xs font-semibold flex items-center justify-between animate-fade-in ${
             actionFeedback.type === 'success'
-              ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+              ? 'bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard-hover'
               : 'bg-red-500/15 border border-red-500/30 text-red-300'
           }`}
         >
@@ -289,7 +289,7 @@ export default function DashboardPage() {
         }}
       >
         {sub.status === 'PENDING' && (
-          <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2.5">
+          <div className="mb-4 p-3.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted flex items-center gap-2.5">
             <span className="text-base">✨</span>
             <span>
               <strong>Prep Queued &amp; Scheduled:</strong> Your subscription is confirmed! Kitchen prep begins at 5:00 AM and morning delivery runs 6:00 AM – 9:00 AM.
@@ -298,7 +298,7 @@ export default function DashboardPage() {
         )}
 
         {isPaused && (
-          <div className="mb-4 p-3.5 rounded-xl bg-amber-500/15 border border-amber-500/30 text-xs text-amber-300 flex items-center gap-2.5">
+          <div className="mb-4 p-3.5 rounded-xl bg-brand-mustard/15 border border-brand-mustard/30 text-xs text-brand-forest-muted flex items-center gap-2.5">
             <span className="text-base">⏸️</span>
             <span>
               <strong>Plan Paused:</strong> Deliveries are paused and your days are preserved. Tap &quot;Resume Plan&quot; whenever you are ready to restart.
@@ -332,10 +332,10 @@ export default function DashboardPage() {
                 {sub.status === 'PENDING' ? 'Scheduled & Queued' : sub.status}
               </span>
             </div>
-            <h2 className="text-xl font-black text-slate-100">{sub.meal}</h2>
-            <p className="text-xs text-slate-400 mt-1">
+            <h2 className="text-xl font-black text-brand-forest">{sub.meal}</h2>
+            <p className="text-xs text-brand-forest-muted mt-1">
               Next delivery:{' '}
-              <span className="font-semibold text-slate-200">
+              <span className="font-semibold text-brand-forest">
                 {isPaused
                   ? 'Paused (No upcoming drop)'
                   : `${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
@@ -353,7 +353,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={handleResumeSubscription}
                 disabled={pauseLoading}
-                className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
+                className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
               >
                 {pauseLoading ? 'Resuming...' : '▶️ Resume Plan'}
               </button>
@@ -362,7 +362,7 @@ export default function DashboardPage() {
                 type="button"
                 onClick={() => setPauseModalOpen(true)}
                 disabled={pauseLoading}
-                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 cursor-pointer bg-amber-500/15 text-amber-300 border border-amber-500/30 hover:bg-amber-500/25"
+                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 cursor-pointer bg-brand-mustard/15 text-brand-forest-muted border border-brand-mustard/30 hover:bg-brand-mustard/25"
               >
                 ⏸️ Pause Plan
               </button>
@@ -370,7 +370,7 @@ export default function DashboardPage() {
 
             <Link
               href="/#trial"
-              className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 flex items-center bg-slate-800 text-slate-300 border border-slate-700 hover:bg-slate-700"
+              className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 flex items-center bg-brand-cream text-brand-forest-muted border border-brand-border hover:bg-brand-border"
             >
               🔄 Change Plan
             </Link>
@@ -378,41 +378,41 @@ export default function DashboardPage() {
         </div>
 
         {/* Progress bar */}
-        <div className="flex items-center justify-between text-xs mb-2 text-slate-400">
+        <div className="flex items-center justify-between text-xs mb-2 text-brand-forest-muted">
           <span>{sub.bundleDays - sub.deliveriesLeft} of {sub.bundleDays} delivered</span>
-          <span className="font-bold text-emerald-400">{sub.deliveriesLeft} days left</span>
+          <span className="font-bold text-brand-mustard">{sub.deliveriesLeft} days left</span>
         </div>
-        <div className="h-2.5 rounded-full overflow-hidden bg-slate-800">
+        <div className="h-2.5 rounded-full overflow-hidden bg-brand-cream">
           <div
             className="h-full rounded-full transition-all duration-700"
             style={{ width: `${progress}%`, background: 'linear-gradient(90deg, #10B981, #34D399)' }}
           />
         </div>
-        <p className="text-xs font-medium mt-2 font-mono text-slate-400">
+        <p className="text-xs font-medium mt-2 font-mono text-brand-forest-muted">
           ₹{sub.perDay}/day · Fresh Living Box drop 6:00 AM – 9:00 AM
         </p>
       </div>
 
       {/* Delivery Calendar */}
-      <div className="rounded-3xl p-6 sm:p-7 bg-slate-900 border border-slate-800 shadow-xl">
+      <div className="rounded-3xl p-6 sm:p-7 bg-brand-card border border-brand-border shadow-xl">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h3 className="text-lg font-bold text-slate-100">Delivery Calendar</h3>
-            <p className="text-xs text-slate-400 mt-0.5">Tap any scheduled morning drop to skip it before 8:30 PM</p>
+            <h3 className="text-lg font-bold text-brand-forest">Delivery Calendar</h3>
+            <p className="text-xs text-brand-forest-muted mt-0.5">Tap any scheduled morning drop to skip it before 8:30 PM</p>
           </div>
           <div className="flex items-center gap-2">
             <button
               onClick={() => setCurrentMonth((m) => Math.max(m - 1, 0))}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-brand-cream text-brand-forest-muted hover:bg-brand-border cursor-pointer"
             >
               ←
             </button>
-            <span className="text-xs font-bold min-w-[110px] text-center text-slate-200">
+            <span className="text-xs font-bold min-w-[110px] text-center text-brand-forest">
               {MONTH_NAMES[currentMonth]} {currentYear}
             </span>
             <button
               onClick={() => setCurrentMonth((m) => Math.min(m + 1, 11))}
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-slate-800 text-slate-300 hover:bg-slate-700 cursor-pointer"
+              className="w-8 h-8 rounded-lg flex items-center justify-center text-sm bg-brand-cream text-brand-forest-muted hover:bg-brand-border cursor-pointer"
             >
               →
             </button>
@@ -422,7 +422,7 @@ export default function DashboardPage() {
         {/* Day labels */}
         <div className="grid grid-cols-7 gap-1.5 mb-2">
           {DAY_LABELS.map((d) => (
-            <div key={d} className="text-center text-xs font-bold py-1 text-slate-400">
+            <div key={d} className="text-center text-xs font-bold py-1 text-brand-forest-muted">
               {d}
             </div>
           ))}
@@ -460,14 +460,14 @@ export default function DashboardPage() {
                 <span>{day}</span>
                 {status === 'DELIVERED' && <span className="text-[9px] mt-0.5 font-bold">✓</span>}
                 {status === 'SKIPPED' && <span className="text-[9px] mt-0.5 font-bold">✕</span>}
-                {isScheduled && <span className="text-[9px] mt-0.5 text-amber-400">●</span>}
+                {isScheduled && <span className="text-[9px] mt-0.5 text-brand-mustard">●</span>}
               </button>
             );
           })}
         </div>
 
         {/* Legend */}
-        <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-slate-800 text-xs text-slate-400">
+        <div className="flex flex-wrap items-center gap-4 mt-5 pt-4 border-t border-brand-border text-xs text-brand-forest-muted">
           {[
             { label: 'Delivered', color: '#6EE7B7', symbol: '✓' },
             { label: 'Scheduled', color: '#FCD34D', symbol: '●' },
@@ -478,7 +478,7 @@ export default function DashboardPage() {
               <span>{item.label}</span>
             </div>
           ))}
-          <span className="ml-auto text-[11px] text-slate-500">
+          <span className="ml-auto text-[11px] text-brand-forest-muted/70">
             ⏰ 8:30 PM eve cutoff for skips
           </span>
         </div>
@@ -486,14 +486,14 @@ export default function DashboardPage() {
 
       {/* Skip Confirmation Modal */}
       {skipConfirmDate && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-slate-900 border border-slate-800 shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-cream/80 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-brand-card border border-brand-border shadow-2xl animate-fade-in-up">
             <div className="text-center">
               <div className="text-3xl mb-2">⏭️</div>
-              <h3 className="text-lg font-bold text-slate-100">Skip This Delivery?</h3>
-              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+              <h3 className="text-lg font-bold text-brand-forest">Skip This Delivery?</h3>
+              <p className="text-xs text-brand-forest-muted mt-2 leading-relaxed">
                 Skip your morning drop on{' '}
-                <span className="font-bold text-amber-400">
+                <span className="font-bold text-brand-mustard">
                   {new Date(skipConfirmDate).toLocaleDateString('en-IN', {
                     weekday: 'long',
                     month: 'short',
@@ -514,7 +514,7 @@ export default function DashboardPage() {
                   type="button"
                   disabled={skipLoading}
                   onClick={() => setSkipConfirmDate(null)}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-cream text-brand-forest-muted hover:bg-brand-border border border-brand-border cursor-pointer"
                 >
                   Keep Delivery
                 </button>
@@ -522,7 +522,7 @@ export default function DashboardPage() {
                   type="button"
                   disabled={skipLoading}
                   onClick={handleConfirmSkipDay}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-mustard text-brand-forest hover:bg-brand-mustard cursor-pointer disabled:opacity-50"
                 >
                   {skipLoading ? 'Skipping...' : 'Confirm Skip'}
                 </button>
@@ -534,12 +534,12 @@ export default function DashboardPage() {
 
       {/* Pause Confirmation Modal */}
       {pauseModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-slate-900 border border-slate-800 shadow-2xl animate-fade-in-up">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-cream/80 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-brand-card border border-brand-border shadow-2xl animate-fade-in-up">
             <div className="text-center">
               <div className="text-3xl mb-2">⏸️</div>
-              <h3 className="text-lg font-bold text-slate-100">Pause Subscription?</h3>
-              <p className="text-xs text-slate-300 mt-2 leading-relaxed">
+              <h3 className="text-lg font-bold text-brand-forest">Pause Subscription?</h3>
+              <p className="text-xs text-brand-forest-muted mt-2 leading-relaxed">
                 Traveling or taking a break? Pausing freezes your deliveries starting tomorrow morning. All your remaining deliveries ({sub.deliveriesLeft} days) stay safe and ready when you resume.
               </p>
 
@@ -548,7 +548,7 @@ export default function DashboardPage() {
                   type="button"
                   disabled={pauseLoading}
                   onClick={() => setPauseModalOpen(false)}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700 cursor-pointer"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-cream text-brand-forest-muted hover:bg-brand-border border border-brand-border cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -556,7 +556,7 @@ export default function DashboardPage() {
                   type="button"
                   disabled={pauseLoading}
                   onClick={handlePauseSubscription}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-amber-500 text-slate-950 hover:bg-amber-400 cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-mustard text-brand-forest hover:bg-brand-mustard cursor-pointer disabled:opacity-50"
                 >
                   {pauseLoading ? 'Pausing...' : 'Pause Plan'}
                 </button>
@@ -567,10 +567,10 @@ export default function DashboardPage() {
       )}
 
       {/* Recent Deliveries (Real orders from DB) */}
-      <div className="rounded-3xl p-6 sm:p-7 bg-slate-900 border border-slate-800 shadow-xl">
+      <div className="rounded-3xl p-6 sm:p-7 bg-brand-card border border-brand-border shadow-xl">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-slate-100">Recent Deliveries</h3>
-          <Link href="/dashboard/orders" className="text-xs font-bold text-emerald-400 hover:text-emerald-300">
+          <h3 className="text-lg font-bold text-brand-forest">Recent Deliveries</h3>
+          <Link href="/dashboard/orders" className="text-xs font-bold text-brand-mustard hover:text-brand-mustard-hover">
             View All Orders →
           </Link>
         </div>
@@ -590,13 +590,13 @@ export default function DashboardPage() {
               return (
                 <div
                   key={order.id}
-                  className="flex items-center justify-between py-3 px-4 rounded-2xl bg-slate-800/60 border border-slate-800/80 hover:bg-slate-800 transition-colors"
+                  className="flex items-center justify-between py-3 px-4 rounded-2xl bg-brand-cream/60 border border-brand-border/80 hover:bg-brand-cream transition-colors"
                 >
                   <div className="flex items-center gap-3">
                     <span
                       className={`w-8 h-8 rounded-xl flex items-center justify-center text-xs font-bold ${
                         order.status === 'DELIVERED'
-                          ? 'bg-emerald-500/15 text-emerald-300'
+                          ? 'bg-brand-mustard/15 text-brand-mustard-hover'
                           : order.status === 'SKIPPED'
                           ? 'bg-red-500/15 text-red-300'
                           : 'bg-blue-500/15 text-blue-300'
@@ -606,10 +606,10 @@ export default function DashboardPage() {
                     </span>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-xs font-bold text-slate-200">{shortId}</span>
-                        <span className="text-xs text-slate-400">{formattedDate}</span>
+                        <span className="font-mono text-xs font-bold text-brand-forest">{shortId}</span>
+                        <span className="text-xs text-brand-forest-muted">{formattedDate}</span>
                       </div>
-                      <p className="text-[11px] text-slate-400 mt-0.5">
+                      <p className="text-[11px] text-brand-forest-muted mt-0.5">
                         {order.status === 'DELIVERED'
                           ? `Delivered by Patna Fleet · ${order.deliveryTime || 'Morning Slot'}`
                           : order.status === 'SKIPPED'
@@ -622,7 +622,7 @@ export default function DashboardPage() {
                   <span
                     className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                       order.status === 'DELIVERED'
-                        ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/30'
+                        ? 'bg-brand-mustard/15 text-brand-mustard border border-brand-mustard/30'
                         : order.status === 'SKIPPED'
                         ? 'bg-red-500/15 text-red-400 border border-red-500/30'
                         : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
@@ -635,7 +635,7 @@ export default function DashboardPage() {
             })}
           </div>
         ) : (
-          <div className="p-8 text-center text-xs text-slate-400 rounded-2xl bg-slate-800/30 border border-dashed border-slate-800">
+          <div className="p-8 text-center text-xs text-brand-forest-muted rounded-2xl bg-brand-cream/30 border border-dashed border-brand-border">
             No previous deliveries yet. Your fresh living diet box is scheduled for tomorrow morning!
           </div>
         )}

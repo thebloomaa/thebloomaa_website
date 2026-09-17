@@ -52,10 +52,10 @@ export default function CalculatorPage() {
           >
             Scientific Dietary Diagnostic 🧪
           </span>
-          <h1 className="text-3xl sm:text-5xl font-black text-slate-100 tracking-tight leading-tight">
+          <h1 className="text-3xl sm:text-5xl font-black text-brand-forest tracking-tight leading-tight">
             Bio Calculator &amp; <span style={{ color: 'var(--brand-primary)' }}>Living Diet</span> Engine
           </h1>
-          <p className="mt-3 text-sm sm:text-base text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-3 text-sm sm:text-base text-brand-forest-muted max-w-2xl mx-auto leading-relaxed">
             Discover how your intake of cooked foods, raw fruits, sprouted seeds, and crisp greens 
             influences your cellular vitality, active enzyme levels, and biological diet age.
           </p>
@@ -67,12 +67,12 @@ export default function CalculatorPage() {
         </div>
 
         {/* Science & Living Foods FAQ Section */}
-        <section className="max-w-4xl mx-auto mt-20 pt-12 border-t border-slate-800 relative z-10">
+        <section className="max-w-4xl mx-auto mt-20 pt-12 border-t border-brand-border relative z-10">
           <div className="text-center mb-10">
-            <h2 className="text-2xl font-black text-slate-100">
+            <h2 className="text-2xl font-black text-brand-forest">
               The Science of Living Food Vitality
             </h2>
-            <p className="text-xs sm:text-sm text-slate-400 mt-1">
+            <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
               Key insights into thermal food processing, cellular enzymes, and metabolic longevity.
             </p>
           </div>
@@ -81,13 +81,13 @@ export default function CalculatorPage() {
             {livingFaqs.map((faq, idx) => (
               <div
                 key={idx}
-                className="rounded-2xl p-6 bg-slate-900/60 border border-slate-800"
+                className="rounded-2xl p-6 bg-brand-card/60 border border-brand-border"
               >
-                <h3 className="text-sm font-bold text-slate-200 mb-2 flex items-start gap-2">
-                  <span className="text-emerald-400">Q:</span>
+                <h3 className="text-sm font-bold text-brand-forest mb-2 flex items-start gap-2">
+                  <span className="text-brand-mustard">Q:</span>
                   <span>{faq.q}</span>
                 </h3>
-                <p className="text-xs text-slate-400 leading-relaxed pl-5">
+                <p className="text-xs text-brand-forest-muted leading-relaxed pl-5">
                   {faq.a}
                 </p>
               </div>

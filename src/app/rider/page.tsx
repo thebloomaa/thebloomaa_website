@@ -110,20 +110,20 @@ export default function RiderLoginPage() {
   };
 
   return (
-    <main className="min-h-screen flex items-center justify-center p-4 bg-[#070b14] text-slate-100">
+    <main className="min-h-screen flex items-center justify-center p-4 bg-[#070b14] text-brand-forest">
       <div className="w-full max-w-sm relative z-10">
-        <div className="rounded-3xl p-7 sm:p-8 bg-slate-900/90 border border-slate-800 shadow-2xl backdrop-blur-xl">
+        <div className="rounded-3xl p-7 sm:p-8 bg-brand-card/90 border border-brand-border shadow-2xl backdrop-blur-xl">
           <div className="text-center mb-6">
-            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 bg-amber-400/10 border border-amber-400/30 shadow-lg shadow-amber-400/10">
+            <div className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl mx-auto mb-3 bg-brand-mustard/10 border border-brand-mustard/30 shadow-lg shadow-brand-mustard/10">
               🚴
             </div>
             <div className="flex items-center justify-center gap-2 mb-1">
-              <h1 className="text-xl font-black tracking-tight text-white">Rider Dispatch Portal</h1>
-              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+              <h1 className="text-xl font-black tracking-tight text-brand-forest">Rider Dispatch Portal</h1>
+              <span className="px-1.5 py-0.5 rounded text-[9px] font-black uppercase bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/30">
                 Patna Fleet
               </span>
             </div>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-brand-forest-muted">
               {step === 'phone'
                 ? 'Sign in with your registered phone number to enter your dispatch passcode.'
                 : `Welcome, ${riderInfo?.name || 'Rider'}! Enter your 6-digit dispatch passcode.`}
@@ -140,11 +140,11 @@ export default function RiderLoginPage() {
           {step === 'phone' ? (
             <form onSubmit={handleSendOtp} className="space-y-4">
               <div>
-                <label className="block text-[11px] font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-[11px] font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                   Mobile Number
                 </label>
                 <div className="flex gap-2">
-                  <span className="flex items-center px-3.5 rounded-2xl text-xs font-mono font-bold bg-slate-950 border border-slate-700 text-slate-400">
+                  <span className="flex items-center px-3.5 rounded-2xl text-xs font-mono font-bold bg-brand-cream border border-brand-border text-brand-forest-muted">
                     +91
                   </span>
                   <input
@@ -154,10 +154,10 @@ export default function RiderLoginPage() {
                     value={phone}
                     onChange={(e) => setPhone(e.target.value.replace(/\D/g, '').slice(0, 10))}
                     placeholder="98765 00001"
-                    className="flex-1 px-4 py-3 rounded-2xl bg-slate-950 border border-slate-700 text-sm font-mono text-slate-100 placeholder:text-slate-600 focus:outline-none focus:border-amber-400 transition-all font-bold"
+                    className="flex-1 px-4 py-3 rounded-2xl bg-brand-cream border border-brand-border text-sm font-mono text-brand-forest placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard transition-all font-bold"
                   />
                 </div>
-                <p className="text-[11px] text-slate-500 mt-1.5">
+                <p className="text-[11px] text-brand-forest-muted/70 mt-1.5">
                   Fleet members: Enter your 10-digit registered mobile number.
                 </p>
               </div>
@@ -165,7 +165,7 @@ export default function RiderLoginPage() {
               <button
                 type="submit"
                 disabled={phone.length < 10 || loading}
-                className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 shadow-lg shadow-amber-400/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-gradient-to-r from-brand-mustard to-brand-mustard hover:from-brand-forest-muted hover:to-brand-mustard text-brand-forest shadow-lg shadow-brand-mustard/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -177,17 +177,17 @@ export default function RiderLoginPage() {
           ) : (
             <form onSubmit={handleVerify} className="space-y-5 animate-fade-in">
               {riderInfo?.zone && (
-                <div className="p-2.5 rounded-xl bg-slate-950 border border-slate-800 text-center text-xs">
-                  <span className="text-slate-400">Assigned Zone: </span>
-                  <span className="font-bold text-amber-400">{riderInfo.zone}</span>
+                <div className="p-2.5 rounded-xl bg-brand-cream border border-brand-border text-center text-xs">
+                  <span className="text-brand-forest-muted">Assigned Zone: </span>
+                  <span className="font-bold text-brand-mustard">{riderInfo.zone}</span>
                 </div>
               )}
 
               <div>
-                <label className="block text-center text-xs font-bold uppercase tracking-wider text-slate-300 mb-1">
+                <label className="block text-center text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1">
                   Enter 6-Digit Dispatch Passcode
                 </label>
-                <p className="text-center text-[11px] text-slate-500 mb-3">
+                <p className="text-center text-[11px] text-brand-forest-muted/70 mb-3">
                   Enter the 6-digit code assigned to you during onboarding.
                 </p>
                 <div className="flex justify-center gap-2" onPaste={handlePaste}>
@@ -201,7 +201,7 @@ export default function RiderLoginPage() {
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
                       onKeyDown={(e) => handleOtpKeyDown(i, e)}
-                      className="w-11 h-13 text-center text-xl font-mono font-black rounded-xl bg-slate-950 border border-slate-700 text-slate-100 focus:outline-none focus:border-amber-400 transition-all"
+                      className="w-11 h-13 text-center text-xl font-mono font-black rounded-xl bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard transition-all"
                       autoFocus={i === 0}
                     />
                   ))}
@@ -211,7 +211,7 @@ export default function RiderLoginPage() {
               <button
                 type="submit"
                 disabled={otp.join('').length < 6 || loading}
-                className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-emerald-400 hover:bg-emerald-300 text-slate-950 shadow-lg shadow-emerald-400/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
+                className="w-full py-3.5 rounded-2xl font-black text-xs uppercase tracking-wider bg-brand-mustard hover:bg-brand-mustard-hover text-brand-forest shadow-lg shadow-brand-mustard/20 transition-all disabled:opacity-40 cursor-pointer flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -227,18 +227,18 @@ export default function RiderLoginPage() {
                   setOtp(['', '', '', '', '', '']);
                   setErrorMsg(null);
                 }}
-                className="w-full text-center text-xs text-slate-400 hover:text-slate-200 cursor-pointer font-medium"
+                className="w-full text-center text-xs text-brand-forest-muted hover:text-brand-forest cursor-pointer font-medium"
               >
                 ← Change Phone Number
               </button>
             </form>
           )}
 
-          <div className="mt-6 pt-5 border-t border-slate-800 flex items-center justify-between text-xs text-slate-500">
-            <Link href="/" className="hover:text-slate-300">
+          <div className="mt-6 pt-5 border-t border-brand-border flex items-center justify-between text-xs text-brand-forest-muted/70">
+            <Link href="/" className="hover:text-brand-forest-muted">
               ← Storefront
             </Link>
-            <Link href="/admin/login" className="hover:text-amber-400 font-medium">
+            <Link href="/admin/login" className="hover:text-brand-mustard font-medium">
               Admin Ops Center →
             </Link>
           </div>

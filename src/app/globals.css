@@ -2,22 +2,25 @@
 @import "tailwindcss";
 
 :root {
-  --brand-primary: #10B981;
-  --brand-primary-hover: #059669;
-  --brand-accent: #F59E0B;
-  --brand-accent-hover: #D97706;
+  --brand-cream: #FDFBF7;
+  --brand-card: #FFFFFF;
+  --brand-forest: #0D2818;
+  --brand-forest-muted: #3D5A47;
+  --brand-mustard: #DDA15E;
+  --brand-mustard-hover: #BC6C25;
+  --brand-border: #E6E2D6;
 
-  --bg-dark: #0F172A;
-  --bg-card: #1E293B;
-  --bg-card-hover: #263548;
-  --bg-surface: #334155;
+  --bg-dark: var(--brand-cream);
+  --bg-card-var: var(--brand-card);
+  --bg-card-hover: #F8F5EC;
+  --bg-surface: #E6E2D6;
 
-  --text-primary: #F8FAFC;
-  --text-secondary: #CBD5E1;
-  --text-muted: #94A3B8;
+  --text-primary: var(--brand-forest);
+  --text-secondary: var(--brand-forest-muted);
+  --text-muted: #6B8775;
 
   --danger: #EF4444;
-  --border-subtle: #334155;
+  --border-subtle: var(--brand-border);
 
   --radius-sm: 0.5rem;
   --radius-md: 0.75rem;
@@ -28,6 +31,15 @@
 @theme inline {
   --color-background: var(--bg-dark);
   --color-foreground: var(--text-primary);
+  
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-card: var(--brand-card);
+  --color-brand-forest: var(--brand-forest);
+  --color-brand-forest-muted: var(--brand-forest-muted);
+  --color-brand-mustard: var(--brand-mustard);
+  --color-brand-mustard-hover: var(--brand-mustard-hover);
+  --color-brand-border: var(--brand-border);
+
   --font-sans: 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
@@ -109,18 +121,18 @@ body {
 
 /* Glassmorphic card */
 .glass {
-  background: rgba(30, 41, 59, 0.75);
+  background: rgba(255, 255, 255, 0.85); /* brand-card */
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(148, 163, 184, 0.15);
+  border: 1px solid rgba(230, 226, 214, 0.4); /* brand-border */
 }
 
 /* Opaque frosted navigation bar for mobile scroll readability */
 .glass-nav {
-  background: rgba(15, 23, 42, 0.94);
+  background: rgba(253, 251, 247, 0.94); /* brand-cream */
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px);
-  border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+  border-bottom: 1px solid rgba(230, 226, 214, 0.8); /* brand-border */
 }
 
 /* Hide scrollbar for smooth horizontal touch carousels */

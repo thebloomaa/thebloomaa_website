@@ -231,18 +231,18 @@ export default function AdminRidersPage() {
   return (
     <div className="space-y-8 animate-fade-in">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-800">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-brand-border">
         <div>
           <div className="flex items-center gap-2 mb-1">
-            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-amber-400/10 text-amber-300 border border-amber-400/30">
+            <span className="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-brand-mustard/10 text-brand-forest-muted border border-brand-mustard/30">
               Fleet Logistics
             </span>
-            <span className="text-xs text-slate-400 font-mono">Patna Dispatch</span>
+            <span className="text-xs text-brand-forest-muted font-mono">Patna Dispatch</span>
           </div>
-          <h1 className="text-2xl sm:text-3xl font-black text-white">
+          <h1 className="text-2xl sm:text-3xl font-black text-brand-forest">
             Delivery Fleet & Zone Assignment
           </h1>
-          <p className="text-xs sm:text-sm text-slate-400 mt-1">
+          <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
             Assign designated riders to specific Patna zones and monitor delivery manifests in real time.
           </p>
         </div>
@@ -252,12 +252,12 @@ export default function AdminRidersPage() {
             type="button"
             onClick={handleAutoAssign}
             disabled={autoAssigning}
-            className="px-4 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 transition-all shadow-md shadow-amber-400/10 flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            className="px-4 py-2.5 rounded-xl font-black text-xs bg-gradient-to-r from-brand-mustard to-brand-mustard hover:from-brand-forest-muted hover:to-brand-mustard text-brand-forest transition-all shadow-md shadow-brand-mustard/10 flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span>⚡</span>
             <span>{autoAssigning ? 'Routing Orders...' : 'Auto-Assign Zone Orders'}</span>
             {unassignedOrders > 0 && (
-              <span className="px-1.5 py-0.5 rounded bg-slate-950 text-amber-300 text-[10px] font-mono">
+              <span className="px-1.5 py-0.5 rounded bg-brand-cream text-brand-forest-muted text-[10px] font-mono">
                 {unassignedOrders} Unassigned
               </span>
             )}
@@ -266,7 +266,7 @@ export default function AdminRidersPage() {
           <button
             type="button"
             onClick={() => setShowModal(true)}
-            className="px-4 py-2.5 rounded-xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 transition-all flex items-center gap-2 cursor-pointer"
+            className="px-4 py-2.5 rounded-xl font-bold text-xs bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all flex items-center gap-2 cursor-pointer"
           >
             <span>+</span>
             <span>Enroll New Rider</span>
@@ -276,7 +276,7 @@ export default function AdminRidersPage() {
 
       {/* Auto-assign feedback banner */}
       {autoAssignMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between animate-fade-in">
+        <div className="p-4 rounded-2xl bg-emerald-950/40 border border-brand-mustard/40 text-brand-mustard-hover text-xs flex items-center justify-between animate-fade-in">
           <div className="flex items-center gap-2">
             <span>✓</span>
             <span className="font-semibold">{autoAssignMsg}</span>
@@ -284,7 +284,7 @@ export default function AdminRidersPage() {
           <button
             type="button"
             onClick={() => setAutoAssignMsg(null)}
-            className="text-emerald-400 hover:text-white cursor-pointer font-bold"
+            className="text-brand-mustard hover:text-brand-forest cursor-pointer font-bold"
           >
             ✕
           </button>
@@ -293,16 +293,16 @@ export default function AdminRidersPage() {
 
       {/* Enrolled rider success credentials card */}
       {enrolledRiderSuccess && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-amber-500/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-brand-mustard/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🎉</span>
             <div>
-              <p className="font-bold text-white text-sm">
+              <p className="font-bold text-brand-forest text-sm">
                 Rider {enrolledRiderSuccess.name} Enrolled Successfully!
               </p>
-              <p className="text-xs text-amber-300/90 font-mono mt-0.5">
+              <p className="text-xs text-brand-forest-muted/90 font-mono mt-0.5">
                 Mobile: +91 {enrolledRiderSuccess.phone} · Login PIN:{' '}
-                <strong className="text-white bg-slate-950 px-2 py-0.5 rounded border border-amber-500/30">
+                <strong className="text-brand-forest bg-brand-cream px-2 py-0.5 rounded border border-brand-mustard/30">
                   {enrolledRiderSuccess.passcode}
                 </strong>
               </p>
@@ -316,14 +316,14 @@ export default function AdminRidersPage() {
                 navigator.clipboard.writeText(text);
                 alert('Credentials copied to clipboard! You can paste them into WhatsApp/SMS.');
               }}
-              className="px-3.5 py-1.5 rounded-xl font-black bg-amber-400 hover:bg-amber-300 text-slate-950 text-xs cursor-pointer transition-colors shadow-md"
+              className="px-3.5 py-1.5 rounded-xl font-black bg-brand-mustard hover:bg-brand-forest-muted text-brand-forest text-xs cursor-pointer transition-colors shadow-md"
             >
               📋 Copy WhatsApp Invite
             </button>
             <button
               type="button"
               onClick={() => setEnrolledRiderSuccess(null)}
-              className="p-1.5 text-amber-400 hover:text-white cursor-pointer font-bold"
+              className="p-1.5 text-brand-mustard hover:text-brand-forest cursor-pointer font-bold"
             >
               ✕
             </button>
@@ -333,45 +333,45 @@ export default function AdminRidersPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-2xl p-5 bg-slate-900/80 border border-slate-800">
+        <div className="rounded-2xl p-5 bg-brand-card/80 border border-brand-border">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xl">🚴</span>
-            <span className="text-[10px] font-bold uppercase text-slate-400">Riders</span>
+            <span className="text-[10px] font-bold uppercase text-brand-forest-muted">Riders</span>
           </div>
-          <p className="text-3xl font-black font-mono text-slate-100">{riders.length}</p>
-          <p className="text-xs font-bold text-slate-300 mt-1">Total Fleet Roster</p>
+          <p className="text-3xl font-black font-mono text-brand-forest">{riders.length}</p>
+          <p className="text-xs font-bold text-brand-forest-muted mt-1">Total Fleet Roster</p>
         </div>
 
-        <div className="rounded-2xl p-5 bg-slate-900/80 border border-emerald-500/20">
+        <div className="rounded-2xl p-5 bg-brand-card/80 border border-brand-mustard/20">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xl">🟢</span>
-            <span className="text-[10px] font-bold uppercase text-emerald-400">On Duty</span>
+            <span className="text-[10px] font-bold uppercase text-brand-mustard">On Duty</span>
           </div>
-          <p className="text-3xl font-black font-mono text-emerald-400">
+          <p className="text-3xl font-black font-mono text-brand-mustard">
             {riders.filter((r) => r.active).length}
           </p>
-          <p className="text-xs font-bold text-slate-300 mt-1">Active on Shift</p>
+          <p className="text-xs font-bold text-brand-forest-muted mt-1">Active on Shift</p>
         </div>
 
-        <div className="rounded-2xl p-5 bg-slate-900/80 border border-blue-500/20">
+        <div className="rounded-2xl p-5 bg-brand-card/80 border border-blue-500/20">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xl">📍</span>
             <span className="text-[10px] font-bold uppercase text-blue-400">Zones</span>
           </div>
           <p className="text-3xl font-black font-mono text-blue-400">{zones.length}</p>
-          <p className="text-xs font-bold text-slate-300 mt-1">Delivery Hubs in Patna</p>
+          <p className="text-xs font-bold text-brand-forest-muted mt-1">Delivery Hubs in Patna</p>
         </div>
 
         <div
-          className={`rounded-2xl p-5 bg-slate-900/80 border ${
-            unassignedOrders > 0 ? 'border-amber-500/40' : 'border-slate-800'
+          className={`rounded-2xl p-5 bg-brand-card/80 border ${
+            unassignedOrders > 0 ? 'border-brand-mustard/40' : 'border-brand-border'
           }`}
         >
           <div className="flex items-center justify-between mb-2">
             <span className="text-xl">📦</span>
             <span
               className={`text-[10px] font-bold uppercase ${
-                unassignedOrders > 0 ? 'text-amber-400' : 'text-slate-400'
+                unassignedOrders > 0 ? 'text-brand-mustard' : 'text-brand-forest-muted'
               }`}
             >
               Pending
@@ -379,23 +379,23 @@ export default function AdminRidersPage() {
           </div>
           <p
             className={`text-3xl font-black font-mono ${
-              unassignedOrders > 0 ? 'text-amber-400' : 'text-slate-100'
+              unassignedOrders > 0 ? 'text-brand-mustard' : 'text-brand-forest'
             }`}
           >
             {unassignedOrders}
           </p>
-          <p className="text-xs font-bold text-slate-300 mt-1">Unassigned Orders Today</p>
+          <p className="text-xs font-bold text-brand-forest-muted mt-1">Unassigned Orders Today</p>
         </div>
       </div>
 
       {/* Zone Coverage Matrix */}
-      <div className="rounded-3xl p-6 sm:p-8 bg-slate-900/90 border border-slate-800 shadow-xl">
+      <div className="rounded-3xl p-6 sm:p-8 bg-brand-card/90 border border-brand-border shadow-xl">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg font-black text-white flex items-center gap-2">
+            <h2 className="text-lg font-black text-brand-forest flex items-center gap-2">
               <span>📍</span> Patna Zone Coverage Matrix
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-brand-forest-muted mt-0.5">
               Live mapping of active designated delivery riders per pincode.
             </p>
           </div>
@@ -408,39 +408,39 @@ export default function AdminRidersPage() {
             return (
               <div
                 key={zone.id}
-                className="rounded-2xl p-5 bg-slate-950/70 border border-slate-800/90 relative overflow-hidden flex flex-col justify-between"
+                className="rounded-2xl p-5 bg-brand-cream/70 border border-brand-border/90 relative overflow-hidden flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <h3 className="font-bold text-sm text-slate-100">{zone.neighborhood}</h3>
-                      <span className="text-xs font-mono font-bold text-amber-400">
+                      <h3 className="font-bold text-sm text-brand-forest">{zone.neighborhood}</h3>
+                      <span className="text-xs font-mono font-bold text-brand-mustard">
                         PIN: {zone.pincode}
                       </span>
                     </div>
-                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-slate-800 text-slate-300">
+                    <span className="px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-brand-cream text-brand-forest-muted">
                       Patna
                     </span>
                   </div>
 
-                  <div className="mt-4 pt-4 border-t border-slate-800/80">
-                    <p className="text-[10px] uppercase font-black tracking-wider text-slate-400 mb-1.5">
+                  <div className="mt-4 pt-4 border-t border-brand-border/80">
+                    <p className="text-[10px] uppercase font-black tracking-wider text-brand-forest-muted mb-1.5">
                       Designated Rider
                     </p>
                     {assignedRider ? (
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-xs font-bold text-emerald-400 flex items-center gap-1.5">
+                          <p className="text-xs font-bold text-brand-mustard flex items-center gap-1.5">
                             <span>🚴</span>
                             <span>{assignedRider.name}</span>
                           </p>
-                          <p className="text-[11px] font-mono text-slate-400 mt-0.5">
+                          <p className="text-[11px] font-mono text-brand-forest-muted mt-0.5">
                             {assignedRider.phone} · {assignedRider.vehicleType}
                           </p>
                         </div>
                         <span
                           className={`w-2 h-2 rounded-full ${
-                            assignedRider.active ? 'bg-emerald-400 animate-pulse' : 'bg-slate-600'
+                            assignedRider.active ? 'bg-brand-mustard animate-pulse' : 'bg-brand-border'
                           }`}
                         />
                       </div>
@@ -453,8 +453,8 @@ export default function AdminRidersPage() {
                   </div>
                 </div>
 
-                <div className="mt-5 pt-3 border-t border-slate-800/60 flex items-center justify-between text-xs">
-                  <span className="text-[11px] text-slate-400">
+                <div className="mt-5 pt-3 border-t border-brand-border/60 flex items-center justify-between text-xs">
+                  <span className="text-[11px] text-brand-forest-muted">
                     Today&apos;s Stops: {assignedRider?.stats.totalAssigned || 0}
                   </span>
                   <select
@@ -465,7 +465,7 @@ export default function AdminRidersPage() {
                         handleZoneChange(selectedRiderId, zone.id);
                       }
                     }}
-                    className="px-2.5 py-1 rounded-lg bg-slate-900 border border-slate-700 text-[11px] font-bold text-slate-200 focus:outline-none focus:border-amber-400"
+                    className="px-2.5 py-1 rounded-lg bg-brand-card border border-brand-border text-[11px] font-bold text-brand-forest focus:outline-none focus:border-brand-mustard"
                   >
                     <option value="">Select rider to assign...</option>
                     {riders.map((r) => (
@@ -482,30 +482,30 @@ export default function AdminRidersPage() {
       </div>
 
       {/* Fleet Roster Table */}
-      <div className="rounded-3xl p-6 sm:p-8 bg-slate-900/90 border border-slate-800 shadow-xl">
+      <div className="rounded-3xl p-6 sm:p-8 bg-brand-card/90 border border-brand-border shadow-xl">
         <div className="flex items-center justify-between mb-6">
           <div>
-            <h2 className="text-lg font-black text-white flex items-center gap-2">
+            <h2 className="text-lg font-black text-brand-forest flex items-center gap-2">
               <span>👥</span> Active Fleet Roster
             </h2>
-            <p className="text-xs text-slate-400 mt-0.5">
+            <p className="text-xs text-brand-forest-muted mt-0.5">
               Manage rider assignments, contact details, and vehicle information.
             </p>
           </div>
         </div>
 
         {loading ? (
-          <div className="py-16 text-center text-slate-400 text-xs font-mono">
+          <div className="py-16 text-center text-brand-forest-muted text-xs font-mono">
             Loading delivery fleet data...
           </div>
         ) : riders.length === 0 ? (
-          <div className="py-16 text-center text-slate-400 text-xs">
+          <div className="py-16 text-center text-brand-forest-muted text-xs">
             No riders registered yet. Click &quot;Enroll New Rider&quot; above to add one.
           </div>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-800">
+          <div className="overflow-x-auto rounded-2xl border border-brand-border">
             <table className="w-full text-left text-xs">
-              <thead className="bg-slate-950/80 text-slate-400 uppercase text-[10px] font-black tracking-wider border-b border-slate-800">
+              <thead className="bg-brand-cream/80 text-brand-forest-muted uppercase text-[10px] font-black tracking-wider border-b border-brand-border">
                 <tr>
                   <th className="py-3.5 px-4">Rider Details</th>
                   <th className="py-3.5 px-4">Dispatch Passcode</th>
@@ -516,21 +516,21 @@ export default function AdminRidersPage() {
                   <th className="py-3.5 px-4 text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-800/60 bg-slate-900/40">
+              <tbody className="divide-y divide-slate-800/60 bg-brand-card/40">
                 {riders.map((rider) => (
-                  <tr key={rider.id} className="hover:bg-slate-800/30 transition-colors">
+                  <tr key={rider.id} className="hover:bg-brand-cream/30 transition-colors">
                     {/* Rider details */}
                     <td className="py-4 px-4 align-middle">
-                      <div className="font-bold text-slate-100 text-sm">{rider.name}</div>
+                      <div className="font-bold text-brand-forest text-sm">{rider.name}</div>
                       <div className="flex items-center gap-2 mt-0.5">
-                        <span className="font-mono text-emerald-400 font-semibold text-[11px]">
+                        <span className="font-mono text-brand-mustard font-semibold text-[11px]">
                           📱 {rider.phone}
                         </span>
                         <a
                           href={`https://wa.me/91${rider.phone.replace(/\D/g, '').slice(-10)}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-[10px] font-bold text-emerald-400/80 hover:text-emerald-300 hover:underline"
+                          className="text-[10px] font-bold text-brand-mustard/80 hover:text-brand-mustard-hover hover:underline"
                         >
                           (WhatsApp)
                         </a>
@@ -540,17 +540,17 @@ export default function AdminRidersPage() {
                     {/* Dispatch Passcode */}
                     <td className="py-4 px-4 align-middle">
                       <div className="flex items-center gap-1.5">
-                        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-amber-400/10 text-amber-300 border border-amber-400/30 tracking-widest">
+                        <span className="font-mono font-bold text-xs px-2.5 py-1 rounded-lg bg-brand-mustard/10 text-brand-forest-muted border border-brand-mustard/30 tracking-widest">
                           🔑 {rider.passcode || '123456'}
                         </span>
                         <button
                           type="button"
                           onClick={() => handleCopyPasscode(rider.passcode || '123456', rider.id)}
-                          className="p-1 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1 rounded-md text-brand-forest-muted hover:text-brand-forest hover:bg-brand-cream transition-colors cursor-pointer"
                           title="Copy 6-digit passcode"
                         >
                           {copiedId === rider.id ? (
-                            <span className="text-emerald-400 font-bold text-[11px]">✓</span>
+                            <span className="text-brand-mustard font-bold text-[11px]">✓</span>
                           ) : (
                             <span className="text-[12px]">📋</span>
                           )}
@@ -558,7 +558,7 @@ export default function AdminRidersPage() {
                         <button
                           type="button"
                           onClick={() => openEditPasscode(rider)}
-                          className="p-1 rounded-md text-slate-400 hover:text-amber-400 hover:bg-slate-800 transition-colors cursor-pointer"
+                          className="p-1 rounded-md text-brand-forest-muted hover:text-brand-mustard hover:bg-brand-cream transition-colors cursor-pointer"
                           title="Change passcode"
                         >
                           <span className="text-[12px]">✏️</span>
@@ -571,7 +571,7 @@ export default function AdminRidersPage() {
                       <span className="inline-block px-2 py-0.5 rounded text-[10px] font-black uppercase bg-blue-500/10 text-blue-300 border border-blue-500/30">
                         {rider.vehicleType}
                       </span>
-                      <p className="font-mono text-[11px] text-slate-400 mt-1">
+                      <p className="font-mono text-[11px] text-brand-forest-muted mt-1">
                         {rider.vehicleNumber}
                       </p>
                     </td>
@@ -581,7 +581,7 @@ export default function AdminRidersPage() {
                       <select
                         value={rider.assignedZone?.id || ''}
                         onChange={(e) => handleZoneChange(rider.id, e.target.value)}
-                        className="px-3 py-1.5 rounded-xl bg-slate-950 border border-slate-700 text-xs font-bold text-slate-200 focus:outline-none focus:border-amber-400"
+                        className="px-3 py-1.5 rounded-xl bg-brand-cream border border-brand-border text-xs font-bold text-brand-forest focus:outline-none focus:border-brand-mustard"
                       >
                         <option value="">Unassigned</option>
                         {zones.map((z) => (
@@ -596,16 +596,16 @@ export default function AdminRidersPage() {
                     <td className="py-4 px-4 align-middle">
                       <div className="space-y-1">
                         <div className="flex justify-between text-[11px] font-mono">
-                          <span className="text-slate-300">
+                          <span className="text-brand-forest-muted">
                             {rider.stats.delivered} / {rider.stats.totalAssigned} Delivered
                           </span>
-                          <span className="text-amber-400 font-bold">
+                          <span className="text-brand-mustard font-bold">
                             {rider.stats.pending} Pending
                           </span>
                         </div>
-                        <div className="w-36 bg-slate-950 rounded-full h-1.5 overflow-hidden border border-slate-800">
+                        <div className="w-36 bg-brand-cream rounded-full h-1.5 overflow-hidden border border-brand-border">
                           <div
-                            className="bg-emerald-400 h-full rounded-full"
+                            className="bg-brand-mustard h-full rounded-full"
                             style={{
                               width:
                                 rider.stats.totalAssigned > 0
@@ -626,8 +626,8 @@ export default function AdminRidersPage() {
                         onClick={() => handleToggleActive(rider.id, rider.active)}
                         className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider cursor-pointer transition-all ${
                           rider.active
-                            ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/30 hover:bg-emerald-500/20'
-                            : 'bg-slate-800 text-slate-400 border border-slate-700 hover:bg-slate-700'
+                            ? 'bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/30 hover:bg-brand-mustard/20'
+                            : 'bg-brand-cream text-brand-forest-muted border border-brand-border hover:bg-brand-border'
                         }`}
                       >
                         {rider.active ? '🟢 On Duty' : '⚪ Offline'}
@@ -639,7 +639,7 @@ export default function AdminRidersPage() {
                       <button
                         type="button"
                         onClick={() => handleDeleteRider(rider.id, rider.name)}
-                        className="px-2.5 py-1 rounded-lg text-red-400 hover:text-white hover:bg-red-500/20 text-xs font-bold transition-all cursor-pointer"
+                        className="px-2.5 py-1 rounded-lg text-red-400 hover:text-brand-forest hover:bg-red-500/20 text-xs font-bold transition-all cursor-pointer"
                         title="Remove rider"
                       >
                         🗑️ Remove
@@ -655,19 +655,19 @@ export default function AdminRidersPage() {
 
       {/* Add Rider Modal */}
       {showModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 bg-slate-900 border border-slate-800 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-cream/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-md rounded-3xl p-6 sm:p-8 bg-brand-card border border-brand-border shadow-2xl relative">
             <div className="flex items-center justify-between mb-5">
               <div>
-                <h3 className="text-lg font-black text-white">Enroll Delivery Rider</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <h3 className="text-lg font-black text-brand-forest">Enroll Delivery Rider</h3>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
                   Add a rider to your Patna distribution network.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setShowModal(false)}
-                className="text-slate-400 hover:text-white cursor-pointer font-bold"
+                className="text-brand-forest-muted hover:text-brand-forest cursor-pointer font-bold"
               >
                 ✕
               </button>
@@ -681,7 +681,7 @@ export default function AdminRidersPage() {
 
             <form onSubmit={handleAddRider} className="space-y-4">
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                   Rider Full Name
                 </label>
                 <input
@@ -690,12 +690,12 @@ export default function AdminRidersPage() {
                   placeholder="e.g. Suresh Kumar"
                   value={newRider.name}
                   onChange={(e) => setNewRider({ ...newRider, name: e.target.value })}
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                   Mobile Number (10 digits)
                 </label>
                 <input
@@ -710,13 +710,13 @@ export default function AdminRidersPage() {
                       phone: e.target.value.replace(/\D/g, '').slice(0, 10),
                     })
                   }
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-100 font-mono placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest font-mono placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                 />
               </div>
 
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                     6-Digit Dispatch Passcode (Login PIN)
                   </label>
                   <button
@@ -727,7 +727,7 @@ export default function AdminRidersPage() {
                         passcode: generateRandomPasscode(),
                       })
                     }
-                    className="text-[11px] font-bold text-amber-400 hover:text-amber-300 flex items-center gap-1 cursor-pointer"
+                    className="text-[11px] font-bold text-brand-mustard hover:text-brand-forest-muted flex items-center gap-1 cursor-pointer"
                   >
                     <span>🎲 Auto-Generate</span>
                   </button>
@@ -744,22 +744,22 @@ export default function AdminRidersPage() {
                       passcode: e.target.value.replace(/\D/g, '').slice(0, 6),
                     })
                   }
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-amber-300 font-mono font-bold tracking-widest placeholder:text-slate-600 focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest-muted font-mono font-bold tracking-widest placeholder:text-slate-600 focus:outline-none focus:border-brand-mustard"
                 />
-                <p className="text-[11px] text-slate-500 mt-1">
+                <p className="text-[11px] text-brand-forest-muted/70 mt-1">
                   The rider will use this 6-digit code with their phone number to log into the Rider Portal.
                 </p>
               </div>
 
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                     Vehicle Type
                   </label>
                   <select
                     value={newRider.vehicleType}
                     onChange={(e) => setNewRider({ ...newRider, vehicleType: e.target.value })}
-                    className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-200 font-bold focus:outline-none focus:border-amber-400"
+                    className="w-full px-3 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest font-bold focus:outline-none focus:border-brand-mustard"
                   >
                     <option value="EV Scooter">EV Scooter</option>
                     <option value="Motorcycle">Motorcycle</option>
@@ -769,7 +769,7 @@ export default function AdminRidersPage() {
                 </div>
 
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                     Vehicle Number
                   </label>
                   <input
@@ -779,19 +779,19 @@ export default function AdminRidersPage() {
                     onChange={(e) =>
                       setNewRider({ ...newRider, vehicleNumber: e.target.value.toUpperCase() })
                     }
-                    className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-100 font-mono placeholder:text-slate-500 focus:outline-none focus:border-amber-400"
+                    className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest font-mono placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                   Assigned Delivery Zone (Patna)
                 </label>
                 <select
                   value={newRider.assignedZoneId}
                   onChange={(e) => setNewRider({ ...newRider, assignedZoneId: e.target.value })}
-                  className="w-full px-3 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-xs text-slate-200 font-bold focus:outline-none focus:border-amber-400"
+                  className="w-full px-3 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest font-bold focus:outline-none focus:border-brand-mustard"
                 >
                   <option value="">Select primary zone...</option>
                   {zones.map((z) => (
@@ -806,14 +806,14 @@ export default function AdminRidersPage() {
                 <button
                   type="button"
                   onClick={() => setShowModal(false)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-brand-forest-muted hover:text-brand-forest cursor-pointer"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={modalLoading || !newRider.name || newRider.phone.length < 10 || newRider.passcode.length < 6}
-                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-forest-muted transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {modalLoading ? 'Enrolling...' : 'Enroll Rider →'}
                 </button>
@@ -825,19 +825,19 @@ export default function AdminRidersPage() {
 
       {/* Edit Passcode Modal */}
       {editingPasscodeRider && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-sm animate-fade-in">
-          <div className="w-full max-w-sm rounded-3xl p-6 bg-slate-900 border border-slate-800 shadow-2xl">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-cream/80 backdrop-blur-sm animate-fade-in">
+          <div className="w-full max-w-sm rounded-3xl p-6 bg-brand-card border border-brand-border shadow-2xl">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h3 className="text-base font-black text-white">Update Dispatch Passcode</h3>
-                <p className="text-xs text-slate-400 mt-0.5">
-                  Rider: <span className="text-slate-200 font-bold">{editingPasscodeRider.name}</span> ({editingPasscodeRider.phone})
+                <h3 className="text-base font-black text-brand-forest">Update Dispatch Passcode</h3>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
+                  Rider: <span className="text-brand-forest font-bold">{editingPasscodeRider.name}</span> ({editingPasscodeRider.phone})
                 </p>
               </div>
               <button
                 type="button"
                 onClick={() => setEditingPasscodeRider(null)}
-                className="text-slate-400 hover:text-white cursor-pointer font-bold"
+                className="text-brand-forest-muted hover:text-brand-forest cursor-pointer font-bold"
               >
                 ✕
               </button>
@@ -846,7 +846,7 @@ export default function AdminRidersPage() {
             <div className="space-y-4">
               <div>
                 <div className="flex items-center justify-between mb-1.5">
-                  <label className="text-xs font-bold uppercase tracking-wider text-slate-300">
+                  <label className="text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                     New 6-Digit Passcode
                   </label>
                   <button
@@ -854,7 +854,7 @@ export default function AdminRidersPage() {
                     onClick={() =>
                       setNewPasscodeVal(generateRandomPasscode())
                     }
-                    className="text-[11px] font-bold text-amber-400 hover:text-amber-300 cursor-pointer"
+                    className="text-[11px] font-bold text-brand-mustard hover:text-brand-forest-muted cursor-pointer"
                   >
                     🎲 Randomize
                   </button>
@@ -865,7 +865,7 @@ export default function AdminRidersPage() {
                   value={newPasscodeVal}
                   onChange={(e) => setNewPasscodeVal(e.target.value.replace(/\D/g, '').slice(0, 6))}
                   placeholder="6-digit PIN"
-                  className="w-full px-4 py-2.5 rounded-xl bg-slate-950 border border-slate-700 text-sm text-amber-300 font-mono font-bold tracking-widest text-center focus:outline-none focus:border-amber-400"
+                  className="w-full px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border text-sm text-brand-forest-muted font-mono font-bold tracking-widest text-center focus:outline-none focus:border-brand-mustard"
                 />
               </div>
 
@@ -873,7 +873,7 @@ export default function AdminRidersPage() {
                 <button
                   type="button"
                   onClick={() => setEditingPasscodeRider(null)}
-                  className="px-4 py-2 rounded-xl text-xs font-bold text-slate-400 hover:text-white cursor-pointer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold text-brand-forest-muted hover:text-brand-forest cursor-pointer"
                 >
                   Cancel
                 </button>
@@ -881,7 +881,7 @@ export default function AdminRidersPage() {
                   type="button"
                   disabled={newPasscodeVal.length !== 6 || savingPasscode}
                   onClick={handleSavePasscode}
-                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-amber-400 text-slate-950 hover:bg-amber-300 transition-all disabled:opacity-50 cursor-pointer"
+                  className="px-5 py-2.5 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-forest-muted transition-all disabled:opacity-50 cursor-pointer"
                 >
                   {savingPasscode ? 'Saving...' : 'Update Passcode'}
                 </button>

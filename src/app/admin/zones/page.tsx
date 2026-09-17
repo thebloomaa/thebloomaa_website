@@ -76,7 +76,7 @@ export default function AdminZonesPage() {
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage which pincodes you deliver to.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-xl text-sm font-bold text-white"
+          className="px-4 py-2 rounded-xl text-sm font-bold text-brand-forest"
           style={{ background: showForm ? 'var(--danger)' : 'var(--brand-primary)' }}>
           {showForm ? '✕ Cancel' : '+ Add Zone'}
         </button>
@@ -92,7 +92,7 @@ export default function AdminZonesPage() {
             <input type="text" value={form.city} disabled className="px-4 py-2.5 rounded-xl text-sm opacity-60" style={inputStyle} />
             <input type="text" value={form.state} disabled className="px-4 py-2.5 rounded-xl text-sm opacity-60" style={inputStyle} />
           </div>
-          <button onClick={handleAdd} disabled={!form.pincode || !form.neighborhood} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
+          <button onClick={handleAdd} disabled={!form.pincode || !form.neighborhood} className="px-6 py-2.5 rounded-xl text-sm font-bold text-brand-forest disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
             Add Zone
           </button>
         </div>
@@ -123,25 +123,25 @@ export default function AdminZonesPage() {
             </div>
 
             {/* Assigned Rider info */}
-            <div className="mb-4 p-2.5 rounded-lg bg-slate-950/80 border border-slate-800">
-              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-slate-400 mb-1">
+            <div className="mb-4 p-2.5 rounded-lg bg-brand-cream/80 border border-brand-border">
+              <div className="flex items-center justify-between text-[10px] uppercase font-bold text-brand-forest-muted mb-1">
                 <span>Designated Rider</span>
-                {zone.assignedRider && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                {zone.assignedRider && <span className="w-1.5 h-1.5 rounded-full bg-brand-mustard" />}
               </div>
               {zone.assignedRider ? (
                 <div className="flex items-center justify-between">
-                  <span className="text-xs font-bold text-emerald-400 flex items-center gap-1">
+                  <span className="text-xs font-bold text-brand-mustard flex items-center gap-1">
                     <span>🚴</span>
                     <span>{zone.assignedRider.name}</span>
                   </span>
-                  <span className="text-[10px] font-mono text-slate-400">
+                  <span className="text-[10px] font-mono text-brand-forest-muted">
                     {zone.assignedRider.vehicleType}
                   </span>
                 </div>
               ) : (
                 <div className="flex items-center justify-between text-[11px]">
-                  <span className="text-amber-400/90 font-medium">⚠️ No rider assigned</span>
-                  <a href="/admin/riders" className="text-amber-400 hover:underline font-bold text-[10px]">
+                  <span className="text-brand-mustard/90 font-medium">⚠️ No rider assigned</span>
+                  <a href="/admin/riders" className="text-brand-mustard hover:underline font-bold text-[10px]">
                     Assign →
                   </a>
                 </div>

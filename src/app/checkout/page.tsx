@@ -330,10 +330,10 @@ function CheckoutPageInner() {
       <>
         <Navbar />
         <main className="min-h-screen pt-28 pb-16 px-4 flex items-center justify-center" style={{ background: 'var(--bg-dark)' }}>
-          <div className="text-center max-w-md p-8 rounded-3xl bg-slate-900 border border-slate-800 shadow-2xl">
+          <div className="text-center max-w-md p-8 rounded-3xl bg-brand-card border border-brand-border shadow-2xl">
             <div className="text-6xl mb-4">🌱</div>
-            <h1 className="text-2xl font-black mb-2 text-slate-100">No Plan Selected</h1>
-            <p className="text-sm mb-6 text-slate-400 leading-relaxed">
+            <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
+            <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
               Order our Single Day Pack (₹70) to try tomorrow morning, claim the 7-Day Living Reset (₹451), or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
@@ -356,7 +356,7 @@ function CheckoutPageInner() {
                   });
                   selectBundle('DAYS_1');
                 }}
-                className="px-5 py-3 rounded-xl text-xs font-black text-slate-950 bg-emerald-400 hover:bg-emerald-300 transition-all shadow-md cursor-pointer"
+                className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-mustard-hover transition-all shadow-md cursor-pointer"
               >
                 1-Day Pack (₹70)
               </button>
@@ -379,13 +379,13 @@ function CheckoutPageInner() {
                   });
                   selectBundle('DAYS_7');
                 }}
-                className="px-5 py-3 rounded-xl text-xs font-black text-slate-950 bg-amber-400 hover:bg-amber-300 transition-all shadow-md cursor-pointer"
+                className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-forest-muted transition-all shadow-md cursor-pointer"
               >
                 7-Day Trial (₹451)
               </button>
               <Link
                 href="/calculator"
-                className="px-4 py-3 rounded-xl text-xs font-bold text-slate-200 bg-slate-800 hover:bg-slate-700 transition-all flex items-center justify-center"
+                className="px-4 py-3 rounded-xl text-xs font-bold text-brand-forest bg-brand-cream hover:bg-brand-border transition-all flex items-center justify-center"
               >
                 Calculator
               </Link>
@@ -420,17 +420,17 @@ function CheckoutPageInner() {
                     <div
                       className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-black transition-all ${
                         isCurrent
-                          ? 'bg-emerald-500 text-slate-950 ring-4 ring-emerald-500/20 scale-105'
+                          ? 'bg-brand-mustard text-brand-forest ring-4 ring-brand-mustard/20 scale-105'
                           : isPast
-                          ? 'bg-emerald-600 text-white'
-                          : 'bg-slate-800 text-slate-400'
+                          ? 'bg-brand-mustard-hover text-brand-forest'
+                          : 'bg-brand-cream text-brand-forest-muted'
                       }`}
                     >
                       {isPast ? '✓' : idx + 1}
                     </div>
                     <span
                       className={`text-xs font-bold hidden sm:inline transition-colors ${
-                        isCurrent ? 'text-emerald-400' : 'text-slate-400'
+                        isCurrent ? 'text-brand-mustard' : 'text-brand-forest-muted'
                       }`}
                     >
                       {s.label}
@@ -439,7 +439,7 @@ function CheckoutPageInner() {
                   {idx < 2 && (
                     <div
                       className={`w-12 sm:w-20 h-0.5 transition-colors ${
-                        isPast ? 'bg-emerald-500' : 'bg-slate-800'
+                        isPast ? 'bg-brand-mustard' : 'bg-brand-cream'
                       }`}
                     />
                   )}
@@ -452,33 +452,33 @@ function CheckoutPageInner() {
           {step === 'summary' && (
             <div className="space-y-6 animate-fade-in-up">
               <div className="text-center mb-6">
-                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                   Step 1 of 3 · Verification
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Review Your Diet Plan</h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Review Your Diet Plan</h2>
+                <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
                   Macro-tracked, chef-crafted, and delivered fresh to your door every morning.
                 </p>
               </div>
 
               {/* Product Hero Card */}
-              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl relative overflow-hidden">
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl relative overflow-hidden">
                 <div className="flex flex-col sm:flex-row gap-6 items-center">
-                  <div className="w-full sm:w-44 h-40 rounded-2xl overflow-hidden relative flex-shrink-0 bg-slate-950 border border-slate-700">
+                  <div className="w-full sm:w-44 h-40 rounded-2xl overflow-hidden relative flex-shrink-0 bg-brand-cream border border-brand-border">
                     <img
                       src={selectedProduct.imageUrl || '/meals/vegan-keto.png'}
                       alt={selectedProduct.name}
                       className="w-full h-full object-cover"
                     />
-                    <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-slate-950/80 text-emerald-400 border border-emerald-500/30">
+                    <div className="absolute top-2 left-2 px-2.5 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-brand-cream/80 text-brand-mustard border border-brand-mustard/30">
                       {selectedProduct.dietaryPreference.replace('_', ' ')}
                     </div>
                   </div>
 
                   <div className="flex-grow text-center sm:text-left">
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
-                      <h3 className="text-xl sm:text-2xl font-black text-slate-100">{selectedProduct.name}</h3>
-                      <div className="text-xl font-black text-emerald-400 font-mono">
+                      <h3 className="text-xl sm:text-2xl font-black text-brand-forest">{selectedProduct.name}</h3>
+                      <div className="text-xl font-black text-brand-mustard font-mono">
                         {isSingleProduct
                           ? '₹70 (Single Day Diet Pack)'
                           : isTrialProduct
@@ -487,22 +487,22 @@ function CheckoutPageInner() {
                       </div>
                     </div>
 
-                    <p className="text-xs text-slate-300 mt-2 leading-relaxed max-w-xl">
+                    <p className="text-xs text-brand-forest-muted mt-2 leading-relaxed max-w-xl">
                       {selectedProduct.description}
                     </p>
 
                     {/* Macro Badges */}
                     <div className="flex flex-wrap gap-2.5 mt-4 justify-center sm:justify-start">
-                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20 font-mono">
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20 font-mono">
                         🔥 {selectedProduct.calories} kcal
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
                         💪 {selectedProduct.protein}g Protein
                       </span>
-                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-amber-400/10 text-amber-300 border border-amber-400/20 font-mono">
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-forest-muted border border-brand-mustard/20 font-mono">
                         🍞 {selectedProduct.carbs}g Carbs
                       </span>
-                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 font-mono">
+                      <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20 font-mono">
                         🥑 {selectedProduct.fats}g Fats
                       </span>
                     </div>
@@ -511,12 +511,12 @@ function CheckoutPageInner() {
 
                 {/* Single Pack 1-Day Logistics Alert */}
                 {isSingleProduct && (
-                  <div className="mt-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 space-y-1">
+                  <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-mustard-hover space-y-1">
                     <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
                       <span>🌱</span>
                       <span>1-Day Single Drop Logistics Protocol</span>
                     </div>
-                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                    <p className="text-[11px] text-brand-forest-muted leading-relaxed">
                       Delivered tomorrow morning between <strong>6:00 AM – 9:00 AM</strong> at your Patna address with dedicated doorstep delivery and zero recurring commitments.
                     </p>
                   </div>
@@ -524,12 +524,12 @@ function CheckoutPageInner() {
 
                 {/* Trial Plan 6+1 Logistics Alert */}
                 {isTrialProduct && (
-                  <div className="mt-6 p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300 space-y-1">
+                  <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted space-y-1">
                     <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
                       <span>🚚</span>
                       <span>6+1 Logistics Protocol Active</span>
                     </div>
-                    <p className="text-[11px] text-slate-300 leading-relaxed">
+                    <p className="text-[11px] text-brand-forest-muted leading-relaxed">
                       Delivered across <strong>6 active mornings (5:00 AM – 8:00 AM)</strong>. On Day 6, your rider will execute a <strong>Double Drop</strong> (delivering Box 6 &amp; Box 7 together) for your Day 7 Gut Reset.
                     </p>
                   </div>
@@ -538,8 +538,8 @@ function CheckoutPageInner() {
 
               {/* Standard Meal Plan Bundle Selector (Hidden for Trial & Single Pack) */}
               {!isTrialProduct && !isSingleProduct && (
-                <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/80 border border-slate-800">
-                  <h4 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-4">
+                <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/80 border border-brand-border">
+                  <h4 className="text-sm font-black uppercase tracking-wider text-brand-forest-muted mb-4">
                     Subscription Duration
                   </h4>
 
@@ -553,17 +553,17 @@ function CheckoutPageInner() {
                           onClick={() => selectBundle(b.type)}
                           className={`p-4 rounded-2xl text-left transition-all border relative ${
                             isSelected
-                              ? 'bg-emerald-500/15 border-emerald-500 shadow-md shadow-emerald-500/15'
-                              : 'bg-slate-800/40 border-slate-800 hover:bg-slate-800 text-slate-300'
+                              ? 'bg-brand-mustard/15 border-brand-mustard shadow-md shadow-brand-mustard/15'
+                              : 'bg-brand-cream/40 border-brand-border hover:bg-brand-cream text-brand-forest-muted'
                           }`}
                         >
                           {b.discount && (
-                            <span className="absolute -top-2.5 right-3 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-amber-500 text-slate-950">
+                            <span className="absolute -top-2.5 right-3 px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-brand-mustard text-brand-forest">
                               {b.discount}
                             </span>
                           )}
-                          <div className="text-sm font-bold text-slate-100">{b.label} ({b.days} Days)</div>
-                          <p className="text-xs text-slate-400 mt-1">Skip any day with 1-click</p>
+                          <div className="text-sm font-bold text-brand-forest">{b.label} ({b.days} Days)</div>
+                          <p className="text-xs text-brand-forest-muted mt-1">Skip any day with 1-click</p>
                         </button>
                       );
                     })}
@@ -572,27 +572,27 @@ function CheckoutPageInner() {
               )}
 
               {/* Price Calculation Summary */}
-              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/80 border border-slate-800">
-                <h4 className="text-sm font-black uppercase tracking-wider text-slate-300 mb-4">
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/80 border border-brand-border">
+                <h4 className="text-sm font-black uppercase tracking-wider text-brand-forest-muted mb-4">
                   Pricing Breakdown
                 </h4>
 
                 <div className="space-y-2.5 text-xs">
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-brand-forest-muted">
                     <span>Effective daily rate:</span>
-                    <span className="font-bold text-slate-200 font-mono">₹{finalPerDay} / diet</span>
+                    <span className="font-bold text-brand-forest font-mono">₹{finalPerDay} / diet</span>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-brand-forest-muted">
                     <span>Scheduled duration:</span>
-                    <span className="font-bold text-slate-200 font-mono">{finalDays} days</span>
+                    <span className="font-bold text-brand-forest font-mono">{finalDays} days</span>
                   </div>
-                  <div className="flex justify-between text-slate-400">
+                  <div className="flex justify-between text-brand-forest-muted">
                     <span>Doorstep morning delivery:</span>
-                    <span className="font-bold text-emerald-400 font-mono">FREE (Included)</span>
+                    <span className="font-bold text-brand-mustard font-mono">FREE (Included)</span>
                   </div>
-                  <div className="pt-3 border-t border-slate-800 flex justify-between items-baseline">
-                    <span className="text-base font-bold text-slate-100">Total Payable:</span>
-                    <span className="text-2xl font-black text-emerald-400 font-mono">₹{finalTotal}</span>
+                  <div className="pt-3 border-t border-brand-border flex justify-between items-baseline">
+                    <span className="text-base font-bold text-brand-forest">Total Payable:</span>
+                    <span className="text-2xl font-black text-brand-mustard font-mono">₹{finalTotal}</span>
                   </div>
                 </div>
 
@@ -600,7 +600,7 @@ function CheckoutPageInner() {
                   <button
                     type="button"
                     onClick={() => setStep('address')}
-                    className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                    className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
                     Continue to Delivery Address →
                   </button>
@@ -613,30 +613,30 @@ function CheckoutPageInner() {
           {step === 'address' && (
             <div className="space-y-6 animate-fade-in-up">
               <div className="text-center mb-6">
-                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                   Step 2 of 3 · Logistics
                 </span>
-                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Where Should We Deliver?</h2>
-                <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Where Should We Deliver?</h2>
+                <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
                   Fresh cloud kitchen delivery in Patna between 5:00 AM – 8:00 AM daily.
                 </p>
               </div>
 
-              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-5">
+              <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-5">
                 {/* User Session Autofill Notice */}
                 {session?.user ? (
-                  <div className="p-3.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <div className="p-3.5 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-mustard-hover flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
                     <span>
                       Logged in as <strong>{session.user.name || session.user.email}</strong>. Details auto-filled from your profile.
                     </span>
                   </div>
                 ) : (
-                  <div className="p-3.5 rounded-2xl bg-slate-800/80 border border-slate-700 text-xs text-slate-300 flex items-center justify-between">
+                  <div className="p-3.5 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest-muted flex items-center justify-between">
                     <span>Already a member?</span>
                     <Link
                       href="/login?callbackUrl=/checkout"
-                      className="text-emerald-400 hover:text-emerald-300 font-bold underline transition-colors"
+                      className="text-brand-mustard hover:text-brand-mustard-hover font-bold underline transition-colors"
                     >
                       Log in to auto-fill address →
                     </Link>
@@ -646,7 +646,7 @@ function CheckoutPageInner() {
                 {/* Name & Phone */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Full Name *
                     </label>
                     <input
@@ -655,11 +655,11 @@ function CheckoutPageInner() {
                       placeholder="e.g. Aditi Sharma"
                       value={form.name}
                       onChange={(e) => setForm({ ...form, name: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Mobile Phone (for delivery SMS/call) *
                     </label>
                     <input
@@ -668,14 +668,14 @@ function CheckoutPageInner() {
                       placeholder="+91 98765 43210"
                       value={form.phone}
                       onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
                 </div>
 
                 {/* Email */}
                 <div>
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                     Email Address (for subscription confirmation)
                   </label>
                   <input
@@ -683,14 +683,14 @@ function CheckoutPageInner() {
                     placeholder="aditi@example.com"
                     value={form.email}
                     onChange={(e) => setForm({ ...form, email: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                   />
                 </div>
 
                 {/* House No & Street Address */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="sm:col-span-1">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Flat / House No. *
                     </label>
                     <input
@@ -698,11 +698,11 @@ function CheckoutPageInner() {
                       placeholder="e.g. Flat 402, Block B"
                       value={form.houseNo}
                       onChange={(e) => setForm({ ...form, houseNo: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Street / Society / Landmark *
                     </label>
                     <input
@@ -711,7 +711,7 @@ function CheckoutPageInner() {
                       placeholder="e.g. Boring Road, near Alankar Jewellers"
                       value={form.street}
                       onChange={(e) => setForm({ ...form, street: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
                 </div>
@@ -719,29 +719,29 @@ function CheckoutPageInner() {
                 {/* City, State & Pincode */}
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       City
                     </label>
                     <input
                       type="text"
                       value={form.city}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-base sm:text-sm text-slate-400 cursor-not-allowed min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/40 border border-brand-border text-base sm:text-sm text-brand-forest-muted cursor-not-allowed min-h-[46px]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       State
                     </label>
                     <input
                       type="text"
                       value={form.state}
                       disabled
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/40 border border-slate-800 text-base sm:text-sm text-slate-400 cursor-not-allowed min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/40 border border-brand-border text-base sm:text-sm text-brand-forest-muted cursor-not-allowed min-h-[46px]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Pincode (Patna) *
                     </label>
                     <input
@@ -754,7 +754,7 @@ function CheckoutPageInner() {
                         const val = e.target.value.replace(/\D/g, '');
                         setForm({ ...form, pincode: val });
                       }}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 font-mono min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono min-h-[46px]"
                     />
                     {pincodeError && (
                       <p className="text-[11px] text-red-400 mt-1">{pincodeError}</p>
@@ -765,13 +765,13 @@ function CheckoutPageInner() {
                 {/* Delivery Time Slot & Notes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Preferred Morning Delivery Slot *
                     </label>
                     <select
                       value={form.deliveryTime}
                       onChange={(e) => setForm({ ...form, deliveryTime: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     >
                       <option value="06:00">06:00 AM (Early Riser)</option>
                       <option value="06:30">06:30 AM</option>
@@ -781,7 +781,7 @@ function CheckoutPageInner() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                    <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                       Delivery Instructions (Optional)
                     </label>
                     <input
@@ -789,23 +789,23 @@ function CheckoutPageInner() {
                       placeholder="e.g. Leave with guard / Ring bell once"
                       value={form.deliveryNote}
                       onChange={(e) => setForm({ ...form, deliveryNote: e.target.value })}
-                      className="w-full px-4 py-3 rounded-xl bg-slate-800/80 border border-slate-700 text-base sm:text-sm text-slate-100 focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800 flex justify-between">
+                <div className="pt-4 border-t border-brand-border flex justify-between">
                   <button
                     type="button"
                     onClick={() => setStep('summary')}
-                    className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                    className="px-6 py-3.5 rounded-2xl text-sm font-semibold border border-brand-border text-brand-forest-muted hover:bg-brand-cream transition-colors"
                   >
                     ← Back
                   </button>
                   <button
                     type="button"
                     onClick={handleValidateAndProceedAddress}
-                    className="px-8 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
+                    className="px-8 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
                     Proceed to Payment — ₹{finalTotal} →
                   </button>
@@ -819,30 +819,30 @@ function CheckoutPageInner() {
             <div className="space-y-6 animate-fade-in-up">
               {/* ORDER SUCCESS OVERLAY */}
               {orderSuccess ? (
-                <div className="rounded-3xl p-8 sm:p-12 backdrop-blur-xl bg-slate-900/95 border-2 border-emerald-500 shadow-2xl text-center space-y-5 animate-fade-in-up">
-                  <div className="w-16 h-16 rounded-full bg-emerald-500/20 text-emerald-400 border-2 border-emerald-500 flex items-center justify-center text-3xl mx-auto">
+                <div className="rounded-3xl p-8 sm:p-12 backdrop-blur-xl bg-brand-card/95 border-2 border-brand-mustard shadow-2xl text-center space-y-5 animate-fade-in-up">
+                  <div className="w-16 h-16 rounded-full bg-brand-mustard/20 text-brand-mustard border-2 border-brand-mustard flex items-center justify-center text-3xl mx-auto">
                     ✓
                   </div>
-                  <h2 className="text-2xl sm:text-3xl font-black text-slate-100">
+                  <h2 className="text-2xl sm:text-3xl font-black text-brand-forest">
                     Subscription Confirmed! 🎉
                   </h2>
-                  <p className="text-sm text-slate-300 max-w-md mx-auto leading-relaxed">
+                  <p className="text-sm text-brand-forest-muted max-w-md mx-auto leading-relaxed">
                     Your morning diet prep has been scheduled. Cold-chain morning drop begins tomorrow at{' '}
-                    <strong className="text-emerald-400 font-mono">{form.deliveryTime || '07:00'} AM</strong>.
+                    <strong className="text-brand-mustard font-mono">{form.deliveryTime || '07:00'} AM</strong>.
                   </p>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-800 text-xs font-mono text-emerald-400">
-                    <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-cream text-xs font-mono text-brand-mustard">
+                    <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
                     Redirecting to your Subscriber Dashboard...
                   </div>
                 </div>
               ) : (
                 <>
                   <div className="text-center mb-6">
-                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
                       Step 3 of 3 · Fast UPI Prepayment
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-slate-100">Complete Your Payment</h2>
-                    <p className="text-xs sm:text-sm text-slate-400 mt-1">
+                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Complete Your Payment</h2>
+                    <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
                       Pay via Google Pay, PhonePe, Paytm, or any UPI app in 1-click.
                     </p>
                   </div>
@@ -854,7 +854,7 @@ function CheckoutPageInner() {
                       <button
                         type="button"
                         onClick={() => setSubmitError(null)}
-                        className="text-slate-400 hover:text-white text-sm font-bold ml-2"
+                        className="text-brand-forest-muted hover:text-brand-forest text-sm font-bold ml-2"
                       >
                         ×
                       </button>
@@ -863,14 +863,14 @@ function CheckoutPageInner() {
 
                   {/* Returned from App Quick-Confirm Banner */}
                   {returnedFromApp && (
-                    <div className="rounded-2xl p-4 bg-emerald-500/15 border-2 border-emerald-500/40 text-emerald-300 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="rounded-2xl p-4 bg-brand-mustard/15 border-2 border-brand-mustard/40 text-brand-mustard-hover flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                       <div className="flex items-start gap-2.5">
                         <span className="text-2xl">✨</span>
                         <div>
                           <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
                             Returned from {launchedApp || 'UPI App'}
                           </h4>
-                          <p className="text-xs text-slate-300 mt-0.5">
+                          <p className="text-xs text-brand-forest-muted mt-0.5">
                             Completed your ₹{finalTotal} payment? Click below to immediately lock in your morning drop without typing anything!
                           </p>
                         </div>
@@ -879,7 +879,7 @@ function CheckoutPageInner() {
                         type="button"
                         disabled={submitting}
                         onClick={() => handleConfirmPayment(true)}
-                        className="px-5 py-2.5 rounded-xl font-black text-xs bg-emerald-500 text-slate-950 hover:bg-emerald-400 shrink-0 shadow-lg cursor-pointer transition-all hover:scale-105"
+                        className="px-5 py-2.5 rounded-xl font-black text-xs bg-brand-mustard text-brand-forest hover:bg-brand-mustard shrink-0 shadow-lg cursor-pointer transition-all hover:scale-105"
                       >
                         {submitting ? 'Confirming...' : '✓ Confirm Order Now'}
                       </button>
@@ -888,13 +888,13 @@ function CheckoutPageInner() {
 
                   {/* Strict COD Disabled Alert for Just Bloomed 7D Trial & Single Pack */}
                   {(isTrialProduct || isSingleProduct) && (
-                    <div className="rounded-2xl p-4 bg-emerald-500/10 border-2 border-emerald-500/40 text-emerald-300 flex items-start gap-3">
+                    <div className="rounded-2xl p-4 bg-brand-mustard/10 border-2 border-brand-mustard/40 text-brand-mustard-hover flex items-start gap-3">
                       <span className="text-xl">🔒</span>
                       <div>
                         <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
                           Prepaid Fresh Living Order Enforced
                         </h4>
-                        <p className="text-xs text-slate-300 mt-0.5 leading-relaxed">
+                        <p className="text-xs text-brand-forest-muted mt-0.5 leading-relaxed">
                           Cash on Delivery is <strong>strictly disabled</strong> to guarantee continuous morning cold-chain logistics in Patna. Total fixed package price: <strong>₹{finalTotal}</strong>.
                         </p>
                       </div>
@@ -902,18 +902,18 @@ function CheckoutPageInner() {
                   )}
 
                   {/* UPI Payment Container Card */}
-                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-slate-900/90 border border-slate-800 shadow-2xl space-y-6">
+                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-6">
                     {/* SECTION 1: ONE-TAP MOBILE UPI LAUNCHER */}
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-950 to-slate-900 border border-slate-800 space-y-3">
+                    <div className="rounded-2xl p-5 bg-gradient-to-br from-slate-950 to-slate-900 border border-brand-border space-y-3">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                        <span className="text-xs font-black uppercase tracking-wider text-slate-200 flex items-center gap-1.5">
+                        <span className="text-xs font-black uppercase tracking-wider text-brand-forest flex items-center gap-1.5">
                           <span>⚡</span> 1-Click UPI App Payment
                         </span>
-                        <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 w-fit">
+                        <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 w-fit">
                           Direct App Redirection · No typing amount
                         </span>
                       </div>
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-brand-forest-muted">
                         Tap any app below to launch payment directly on your phone with ₹{finalTotal} prefilled:
                       </p>
 
@@ -922,40 +922,40 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('Google Pay', gpayUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
+                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-blue-400 group-hover:scale-110 transition-transform">G</span>
-                          <span className="text-xs font-bold text-slate-200">Google Pay</span>
+                          <span className="text-xs font-bold text-brand-forest">Google Pay</span>
                         </button>
 
                         {/* PhonePe */}
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('PhonePe', phonepeUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
+                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-purple-400 group-hover:scale-110 transition-transform">पे</span>
-                          <span className="text-xs font-bold text-slate-200">PhonePe</span>
+                          <span className="text-xs font-bold text-brand-forest">PhonePe</span>
                         </button>
 
                         {/* Paytm */}
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('Paytm', paytmUri)}
-                          className="p-3 rounded-xl bg-slate-800/80 hover:bg-slate-700/90 border border-slate-700 hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
+                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
                           <span className="text-sm font-black text-sky-400 group-hover:scale-110 transition-transform">P</span>
-                          <span className="text-xs font-bold text-slate-200">Paytm</span>
+                          <span className="text-xs font-bold text-brand-forest">Paytm</span>
                         </button>
 
                         {/* Any UPI App */}
                         <button
                           type="button"
                           onClick={() => handleLaunchApp('UPI App', universalUpiUri)}
-                          className="p-3 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
+                          className="p-3 rounded-xl bg-brand-mustard/15 hover:bg-brand-mustard/25 border border-brand-mustard/40 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
                         >
-                          <span className="text-sm font-black text-emerald-400 group-hover:scale-110 transition-transform">📲</span>
-                          <span className="text-xs font-bold text-emerald-300">Any UPI App</span>
+                          <span className="text-sm font-black text-brand-mustard group-hover:scale-110 transition-transform">📲</span>
+                          <span className="text-xs font-bold text-brand-mustard-hover">Any UPI App</span>
                         </button>
                       </div>
                     </div>
@@ -963,7 +963,7 @@ function CheckoutPageInner() {
                     {/* SECTION 2: DESKTOP QR CODE & UTR CONFIRMATION */}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
                       {/* Dynamic UPI QR Code Display */}
-                      <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-slate-950 border border-slate-800">
+                      <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-brand-cream border border-brand-border">
                         <div className="p-3 bg-white rounded-2xl shadow-xl">
                           <img
                             src={`https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(universalUpiUri)}`}
@@ -973,10 +973,10 @@ function CheckoutPageInner() {
                         </div>
 
                         <div className="mt-4 text-center">
-                          <span className="text-[11px] uppercase tracking-wider text-slate-400 block font-semibold">
+                          <span className="text-[11px] uppercase tracking-wider text-brand-forest-muted block font-semibold">
                             Or Scan with PhonePe / GPay / Paytm
                           </span>
-                          <span className="text-2xl font-black text-emerald-400 font-mono mt-1 block">
+                          <span className="text-2xl font-black text-brand-mustard font-mono mt-1 block">
                             ₹{finalTotal}
                           </span>
                         </div>
@@ -986,18 +986,18 @@ function CheckoutPageInner() {
                       <div className="space-y-4">
                         {/* Copyable UPI ID Pill */}
                         <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+                          <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
                             Merchant UPI ID
                           </label>
                           <div className="flex items-center gap-2">
-                            <div className="flex-1 px-4 py-2.5 rounded-xl bg-slate-800 border border-slate-700 font-mono text-sm text-slate-100 flex items-center justify-between">
+                            <div className="flex-1 px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border font-mono text-sm text-brand-forest flex items-center justify-between">
                               <span>thebloomaa@upi</span>
-                              <span className="text-[10px] text-emerald-400 uppercase font-black">Verified</span>
+                              <span className="text-[10px] text-brand-mustard uppercase font-black">Verified</span>
                             </div>
                             <button
                               type="button"
                               onClick={handleCopyUpiId}
-                              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-colors"
+                              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-colors"
                             >
                               {copiedUpi ? 'Copied! ✓' : 'Copy'}
                             </button>
@@ -1005,34 +1005,34 @@ function CheckoutPageInner() {
                         </div>
 
                         {/* Order Reference Breakdown */}
-                        <div className="p-3.5 rounded-2xl bg-slate-800/40 border border-slate-800 text-xs space-y-1.5">
-                          <div className="flex justify-between text-slate-400">
+                        <div className="p-3.5 rounded-2xl bg-brand-cream/40 border border-brand-border text-xs space-y-1.5">
+                          <div className="flex justify-between text-brand-forest-muted">
                             <span>Selected Diet Prep:</span>
-                            <span className="font-bold text-slate-200">{selectedProduct.name}</span>
+                            <span className="font-bold text-brand-forest">{selectedProduct.name}</span>
                           </div>
-                          <div className="flex justify-between text-slate-400">
+                          <div className="flex justify-between text-brand-forest-muted">
                             <span>Delivery Address:</span>
-                            <span className="font-bold text-slate-200 max-w-[180px] truncate">
+                            <span className="font-bold text-brand-forest max-w-[180px] truncate">
                               {form.houseNo ? `${form.houseNo}, ` : ''}{form.street}, {form.pincode}
                             </span>
                           </div>
-                          <div className="flex justify-between text-slate-400">
+                          <div className="flex justify-between text-brand-forest-muted">
                             <span>Morning Slot:</span>
-                            <span className="font-bold text-emerald-400 font-mono">{form.deliveryTime} AM</span>
+                            <span className="font-bold text-brand-mustard font-mono">{form.deliveryTime} AM</span>
                           </div>
                         </div>
 
                         {/* 12-Digit UTR Input with 1-Tap Paste */}
                         <div>
                           <div className="flex items-center justify-between mb-1.5">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300">
+                            <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
                               UPI UTR / Reference No.{' '}
-                              <span className="text-slate-500 font-normal lowercase">(optional if paid via app)</span>
+                              <span className="text-brand-forest-muted/70 font-normal lowercase">(optional if paid via app)</span>
                             </label>
                             <button
                               type="button"
                               onClick={handlePasteClipboard}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 flex items-center gap-1 transition-colors cursor-pointer"
+                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand-cream hover:bg-brand-border text-brand-mustard border border-brand-mustard/30 flex items-center gap-1 transition-colors cursor-pointer"
                             >
                               <span>📋</span>
                               <span>{pastedUtr ? 'Pasted! ✓' : 'Paste UTR'}</span>
@@ -1044,9 +1044,9 @@ function CheckoutPageInner() {
                             placeholder="e.g. 325498712345 (or 1-click confirm below)"
                             value={utr}
                             onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
-                            className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-base sm:text-sm font-mono text-emerald-400 tracking-wider focus:outline-none focus:border-emerald-500 min-h-[46px]"
+                            className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-base sm:text-sm font-mono text-brand-mustard tracking-wider focus:outline-none focus:border-brand-mustard min-h-[46px]"
                           />
-                          <p className="text-[10px] text-slate-400 mt-1">
+                          <p className="text-[10px] text-brand-forest-muted mt-1">
                             Tip: You can 1-tap paste from your clipboard, or click &quot;I Have Paid&quot; below.
                           </p>
                         </div>
@@ -1054,11 +1054,11 @@ function CheckoutPageInner() {
                     </div>
 
                     {/* SECTION 3: BOTTOM CONFIRMATION NAVIGATION */}
-                    <div className="pt-4 border-t border-slate-800 flex flex-col sm:flex-row justify-between items-center gap-3">
+                    <div className="pt-4 border-t border-brand-border flex flex-col sm:flex-row justify-between items-center gap-3">
                       <button
                         type="button"
                         onClick={() => setStep('address')}
-                        className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-semibold border border-slate-700 text-slate-300 hover:bg-slate-800 transition-colors"
+                        className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-semibold border border-brand-border text-brand-forest-muted hover:bg-brand-cream transition-colors"
                       >
                         ← Back
                       </button>
@@ -1068,7 +1068,7 @@ function CheckoutPageInner() {
                           type="button"
                           disabled={submitting}
                           onClick={() => handleConfirmPayment(true)}
-                          className="px-6 py-3.5 rounded-2xl font-bold text-xs bg-slate-800 hover:bg-slate-700 text-emerald-400 border border-emerald-500/30 transition-all cursor-pointer text-center"
+                          className="px-6 py-3.5 rounded-2xl font-bold text-xs bg-brand-cream hover:bg-brand-border text-brand-mustard border border-brand-mustard/30 transition-all cursor-pointer text-center"
                         >
                           {submitting ? 'Confirming...' : `I Have Paid ₹${finalTotal} (No UTR)`}
                         </button>
@@ -1077,7 +1077,7 @@ function CheckoutPageInner() {
                           type="button"
                           disabled={submitting}
                           onClick={() => handleConfirmPayment(false)}
-                          className="px-8 py-4 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-xl shadow-emerald-500/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                          className="px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                         >
                           {submitting ? (
                             <>
@@ -1108,7 +1108,7 @@ export default function CheckoutPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center text-slate-400 font-mono text-sm">
+        <div className="min-h-screen bg-brand-cream flex items-center justify-center text-brand-forest-muted font-mono text-sm">
           Loading Checkout...
         </div>
       }

@@ -10,7 +10,7 @@ export default function Footer() {
           {/* Brand */}
           <div className="md:col-span-1">
             <div className="flex items-center gap-3 mb-4">
-              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-lg shrink-0 bg-slate-900 ring-2 ring-emerald-500/20">
+              <div className="relative w-12 h-12 rounded-full overflow-hidden border-2 border-brand-mustard/70 shadow-lg shrink-0 bg-brand-card ring-2 ring-brand-mustard/20">
                 <Image
                   src="/logo.jpg"
                   alt="Bloom your life with BlooMaa"
@@ -20,10 +20,10 @@ export default function Footer() {
                 />
               </div>
               <div>
-                <span className="text-2xl font-black tracking-tight text-slate-100 block leading-tight">
-                  thebloo<span className="text-emerald-400">maa</span>
+                <span className="text-2xl font-black tracking-tight text-brand-forest block leading-tight">
+                  thebloo<span className="text-brand-mustard">maa</span>
                 </span>
-                <span className="text-[11px] text-amber-300/90 font-serif italic tracking-wide block">
+                <span className="text-[11px] text-brand-forest-muted/90 font-serif italic tracking-wide block">
                   Bloom your life with BlooMaa
                 </span>
               </div>
@@ -38,7 +38,7 @@ export default function Footer() {
                 href="https://www.instagram.com/thebloomaa_official?stkn=MW15ZXYyZ2ZtdmwxYg%3D%3D"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-amber-500 via-pink-500 to-purple-600 flex items-center justify-center text-white shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-mustard via-pink-500 to-purple-600 flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
                 aria-label="Instagram"
                 title="Follow @thebloomaa_official on Instagram"
               >
@@ -50,7 +50,7 @@ export default function Footer() {
                 href="https://www.facebook.com/thebloomaa"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#1877F2] flex items-center justify-center text-white shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-[#1877F2] flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
                 aria-label="Facebook"
                 title="Follow thebloomaa on Facebook"
               >
@@ -62,7 +62,7 @@ export default function Footer() {
                 href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-9 h-9 rounded-xl bg-[#25D366] flex items-center justify-center text-white shadow-md hover:opacity-90 hover:scale-105 transition-all"
+                className="w-9 h-9 rounded-xl bg-[#25D366] flex items-center justify-center text-brand-forest shadow-md hover:opacity-90 hover:scale-105 transition-all"
                 aria-label="WhatsApp"
                 title="Chat with us on WhatsApp"
               >
@@ -75,37 +75,37 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-300">Quick Links</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-brand-forest-muted">Quick Links</h4>
             <ul className="space-y-2.5">
-              <li><a href="/#trial" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">7-Day Living Food Trial (₹451)</a></li>
-              <li><Link href="/calculator" className="text-sm font-semibold text-emerald-400 hover:text-emerald-300 transition-colors flex items-center gap-1.5">Bio Calculator <span className="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-bold">NEW</span></Link></li>
-              <li><a href="/#pricing" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Pricing &amp; Subscriptions</a></li>
-              <li><a href="/#how-it-works" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">How It Works</a></li>
-              <li><a href="/#faq" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">FAQ</a></li>
+              <li><a href="/#trial" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">7-Day Living Food Trial (₹451)</a></li>
+              <li><Link href="/calculator" className="text-sm font-semibold text-brand-mustard hover:text-brand-mustard-hover transition-colors flex items-center gap-1.5">Bio Calculator <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-mustard/20 text-brand-mustard font-bold">NEW</span></Link></li>
+              <li><a href="/#pricing" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Pricing &amp; Subscriptions</a></li>
+              <li><a href="/#how-it-works" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">How It Works</a></li>
+              <li><a href="/#faq" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">FAQ</a></li>
             </ul>
           </div>
 
           {/* Support */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-300">Support &amp; Trust</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-brand-forest-muted">Support &amp; Trust</h4>
             <ul className="space-y-2.5">
-              <li><Link href="/contact" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Help Center &amp; Support</Link></li>
-              <li><Link href="/contact" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Contact Us</Link></li>
-              <li><Link href="/privacy" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-slate-400 hover:text-emerald-400 transition-colors">Terms of Service</Link></li>
+              <li><Link href="/contact" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Help Center &amp; Support</Link></li>
+              <li><Link href="/contact" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Contact Us</Link></li>
+              <li><Link href="/privacy" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Privacy Policy</Link></li>
+              <li><Link href="/terms" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Terms of Service</Link></li>
             </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-slate-300">Patna Kitchen</h4>
+            <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-brand-forest-muted">Patna Kitchen</h4>
             <ul className="space-y-2.5">
-              <li className="text-sm text-slate-400">📍 Boring Road, Patna, Bihar</li>
-              <li className="text-sm text-slate-400">
-                <a href="tel:+916207654684" className="hover:text-emerald-400 transition-colors">📞 +91 62076 54684</a>
+              <li className="text-sm text-brand-forest-muted">📍 Boring Road, Patna, Bihar</li>
+              <li className="text-sm text-brand-forest-muted">
+                <a href="tel:+916207654684" className="hover:text-brand-mustard transition-colors">📞 +91 62076 54684</a>
               </li>
-              <li className="text-sm text-slate-400">
-                <a href="mailto:admin@thebloomaa.com" className="hover:text-emerald-400 transition-colors">✉️ admin@thebloomaa.com</a>
+              <li className="text-sm text-brand-forest-muted">
+                <a href="mailto:admin@thebloomaa.com" className="hover:text-brand-mustard transition-colors">✉️ admin@thebloomaa.com</a>
               </li>
             </ul>
             <div className="flex gap-2.5 mt-5">
@@ -113,14 +113,14 @@ export default function Footer() {
                 href="https://wa.me/916207654684?text=Hi%20Thebloomaa%2C%20I%20have%20a%20question%20about%20your%20diet%20plans"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/25 transition-all flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-lg text-xs font-bold bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard hover:bg-brand-mustard/25 transition-all flex items-center gap-1.5"
               >
                 <span>💬</span>
                 <span>WhatsApp</span>
               </a>
               <Link
                 href="/login"
-                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-800 border border-slate-700 text-slate-300 hover:text-white transition-all"
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-brand-cream border border-brand-border text-brand-forest-muted hover:text-brand-forest transition-all"
               >
                 Rider / Portal
               </Link>
@@ -129,7 +129,7 @@ export default function Footer() {
         </div>
 
         <div className="mt-12 pt-8 text-center text-xs" style={{ borderTop: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
-          © {new Date().getFullYear()} thebloomaa · <span className="text-amber-300/80 italic">Bloom your life with BlooMaa</span>. Made with 💚 in Patna.
+          © {new Date().getFullYear()} thebloomaa · <span className="text-brand-forest-muted/80 italic">Bloom your life with BlooMaa</span>. Made with 💚 in Patna.
         </div>
       </div>
     </footer>

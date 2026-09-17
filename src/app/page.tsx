@@ -202,7 +202,7 @@ export default function Home() {
               >
                 {plan.popular && (
                   <span
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-slate-950 bg-emerald-400 shadow-md shadow-emerald-500/20"
+                    className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-xs font-bold text-brand-forest bg-brand-mustard shadow-md shadow-brand-mustard/20"
                   >
                     ⭐ {plan.tag}
                   </span>
@@ -221,7 +221,7 @@ export default function Home() {
                 <ul className="space-y-2.5 mb-7 flex-grow">
                   {plan.features.map((feat, j) => (
                     <li key={j} className="flex items-start gap-2.5 text-xs sm:text-sm" style={{ color: 'var(--text-secondary)' }}>
-                      <span className="text-emerald-400 shrink-0 mt-0.5">✓</span>
+                      <span className="text-brand-mustard shrink-0 mt-0.5">✓</span>
                       <span>{feat}</span>
                     </li>
                   ))}
@@ -247,9 +247,9 @@ export default function Home() {
       <section className="py-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-card)' }}>
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-14">
-            <span className="text-xs font-bold uppercase tracking-widest text-emerald-400">The thebloomaa Difference</span>
+            <span className="text-xs font-bold uppercase tracking-widest text-brand-mustard">The thebloomaa Difference</span>
             <h2 className="text-3xl sm:text-4xl font-black mt-2">Motherly Care. Macro Precision.</h2>
-            <p className="text-sm text-amber-300/80 font-serif italic mt-1">Bloom your life with BlooMaa</p>
+            <p className="text-sm text-brand-forest-muted/80 font-serif italic mt-1">Bloom your life with BlooMaa</p>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -302,7 +302,7 @@ export default function Home() {
           style={{ background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(16, 185, 129, 0.05))', border: '1px solid rgba(16, 185, 129, 0.2)' }}
         >
           <div className="absolute top-0 right-0 w-64 h-64 rounded-full opacity-20 blur-3xl" style={{ background: 'var(--brand-primary)' }} />
-          <span className="text-xs text-amber-300 font-serif italic tracking-wide block mb-2">
+          <span className="text-xs text-brand-forest-muted font-serif italic tracking-wide block mb-2">
             Bloom your life with BlooMaa
           </span>
           <h2 className="text-2xl sm:text-3xl font-black mb-3 relative z-10">Ready to Fuel Your Fitness &amp; Vitality?</h2>
@@ -311,7 +311,7 @@ export default function Home() {
           </p>
           <a
             href="/#pricing"
-            className="inline-block px-8 py-3.5 rounded-xl text-base font-bold text-slate-950 bg-emerald-500 hover:bg-emerald-400 transition-all hover:scale-105 active:scale-95 relative z-10 shadow-lg shadow-emerald-500/20"
+            className="inline-block px-8 py-3.5 rounded-xl text-base font-bold text-brand-forest bg-brand-mustard hover:bg-brand-mustard transition-all hover:scale-105 active:scale-95 relative z-10 shadow-lg shadow-brand-mustard/20"
           >
             Start Your Plan Today →
           </a>

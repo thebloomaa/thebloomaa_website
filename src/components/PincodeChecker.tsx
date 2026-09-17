@@ -38,13 +38,13 @@ export default function PincodeChecker({ variant = 'hero' }: PincodeCheckerProps
           }}
           onKeyDown={(e) => e.key === 'Enter' && checkPincode()}
           placeholder="Enter your pincode"
-          className="flex-1 px-4 py-3 rounded-xl text-sm font-medium placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 transition-all"
+          className="flex-1 px-4 py-3 rounded-xl text-sm font-medium placeholder:text-brand-forest-muted/70 focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 transition-all"
           style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
         />
         <button
           onClick={checkPincode}
           disabled={pincode.length !== 6 || loading}
-          className="px-6 py-3 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-3 rounded-xl text-sm font-bold text-brand-forest transition-all hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
           style={{ background: 'var(--brand-primary)' }}
         >
           {loading ? (

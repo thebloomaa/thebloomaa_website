@@ -73,7 +73,7 @@ export default function OnboardingPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="John Doe"
                   />
@@ -85,7 +85,7 @@ export default function OnboardingPage() {
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="+91 98765 43210"
                   />
@@ -102,7 +102,7 @@ export default function OnboardingPage() {
                   <select
                     value={form.gender}
                     onChange={(e) => setForm({ ...form, gender: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 appearance-none min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                   >
                     <option value="">Select</option>
@@ -117,7 +117,7 @@ export default function OnboardingPage() {
                     type="number"
                     value={form.age}
                     onChange={(e) => setForm({ ...form, age: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="25"
                   />
@@ -128,7 +128,7 @@ export default function OnboardingPage() {
                     type="number"
                     value={form.weight}
                     onChange={(e) => setForm({ ...form, weight: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="75"
                   />
@@ -139,7 +139,7 @@ export default function OnboardingPage() {
                     type="number"
                     value={form.height}
                     onChange={(e) => setForm({ ...form, height: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="175"
                   />
@@ -157,7 +157,7 @@ export default function OnboardingPage() {
                   <select
                     value={form.fitnessGoal}
                     onChange={(e) => setForm({ ...form, fitnessGoal: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 appearance-none min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                   >
                     <option value="">Select Goal</option>
@@ -171,7 +171,7 @@ export default function OnboardingPage() {
                   <select
                     value={form.activityLevel}
                     onChange={(e) => setForm({ ...form, activityLevel: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 appearance-none min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                   >
                     <option value="">Select Activity Level</option>
@@ -189,7 +189,7 @@ export default function OnboardingPage() {
                   <select
                     value={form.dietaryPreference}
                     onChange={(e) => setForm({ ...form, dietaryPreference: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 appearance-none min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 appearance-none min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                   >
                     <option value="">No Preference (100% Veg)</option>
@@ -206,7 +206,7 @@ export default function OnboardingPage() {
                     type="text"
                     value={form.allergies}
                     onChange={(e) => setForm({ ...form, allergies: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500/50 min-h-[46px]"
+                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
                     style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
                     placeholder="e.g. Peanuts, Dairy, Gluten (Optional)"
                   />
@@ -217,7 +217,7 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={loading || !form.name || !form.phone}
-              className="w-full py-4 rounded-xl text-base font-bold text-white transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
+              className="w-full py-4 rounded-xl text-base font-bold text-brand-forest transition-all hover:scale-[1.01] active:scale-[0.99] disabled:opacity-40"
               style={{ background: 'var(--brand-primary)' }}
             >
               {loading ? 'Saving Profile...' : 'Save Profile & Continue →'}

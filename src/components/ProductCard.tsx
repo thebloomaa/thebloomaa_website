@@ -129,7 +129,7 @@ export default function ProductCard({
         <div className="grid grid-cols-2 gap-2.5 mt-auto">
           <Link
             href="/menu"
-            className="py-2.5 px-4 text-sm font-bold rounded-xl text-white transition-all hover:scale-[1.02] active:scale-[0.98] text-center"
+            className="py-2.5 px-4 text-sm font-bold rounded-xl text-brand-forest transition-all hover:scale-[1.02] active:scale-[0.98] text-center"
             style={{ background: 'var(--brand-primary)' }}
           >
             Subscribe

@@ -164,8 +164,8 @@ export default function AdminOrdersPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl sm:text-3xl font-black text-slate-100">Order Management</h1>
-          <p className="text-xs text-slate-400 mt-1">
+          <h1 className="text-2xl sm:text-3xl font-black text-brand-forest">Order Management</h1>
+          <p className="text-xs text-brand-forest-muted mt-1">
             Assign orders to riders, verify morning doorstep drops, and double-mark delivery completion.
           </p>
         </div>
@@ -175,7 +175,7 @@ export default function AdminOrdersPage() {
             type="button"
             onClick={handleAutoAssign}
             disabled={autoAssigning}
-            className="px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
+            className="px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-brand-mustard to-brand-mustard hover:from-brand-forest-muted hover:to-brand-mustard text-brand-forest transition-all flex items-center gap-2 cursor-pointer disabled:opacity-50"
           >
             <span>⚡</span>
             <span>{autoAssigning ? 'Routing...' : 'Auto-Assign by Zone'}</span>
@@ -185,11 +185,11 @@ export default function AdminOrdersPage() {
             placeholder="Search customer, phone, PIN..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="px-4 py-2 rounded-xl bg-slate-900 border border-slate-800 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+            className="px-4 py-2 rounded-xl bg-brand-card border border-brand-border text-xs text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
           />
           <button
             onClick={fetchOrders}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition-all cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all cursor-pointer"
           >
             Refresh
           </button>
@@ -198,14 +198,14 @@ export default function AdminOrdersPage() {
 
       {/* Auto-assign feedback banner */}
       {autoAssignMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-emerald-500/40 text-emerald-300 text-xs flex items-center justify-between animate-fade-in">
+        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-brand-mustard/40 text-brand-mustard-hover text-xs flex items-center justify-between animate-fade-in">
           <span>✓ {autoAssignMsg}</span>
-          <button onClick={() => setAutoAssignMsg(null)} className="font-bold text-emerald-400 cursor-pointer">✕</button>
+          <button onClick={() => setAutoAssignMsg(null)} className="font-bold text-brand-mustard cursor-pointer">✕</button>
         </div>
       )}
 
       {/* Filter Tabs */}
-      <div className="flex gap-2 border-b border-slate-800 pb-3 overflow-x-auto">
+      <div className="flex gap-2 border-b border-brand-border pb-3 overflow-x-auto">
         {[
           { id: 'ALL', label: 'All Orders' },
           { id: 'QUEUED', label: 'Queued' },
@@ -219,8 +219,8 @@ export default function AdminOrdersPage() {
             onClick={() => setStatusFilter(tab.id)}
             className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap ${
               statusFilter === tab.id
-                ? 'bg-emerald-500 text-slate-950 shadow-sm'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                ? 'bg-brand-mustard text-brand-forest shadow-sm'
+                : 'bg-brand-card text-brand-forest-muted hover:text-brand-forest border border-brand-border'
             }`}
           >
             {tab.label}
@@ -229,20 +229,20 @@ export default function AdminOrdersPage() {
       </div>
 
       {/* Orders Table */}
-      <div className="rounded-2xl bg-slate-900 border border-slate-800 overflow-hidden shadow-xl">
+      <div className="rounded-2xl bg-brand-card border border-brand-border overflow-hidden shadow-xl">
         {loading ? (
-          <div className="p-12 text-center text-slate-500 text-sm font-medium">
+          <div className="p-12 text-center text-brand-forest-muted/70 text-sm font-medium">
             Loading orders...
           </div>
         ) : filteredOrders.length === 0 ? (
-          <div className="p-12 text-center text-slate-500 text-sm">
+          <div className="p-12 text-center text-brand-forest-muted/70 text-sm">
             No orders found matching the filter.
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-slate-950/80 border-b border-slate-800 text-slate-400 uppercase tracking-wider text-[10px]">
+                <tr className="bg-brand-cream/80 border-b border-brand-border text-brand-forest-muted uppercase tracking-wider text-[10px]">
                   <th className="p-4">Order / Customer</th>
                   <th className="p-4">Delivery Zone</th>
                   <th className="p-4">Diet Item</th>
@@ -259,60 +259,60 @@ export default function AdminOrdersPage() {
                   const hasSpecialNote = Boolean(order.deliveryNote);
 
                   return (
-                    <tr key={order.id} className="hover:bg-slate-800/40 transition-colors">
+                    <tr key={order.id} className="hover:bg-brand-cream/40 transition-colors">
                       <td className="p-4">
-                        <span className="font-mono font-bold text-slate-200 block">
+                        <span className="font-mono font-bold text-brand-forest block">
                           {shortId}
                         </span>
-                        <span className="font-semibold text-slate-300 block mt-0.5">
+                        <span className="font-semibold text-brand-forest-muted block mt-0.5">
                           {order.user?.name || 'Patna Customer'}
                         </span>
                         {order.user?.phone ? (
                           <div className="flex items-center gap-1.5 mt-0.5">
-                            <span className="text-[11px] text-slate-400 font-mono">
+                            <span className="text-[11px] text-brand-forest-muted font-mono">
                               📱 {order.user.phone}
                             </span>
                             <a
                               href={`https://wa.me/91${order.user.phone.replace(/\D/g, '')}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[10px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                              className="text-[10px] font-bold text-brand-mustard hover:text-brand-mustard-hover hover:underline"
                               title="Chat with customer on WhatsApp to confirm delivery"
                             >
                               (WA)
                             </a>
                           </div>
                         ) : (
-                          <span className="text-[11px] text-slate-500 block font-mono">
+                          <span className="text-[11px] text-brand-forest-muted/70 block font-mono">
                             No phone
                           </span>
                         )}
                       </td>
 
                       <td className="p-4">
-                        <span className="font-medium text-slate-200 block">
+                        <span className="font-medium text-brand-forest block">
                           {order.address?.street || 'Local Delivery'}
                         </span>
-                        <span className="text-[10px] text-emerald-400 uppercase font-black tracking-wider">
+                        <span className="text-[10px] text-brand-mustard uppercase font-black tracking-wider">
                           PIN: {order.address?.pincode || '800001'}
                         </span>
                       </td>
 
                       <td className="p-4">
-                        <span className="font-bold text-slate-100 block">
+                        <span className="font-bold text-brand-forest block">
                           {order.subscription?.product?.name || 'Chef Diet Prep'}
                         </span>
-                        <span className="text-[10px] text-slate-400 block">
+                        <span className="text-[10px] text-brand-forest-muted block">
                           🔥 {order.subscription?.product?.calories || 520} kcal
                         </span>
                       </td>
 
                       <td className="p-4">
-                        <span className="inline-block px-2 py-0.5 rounded bg-slate-800 text-slate-300 font-mono text-[11px] mb-1">
+                        <span className="inline-block px-2 py-0.5 rounded bg-brand-cream text-brand-forest-muted font-mono text-[11px] mb-1">
                           ⏰ {order.deliveryTime || '07:00 AM'}
                         </span>
                         {hasSpecialNote && (
-                          <div className="p-1.5 rounded-lg bg-amber-500/15 border border-amber-500/30 text-amber-300 text-[10px] font-bold">
+                          <div className="p-1.5 rounded-lg bg-brand-mustard/15 border border-brand-mustard/30 text-brand-forest-muted text-[10px] font-bold">
                             ⚠️ {order.deliveryNote}
                           </div>
                         )}
@@ -323,7 +323,7 @@ export default function AdminOrdersPage() {
                         <select
                           value={order.riderId || ''}
                           onChange={(e) => handleAssignRider(order.id, e.target.value)}
-                          className="px-2.5 py-1 rounded-lg bg-slate-950 border border-slate-700 text-xs font-bold text-slate-200 focus:outline-none focus:border-amber-400 max-w-[150px]"
+                          className="px-2.5 py-1 rounded-lg bg-brand-cream border border-brand-border text-xs font-bold text-brand-forest focus:outline-none focus:border-brand-mustard max-w-[150px]"
                         >
                           <option value="">Unassigned</option>
                           {allRiders.map((r) => (
@@ -334,14 +334,14 @@ export default function AdminOrdersPage() {
                         </select>
                         {order.rider && (
                           <div className="flex items-center gap-1.5 mt-1">
-                            <span className="text-[10px] font-mono text-emerald-400">
+                            <span className="text-[10px] font-mono text-brand-mustard">
                               📱 {order.rider.phone}
                             </span>
                             <a
                               href={`https://wa.me/91${order.rider.phone.replace(/\D/g, '')}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-[9px] font-bold text-emerald-400 hover:text-emerald-300 hover:underline"
+                              className="text-[9px] font-bold text-brand-mustard hover:text-brand-mustard-hover hover:underline"
                               title="Chat with rider on WhatsApp"
                             >
                               (WA)
@@ -356,9 +356,9 @@ export default function AdminOrdersPage() {
                             <span
                               className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                                 order.status === 'DELIVERED'
-                                  ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                                  ? 'bg-brand-mustard/20 text-brand-mustard border border-brand-mustard/40'
                                   : order.status === 'RIDER_DELIVERED'
-                                  ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40 animate-pulse'
+                                  ? 'bg-brand-mustard/20 text-brand-forest-muted border border-brand-mustard/40 animate-pulse'
                                   : order.status === 'FAILED'
                                   ? 'bg-red-500/15 text-red-400 border border-red-500/30'
                                   : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
@@ -374,8 +374,8 @@ export default function AdminOrdersPage() {
                               <span
                                 className={`px-2 py-0.5 rounded text-[9px] font-black uppercase tracking-wider ${
                                   order.subscription.status === 'ACTIVE'
-                                    ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30'
-                                    : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'
+                                    ? 'bg-brand-mustard/20 text-brand-mustard-hover border border-brand-mustard/30'
+                                    : 'bg-brand-mustard/20 text-brand-forest-muted border border-brand-mustard/30'
                                 }`}
                               >
                                 Plan: {order.subscription.status}
@@ -384,13 +384,13 @@ export default function AdminOrdersPage() {
                           </div>
 
                           {order.riderDeliveredAt && (
-                            <span className="text-[10px] font-mono text-amber-300/90 flex items-center gap-1">
+                            <span className="text-[10px] font-mono text-brand-forest-muted/90 flex items-center gap-1">
                               <span>🚴 Drop-off:</span>
                               <span>{new Date(order.riderDeliveredAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </span>
                           )}
                           {order.adminVerifiedAt && (
-                            <span className="text-[10px] font-mono text-emerald-400/90 flex items-center gap-1">
+                            <span className="text-[10px] font-mono text-brand-mustard/90 flex items-center gap-1">
                               <span>🛡️ Admin verified:</span>
                               <span>{new Date(order.adminVerifiedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
                             </span>
@@ -400,11 +400,11 @@ export default function AdminOrdersPage() {
                         {order.subscription?.utr && (
                           <div className="mt-1.5">
                             {order.subscription.utr.startsWith('DIRECT_UPI_') ? (
-                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30" title="User paid via 1-click UPI app intent without typing UTR">
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-mustard/15 text-brand-forest-muted border border-brand-mustard/30" title="User paid via 1-click UPI app intent without typing UTR">
                                 📲 1-Tap UPI ({order.subscription.utr.slice(-6)})
                               </span>
                             ) : (
-                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30" title="Verified UPI UTR">
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-mustard/15 text-brand-mustard-hover border border-brand-mustard/30" title="Verified UPI UTR">
                                 🔑 UTR: {order.subscription.utr}
                               </span>
                             )}
@@ -418,7 +418,7 @@ export default function AdminOrdersPage() {
                             <button
                               type="button"
                               onClick={() => handleActivateSubscription(order.id)}
-                              className="px-2.5 py-1.5 rounded-lg bg-amber-500/15 hover:bg-amber-500/25 text-amber-300 border border-amber-500/30 font-bold text-[11px] cursor-pointer transition-all whitespace-nowrap"
+                              className="px-2.5 py-1.5 rounded-lg bg-brand-mustard/15 hover:bg-brand-mustard/25 text-brand-forest-muted border border-brand-mustard/30 font-bold text-[11px] cursor-pointer transition-all whitespace-nowrap"
                               title="Verify payment and activate recurring daily cutoff engine"
                             >
                               Verify Plan ⚡
@@ -429,7 +429,7 @@ export default function AdminOrdersPage() {
                             <button
                               type="button"
                               onClick={() => handleDoubleVerify(order.id)}
-                              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-emerald-500 to-teal-400 hover:from-emerald-400 hover:to-teal-300 text-slate-950 font-black text-[11px] cursor-pointer transition-all shadow-md flex items-center gap-1 whitespace-nowrap animate-bounce"
+                              className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-mustard to-teal-400 hover:from-brand-mustard hover:to-brand-mustard-hover text-brand-forest font-black text-[11px] cursor-pointer transition-all shadow-md flex items-center gap-1 whitespace-nowrap animate-bounce"
                               title="Confirm doorstep delivery and double-mark complete"
                             >
                               <span>Double-Mark Verified</span>
@@ -441,7 +441,7 @@ export default function AdminOrdersPage() {
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
-                              className="px-2.5 py-1.5 rounded-lg bg-emerald-500 text-slate-950 font-bold text-[11px] hover:bg-emerald-400 cursor-pointer transition-all whitespace-nowrap"
+                              className="px-2.5 py-1.5 rounded-lg bg-brand-mustard text-brand-forest font-bold text-[11px] hover:bg-brand-mustard cursor-pointer transition-all whitespace-nowrap"
                               title="Admin direct mark delivered"
                             >
                               Delivered ✓
@@ -452,7 +452,7 @@ export default function AdminOrdersPage() {
                             <button
                               type="button"
                               onClick={() => handleUpdateStatus(order.id, 'FAILED')}
-                              className="px-2 py-1.5 rounded-lg bg-slate-800 text-red-400 font-bold text-[11px] hover:bg-slate-700 cursor-pointer transition-all"
+                              className="px-2 py-1.5 rounded-lg bg-brand-cream text-red-400 font-bold text-[11px] hover:bg-brand-border cursor-pointer transition-all"
                             >
                               Fail
                             </button>

@@ -110,9 +110,9 @@ export default function RiderManifestPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#070b14] text-slate-100">
-        <div className="w-10 h-10 border-3 border-amber-400 border-t-transparent rounded-full animate-spin mb-3" />
-        <p className="text-xs font-mono text-slate-400">Loading delivery stops & GPS route...</p>
+      <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-[#070b14] text-brand-forest">
+        <div className="w-10 h-10 border-3 border-brand-mustard border-t-transparent rounded-full animate-spin mb-3" />
+        <p className="text-xs font-mono text-brand-forest-muted">Loading delivery stops & GPS route...</p>
       </div>
     );
   }
@@ -130,22 +130,22 @@ export default function RiderManifestPage() {
       : 0;
 
   return (
-    <main className="min-h-screen bg-[#070b14] text-slate-100 pb-20 px-3 sm:px-6 pt-4 max-w-xl mx-auto">
+    <main className="min-h-screen bg-[#070b14] text-brand-forest pb-20 px-3 sm:px-6 pt-4 max-w-xl mx-auto">
       {/* Top Rider Header */}
-      <div className="p-4 rounded-3xl bg-slate-900 border border-slate-800 shadow-xl mb-4">
+      <div className="p-4 rounded-3xl bg-brand-card border border-brand-border shadow-xl mb-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-center text-xl">
+            <div className="w-11 h-11 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 flex items-center justify-center text-xl">
               🚴
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h1 className="text-sm font-black text-white">
+                <h1 className="text-sm font-black text-brand-forest">
                   {data?.rider?.name || 'Patna Rider'}
                 </h1>
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
               </div>
-              <p className="text-[11px] font-mono text-slate-400">
+              <p className="text-[11px] font-mono text-brand-forest-muted">
                 {data?.rider?.vehicleType} · {data?.rider?.vehicleNumber}
               </p>
             </div>
@@ -154,55 +154,55 @@ export default function RiderManifestPage() {
           <button
             type="button"
             onClick={handleLogout}
-            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-slate-950 border border-slate-800 text-slate-400 hover:text-red-400 transition-colors cursor-pointer"
+            className="px-3 py-1.5 rounded-xl text-xs font-bold bg-brand-cream border border-brand-border text-brand-forest-muted hover:text-red-400 transition-colors cursor-pointer"
           >
             Logout
           </button>
         </div>
 
         {/* Assigned Zone banner */}
-        <div className="mt-3 pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs">
+        <div className="mt-3 pt-3 border-t border-brand-border/80 flex items-center justify-between text-xs">
           <div className="flex items-center gap-1.5">
-            <span className="text-amber-400">📍</span>
-            <span className="font-bold text-slate-200">
+            <span className="text-brand-mustard">📍</span>
+            <span className="font-bold text-brand-forest">
               Zone: {data?.rider?.assignedZone || 'All Patna'}
             </span>
           </div>
-          <span className="font-mono text-[11px] text-slate-400">{data?.date}</span>
+          <span className="font-mono text-[11px] text-brand-forest-muted">{data?.date}</span>
         </div>
       </div>
 
       {/* Progress & Quick Stats */}
-      <div className="p-4 rounded-3xl bg-slate-900/90 border border-slate-800 mb-4 shadow-lg">
+      <div className="p-4 rounded-3xl bg-brand-card/90 border border-brand-border mb-4 shadow-lg">
         <div className="flex items-center justify-between text-xs mb-2">
-          <span className="font-bold text-slate-300">Shift Completion</span>
-          <span className="font-mono font-bold text-emerald-400">{completionPct}% Done</span>
+          <span className="font-bold text-brand-forest-muted">Shift Completion</span>
+          <span className="font-mono font-bold text-brand-mustard">{completionPct}% Done</span>
         </div>
-        <div className="w-full bg-slate-950 rounded-full h-2 overflow-hidden border border-slate-800 mb-4">
+        <div className="w-full bg-brand-cream rounded-full h-2 overflow-hidden border border-brand-border mb-4">
           <div
-            className="bg-gradient-to-r from-amber-400 to-emerald-400 h-full rounded-full transition-all duration-500"
+            className="bg-gradient-to-r from-brand-mustard to-brand-mustard h-full rounded-full transition-all duration-500"
             style={{ width: `${completionPct}%` }}
           />
         </div>
 
         <div className="grid grid-cols-3 gap-2 text-center">
-          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800">
+          <div className="p-2.5 rounded-2xl bg-brand-cream/80 border border-brand-border">
             <p className="text-lg font-black font-mono text-blue-400">
               {data?.pendingCount || 0}
             </p>
-            <p className="text-[10px] uppercase font-bold text-slate-400">Pending</p>
+            <p className="text-[10px] uppercase font-bold text-brand-forest-muted">Pending</p>
           </div>
-          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-emerald-500/20">
-            <p className="text-lg font-black font-mono text-emerald-400">
+          <div className="p-2.5 rounded-2xl bg-brand-cream/80 border border-brand-mustard/20">
+            <p className="text-lg font-black font-mono text-brand-mustard">
               {data?.deliveredCount || 0}
             </p>
-            <p className="text-[10px] uppercase font-bold text-emerald-400/80">Delivered</p>
+            <p className="text-[10px] uppercase font-bold text-brand-mustard/80">Delivered</p>
           </div>
-          <div className="p-2.5 rounded-2xl bg-slate-950/80 border border-slate-800">
-            <p className="text-lg font-black font-mono text-slate-100">
+          <div className="p-2.5 rounded-2xl bg-brand-cream/80 border border-brand-border">
+            <p className="text-lg font-black font-mono text-brand-forest">
               {data?.totalStops || 0}
             </p>
-            <p className="text-[10px] uppercase font-bold text-slate-400">Total Stops</p>
+            <p className="text-[10px] uppercase font-bold text-brand-forest-muted">Total Stops</p>
           </div>
         </div>
       </div>
@@ -219,8 +219,8 @@ export default function RiderManifestPage() {
             onClick={() => setFilter(tab.key as any)}
             className={`flex-1 py-2 rounded-xl text-xs font-bold transition-all cursor-pointer ${
               filter === tab.key
-                ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/10'
-                : 'bg-slate-900 text-slate-400 hover:text-slate-200 border border-slate-800'
+                ? 'bg-brand-mustard text-brand-forest shadow-md shadow-brand-mustard/10'
+                : 'bg-brand-card text-brand-forest-muted hover:text-brand-forest border border-brand-border'
             }`}
           >
             {tab.label}
@@ -230,10 +230,10 @@ export default function RiderManifestPage() {
 
       {/* Delivery Stops List */}
       {filteredStops.length === 0 ? (
-        <div className="p-12 text-center rounded-3xl bg-slate-900/60 border border-slate-800 text-slate-400 text-xs">
+        <div className="p-12 text-center rounded-3xl bg-brand-card/60 border border-brand-border text-brand-forest-muted text-xs">
           <p className="text-2xl mb-2">🎉</p>
-          <p className="font-bold text-slate-200">No stops in this view!</p>
-          <p className="text-[11px] text-slate-500 mt-1">
+          <p className="font-bold text-brand-forest">No stops in this view!</p>
+          <p className="text-[11px] text-brand-forest-muted/70 mt-1">
             {filter === 'PENDING'
               ? 'All deliveries for your current zone are completed.'
               : 'No orders dispatched for this criteria yet.'}
@@ -250,29 +250,29 @@ export default function RiderManifestPage() {
                 key={stop.id}
                 className={`rounded-3xl p-5 border transition-all ${
                   stop.status === 'DELIVERED'
-                    ? 'bg-emerald-950/30 border-emerald-500/40'
+                    ? 'bg-emerald-950/30 border-brand-mustard/40'
                     : stop.status === 'RIDER_DELIVERED'
-                    ? 'bg-amber-950/20 border-amber-500/30'
+                    ? 'bg-amber-950/20 border-brand-mustard/30'
                     : isFailed
                     ? 'bg-red-950/20 border-red-500/30'
-                    : 'bg-slate-900/90 border-slate-800 shadow-md'
+                    : 'bg-brand-card/90 border-brand-border shadow-md'
                 }`}
               >
                 {/* Stop Header */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-2">
-                    <span className="px-2.5 py-1 rounded-xl text-xs font-black bg-slate-950 text-amber-400 border border-slate-800 font-mono">
+                    <span className="px-2.5 py-1 rounded-xl text-xs font-black bg-brand-cream text-brand-mustard border border-brand-border font-mono">
                       STOP #{stop.stopNumber}
                     </span>
-                    <span className="text-xs font-bold text-slate-200">{stop.customer}</span>
+                    <span className="text-xs font-bold text-brand-forest">{stop.customer}</span>
                   </div>
 
                   <span
                     className={`px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider ${
                       stop.status === 'DELIVERED'
-                        ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40'
+                        ? 'bg-brand-mustard/20 text-brand-mustard border border-brand-mustard/40'
                         : stop.status === 'RIDER_DELIVERED'
-                        ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40'
+                        ? 'bg-brand-mustard/20 text-brand-forest-muted border border-brand-mustard/40'
                         : isFailed
                         ? 'bg-red-500/20 text-red-400 border border-red-500/40'
                         : 'bg-blue-500/20 text-blue-300 border border-blue-500/40'
@@ -287,32 +287,32 @@ export default function RiderManifestPage() {
                 </div>
 
                 {/* Delivery Address */}
-                <div className="p-3 rounded-2xl bg-slate-950/70 border border-slate-800/80 mb-3">
-                  <p className="text-xs font-semibold text-slate-200 leading-relaxed">
+                <div className="p-3 rounded-2xl bg-brand-cream/70 border border-brand-border/80 mb-3">
+                  <p className="text-xs font-semibold text-brand-forest leading-relaxed">
                     {stop.street}
                   </p>
-                  <div className="flex items-center gap-2 mt-1.5 text-[11px] text-slate-400 font-mono">
-                    <span className="text-amber-400 font-bold">PIN: {stop.pincode}</span>
+                  <div className="flex items-center gap-2 mt-1.5 text-[11px] text-brand-forest-muted font-mono">
+                    <span className="text-brand-mustard font-bold">PIN: {stop.pincode}</span>
                     <span>• {stop.city}</span>
                     {stop.gpsCoords && <span>• 📍 GPS Pinned</span>}
                   </div>
                 </div>
 
                 {/* Meal Info & Special Notes */}
-                <div className="flex items-center justify-between text-xs mb-3 text-slate-300">
+                <div className="flex items-center justify-between text-xs mb-3 text-brand-forest-muted">
                   <div className="flex items-center gap-1.5">
-                    <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/30">
+                    <span className="px-2 py-0.5 rounded-md text-[10px] font-black uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/30">
                       {stop.dietary}
                     </span>
                     <span className="font-bold text-xs">{stop.meal}</span>
                   </div>
-                  <span className="font-mono text-[11px] text-slate-400">
+                  <span className="font-mono text-[11px] text-brand-forest-muted">
                     ⏰ {stop.time}
                   </span>
                 </div>
 
                 {stop.deliveryNote && (
-                  <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-300 text-[11px] font-medium mb-3">
+                  <div className="p-2 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20 text-brand-forest-muted text-[11px] font-medium mb-3">
                     💬 Note: {stop.deliveryNote}
                   </div>
                 )}
@@ -323,7 +323,7 @@ export default function RiderManifestPage() {
                     href={stop.mapsUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="py-2.5 px-2 rounded-xl text-xs font-black bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 transition-all flex items-center justify-center gap-1 shadow-sm"
+                    className="py-2.5 px-2 rounded-xl text-xs font-black bg-gradient-to-r from-brand-mustard to-teal-500 hover:from-brand-mustard hover:to-teal-400 text-brand-forest transition-all flex items-center justify-center gap-1 shadow-sm"
                   >
                     <span>🗺️</span>
                     <span>Maps ↗</span>
@@ -333,7 +333,7 @@ export default function RiderManifestPage() {
                     <>
                       <a
                         href={`tel:${stop.phone}`}
-                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-slate-950 border border-slate-700 hover:border-slate-500 text-slate-200 transition-all flex items-center justify-center gap-1"
+                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-brand-cream border border-brand-border hover:border-slate-500 text-brand-forest transition-all flex items-center justify-center gap-1"
                       >
                         <span>📞</span>
                         <span>Call</span>
@@ -342,14 +342,14 @@ export default function RiderManifestPage() {
                         href={`https://wa.me/91${stop.phone.replace(/\D/g, '')}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-slate-950 border border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 transition-all flex items-center justify-center gap-1"
+                        className="py-2.5 px-2 rounded-xl text-xs font-bold bg-brand-cream border border-brand-mustard/30 text-brand-mustard hover:bg-brand-mustard/10 transition-all flex items-center justify-center gap-1"
                       >
                         <span>💬</span>
                         <span>WhatsApp</span>
                       </a>
                     </>
                   ) : (
-                    <span className="col-span-2 py-2.5 text-center text-xs text-slate-500 bg-slate-950 rounded-xl border border-slate-800">
+                    <span className="col-span-2 py-2.5 text-center text-xs text-brand-forest-muted/70 bg-brand-cream rounded-xl border border-brand-border">
                       No Phone on file
                     </span>
                   )}
@@ -357,12 +357,12 @@ export default function RiderManifestPage() {
 
                 {/* Delivery Completion Buttons */}
                 {!isDelivered && (
-                  <div className="pt-3 border-t border-slate-800/80 flex items-center gap-2">
+                  <div className="pt-3 border-t border-brand-border/80 flex items-center gap-2">
                     <button
                       type="button"
                       disabled={updatingId === stop.id}
                       onClick={() => handleUpdateStatus(stop.id, 'DELIVERED')}
-                      className="flex-1 py-2.5 px-3 rounded-xl font-black text-xs bg-emerald-400 hover:bg-emerald-300 text-slate-950 shadow-md shadow-emerald-400/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
+                      className="flex-1 py-2.5 px-3 rounded-xl font-black text-xs bg-brand-mustard hover:bg-brand-mustard-hover text-brand-forest shadow-md shadow-brand-mustard/20 transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
                     >
                       <span>✓</span>
                       <span>Mark Delivered</span>
@@ -372,7 +372,7 @@ export default function RiderManifestPage() {
                       type="button"
                       disabled={updatingId === stop.id}
                       onClick={() => handleUpdateStatus(stop.id, 'FAILED')}
-                      className="py-2.5 px-3 rounded-xl font-bold text-xs bg-slate-950 border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all cursor-pointer disabled:opacity-50"
+                      className="py-2.5 px-3 rounded-xl font-bold text-xs bg-brand-cream border border-red-500/30 text-red-400 hover:bg-red-500/10 transition-all cursor-pointer disabled:opacity-50"
                     >
                       Report Issue
                     </button>
@@ -388,7 +388,7 @@ export default function RiderManifestPage() {
       <div className="mt-8 text-center">
         <Link
           href="/"
-          className="text-xs font-mono text-slate-500 hover:text-slate-300 transition-colors"
+          className="text-xs font-mono text-brand-forest-muted/70 hover:text-brand-forest-muted transition-colors"
         >
           thebloomaa Patna Kitchen Dispatch • 2026
         </Link>

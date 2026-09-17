@@ -132,20 +132,20 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
       {/* Dark Glassmorphic Backdrop */}
       <div
         onClick={handleClose}
-        className="fixed inset-0 bg-slate-950/80 backdrop-blur-md transition-opacity animate-fade-in"
+        className="fixed inset-0 bg-brand-cream/80 backdrop-blur-md transition-opacity animate-fade-in"
       />
 
       {/* Modal Container */}
-      <div className="relative w-full max-w-lg rounded-3xl p-6 sm:p-8 backdrop-blur-2xl bg-slate-900/95 border border-slate-700/80 shadow-2xl z-10 animate-fade-in-up">
+      <div className="relative w-full max-w-lg rounded-3xl p-6 sm:p-8 backdrop-blur-2xl bg-brand-card/95 border border-brand-border/80 shadow-2xl z-10 animate-fade-in-up">
         {/* Subtle Ambient Radial Glow */}
-        <div className="absolute top-0 right-1/4 w-48 h-48 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-amber-500/10 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-0 right-1/4 w-48 h-48 bg-brand-mustard/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-1/4 w-48 h-48 bg-brand-mustard/10 rounded-full blur-3xl pointer-events-none" />
 
         {/* Close Button */}
         <button
           type="button"
           onClick={handleClose}
-          className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+          className="absolute top-5 right-5 w-8 h-8 rounded-full flex items-center justify-center text-brand-forest-muted hover:text-brand-forest hover:bg-brand-cream transition-colors"
           aria-label="Close modal"
         >
           ✕
@@ -153,7 +153,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
 
         {/* Modal Header */}
         <div className="text-center mb-6">
-          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-amber-400/70 shadow-xl shadow-emerald-500/10 mx-auto mb-3 bg-slate-900 ring-4 ring-emerald-500/20">
+          <div className="relative w-16 h-16 rounded-full overflow-hidden border-2 border-brand-mustard/70 shadow-xl shadow-brand-mustard/10 mx-auto mb-3 bg-brand-card ring-4 ring-brand-mustard/20">
             <Image
               src="/logo.jpg"
               alt="Bloom your life with BlooMaa"
@@ -162,16 +162,16 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
               className="object-cover"
             />
           </div>
-          <span className="text-[11px] text-amber-300 font-serif italic tracking-wide block mb-1">
+          <span className="text-[11px] text-brand-forest-muted font-serif italic tracking-wide block mb-1">
             Bloom your life with BlooMaa
           </span>
-          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          <span className="px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
             Patna Delivery Zone Check
           </span>
-          <h3 className="text-2xl font-black text-slate-100 mt-2 tracking-tight">
+          <h3 className="text-2xl font-black text-brand-forest mt-2 tracking-tight">
             Check Your Area in Patna
           </h3>
-          <p className="text-xs text-slate-400 mt-1.5 leading-relaxed max-w-xs mx-auto">
+          <p className="text-xs text-brand-forest-muted mt-1.5 leading-relaxed max-w-xs mx-auto">
             Fresh chef-prepared living diet preps delivered to your door every morning between 6:00 AM – 9:00 AM.
           </p>
         </div>
@@ -179,7 +179,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
         {/* Pincode Input Form */}
         <form onSubmit={handleCheckPincode} className="space-y-4">
           <div>
-            <label className="block text-xs font-bold uppercase tracking-wider text-slate-300 mb-1.5">
+            <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
               Enter 6-Digit Pincode
             </label>
             <div className="flex gap-2">
@@ -194,12 +194,12 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                   setResult(null);
                   setNotifySubmitted(false);
                 }}
-                className="flex-1 px-4 py-3.5 rounded-2xl bg-slate-800 border border-slate-700 text-slate-100 text-sm font-mono tracking-widest placeholder:text-slate-500 focus:outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition-all"
+                className="flex-1 px-4 py-3.5 rounded-2xl bg-brand-cream border border-brand-border text-brand-forest text-sm font-mono tracking-widest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard focus:ring-2 focus:ring-brand-mustard/20 transition-all"
               />
               <button
                 type="submit"
                 disabled={pincode.length !== 6 || loading}
-                className="px-6 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer min-w-[100px]"
+                className="px-6 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed flex items-center justify-center gap-2 cursor-pointer min-w-[100px]"
               >
                 {loading ? (
                   <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin" />
@@ -212,7 +212,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
         </form>
 
         {/* Quick Patna Sample Pincodes */}
-        <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-slate-400">
+        <div className="mt-3 flex items-center justify-center gap-2 text-[11px] text-brand-forest-muted">
           <span>Popular areas:</span>
           {[
             { pin: '800001', area: 'Boring Rd' },
@@ -226,7 +226,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                 setPincode(sample.pin);
                 setResult(null);
               }}
-              className="text-emerald-400 hover:text-emerald-300 font-mono underline underline-offset-2 decoration-emerald-500/40"
+              className="text-brand-mustard hover:text-brand-mustard-hover font-mono underline underline-offset-2 decoration-brand-mustard/40"
             >
               {sample.pin}
             </button>
@@ -238,16 +238,16 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
           <div className="mt-5 animate-fade-in-up">
             {/* SUCCESS STATE */}
             {result.serviceable ? (
-              <div className="rounded-2xl p-4 bg-emerald-500/15 border border-emerald-500/40 text-left space-y-2">
-                <div className="flex items-center gap-2 text-emerald-300 font-bold text-sm">
+              <div className="rounded-2xl p-4 bg-brand-mustard/15 border border-brand-mustard/40 text-left space-y-2">
+                <div className="flex items-center gap-2 text-brand-mustard-hover font-bold text-sm">
                   <span>✅</span>
                   <span>We deliver to your neighborhood!</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-brand-forest-muted leading-relaxed">
                   {result.message} Your fresh chef prep will arrive hot and macro-tracked between 6:00 AM – 9:00 AM daily.
                 </p>
                 <div className="pt-2 flex justify-between items-center">
-                  <span className="text-[10px] uppercase font-black tracking-wider text-emerald-400">
+                  <span className="text-[10px] uppercase font-black tracking-wider text-brand-mustard">
                     Zone Verified · Saved to Device
                   </span>
                   <button
@@ -256,7 +256,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                       handleClose();
                       router.push('/menu');
                     }}
-                    className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-md"
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-md"
                   >
                     Browse Diet Plans →
                   </button>
@@ -269,7 +269,7 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                   <span>❌</span>
                   <span>We don't deliver to {pincode} yet.</span>
                 </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
+                <p className="text-xs text-brand-forest-muted leading-relaxed">
                   We are rapidly expanding our cloud kitchen routes across Patna. Enter your email or phone to get priority notification as soon as we open delivery to your sector.
                 </p>
 
@@ -281,17 +281,17 @@ export default function PincodeModal({ isOpen: controlledIsOpen, onClose, onVeri
                       placeholder="Email or WhatsApp number"
                       value={notifyInput}
                       onChange={(e) => setNotifyInput(e.target.value)}
-                      className="flex-1 px-3 py-2 rounded-xl bg-slate-800 border border-slate-700 text-xs text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-amber-500"
+                      className="flex-1 px-3 py-2 rounded-xl bg-brand-cream border border-brand-border text-xs text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                     />
                     <button
                       type="submit"
-                      className="px-4 py-2 rounded-xl text-xs font-bold text-slate-950 bg-amber-500 hover:bg-amber-400 transition-all whitespace-nowrap shadow-sm"
+                      className="px-4 py-2 rounded-xl text-xs font-bold text-brand-forest bg-brand-mustard hover:bg-brand-mustard transition-all whitespace-nowrap shadow-sm"
                     >
                       Notify Me
                     </button>
                   </form>
                 ) : (
-                  <div className="p-2.5 rounded-xl bg-slate-800/80 border border-slate-700 text-xs text-amber-300 font-semibold flex items-center gap-2">
+                  <div className="p-2.5 rounded-xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest-muted font-semibold flex items-center gap-2">
                     <span>🎉</span>
                     <span>You're on the priority waitlist! We will notify you immediately upon rollout.</span>
                   </div>

@@ -63,8 +63,8 @@ export default function SubscriberSettingsPage() {
   return (
     <div className="max-w-3xl mx-auto space-y-6">
       <div>
-        <h1 className="text-2xl sm:text-3xl font-black text-slate-100">Subscriber Settings</h1>
-        <p className="text-xs text-slate-400 mt-1">
+        <h1 className="text-2xl sm:text-3xl font-black text-brand-forest">Subscriber Settings</h1>
+        <p className="text-xs text-brand-forest-muted mt-1">
           Manage your contact details, morning delivery slot, and dietary preferences.
         </p>
       </div>
@@ -73,7 +73,7 @@ export default function SubscriberSettingsPage() {
         <div
           className={`p-4 rounded-2xl text-xs font-semibold ${
             message.type === 'success'
-              ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300'
+              ? 'bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard-hover'
               : 'bg-red-500/15 border border-red-500/30 text-red-300'
           }`}
         >
@@ -81,20 +81,20 @@ export default function SubscriberSettingsPage() {
         </div>
       )}
 
-      <div className="rounded-3xl p-6 sm:p-8 bg-slate-900 border border-slate-800 shadow-xl">
+      <div className="rounded-3xl p-6 sm:p-8 bg-brand-card border border-brand-border shadow-xl">
         {loading ? (
-          <div className="p-8 text-center text-slate-500 text-sm">Loading your preferences...</div>
+          <div className="p-8 text-center text-brand-forest-muted/70 text-sm">Loading your preferences...</div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-6 text-xs">
             {/* Contact Details */}
             <div className="space-y-4">
-              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">
+              <h3 className="text-sm font-bold text-brand-mustard uppercase tracking-wider">
                 1. Delivery Contact
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-brand-forest-muted mb-1.5 uppercase tracking-wider text-[11px]">
                     Full Name
                   </label>
                   <input
@@ -102,12 +102,12 @@ export default function SubscriberSettingsPage() {
                     required
                     value={form.name}
                     onChange={(e) => setForm({ ...form, name: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                   />
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-brand-forest-muted mb-1.5 uppercase tracking-wider text-[11px]">
                     WhatsApp Phone (for Morning OTP / Drop Alert)
                   </label>
                   <input
@@ -115,18 +115,18 @@ export default function SubscriberSettingsPage() {
                     required
                     value={form.phone}
                     onChange={(e) => setForm({ ...form, phone: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                   />
                 </div>
               </div>
             </div>
 
             {/* Delivery Time Window */}
-            <div className="space-y-4 pt-4 border-t border-slate-800">
-              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="space-y-4 pt-4 border-t border-brand-border">
+              <h3 className="text-sm font-bold text-brand-mustard uppercase tracking-wider">
                 2. Morning Delivery Time Slot
               </h3>
-              <p className="text-slate-400 text-[11px]">
+              <p className="text-brand-forest-muted text-[11px]">
                 Our cloud kitchen fleet departs at 5:30 AM. Choose your optimal morning delivery window:
               </p>
 
@@ -138,8 +138,8 @@ export default function SubscriberSettingsPage() {
                     onClick={() => setForm({ ...form, deliveryTime: time })}
                     className={`p-3 rounded-xl font-mono text-center font-bold transition-all cursor-pointer ${
                       form.deliveryTime === time
-                        ? 'bg-emerald-500 text-slate-950 shadow-md ring-2 ring-emerald-500/30'
-                        : 'bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700'
+                        ? 'bg-brand-mustard text-brand-forest shadow-md ring-2 ring-brand-mustard/30'
+                        : 'bg-brand-cream text-brand-forest-muted hover:bg-brand-border border border-brand-border'
                     }`}
                   >
                     {time} AM
@@ -149,20 +149,20 @@ export default function SubscriberSettingsPage() {
             </div>
 
             {/* Dietary Preferences */}
-            <div className="space-y-4 pt-4 border-t border-slate-800">
-              <h3 className="text-sm font-bold text-emerald-400 uppercase tracking-wider">
+            <div className="space-y-4 pt-4 border-t border-brand-border">
+              <h3 className="text-sm font-bold text-brand-mustard uppercase tracking-wider">
                 3. Dietary &amp; Allergen Notes
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-brand-forest-muted mb-1.5 uppercase tracking-wider text-[11px]">
                     Dietary Focus
                   </label>
                   <select
                     value={form.dietaryPreference}
                     onChange={(e) => setForm({ ...form, dietaryPreference: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard"
                   >
                     <option value="VEG">100% Pure Vegetarian</option>
                     <option value="VEGAN">Vegan Plant-Based</option>
@@ -173,7 +173,7 @@ export default function SubscriberSettingsPage() {
                 </div>
 
                 <div>
-                  <label className="block font-bold text-slate-300 mb-1.5 uppercase tracking-wider text-[11px]">
+                  <label className="block font-bold text-brand-forest-muted mb-1.5 uppercase tracking-wider text-[11px]">
                     Allergies / Special Kitchen Instructions
                   </label>
                   <input
@@ -181,7 +181,7 @@ export default function SubscriberSettingsPage() {
                     placeholder="e.g. No peanuts, extra dressing on side"
                     value={form.allergies}
                     onChange={(e) => setForm({ ...form, allergies: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-slate-800 border border-slate-700 text-slate-100 placeholder:text-slate-500 focus:outline-none focus:border-emerald-500"
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
                   />
                 </div>
               </div>
@@ -191,7 +191,7 @@ export default function SubscriberSettingsPage() {
               <button
                 type="submit"
                 disabled={saving}
-                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-sm bg-emerald-500 text-slate-950 hover:bg-emerald-400 transition-all shadow-lg shadow-emerald-500/20 disabled:opacity-50 cursor-pointer"
+                className="w-full sm:w-auto px-8 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 disabled:opacity-50 cursor-pointer"
               >
                 {saving ? 'Saving...' : 'Save Settings ✓'}
               </button>
