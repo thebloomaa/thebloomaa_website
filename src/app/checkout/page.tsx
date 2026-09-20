@@ -871,17 +871,7 @@ function CheckoutPageInner() {
                           )}
                         </button>
                   </div>
-                  </>
-                          ) : (
-                            <>
-                              <span>Confirm Payment &amp; Schedule Prep</span>
-                              <span>→</span>
-                            </>
-                          )}
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+
                 </>
               )}
             </div>
