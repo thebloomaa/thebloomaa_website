@@ -34,12 +34,9 @@ function CheckoutPageInner() {
   } = useBundleStore();
 
   const [step, setStep] = useState<'summary' | 'address' | 'pay'>('summary');
-  const [copiedUpi, setCopiedUpi] = useState(false);
+
   const [submitting, setSubmitting] = useState(false);
   const [pincodeError, setPincodeError] = useState<string | null>(null);
-  const [launchedApp, setLaunchedApp] = useState<string | null>(null);
-  const [returnedFromApp, setReturnedFromApp] = useState(false);
-  const [pastedUtr, setPastedUtr] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
 
@@ -90,27 +87,7 @@ function CheckoutPageInner() {
     }
   }, [session]);
 
-  const [utr, setUtr] = useState('');
 
-  // Detect when user returns from UPI App
-  useEffect(() => {
-    const handleVisibilityChange = () => {
-      if (document.visibilityState === 'visible' && launchedApp) {
-        setReturnedFromApp(true);
-      }
-    };
-    const handleFocus = () => {
-      if (launchedApp) {
-        setReturnedFromApp(true);
-      }
-    };
-    document.addEventListener('visibilitychange', handleVisibilityChange);
-    window.addEventListener('focus', handleFocus);
-    return () => {
-      document.removeEventListener('visibilitychange', handleVisibilityChange);
-      window.removeEventListener('focus', handleFocus);
-    };
-  }, [launchedApp]);
 
   const searchParams = useSearchParams();
   const planParam = searchParams ? searchParams.get('plan') : null;
@@ -179,58 +156,7 @@ function CheckoutPageInner() {
     }
   }, [isSingleProduct, isTrialProduct, bundleType, selectBundle]);
 
-  // Unique Order Reference for UPI Transaction Note
-  const orderRefNote = `BLM-${(selectedProduct?.name || 'Diet').replace(/[^a-zA-Z0-9]/g, '').slice(0, 10)}-${finalTotal}`;
-  const universalUpiUri = `upi://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
-  const upiIntentUri = universalUpiUri;
-  const gpayUri = `gpay://upi/pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
-  const phonepeUri = `phonepe://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
-  const paytmUri = `paytmmp://pay?pa=8863002959@ptyes&pn=TheBlooMaa&am=${finalTotal}&cu=INR&tn=${encodeURIComponent(orderRefNote)}`;
 
-  const handleLaunchApp = (appName: string, uri: string) => {
-    setLaunchedApp(appName);
-    try {
-      const a = document.createElement('a');
-      a.href = uri;
-      a.style.display = 'none';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-    } catch {
-      window.location.href = uri;
-    }
-  };
-
-  const handlePasteClipboard = async () => {
-    try {
-      const text = await navigator.clipboard.readText();
-      const match = text.match(/\b\d{12}\b/);
-      if (match) {
-        setUtr(match[0]);
-        setPastedUtr(true);
-        setTimeout(() => setPastedUtr(false), 3000);
-      } else {
-        const clean = text.replace(/\D/g, '');
-        if (clean.length >= 12) {
-          setUtr(clean.slice(0, 12));
-          setPastedUtr(true);
-          setTimeout(() => setPastedUtr(false), 3000);
-        } else if (clean.length > 0) {
-          setUtr(clean);
-        } else {
-          alert('No 12-digit number found in clipboard. Please paste or enter manually.');
-        }
-      }
-    } catch {
-      alert('Clipboard permission denied. Please manually enter your UTR.');
-    }
-  };
-
-  const handleCopyUpiId = () => {
-    navigator.clipboard.writeText('8863002959@ptyes');
-    setCopiedUpi(true);
-    setTimeout(() => setCopiedUpi(false), 2500);
-  };
 
   const handleConfirmPayment = async () => {
     if (!selectedProduct) return;
