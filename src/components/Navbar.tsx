@@ -41,9 +41,6 @@ export default function Navbar() {
           <div className="hidden md:flex items-center gap-7">
             <Link href="/#trial" className="text-sm font-semibold transition-colors hover:text-brand-mustard text-brand-forest flex items-center gap-1.5">
               <span>🌱 7D Trial</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-brand-mustard/20 text-brand-forest border border-brand-mustard/30">
-                ₹451
-              </span>
             </Link>
             <Link href="/calculator" className="text-sm font-semibold transition-all hover:text-brand-mustard-hover flex items-center gap-1.5 text-brand-forest">
               <span>Bio Calculator</span>
@@ -111,7 +108,6 @@ export default function Navbar() {
               className="px-5 py-2.5 text-sm font-bold rounded-xl text-brand-forest bg-brand-mustard hover:bg-brand-mustard transition-all hover:scale-105 shadow-md shadow-brand-mustard/20 flex items-center gap-1.5"
             >
               <span>Get 7D Trial</span>
-              <span className="text-[11px] bg-brand-cream/20 px-1.5 py-0.5 rounded font-black">₹451</span>
             </Link>
           </div>
 
@@ -165,7 +161,6 @@ export default function Navbar() {
                 onClick={() => setMobileOpen(false)}
               >
                 <span className="flex items-center gap-2">🌱 7D Fresh Nutrition Trial</span>
-                <span className="text-xs px-2.5 py-1 rounded bg-brand-mustard text-brand-forest font-black">₹451</span>
               </Link>
               <Link
                 href="/calculator"
@@ -223,7 +218,7 @@ export default function Navbar() {
                 className="w-full mt-2 py-3 text-sm font-black text-center rounded-xl text-brand-forest bg-brand-mustard hover:bg-brand-mustard block shadow-lg shadow-brand-mustard/20 min-h-[44px] flex items-center justify-center"
                 onClick={() => setMobileOpen(false)}
               >
-                Claim 7D Trial (₹451) →
+                Claim 7D Trial →
               </Link>
             </div>
           </div>

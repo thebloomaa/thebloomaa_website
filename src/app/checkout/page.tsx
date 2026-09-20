@@ -24,8 +24,6 @@ function CheckoutPageInner() {
     selectProduct,
     bundleType,
     selectBundle,
-    getTotalPrice,
-    getPerDayPrice,
     getBundleDays,
     setAddress,
     address,
@@ -171,10 +169,7 @@ function CheckoutPageInner() {
       selectedProduct.isTrialPlan)
   );
 
-  // Calculate strict checkout total
-  const finalTotal = isSingleProduct ? 70 : isTrialProduct ? 451 : getTotalPrice();
   const finalDays = isSingleProduct ? 1 : isTrialProduct ? 7 : getBundleDays();
-  const finalPerDay = isSingleProduct ? 70 : isTrialProduct ? Math.round(451 / 7) : getPerDayPrice();
 
   useEffect(() => {
     if (isSingleProduct && bundleType !== 'DAYS_1') {
@@ -237,20 +232,14 @@ function CheckoutPageInner() {
     setTimeout(() => setCopiedUpi(false), 2500);
   };
 
-  const handleConfirmPayment = async (forcePaidWithoutUtr = false) => {
+  const handleConfirmPayment = async () => {
     if (!selectedProduct) return;
-    if (!forcePaidWithoutUtr && utr.trim().length > 0 && utr.trim().length !== 12) {
-      alert('Please enter a valid 12-digit UTR, or click "Confirm Order (Paid via App)" without entering UTR.');
-      return;
-    }
 
     setSubmitting(true);
     setSubmitError(null);
     try {
       const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
-      const effectiveUtr = utr.trim().length === 12
-        ? utr.trim()
-        : `DIRECT_UPI_${Date.now().toString().slice(-8)}`;
+      const effectiveUtr = `PRE_BOOK_${Date.now().toString().slice(-8)}`;
 
       const res = await fetch('/api/checkout', {
         method: 'POST',
@@ -334,7 +323,7 @@ function CheckoutPageInner() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
             <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
-              Order our Single Day Pack (₹70) to try tomorrow morning, claim the 7-Day Living Reset (₹451), or run the Bio Calculator.
+              Order our Single Day Pack to try tomorrow morning, claim the 7-Day Living Reset, or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
               <button
@@ -358,7 +347,7 @@ function CheckoutPageInner() {
                 }}
                 className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-mustard-hover transition-all shadow-md cursor-pointer"
               >
-                1-Day Pack (₹70)
+                1-Day Pack
               </button>
               <button
                 type="button"
@@ -381,7 +370,7 @@ function CheckoutPageInner() {
                 }}
                 className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-forest-muted transition-all shadow-md cursor-pointer"
               >
-                7-Day Trial (₹451)
+                7-Day Trial
               </button>
               <Link
                 href="/calculator"
@@ -407,7 +396,7 @@ function CheckoutPageInner() {
             {[
               { id: 'summary', label: '1. Order Summary' },
               { id: 'address', label: '2. Delivery Address' },
-              { id: 'pay', label: '3. UPI Payment' },
+              { id: 'pay', label: '3. Pre-Book' },
             ].map((s, idx) => {
               const stepOrder = ['summary', 'address', 'pay'];
               const currentIdx = stepOrder.indexOf(step);
@@ -480,10 +469,10 @@ function CheckoutPageInner() {
                       <h3 className="text-xl sm:text-2xl font-black text-brand-forest">{selectedProduct.name}</h3>
                       <div className="text-xl font-black text-brand-mustard font-mono">
                         {isSingleProduct
-                          ? '₹70 (Single Day Diet Pack)'
+                          ? 'Single Day Diet Pack (Price TBA)'
                           : isTrialProduct
-                          ? '₹451 (Flat 7D Trial)'
-                          : `₹${selectedProduct.price}/diet`}
+                          ? 'Flat 7D Trial (Price TBA)'
+                          : `Price TBA`}
                       </div>
                     </div>
 
@@ -580,7 +569,7 @@ function CheckoutPageInner() {
                 <div className="space-y-2.5 text-xs">
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Effective daily rate:</span>
-                    <span className="font-bold text-brand-forest font-mono">₹{finalPerDay} / diet</span>
+                    <span className="font-bold text-brand-forest font-mono">TBA</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Scheduled duration:</span>
@@ -592,7 +581,7 @@ function CheckoutPageInner() {
                   </div>
                   <div className="pt-3 border-t border-brand-border flex justify-between items-baseline">
                     <span className="text-base font-bold text-brand-forest">Total Payable:</span>
-                    <span className="text-2xl font-black text-brand-mustard font-mono">₹{finalTotal}</span>
+                    <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
                   </div>
                 </div>
 
@@ -807,7 +796,7 @@ function CheckoutPageInner() {
                     onClick={handleValidateAndProceedAddress}
                     className="px-8 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
-                    Proceed to Payment — ₹{finalTotal} →
+                    Proceed to Pre-Book →
                   </button>
                 </div>
               </div>
@@ -839,11 +828,11 @@ function CheckoutPageInner() {
                 <>
                   <div className="text-center mb-6">
                     <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
-                      Step 3 of 3 · Fast UPI Prepayment
+                      Step 3 of 3 · Pre-Book Confirmation
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Complete Your Payment</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Confirm Pre-Booking</h2>
                     <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
-                      Pay via Google Pay, PhonePe, Paytm, or any UPI app in 1-click.
+                      No payment required at this time. We will contact you once pricing is finalized.
                     </p>
                   </div>
 
@@ -861,229 +850,28 @@ function CheckoutPageInner() {
                     </div>
                   )}
 
-                  {/* Returned from App Quick-Confirm Banner */}
-                  {returnedFromApp && (
-                    <div className="rounded-2xl p-4 bg-brand-mustard/15 border-2 border-brand-mustard/40 text-brand-mustard-hover flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                      <div className="flex items-start gap-2.5">
-                        <span className="text-2xl">✨</span>
-                        <div>
-                          <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
-                            Returned from {launchedApp || 'UPI App'}
-                          </h4>
-                          <p className="text-xs text-brand-forest-muted mt-0.5">
-                            Completed your ₹{finalTotal} payment? Click below to immediately lock in your morning drop without typing anything!
-                          </p>
-                        </div>
-                      </div>
+                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-6 text-center">
+                      <p className="text-brand-forest-muted">Please confirm your pre-booking for {selectedProduct.name}. Pricing will be announced soon.</p>
                       <button
-                        type="button"
-                        disabled={submitting}
-                        onClick={() => handleConfirmPayment(true)}
-                        className="px-5 py-2.5 rounded-xl font-black text-xs bg-brand-mustard text-brand-forest hover:bg-brand-mustard shrink-0 shadow-lg cursor-pointer transition-all hover:scale-105"
-                      >
-                        {submitting ? 'Confirming...' : '✓ Confirm Order Now'}
-                      </button>
-                    </div>
-                  )}
-
-                  {/* Strict COD Disabled Alert for Just Bloomed 7D Trial & Single Pack */}
-                  {(isTrialProduct || isSingleProduct) && (
-                    <div className="rounded-2xl p-4 bg-brand-mustard/10 border-2 border-brand-mustard/40 text-brand-mustard-hover flex items-start gap-3">
-                      <span className="text-xl">🔒</span>
-                      <div>
-                        <h4 className="text-xs font-black uppercase tracking-wider text-emerald-200">
-                          Prepaid Fresh Living Order Enforced
-                        </h4>
-                        <p className="text-xs text-brand-forest-muted mt-0.5 leading-relaxed">
-                          Cash on Delivery is <strong>strictly disabled</strong> to guarantee continuous morning cold-chain logistics in Patna. Total fixed package price: <strong>₹{finalTotal}</strong>.
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* UPI Payment Container Card */}
-                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-6">
-                    {/* SECTION 1: ONE-TAP MOBILE UPI LAUNCHER */}
-                    <div className="rounded-2xl p-5 bg-gradient-to-br from-brand-card to-brand-cream border border-brand-border space-y-3">
-                      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1">
-                        <span className="text-xs font-black uppercase tracking-wider text-brand-forest flex items-center gap-1.5">
-                          <span>⚡</span> 1-Click UPI App Payment
-                        </span>
-                        <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 w-fit">
-                          Direct App Redirection · No typing amount
-                        </span>
-                      </div>
-                      <p className="text-xs text-brand-forest-muted">
-                        Tap any app below to launch payment directly on your phone with ₹{finalTotal} prefilled:
-                      </p>
-
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5 pt-1">
-                        {/* Google Pay */}
-                        <button
-                          type="button"
-                          onClick={() => handleLaunchApp('Google Pay', gpayUri)}
-                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-blue-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
-                        >
-                          <span className="text-sm font-black text-blue-400 group-hover:scale-110 transition-transform">G</span>
-                          <span className="text-xs font-bold text-brand-forest">Google Pay</span>
-                        </button>
-
-                        {/* PhonePe */}
-                        <button
-                          type="button"
-                          onClick={() => handleLaunchApp('PhonePe', phonepeUri)}
-                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-purple-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
-                        >
-                          <span className="text-sm font-black text-purple-400 group-hover:scale-110 transition-transform">पे</span>
-                          <span className="text-xs font-bold text-brand-forest">PhonePe</span>
-                        </button>
-
-                        {/* Paytm */}
-                        <button
-                          type="button"
-                          onClick={() => handleLaunchApp('Paytm', paytmUri)}
-                          className="p-3 rounded-xl bg-brand-cream/80 hover:bg-brand-border/90 border border-brand-border hover:border-sky-500/50 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
-                        >
-                          <span className="text-sm font-black text-sky-400 group-hover:scale-110 transition-transform">P</span>
-                          <span className="text-xs font-bold text-brand-forest">Paytm</span>
-                        </button>
-
-                        {/* Any UPI App */}
-                        <button
-                          type="button"
-                          onClick={() => handleLaunchApp('UPI App', universalUpiUri)}
-                          className="p-3 rounded-xl bg-brand-mustard/15 hover:bg-brand-mustard/25 border border-brand-mustard/40 transition-all flex items-center justify-center gap-2 group cursor-pointer min-h-[48px]"
-                        >
-                          <span className="text-sm font-black text-brand-mustard group-hover:scale-110 transition-transform">📲</span>
-                          <span className="text-xs font-bold text-brand-mustard-hover">Any UPI App</span>
-                        </button>
-                      </div>
-                    </div>
-
-                    {/* SECTION 2: DESKTOP QR CODE & UTR CONFIRMATION */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center pt-2">
-                      {/* Dynamic UPI QR Code Display */}
-                      <div className="flex flex-col items-center justify-center p-6 rounded-3xl bg-brand-cream border border-brand-border">
-                        <div className="p-3 bg-white rounded-2xl shadow-xl">
-                          <img
-                            src="/upi-qr.jpg"
-                            alt="Thebloomaa UPI Payment QR Code"
-                            className="w-48 h-auto rounded-lg"
-                          />
-                        </div>
-
-                        <div className="mt-4 text-center">
-                          <span className="text-[11px] uppercase tracking-wider text-brand-forest-muted block font-semibold">
-                            Or Scan with PhonePe / GPay / Paytm
-                          </span>
-                          <span className="text-2xl font-black text-brand-mustard font-mono mt-1 block">
-                            ₹{finalTotal}
-                          </span>
-                        </div>
-                      </div>
-
-                      {/* UPI ID & UTR Input Column */}
-                      <div className="space-y-4">
-                        {/* Copyable UPI ID Pill */}
-                        <div>
-                          <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                            Merchant UPI ID
-                          </label>
-                          <div className="flex items-center gap-2">
-                            <div className="flex-1 px-4 py-2.5 rounded-xl bg-brand-cream border border-brand-border font-mono text-sm text-brand-forest flex items-center justify-between">
-                              <span>8863002959@ptyes</span>
-                              <span className="text-[10px] text-brand-mustard uppercase font-black">Verified</span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={handleCopyUpiId}
-                              className="px-4 py-2.5 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-colors"
-                            >
-                              {copiedUpi ? 'Copied! ✓' : 'Copy'}
-                            </button>
-                          </div>
-                        </div>
-
-                        {/* Order Reference Breakdown */}
-                        <div className="p-3.5 rounded-2xl bg-brand-cream/40 border border-brand-border text-xs space-y-1.5">
-                          <div className="flex justify-between text-brand-forest-muted">
-                            <span>Selected Diet Prep:</span>
-                            <span className="font-bold text-brand-forest">{selectedProduct.name}</span>
-                          </div>
-                          <div className="flex justify-between text-brand-forest-muted">
-                            <span>Delivery Address:</span>
-                            <span className="font-bold text-brand-forest max-w-[180px] truncate">
-                              {form.houseNo ? `${form.houseNo}, ` : ''}{form.street}, {form.pincode}
-                            </span>
-                          </div>
-                          <div className="flex justify-between text-brand-forest-muted">
-                            <span>Morning Slot:</span>
-                            <span className="font-bold text-brand-mustard font-mono">{form.deliveryTime} AM</span>
-                          </div>
-                        </div>
-
-                        {/* 12-Digit UTR Input with 1-Tap Paste */}
-                        <div>
-                          <div className="flex items-center justify-between mb-1.5">
-                            <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
-                              UPI UTR / Reference No.{' '}
-                              <span className="text-brand-forest-muted/70 font-normal lowercase">(optional if paid via app)</span>
-                            </label>
-                            <button
-                              type="button"
-                              onClick={handlePasteClipboard}
-                              className="px-2.5 py-1 rounded-lg text-[11px] font-bold bg-brand-cream hover:bg-brand-border text-brand-mustard border border-brand-mustard/30 flex items-center gap-1 transition-colors cursor-pointer"
-                            >
-                              <span>📋</span>
-                              <span>{pastedUtr ? 'Pasted! ✓' : 'Paste UTR'}</span>
-                            </button>
-                          </div>
-                          <input
-                            type="text"
-                            maxLength={12}
-                            placeholder="e.g. 325498712345 (or 1-click confirm below)"
-                            value={utr}
-                            onChange={(e) => setUtr(e.target.value.replace(/\D/g, ''))}
-                            className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-base sm:text-sm font-mono text-brand-mustard tracking-wider focus:outline-none focus:border-brand-mustard min-h-[46px]"
-                          />
-                          <p className="text-[10px] text-brand-forest-muted mt-1">
-                            Tip: You can 1-tap paste from your clipboard, or click &quot;I Have Paid&quot; below.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* SECTION 3: BOTTOM CONFIRMATION NAVIGATION */}
-                    <div className="pt-4 border-t border-brand-border flex flex-col sm:flex-row justify-between items-center gap-3">
-                      <button
-                        type="button"
-                        onClick={() => setStep('address')}
-                        className="w-full sm:w-auto px-6 py-3.5 rounded-2xl text-sm font-semibold border border-brand-border text-brand-forest-muted hover:bg-brand-cream transition-colors"
-                      >
-                        ← Back
-                      </button>
-
-                      <div className="flex flex-col sm:flex-row gap-2.5 w-full sm:w-auto">
-                        <button
                           type="button"
                           disabled={submitting}
-                          onClick={() => handleConfirmPayment(true)}
-                          className="px-6 py-3.5 rounded-2xl font-bold text-xs bg-brand-cream hover:bg-brand-border text-brand-mustard border border-brand-mustard/30 transition-all cursor-pointer text-center"
-                        >
-                          {submitting ? 'Confirming...' : `I Have Paid ₹${finalTotal} (No UTR)`}
-                        </button>
-
-                        <button
-                          type="button"
-                          disabled={submitting}
-                          onClick={() => handleConfirmPayment(false)}
-                          className="px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                          onClick={() => handleConfirmPayment()}
+                          className="w-full sm:w-auto px-8 py-4 mx-auto rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                         >
                           {submitting ? (
                             <>
                               <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
-                              <span>Scheduling Prep...</span>
+                              <span>Confirming...</span>
                             </>
+                          ) : (
+                            <>
+                              <span>Confirm Pre-Booking</span>
+                              <span>→</span>
+                            </>
+                          )}
+                        </button>
+                  </div>
+                  </>
                           ) : (
                             <>
                               <span>Confirm Payment &amp; Schedule Prep</span>

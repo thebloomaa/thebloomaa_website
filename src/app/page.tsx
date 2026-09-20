@@ -35,8 +35,8 @@ const offerings = [
     name: 'Single Pack 1-Day Fresh Diet',
     type: 'SINGLE_PACK',
     tag: 'Starter Sampler',
-    perDay: '₹70',
-    total: '₹70 (Single Drop)',
+    perDay: 'TBA',
+    total: 'To Be Announced',
     period: '1-day fresh diet sampler',
     features: [
       '1 goal-targeted cold-prepared living enzyme box',
@@ -47,15 +47,15 @@ const offerings = [
       'Bio-calculator nutrition analysis report included',
     ],
     popular: false,
-    ctaText: 'Order 1-Day Pack (₹70) →',
+    ctaText: 'Order 1-Day Pack →',
     ctaHref: '/checkout?plan=single',
   },
   {
     name: 'Just Bloomed 7-Day Living Trial',
     type: 'TRIAL',
     tag: 'Most Popular',
-    perDay: '₹64',
-    total: '₹451',
+    perDay: 'TBA',
+    total: 'To Be Announced',
     period: '7-day living reset',
     features: [
       '7 goal-targeted living enzyme boxes (Sprouts, Raw Greens, Seeds)',
@@ -66,7 +66,7 @@ const offerings = [
       'Free WhatsApp nutrition consultation',
     ],
     popular: true,
-    ctaText: 'Claim 7D Trial (₹451) →',
+    ctaText: 'Claim 7D Trial →',
     ctaHref: '/checkout?plan=trial',
   },
   {
@@ -92,7 +92,7 @@ const offerings = [
 const faqs = [
   {
     q: 'Can I order a single 1-day pack before taking a full plan?',
-    a: 'Yes! You can order our Single Pack 1-Day Diet Order for just ₹70. We will deliver a complete fresh living nutrition box to your doorstep tomorrow morning between 6:00 AM and 9:00 AM across Patna with zero recurring commitments.',
+    a: 'Yes! You can order our Single Pack 1-Day Diet Order. We will deliver a complete fresh living nutrition box to your doorstep tomorrow morning between 6:00 AM and 9:00 AM across Patna with zero recurring commitments.',
   },
   {
     q: 'What is the Just Bloomed 7D Trial Plan?',
@@ -207,7 +207,7 @@ export default function Home() {
                 <p className="text-xs mb-4 text-brand-forest-muted">{plan.period}</p>
                 <div className="mb-5">
                   <span className="text-3xl font-black font-mono text-brand-mustard">{plan.perDay}</span>
-                  {plan.perDay !== 'Free' && plan.perDay !== 'Custom' && (
+                  {plan.perDay !== 'Free' && plan.perDay !== 'Custom' && plan.perDay !== 'TBA' && (
                     <span className="text-sm ml-1 text-brand-forest-muted">/day</span>
                   )}
                 </div>

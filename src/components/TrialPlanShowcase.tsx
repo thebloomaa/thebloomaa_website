@@ -147,7 +147,7 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
               Introductory Trial
             </span>
             <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-brand-mustard font-mono">₹451</span>
+              <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
               <span className="text-xs text-brand-forest-muted font-medium">/ 7 boxes</span>
             </div>
           </div>

@@ -25,7 +25,7 @@ export default function TermsPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-brand-forest">1. Subscription Bundles &amp; Prepaid Models</h2>
               <p>
-                thebloomaa operates on a prepaid subscription model offering 7-day, 15-day, and 30-day bundles, as well as the special ₹451 Just Bloomed 7D Trial. All plans are paid in advance via UPI or accepted payment methods.
+                thebloomaa operates on a prepaid subscription model offering 7-day, 15-day, and 30-day bundles, as well as the Just Bloomed 7D Trial. All plans are paid in advance via UPI or accepted payment methods.
               </p>
             </section>
 
@@ -46,7 +46,7 @@ export default function TermsPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-brand-forest">4. Just Bloomed 7-Day Trial Protocol</h2>
               <p>
-                The ₹451 Just Bloomed 7-Day Trial is a prepaid introduction plan. As part of our logistics protocol, 7 unique living boxes are distributed over 6 active morning routes, featuring a Day 6 Double Drop (Box 6 + Box 7 delivered together).
+                The Just Bloomed 7-Day Trial is a prepaid introduction plan. As part of our logistics protocol, 7 unique living boxes are distributed over 6 active morning routes, featuring a Day 6 Double Drop (Box 6 + Box 7 delivered together).
               </p>
             </section>
 

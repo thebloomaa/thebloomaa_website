@@ -77,7 +77,7 @@ export default function Footer() {
           <div>
             <h4 className="text-sm font-bold uppercase tracking-wider mb-4 text-brand-forest-muted">Quick Links</h4>
             <ul className="space-y-2.5">
-              <li><a href="/#trial" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">7-Day Living Food Trial (₹451)</a></li>
+              <li><a href="/#trial" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">7-Day Living Food Trial</a></li>
               <li><Link href="/calculator" className="text-sm font-semibold text-brand-mustard hover:text-brand-mustard-hover transition-colors flex items-center gap-1.5">Bio Calculator <span className="text-[9px] px-1.5 py-0.5 rounded bg-brand-mustard/20 text-brand-mustard font-bold">NEW</span></Link></li>
               <li><a href="/#pricing" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">Pricing &amp; Subscriptions</a></li>
               <li><a href="/#how-it-works" className="text-sm text-brand-forest-muted hover:text-brand-mustard transition-colors">How It Works</a></li>

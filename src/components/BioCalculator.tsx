@@ -792,7 +792,7 @@ export default function BioCalculator() {
                     <span className="font-bold text-brand-mustard font-mono">🍞 {results.matchedProduct.carbs}g Carbs</span>
                     <span className="font-bold text-brand-mustard font-mono">🥑 {results.matchedProduct.fats}g Fats</span>
                     <span className="font-black text-base text-brand-forest font-mono">
-                      {results.matchedProduct.isTrialPlan ? '₹451 (7 Days Trial)' : `₹${results.matchedProduct.price}/diet`}
+                      Price: TBA
                     </span>
                   </div>
 
@@ -817,7 +817,7 @@ export default function BioCalculator() {
                   onClick={handleSelectPlanAndOrder}
                   className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Select This Plan &amp; Order</span>
+                  <span>Select This Plan &amp; Pre-Book</span>
                   <span>→</span>
                 </button>
               </div>

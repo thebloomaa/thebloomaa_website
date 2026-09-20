@@ -18,8 +18,6 @@ export default function MiniCartDrawer() {
     selectBundle,
     isDrawerOpen,
     closeDrawer,
-    getPerDayPrice,
-    getTotalPrice,
   } = useBundleStore();
 
   // If product is a trial plan, automatically bypass the drawer and push to checkout
@@ -124,7 +122,7 @@ export default function MiniCartDrawer() {
                   🔥 {selectedProduct.calories} kcal · 💪 {selectedProduct.protein}g P · 🥑 {selectedProduct.fats}g F
                 </p>
                 <span className="text-xs font-bold text-brand-mustard font-mono mt-1 block">
-                  ₹{selectedProduct.price} / diet
+                  Price: TBA
                 </span>
               </div>
             </div>
@@ -145,7 +143,6 @@ export default function MiniCartDrawer() {
                     ? Math.round(basePrice * (1 - opt.discountPct / 100))
                     : basePrice;
                   const total = perDay * opt.days;
-                  const savings = (basePrice * opt.days) - total;
 
                   return (
                     <button
@@ -181,17 +178,9 @@ export default function MiniCartDrawer() {
                         </div>
 
                         <div className="text-right">
-                          <div className="text-base font-black text-brand-mustard font-mono">₹{total}</div>
-                          <div className="text-[10px] text-brand-forest-muted font-mono">₹{perDay}/day</div>
+                          <div className="text-base font-black text-brand-mustard font-mono">TBA</div>
                         </div>
                       </div>
-
-                      {savings > 0 && (
-                        <div className="mt-2 pt-2 border-t border-brand-border/60 flex items-center justify-between text-[11px]">
-                          <span className="text-brand-forest-muted">Total Bundle Savings:</span>
-                          <span className="font-bold text-brand-mustard font-mono">Save ₹{savings}</span>
-                        </div>
-                      )}
                     </button>
                   );
                 })}
@@ -200,10 +189,6 @@ export default function MiniCartDrawer() {
 
             {/* Price Summary Breakdown */}
             <div className="rounded-2xl p-4 bg-brand-cream/60 border border-brand-border/80 space-y-2 text-xs">
-              <div className="flex justify-between text-brand-forest-muted">
-                <span>Per-day rate:</span>
-                <span className="font-bold text-brand-forest font-mono">₹{getPerDayPrice()}</span>
-              </div>
               <div className="flex justify-between text-brand-forest-muted">
                 <span>Scheduled duration:</span>
                 <span className="font-bold text-brand-forest font-mono">
@@ -215,8 +200,8 @@ export default function MiniCartDrawer() {
                 <span className="font-bold text-brand-mustard font-mono">FREE (Included)</span>
               </div>
               <div className="pt-2 border-t border-brand-border flex justify-between items-baseline">
-                <span className="text-sm font-bold text-brand-forest">Total Upfront:</span>
-                <span className="text-xl font-black text-brand-mustard font-mono">₹{getTotalPrice()}</span>
+                <span className="text-sm font-bold text-brand-forest">Total Price:</span>
+                <span className="text-xl font-black text-brand-mustard font-mono">TBA</span>
               </div>
             </div>
           </div>
@@ -228,7 +213,7 @@ export default function MiniCartDrawer() {
               onClick={handleProceedToCheckout}
               className="w-full py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Proceed to Checkout</span>
+              <span>Proceed to Pre-Book</span>
               <span>→</span>
             </button>
             <p className="text-[10px] text-center text-brand-forest-muted mt-2">
