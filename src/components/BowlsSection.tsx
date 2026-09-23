@@ -167,26 +167,44 @@ const weeklyBowls: BowlItem[] = [
   },
 ];
 
+const bowlPairs = [
+  [weeklyBowls[0], weeklyBowls[1]], // Monday & Tuesday
+  [weeklyBowls[2], weeklyBowls[3]], // Wednesday & Thursday
+  [weeklyBowls[4], weeklyBowls[5]], // Friday & Saturday
+];
+
 export default function BowlsSection() {
   const router = useRouter();
   const { selectProduct } = useBundleStore();
   const [selectedBowlModal, setSelectedBowlModal] = useState<BowlItem | null>(null);
-  const [activeDayIndex, setActiveDayIndex] = useState<number | null>(null);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
 
-  const scroll = (direction: 'left' | 'right') => {
-    if (scrollRef.current) {
-      const scrollAmount = direction === 'left' ? -280 : 280;
-      scrollRef.current.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-    }
+  // Auto-slide every 4.5 seconds (paused on mouse enter / touch)
+  React.useEffect(() => {
+    if (isPaused) return;
+
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev === bowlPairs.length - 1 ? 0 : prev + 1));
+    }, 4500);
+
+    return () => clearInterval(timer);
+  }, [isPaused]);
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev === 0 ? bowlPairs.length - 1 : prev - 1));
   };
 
-  const scrollToDay = (index: number) => {
-    setActiveDayIndex(index);
-    if (scrollRef.current) {
-      const cardWidth = 275;
-      scrollRef.current.scrollTo({ left: index * cardWidth, behavior: 'smooth' });
-    }
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev === bowlPairs.length - 1 ? 0 : prev + 1));
+  };
+
+  const goToDay = (dayIdx: number) => {
+    // 0, 1 -> Slide 0 (Mon, Tue)
+    // 2, 3 -> Slide 1 (Wed, Thu)
+    // 4, 5 -> Slide 2 (Fri, Sat)
+    const slideIdx = Math.floor(dayIdx / 2);
+    setCurrentSlide(slideIdx);
   };
 
   const handleSelectBowl = (bowl: BowlItem) => {
@@ -208,8 +226,8 @@ export default function BowlsSection() {
   };
 
   return (
-    <section id="bowls" className="py-20 px-3 sm:px-6 lg:px-8 bg-[#FAF7F2] overflow-hidden">
-      <div className="max-w-[1720px] mx-auto">
+    <section id="bowls" className="py-16 sm:py-20 px-3 sm:px-6 lg:px-8 bg-[#FAF7F2] overflow-hidden">
+      <div className="max-w-[1536px] mx-auto">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-8">
           <div className="flex items-center gap-2 mb-2">
@@ -247,174 +265,218 @@ export default function BowlsSection() {
             </span>
           </div>
 
-          {/* Day Pills Bar - Symmetrically Centered */}
-          <div className="flex items-center justify-center gap-2 mt-6 max-w-full overflow-x-auto pb-1 no-scrollbar px-2">
-            {/* Scroll Left Button for small screens */}
+          {/* Day Tabs with Navigation Controls */}
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-6 max-w-full overflow-x-auto pb-1 no-scrollbar px-2">
+            {/* Quick Prev Arrow in Tab Bar */}
             <button
-              onClick={() => scroll('left')}
-              aria-label="Scroll left"
-              className="w-8 h-8 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-sm font-bold cursor-pointer active:scale-95 shrink-0 xl:hidden"
+              onClick={prevSlide}
+              aria-label="Previous 2 bowls"
+              className="w-8 h-8 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-sm font-bold cursor-pointer active:scale-95 shrink-0"
             >
               ‹
             </button>
 
-            <button
-              onClick={() => {
-                setActiveDayIndex(null);
-                if (scrollRef.current) {
-                  scrollRef.current.scrollTo({ left: 0, behavior: 'smooth' });
-                }
-              }}
-              className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap active:scale-95 border ${
-                activeDayIndex === null
-                  ? 'bg-[#0F3826] text-white border-[#0F3826] shadow-sm'
-                  : 'bg-white hover:bg-[#0F3826] hover:text-white text-[#0D2818] border-[#DDD5C0]'
-              }`}
-            >
-              All 6 Days
-            </button>
+            {weeklyBowls.map((bowl, idx) => {
+              const pairIndex = Math.floor(idx / 2);
+              const isActive = currentSlide === pairIndex;
+              return (
+                <button
+                  key={idx}
+                  onClick={() => goToDay(idx)}
+                  className={`px-3 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap active:scale-95 border ${
+                    isActive
+                      ? 'bg-[#0F3826] text-white border-[#0F3826] shadow-sm'
+                      : 'bg-white hover:bg-[#0F3826] hover:text-white text-[#0D2818] border-[#DDD5C0]'
+                  }`}
+                >
+                  {bowl.day}
+                </button>
+              );
+            })}
 
-            {weeklyBowls.map((bowl, idx) => (
-              <button
-                key={idx}
-                onClick={() => scrollToDay(idx)}
-                className={`px-3.5 sm:px-4 py-1.5 rounded-full text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap active:scale-95 border ${
-                  activeDayIndex === idx
-                    ? 'bg-[#0F3826] text-white border-[#0F3826] shadow-sm'
-                    : 'bg-white hover:bg-[#0F3826] hover:text-white text-[#0D2818] border-[#DDD5C0]'
-                }`}
-              >
-                {bowl.day}
-              </button>
-            ))}
-
-            {/* Scroll Right Button for small screens */}
+            {/* Quick Next Arrow in Tab Bar */}
             <button
-              onClick={() => scroll('right')}
-              aria-label="Scroll right"
-              className="w-8 h-8 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-sm font-bold cursor-pointer active:scale-95 shrink-0 xl:hidden"
+              onClick={nextSlide}
+              aria-label="Next 2 bowls"
+              className="w-8 h-8 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-sm font-bold cursor-pointer active:scale-95 shrink-0"
             >
               ›
             </button>
           </div>
         </div>
 
-        {/* All 6 Days in ONE Single Line (6 Columns on Desktop, Single Horizontal Scroll Track on Mobile/Tablet) */}
+        {/* ========================================================
+            2-CARDS-AT-A-TIME AUTO-SLIDING CAROUSEL CONTAINER
+           ======================================================== */}
         <div
-          ref={scrollRef}
-          className="flex xl:grid xl:grid-cols-6 items-stretch overflow-x-auto xl:overflow-x-visible gap-3 sm:gap-4 xl:gap-2.5 2xl:gap-3.5 pb-6 pt-1 scroll-smooth snap-x snap-mandatory no-scrollbar"
+          className="relative max-w-4xl lg:max-w-5xl mx-auto px-2 sm:px-8 py-2"
+          onMouseEnter={() => setIsPaused(true)}
+          onMouseLeave={() => setIsPaused(false)}
         >
-          {weeklyBowls.map((bowl, idx) => (
+          {/* Floating Left Arrow Sign */}
+          <button
+            type="button"
+            onClick={prevSlide}
+            aria-label="Slide to previous two cards"
+            className="absolute -left-1 sm:-left-3 lg:-left-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 border-2 border-[#DDD5C0] text-[#0D2818] shadow-xl hover:bg-[#0F3826] hover:text-white hover:border-[#0F3826] transition-all flex items-center justify-center text-xl sm:text-2xl font-bold cursor-pointer active:scale-90"
+          >
+            ‹
+          </button>
+
+          {/* Floating Right Arrow Sign */}
+          <button
+            type="button"
+            onClick={nextSlide}
+            aria-label="Slide to next two cards"
+            className="absolute -right-1 sm:-right-3 lg:-right-6 top-1/2 -translate-y-1/2 z-30 w-11 h-11 sm:w-13 sm:h-13 rounded-full bg-white/95 border-2 border-[#DDD5C0] text-[#0D2818] shadow-xl hover:bg-[#0F3826] hover:text-white hover:border-[#0F3826] transition-all flex items-center justify-center text-xl sm:text-2xl font-bold cursor-pointer active:scale-90"
+          >
+            ›
+          </button>
+
+          {/* Overflow Viewport */}
+          <div className="overflow-hidden rounded-[2rem] p-1">
             <div
-              key={bowl.id}
-              className={`w-[260px] sm:w-[280px] xl:w-auto shrink-0 xl:shrink snap-center xl:snap-align-none rounded-[1.75rem] 2xl:rounded-[2rem] p-3 sm:p-4 xl:p-2.5 2xl:p-3.5 ${bowl.bgClass} border ${bowl.borderClass} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl shadow-xs group ${
-                activeDayIndex === idx ? 'ring-2 ring-[#0F3826] shadow-lg scale-[1.01]' : ''
-              }`}
+              className="flex transition-transform duration-600 ease-in-out"
+              style={{ transform: `translateX(-${currentSlide * 100}%)` }}
             >
-              <div>
-                {/* Day Badge & Bowl Title */}
-                <div className="text-center mb-2">
-                  <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] 2xl:text-[11px] font-black uppercase tracking-wider border ${bowl.badgeColor} mb-1.5 shadow-2xs`}>
-                    {bowl.day}
-                  </span>
-                  <h3 className="font-serif text-sm sm:text-base xl:text-[13px] 2xl:text-base font-bold text-[#0D2818] tracking-tight leading-snug min-h-[38px] xl:min-h-[42px] 2xl:min-h-[48px] flex items-center justify-center">
-                    {bowl.name}
-                  </h3>
-                  <p className="text-[10px] 2xl:text-xs text-[#5E7A67] mt-0.5 leading-tight min-h-[26px] 2xl:min-h-[28px] line-clamp-2">
-                    {bowl.subtitle}
-                  </p>
-                </div>
-
-                {/* Circular Bowl Image */}
-                <div className="relative w-24 h-24 sm:w-28 sm:h-28 xl:w-24 xl:h-24 2xl:w-28 2xl:h-28 mx-auto rounded-full overflow-hidden border-3 2xl:border-4 border-white shadow-md my-2 group-hover:scale-105 transition-transform duration-500 bg-white">
-                  <Image
-                    src={bowl.image}
-                    alt={bowl.name}
-                    fill
-                    sizes="(max-width: 1280px) 160px, 120px"
-                    className="object-cover"
-                  />
-                  <div className="absolute inset-0 rounded-full shadow-inner pointer-events-none" />
-                </div>
-
-                {/* 4 Goal Benefit Pills */}
-                <div className="grid grid-cols-2 gap-1 mb-2">
-                  {bowl.benefits.map((b, bIdx) => (
+              {bowlPairs.map((pair, pairIdx) => (
+                <div
+                  key={pairIdx}
+                  className="w-full shrink-0 grid grid-cols-1 sm:grid-cols-2 gap-5 sm:gap-6 px-1 sm:px-2"
+                >
+                  {pair.map((bowl) => (
                     <div
-                      key={bIdx}
-                      className="flex items-center gap-1 p-1 rounded-lg bg-white/75 border border-black/5 text-[9px] 2xl:text-[10px] font-semibold text-[#0D2818] shadow-2xs min-w-0"
-                      title={b.label}
+                      key={bowl.id}
+                      className={`w-full rounded-[2rem] p-5 sm:p-6 lg:p-7 ${bowl.bgClass} border ${bowl.borderClass} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1.5 hover:shadow-xl shadow-sm group`}
                     >
-                      <span className="text-[11px] shrink-0">{b.icon}</span>
-                      <span className="truncate leading-none">{b.label}</span>
+                      <div>
+                        {/* Day Badge & Bowl Title */}
+                        <div className="text-center mb-3">
+                          <span className={`inline-block px-3.5 py-1 rounded-full text-xs font-black uppercase tracking-wider border ${bowl.badgeColor} mb-2 shadow-2xs`}>
+                            {bowl.day} Bowl
+                          </span>
+                          <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0D2818] tracking-tight leading-snug">
+                            {bowl.name}
+                          </h3>
+                          <p className="text-xs sm:text-sm text-[#5E7A67] mt-1 leading-relaxed">
+                            {bowl.subtitle}
+                          </p>
+                        </div>
+
+                        {/* Circular Bowl Image */}
+                        <div className="relative w-36 h-36 sm:w-40 sm:h-40 mx-auto rounded-full overflow-hidden border-4 border-white shadow-lg my-4 group-hover:scale-105 transition-transform duration-500 bg-white">
+                          <Image
+                            src={bowl.image}
+                            alt={bowl.name}
+                            fill
+                            sizes="200px"
+                            className="object-cover"
+                          />
+                          <div className="absolute inset-0 rounded-full shadow-inner pointer-events-none" />
+                        </div>
+
+                        {/* 4 Goal Benefit Pills with Full Labels (No Ellipsis) */}
+                        <div className="grid grid-cols-2 gap-2 mb-3.5">
+                          {bowl.benefits.map((b, bIdx) => (
+                            <div
+                              key={bIdx}
+                              className="flex items-center gap-1.5 p-2 rounded-xl bg-white/85 border border-black/5 text-xs font-semibold text-[#0D2818] shadow-2xs"
+                            >
+                              <span className="text-sm shrink-0">{b.icon}</span>
+                              <span className="leading-tight">{b.label}</span>
+                            </div>
+                          ))}
+                        </div>
+
+                        {/* Key Ingredients (Types only: Fruits, Sprouts, Dry Fruits, Seeds) */}
+                        <div className="mb-3.5 p-2.5 rounded-2xl bg-white/90 border border-black/5">
+                          <div className="flex items-center justify-center gap-2 mb-2">
+                            <div className="h-px w-4 bg-[#0D2818]/20" />
+                            <span className="text-[10px] font-black uppercase tracking-widest text-[#0D2818]/80">
+                              Key Ingredients
+                            </span>
+                            <div className="h-px w-4 bg-[#0D2818]/20" />
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-1.5">
+                            {bowl.ingredientTypes.map((item, iIdx) => (
+                              <div
+                                key={iIdx}
+                                className="flex items-center gap-1.5 p-1.5 rounded-lg bg-[#FAF7F2] border border-[#EAE2D2] text-xs font-bold text-[#0D2818]"
+                              >
+                                <span className="text-sm shrink-0">{item.icon}</span>
+                                <span className="truncate">{item.label}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        {/* Macros Breakdown Bar */}
+                        <div className="flex justify-between items-center bg-white/95 p-2.5 rounded-2xl mb-3.5 border border-black/5 shadow-2xs">
+                          <div className="flex flex-col items-center flex-1 border-r border-[#EAE2D2] px-1">
+                            <span className="text-sm font-black text-[#0D2818]">{bowl.macros.protein}</span>
+                            <span className="text-[9px] uppercase text-[#5E7A67] font-bold tracking-wider">Protein</span>
+                          </div>
+                          <div className="flex flex-col items-center flex-1 border-r border-[#EAE2D2] px-1">
+                            <span className="text-sm font-black text-[#0D2818]">{bowl.macros.fiber}</span>
+                            <span className="text-[9px] uppercase text-[#5E7A67] font-bold tracking-wider">Fiber</span>
+                          </div>
+                          <div className="flex flex-col items-center flex-1 px-1">
+                            <span className="text-sm font-black text-[#D97706]">{bowl.macros.calories}</span>
+                            <span className="text-[9px] uppercase text-[#5E7A67] font-bold tracking-wider">Calories</span>
+                          </div>
+                        </div>
+
+                        {/* Target Audience Banner */}
+                        <div className="text-center py-2 px-3 rounded-xl bg-white/60 border border-black/5 mb-4 min-h-[38px] flex items-center justify-center">
+                          <p className="text-xs font-bold text-[#0D2818]/90 leading-tight">
+                            {bowl.target}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Action Button */}
+                      <div className="pt-1">
+                        <button
+                          type="button"
+                          onClick={() => setSelectedBowlModal(bowl)}
+                          className="w-full py-3 rounded-full text-xs sm:text-sm font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-2 shadow-md active:scale-98 cursor-pointer"
+                        >
+                          <span>View Details & Nutrition</span>
+                          <span className="text-sm">→</span>
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
-
-                {/* Key Ingredients (Types only: Fruits, Sprouts, Dry Fruits, Seeds) */}
-                <div className="mb-2 p-1.5 2xl:p-2 rounded-xl bg-white/85 border border-black/5">
-                  <div className="flex items-center justify-center gap-1.5 mb-1.5">
-                    <div className="h-px w-3 bg-[#0D2818]/20" />
-                    <span className="text-[8px] 2xl:text-[9px] font-black uppercase tracking-widest text-[#0D2818]/80">
-                      Key Ingredients
-                    </span>
-                    <div className="h-px w-3 bg-[#0D2818]/20" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-1">
-                    {bowl.ingredientTypes.map((item, iIdx) => (
-                      <div
-                        key={iIdx}
-                        className="flex items-center gap-1 p-1 rounded-md bg-[#FAF7F2] border border-[#EAE2D2] text-[9.5px] 2xl:text-[10.5px] font-bold text-[#0D2818] min-w-0"
-                      >
-                        <span className="text-[10px] shrink-0">{item.icon}</span>
-                        <span className="truncate">{item.label}</span>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Macros Breakdown Bar */}
-                <div className="flex justify-between items-center bg-white/90 p-1.5 rounded-xl mb-2 border border-black/5 shadow-2xs">
-                  <div className="flex flex-col items-center flex-1 border-r border-[#EAE2D2] px-0.5">
-                    <span className="text-[11px] 2xl:text-xs font-black text-[#0D2818]">{bowl.macros.protein}</span>
-                    <span className="text-[7.5px] 2xl:text-[8px] uppercase text-[#5E7A67] font-bold tracking-wider">Protein</span>
-                  </div>
-                  <div className="flex flex-col items-center flex-1 border-r border-[#EAE2D2] px-0.5">
-                    <span className="text-[11px] 2xl:text-xs font-black text-[#0D2818]">{bowl.macros.fiber}</span>
-                    <span className="text-[7.5px] 2xl:text-[8px] uppercase text-[#5E7A67] font-bold tracking-wider">Fiber</span>
-                  </div>
-                  <div className="flex flex-col items-center flex-1 px-0.5">
-                    <span className="text-[11px] 2xl:text-xs font-black text-[#D97706]">{bowl.macros.calories}</span>
-                    <span className="text-[7.5px] 2xl:text-[8px] uppercase text-[#5E7A67] font-bold tracking-wider">Calories</span>
-                  </div>
-                </div>
-
-                {/* Target Audience Banner */}
-                <div className="text-center py-1.5 px-1 rounded-lg bg-white/50 border border-black/5 mb-2 min-h-[34px] 2xl:min-h-[38px] flex items-center justify-center">
-                  <p className="text-[9px] 2xl:text-[10px] font-bold text-[#0D2818]/90 leading-tight">
-                    {bowl.target}
-                  </p>
-                </div>
-              </div>
-
-              {/* Action Button */}
-              <div className="pt-0.5">
-                <button
-                  type="button"
-                  onClick={() => setSelectedBowlModal(bowl)}
-                  className="w-full py-2 2xl:py-2.5 rounded-full text-[11px] 2xl:text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-1 shadow-md active:scale-95 cursor-pointer"
-                >
-                  <span>View Details</span>
-                  <span className="text-xs">→</span>
-                </button>
-              </div>
+              ))}
             </div>
-          ))}
+          </div>
+
+          {/* Slide Indicator Dots + Current Pair Label */}
+          <div className="flex flex-col items-center gap-2 mt-5">
+            <div className="flex items-center gap-2.5">
+              {bowlPairs.map((pair, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setCurrentSlide(idx)}
+                  className={`transition-all duration-300 rounded-full cursor-pointer ${
+                    currentSlide === idx
+                      ? 'w-10 h-3 bg-[#0F3826] shadow-xs'
+                      : 'w-3 h-3 bg-[#DDD5C0] hover:bg-[#A89F8B]'
+                  }`}
+                  aria-label={`Slide ${idx + 1}: ${pair[0].day} & ${pair[1].day}`}
+                />
+              ))}
+            </div>
+            <span className="text-xs font-semibold text-[#5E7A67]">
+              Showing: {bowlPairs[currentSlide][0].day} & {bowlPairs[currentSlide][1].day} (Auto-sliding • Hover to pause)
+            </span>
+          </div>
         </div>
 
         {/* Section Bottom Banner & CTA */}
-        <div className="mt-10 p-6 sm:p-8 rounded-3xl bg-white border border-[#E6DFC6] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+        <div className="mt-12 p-6 sm:p-8 rounded-3xl bg-white border border-[#E6DFC6] shadow-sm flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden max-w-4xl lg:max-w-5xl mx-auto">
           {/* Left Side: Delivery Badges & Tagline */}
           <div className="space-y-2 text-center md:text-left">
             <h3 className="font-serif text-2xl font-bold text-[#0D2818]">
