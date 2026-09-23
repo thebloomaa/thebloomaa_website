@@ -436,7 +436,7 @@ export default function BowlsSection() {
             SLIDER CONTAINER: 1 CARD ON MOBILE, 2 CARDS ON DESKTOP
            ======================================================== */}
         <div
-          className="relative max-w-sm sm:max-w-2xl lg:max-w-[780px] mx-auto px-1 sm:px-6 py-1"
+          className="relative max-w-sm sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto px-1 sm:px-6 py-1"
           onMouseEnter={() => setIsPaused(true)}
           onMouseLeave={() => setIsPaused(false)}
         >
@@ -475,7 +475,7 @@ export default function BowlsSection() {
                 : bowlPairs.map((pair, pairIdx) => (
                     <div
                       key={pairIdx}
-                      className="w-full shrink-0 grid grid-cols-2 gap-3.5 lg:gap-4 px-1"
+                      className="w-full shrink-0 grid grid-cols-2 gap-4 lg:gap-6 px-1"
                     >
                       {pair.map((bowl) => renderBowlCard(bowl))}
                     </div>
@@ -509,7 +509,7 @@ export default function BowlsSection() {
         </div>
 
         {/* Section Bottom Banner & CTA */}
-        <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-white border border-[#E6DFC6] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden max-w-sm sm:max-w-2xl lg:max-w-[780px] mx-auto">
+        <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-white border border-[#E6DFC6] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden max-w-sm sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
           {/* Left Side: Delivery Badges & Tagline */}
           <div className="space-y-1.5 text-center md:text-left">
             <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0D2818]">
