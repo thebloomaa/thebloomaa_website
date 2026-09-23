@@ -138,9 +138,9 @@ export default function NutritionAndPlansSection() {
                   
                   {/* Price Block */}
                   <div className="py-2.5 px-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Intro Price</span>
-                    <strong className="text-2xl font-black text-[#0D2818] block font-sans tracking-tight">₹149</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">per day</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Intro Plan</span>
+                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
+                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
                   </div>
                 </div>
                 
@@ -148,7 +148,7 @@ export default function NutritionAndPlansSection() {
                   href="/checkout?plan=single"
                   className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
                 >
-                  Get Started
+                  Pre-Book Daily →
                 </Link>
               </div>
 
@@ -166,9 +166,9 @@ export default function NutritionAndPlansSection() {
                   
                   {/* Price Block */}
                   <div className="py-2.5 px-1 rounded-xl bg-[#FEF9EC] border border-[#FDE3B2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Save 15%</span>
-                    <strong className="text-2xl font-black text-[#0D2818] block font-sans tracking-tight">₹899</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">(7 days • ₹128/day)</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">7-Day Routine</span>
+                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
+                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
                   </div>
                 </div>
                 
@@ -176,7 +176,7 @@ export default function NutritionAndPlansSection() {
                   href="/checkout?plan=trial"
                   className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#D97706] hover:bg-[#B45309] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
                 >
-                  Choose Plan
+                  Pre-Book Weekly →
                 </Link>
               </div>
 
@@ -191,9 +191,9 @@ export default function NutritionAndPlansSection() {
                   
                   {/* Price Block */}
                   <div className="py-2.5 px-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Best Value</span>
-                    <strong className="text-2xl font-black text-[#0D2818] block font-sans tracking-tight">₹3,299</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">(30 days • ₹110/day)</span>
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">30-Day Transformation</span>
+                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
+                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
                   </div>
                 </div>
                 
@@ -201,7 +201,7 @@ export default function NutritionAndPlansSection() {
                   href="/checkout?plan=monthly"
                   className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
                 >
-                  Subscribe
+                  Pre-Book Monthly →
                 </Link>
               </div>
 

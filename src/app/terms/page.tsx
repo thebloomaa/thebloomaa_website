@@ -44,9 +44,9 @@ export default function TermsPage() {
             </section>
 
             <section className="space-y-2">
-              <h2 className="text-base font-bold text-brand-forest">4. Just Bloomed 7-Day Trial Protocol</h2>
+              <h2 className="text-base font-bold text-brand-forest">4. Just Bloomed 7-Day Living Routine</h2>
               <p>
-                The Just Bloomed 7-Day Trial is a prepaid introduction plan. As part of our logistics protocol, 7 unique living boxes are distributed over 6 active morning routes, featuring a Day 6 Double Drop (Box 6 + Box 7 delivered together).
+                The Just Bloomed 7-Day Routine is a prepaid introductory wellness routine delivering 7 unique, chef-prepared raw and living nutrition bowls fresh to your doorstep across Patna.
               </p>
             </section>
 

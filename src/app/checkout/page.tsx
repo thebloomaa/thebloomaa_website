@@ -128,6 +128,22 @@ function CheckoutPageInner() {
         dietaryPreference: trialProd.dietaryPreference,
       });
       selectBundle('DAYS_7');
+    } else if (planParam === 'monthly') {
+      const monthlyProd = BLOOMAA_PRODUCTS.MONTHLY_SUBSCRIPTION;
+      selectProduct({
+        id: monthlyProd.id,
+        name: monthlyProd.name,
+        description: monthlyProd.description,
+        price: monthlyProd.price,
+        imageUrl: monthlyProd.imageUrl,
+        type: monthlyProd.type,
+        calories: monthlyProd.calories,
+        protein: monthlyProd.protein,
+        carbs: monthlyProd.carbs,
+        fats: monthlyProd.fats,
+        dietaryPreference: monthlyProd.dietaryPreference,
+      });
+      selectBundle('DAYS_30');
     }
   }, [planParam, selectProduct, selectBundle]);
 
@@ -149,15 +165,26 @@ function CheckoutPageInner() {
       selectedProduct.isTrialPlan)
   );
 
-  const finalDays = isSingleProduct ? 1 : isTrialProduct ? 7 : getBundleDays();
+  const isMonthlyProduct = Boolean(
+    !isSingleProduct &&
+    !isTrialProduct &&
+    selectedProduct &&
+    (selectedProduct.id === 'prod-monthly-living-diet' ||
+      bundleType === 'DAYS_30' ||
+      selectedProduct.name.toLowerCase().includes('monthly'))
+  );
+
+  const finalDays = isSingleProduct ? 1 : isTrialProduct ? 7 : isMonthlyProduct ? 30 : getBundleDays();
 
   useEffect(() => {
     if (isSingleProduct && bundleType !== 'DAYS_1') {
       selectBundle('DAYS_1');
     } else if (isTrialProduct && bundleType !== 'DAYS_7') {
       selectBundle('DAYS_7');
+    } else if (isMonthlyProduct && bundleType !== 'DAYS_30') {
+      selectBundle('DAYS_30');
     }
-  }, [isSingleProduct, isTrialProduct, bundleType, selectBundle]);
+  }, [isSingleProduct, isTrialProduct, isMonthlyProduct, bundleType, selectBundle]);
 
 
 
@@ -404,7 +431,9 @@ function CheckoutPageInner() {
                         {isSingleProduct
                           ? 'Single Day Diet Pack (Price TBA)'
                           : isTrialProduct
-                          ? 'Flat 7D Trial (Price TBA)'
+                          ? '7-Day Living Routine (Price TBA)'
+                          : isMonthlyProduct
+                          ? '30-Day Living Plan (Price TBA)'
                           : `Price TBA`}
                       </div>
                     </div>
@@ -436,7 +465,7 @@ function CheckoutPageInner() {
                   <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-mustard-hover space-y-1">
                     <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
                       <span>🌱</span>
-                      <span>1-Day Single Drop Logistics Protocol</span>
+                      <span>1-Day Fresh Morning Drop</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
                       Delivered tomorrow morning between <strong>6:00 AM – 9:00 AM</strong> at your Patna address with dedicated doorstep delivery and zero recurring commitments.
@@ -444,22 +473,35 @@ function CheckoutPageInner() {
                   </div>
                 )}
 
-                {/* Trial Plan 6+1 Logistics Alert */}
+                {/* Trial Plan Logistics Alert */}
                 {isTrialProduct && (
                   <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted space-y-1">
-                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
+                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px] text-brand-mustard">
                       <span>🚚</span>
-                      <span>6+1 Logistics Protocol Active</span>
+                      <span>7-Day Fresh Living Food Schedule</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered across <strong>6 active mornings (5:00 AM – 8:00 AM)</strong>. On Day 6, your rider will execute a <strong>Double Drop</strong> (delivering Box 6 &amp; Box 7 together) for your Day 7 Gut Reset.
+                      Delivered across <strong>7 fresh mornings between 6:00 AM – 9:00 AM</strong> across Patna. Freshly cold-prepared daily with zero cooking oils.
+                    </p>
+                  </div>
+                )}
+
+                {/* Monthly Plan Logistics Alert */}
+                {isMonthlyProduct && (
+                  <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted space-y-1">
+                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px] text-brand-mustard">
+                      <span>🌿</span>
+                      <span>30-Day Transformation Schedule</span>
+                    </div>
+                    <p className="text-[11px] text-brand-forest-muted leading-relaxed">
+                      Delivered every morning between <strong>6:00 AM – 9:00 AM</strong> across Patna. Enjoy continuous living nutrition with the flexibility to pause or skip any day via your dashboard.
                     </p>
                   </div>
                 )}
               </div>
 
-              {/* Standard Meal Plan Bundle Selector (Hidden for Trial & Single Pack) */}
-              {!isTrialProduct && !isSingleProduct && (
+              {/* Standard Meal Plan Bundle Selector (Hidden for Trial, Single Pack & Monthly) */}
+              {!isTrialProduct && !isSingleProduct && !isMonthlyProduct && (
                 <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/80 border border-brand-border">
                   <h4 className="text-sm font-black uppercase tracking-wider text-brand-forest-muted mb-4">
                     Subscription Duration

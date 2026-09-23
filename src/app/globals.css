@@ -12,7 +12,11 @@
   --brand-mustard-hover: #B45309;
   --brand-border: #E8E3D7;
 
+  --brand-primary: #0F3826;
+  --brand-accent: #D97706;
+
   --bg-dark: var(--brand-cream);
+  --bg-card: var(--brand-card);
   --bg-card-var: var(--brand-card);
   --bg-card-hover: #F8F5EC;
   --bg-surface: #EAE5D9;

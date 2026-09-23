@@ -130,7 +130,7 @@ export async function POST(req: Request) {
           deliveryNote:
             deliveryNote ||
             (isSingleDay
-              ? '1-DAY SINGLE DROP: Patna Morning Fresh Living Box (₹70)'
+              ? '1-DAY SINGLE DROP: Patna Morning Fresh Living Box'
               : isTrial
               ? 'Just Bloomed 7D Trial Morning Delivery'
               : null),

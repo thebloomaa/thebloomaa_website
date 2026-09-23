@@ -75,10 +75,10 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
               key={box.day}
               className="glow-card flex flex-col justify-between rounded-2xl p-4 backdrop-blur-md bg-brand-card/90 border border-brand-border transition-all duration-300 hover:border-brand-border hover:-translate-y-1 relative overflow-hidden group shadow-lg"
             >
-              {/* Day 6/7 Double Drop Tag */}
+              {/* Day 6/7 Goal Focus Tag */}
               {isDoubleDrop && (
                 <div className="absolute top-0 right-0 px-2 py-0.5 rounded-bl-xl text-[9px] font-black uppercase tracking-wider bg-brand-mustard text-brand-forest">
-                  {box.day === 6 ? 'Double Drop (AM)' : 'Double Drop (PM)'}
+                  {box.day === 6 ? 'Joint Vitality' : 'Gut Reset'}
                 </div>
               )}
 

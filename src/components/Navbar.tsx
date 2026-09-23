@@ -58,9 +58,6 @@ export default function Navbar() {
               <a href="/#plans" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
                 Plans
               </a>
-              <a href="/#how-it-works" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
-                Our Story
-              </a>
               <a href="/#reviews" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
                 Reviews
               </a>
