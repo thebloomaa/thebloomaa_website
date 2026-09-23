@@ -8,7 +8,7 @@ export default function CtaBannerPatna() {
   return (
     <section className="relative w-full bg-[#082015] overflow-hidden">
       {/* Full width container */}
-      <div className="relative w-full min-h-[220px] sm:min-h-[260px] lg:min-h-[280px] flex items-center">
+      <div className="relative w-full min-h-[170px] sm:min-h-[200px] lg:min-h-[220px] flex items-center">
         {/* Right Half: Panoramic Patna Sunset Photo with Smooth Gradient Mask */}
         <div className="absolute top-0 right-0 bottom-0 w-full sm:w-2/3 lg:w-3/5 h-full overflow-hidden pointer-events-none z-0">
           <Image
@@ -26,7 +26,7 @@ export default function CtaBannerPatna() {
         </div>
 
         {/* Foreground Content (Max-w-7xl aligned) */}
-        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-10 sm:py-14">
+        <div className="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-6 sm:py-8 lg:py-10">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-center">
             {/* Left Content: Headline + Subheadline + Order Your Bowl Button */}
             <div className="lg:col-span-7 space-y-3.5 text-center sm:text-left">

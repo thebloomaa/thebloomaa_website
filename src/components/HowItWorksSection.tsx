@@ -68,7 +68,7 @@ const steps = [
 
 export default function HowItWorksSection() {
   return (
-    <section id="how-it-works" className="py-4 sm:py-5 lg:py-6 px-3 sm:px-6 lg:px-8 bg-[#FAF7F2]">
+    <section id="how-it-works" className="py-2 sm:py-3 lg:py-3.5 px-3 sm:px-6 lg:px-8 bg-[#FAF7F2]">
       <div className="max-w-[1536px] mx-auto">
         {/* Sleek, Compact Panoramic Card Banner */}
         <div className="relative rounded-2xl lg:rounded-3xl border border-[#E2D8BF] bg-gradient-to-r from-[#F6EFE5] via-[#FAF7F2] to-[#F5EEE3] shadow-xs overflow-hidden">

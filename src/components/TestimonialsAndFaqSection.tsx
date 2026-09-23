@@ -62,9 +62,9 @@ export default function TestimonialsAndFaqSection() {
   };
 
   return (
-    <section id="reviews" className="py-20 px-4 sm:px-6 lg:px-8 bg-[#FAF7F2] border-t border-[#EAE2D2]">
+    <section id="reviews" className="py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 bg-[#FAF7F2] border-t border-[#EAE2D2]">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-10 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-10 items-start">
           {/* Left Column: Real People. Real Stories. */}
           <div className="lg:col-span-6 space-y-6">
             <div>

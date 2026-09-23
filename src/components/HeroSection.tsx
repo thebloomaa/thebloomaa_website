@@ -90,7 +90,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-24 pb-12 sm:pt-28 sm:pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
+    <section className="relative pt-18 pb-6 sm:pt-20 sm:pb-8 lg:pt-22 lg:pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
       {/* Decorative leaf backdrop silhouette */}
       <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none opacity-5">
         <svg viewBox="0 0 100 100" fill="#0D2818">
@@ -138,12 +138,12 @@ export default function HeroSection() {
           </div>
 
           {/* 4 Trust Feature Badges */}
-          <div className="pt-6 border-t border-[#E8E2D2]">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+          <div className="pt-4 sm:pt-5 border-t border-[#E8E2D2]">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
               {heroBadges.map((badge, i) => (
                 <div
                   key={i}
-                  className="flex flex-col items-center lg:items-start text-center lg:text-left p-2.5 rounded-xl bg-white/60 border border-[#EBE5D6]/80 shadow-2xs hover:bg-white transition-colors"
+                  className="flex flex-col items-center lg:items-start text-center lg:text-left p-2 sm:p-2.5 rounded-xl bg-white/60 border border-[#EBE5D6]/80 shadow-2xs hover:bg-white transition-colors"
                 >
                   <div className="w-8 h-8 rounded-full bg-[#F3EFE6] flex items-center justify-center mb-1.5 shadow-2xs">
                     {badge.icon}
@@ -161,7 +161,7 @@ export default function HeroSection() {
         </div>
 
         {/* Right Column: Hero Visuals + Patna Ghat Background + Sticky Note */}
-        <div className="lg:col-span-6 relative flex flex-col items-center pt-8 sm:pt-10">
+        <div className="lg:col-span-6 relative flex flex-col items-center pt-2 sm:pt-4 lg:pt-0">
           {/* Handwritten Tag positioned above the image frame */}
           <div className="w-full max-w-lg flex justify-end pr-2 pb-2">
             <span className="font-script text-xl sm:text-2xl font-bold text-[#8C3A27] tracking-wide drop-shadow-xs rotate-2 block whitespace-nowrap">

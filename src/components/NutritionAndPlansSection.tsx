@@ -23,9 +23,9 @@ const planPerks = [
 
 export default function NutritionAndPlansSection() {
   return (
-    <section id="plans" className="py-12 sm:py-16 lg:py-20 px-4 sm:px-6 lg:px-8 bg-[#FAF7F2] border-t border-[#EAE2D2]">
+    <section id="plans" className="py-8 sm:py-10 lg:py-12 px-4 sm:px-6 lg:px-8 bg-[#FAF7F2] border-t border-[#EAE2D2]">
       <div className="max-w-[1536px] mx-auto">
-        <div className="grid grid-cols-1 xl:grid-cols-12 gap-8 items-stretch">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 lg:gap-8 items-stretch">
           
           {/* ========================================================
               LEFT COLUMN: Nutrition You Can See (Contained Card)
