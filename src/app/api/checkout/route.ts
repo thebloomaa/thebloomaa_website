@@ -12,7 +12,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-    const { productId, address, bundleType, deliveryTime, utr, deliveryNote } = body;
+    const { productId, address, bundleType, deliveryTime, utr, deliveryNote, allergies } = body;
 
     if (!address || !address.street || !address.pincode) {
       return NextResponse.json({ error: 'Delivery address and pincode are required.' }, { status: 400 });
@@ -136,6 +136,18 @@ export async function POST(req: Request) {
               : null),
         },
       });
+
+      // Update customer profile allergies if provided during checkout
+      if (allergies && typeof allergies === 'string' && (session.user as any).id) {
+        try {
+          await tx.user.update({
+            where: { id: (session.user as any).id },
+            data: { allergies: allergies.trim() },
+          });
+        } catch (uErr) {
+          console.error('Failed to update customer allergies on user profile:', uErr);
+        }
+      }
 
       // Record direct UPI payment record
       await tx.payment.create({

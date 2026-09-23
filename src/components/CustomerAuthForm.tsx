@@ -5,6 +5,7 @@ import { signIn } from 'next-auth/react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useBioCalcStore } from '@/store/useBioCalcStore';
 import LocationPickerMap from '@/components/LocationPickerMap';
+import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
 
 export default function CustomerAuthForm() {
   const router = useRouter();
@@ -725,15 +726,11 @@ export default function CustomerAuthForm() {
               </div>
 
               <div>
-                <label className="block font-bold uppercase tracking-wider text-brand-forest-muted mb-1 text-[11px]">
-                  Allergies or Disliked Ingredients (Optional)
-                </label>
-                <input
-                  type="text"
-                  placeholder="e.g. Peanuts, Dairy, Gluten, Extra Spicy"
+                <AllergyPreferencesSelector
                   value={regForm.allergies}
-                  onChange={(e) => setRegForm({ ...regForm, allergies: e.target.value })}
-                  className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
+                  onChange={(val) => setRegForm({ ...regForm, allergies: val })}
+                  title="Food Allergies & Disliked Items"
+                  subtitle="Select any allergies or fruits/seeds you dislike so our kitchen can customize your bowl."
                 />
               </div>
 

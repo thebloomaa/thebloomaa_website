@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
 
 export default function SubscriberSettingsPage() {
   const [loading, setLoading] = useState(true);
@@ -172,16 +173,12 @@ export default function SubscriberSettingsPage() {
                   </select>
                 </div>
 
-                <div>
-                  <label className="block font-bold text-brand-forest-muted mb-1.5 uppercase tracking-wider text-[11px]">
-                    Allergies / Special Kitchen Instructions
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="e.g. No peanuts, extra dressing on side"
+                <div className="pt-2">
+                  <AllergyPreferencesSelector
                     value={form.allergies}
-                    onChange={(e) => setForm({ ...form, allergies: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl bg-brand-cream border border-brand-border text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard"
+                    onChange={(val) => setForm({ ...form, allergies: val })}
+                    title="Allergies & Custom Bowl Preferences"
+                    subtitle="Save your allergies and disliked fruits or seeds so our cloud kitchen always customizes your daily bowls."
                   />
                 </div>
               </div>

@@ -7,6 +7,7 @@ import { useSession } from 'next-auth/react';
 import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
+import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
 
 export const dynamic = 'force-dynamic';
 
@@ -52,6 +53,7 @@ function CheckoutPageInner() {
     pincode: '',
     deliveryTime: deliveryTime || '07:00',
     deliveryNote: deliveryNote || '',
+    allergies: '',
   });
 
   // Prefill from user session / profile if available
@@ -80,6 +82,7 @@ function CheckoutPageInner() {
               city: defaultAddr?.city || prev.city || 'Patna',
               state: defaultAddr?.state || prev.state || 'Bihar',
               pincode: prev.pincode || defaultAddr?.pincode || '',
+              allergies: prev.allergies || data.user.allergies || '',
             }));
           }
         })
@@ -167,6 +170,9 @@ function CheckoutPageInner() {
       const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
       const effectiveUtr = `PRE_BOOK_${Date.now().toString().slice(-8)}`;
 
+      const allergyTag = form.allergies ? `⚠️ ALLERGIES / EXCLUSIONS: ${form.allergies}` : '';
+      const combinedDeliveryNote = [allergyTag, form.deliveryNote].filter(Boolean).join(' | ');
+
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -175,10 +181,11 @@ function CheckoutPageInner() {
           bundleType: isSingleProduct ? 'DAYS_1' : isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
           deliveryTime: form.deliveryTime,
           deliveryNote: isSingleProduct
-            ? `1-DAY SINGLE PACK: Morning doorstep fresh diet box. Customer Note: ${form.deliveryNote}`
+            ? `1-DAY SINGLE PACK: Morning fresh diet box. ${combinedDeliveryNote}`
             : isTrialProduct
-            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. Customer Note: ${form.deliveryNote}`
-            : form.deliveryNote,
+            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. ${combinedDeliveryNote}`
+            : (combinedDeliveryNote || form.deliveryNote),
+          allergies: form.allergies,
           utr: effectiveUtr,
           address: {
             street: fullStreet,
@@ -707,6 +714,16 @@ function CheckoutPageInner() {
                       className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
+                </div>
+
+                {/* Allergies & Fruit/Seed Customization Selector */}
+                <div className="pt-2">
+                  <AllergyPreferencesSelector
+                    value={form.allergies}
+                    onChange={(val) => setForm({ ...form, allergies: val })}
+                    title="Allergies & Custom Bowl Preferences"
+                    subtitle="Have any allergies, or fruits/seeds you dislike? Our cloud kitchen will hand-adjust your bowl."
+                  />
                 </div>
 
                 <div className="pt-4 border-t border-brand-border flex justify-between">

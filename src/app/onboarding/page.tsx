@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { useRouter } from 'next/navigation';
+import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -200,15 +201,12 @@ export default function OnboardingPage() {
                     <option value="KETO">Plant Keto / Low Carb</option>
                   </select>
                 </div>
-                <div>
-                  <label className="block text-xs font-semibold mb-2" style={{ color: 'var(--text-secondary)' }}>Food Allergies</label>
-                  <input
-                    type="text"
+                <div className="pt-2">
+                  <AllergyPreferencesSelector
                     value={form.allergies}
-                    onChange={(e) => setForm({ ...form, allergies: e.target.value })}
-                    className="w-full px-4 py-3 rounded-xl text-base sm:text-sm focus:outline-none focus:ring-2 focus:ring-brand-mustard/50 min-h-[46px]"
-                    style={{ background: 'var(--bg-surface)', color: 'var(--text-primary)', border: '1px solid var(--border-subtle)' }}
-                    placeholder="e.g. Peanuts, Dairy, Gluten (Optional)"
+                    onChange={(val) => setForm({ ...form, allergies: val })}
+                    title="Food Allergies & Excluded Ingredients"
+                    subtitle="Select any allergies or fruits/seeds you dislike so our kitchen can customize your bowl."
                   />
                 </div>
               </div>

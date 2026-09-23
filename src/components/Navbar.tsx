@@ -3,236 +3,220 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSession, signOut } from 'next-auth/react';
+import { useSession } from 'next-auth/react';
+import { useBundleStore } from '@/store/useBundleStore';
+import PincodeModal from '@/components/PincodeModal';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [isPincodeOpen, setIsPincodeOpen] = useState(false);
   const { data: session } = useSession();
+  const { selectedProduct, openDrawer, pincode, setPincode } = useBundleStore();
+
+  const handlePincodeVerified = (newPin: string) => {
+    setPincode(newPin);
+  };
 
   return (
-    <nav className={`fixed top-0 left-0 right-0 z-50 transition-colors duration-200 ${mobileOpen ? 'bg-brand-cream/98 border-b border-brand-border shadow-2xl' : 'glass-nav'}`}>
-      <div className="relative z-50 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-brand-mustard/70 shadow-md shadow-brand-mustard/10 transition-transform group-hover:scale-105 shrink-0 bg-brand-card ring-2 ring-brand-mustard/20">
-              <Image
-                src="/logo.jpg"
-                alt="Bloom your day with BlooMaa"
-                fill
-                sizes="40px"
-                className="object-cover"
-                priority
-              />
-            </div>
-            <div className="flex flex-col">
-              <div className="flex items-center gap-1.5 leading-tight">
-                <span className="text-xl font-black tracking-tight text-brand-forest font-sans">
-                  thebloo<span className="text-brand-mustard">maa</span>
+    <>
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8E2D2] transition-all">
+        <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-20 gap-3 xl:gap-4">
+            {/* Brand Logo Left */}
+            <Link href="/" className="flex items-center gap-2.5 group shrink-0 mr-2 sm:mr-4 lg:mr-6">
+              <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#0F3826] bg-white flex items-center justify-center shadow-xs">
+                <Image
+                  src="/logo.jpg"
+                  alt="Thebloomaa"
+                  fill
+                  sizes="40px"
+                  className="object-cover"
+                  priority
+                />
+              </div>
+              <div className="flex flex-col">
+                <span className="font-serif text-xl sm:text-2xl font-bold text-[#0D2818] tracking-tight leading-tight">
+                  Thebloomaa
+                </span>
+                <span className="text-[10px] text-[#5E7A67] italic font-serif leading-none hidden sm:block">
+                  Bloom your day with bloomaa
                 </span>
               </div>
-              <span className="text-[10px] text-brand-forest-muted font-serif italic tracking-wide hidden sm:block leading-none">
-                Bloom your day with BlooMaa
-              </span>
-            </div>
-          </Link>
-
-          {/* Desktop Links */}
-          <div className="hidden md:flex items-center gap-7">
-            <Link href="/#trial" className="text-sm font-semibold transition-colors hover:text-brand-mustard text-brand-forest flex items-center gap-1.5">
-              <span>🌱 7D Trial</span>
             </Link>
-            <Link href="/calculator" className="text-sm font-semibold transition-all hover:text-brand-mustard-hover flex items-center gap-1.5 text-brand-forest">
-              <span>Bio Calculator</span>
-              <span className="px-1.5 py-0.5 rounded text-[10px] font-black uppercase tracking-wider bg-brand-mustard/20 text-brand-forest border border-brand-mustard/30 animate-pulse">
-                New
-              </span>
-            </Link>
-            <Link href="/#how-it-works" className="text-sm font-medium transition-colors hover:text-brand-mustard" style={{ color: 'var(--text-muted)' }}>How It Works</Link>
-            <Link href="/#pricing" className="text-sm font-medium transition-colors hover:text-brand-mustard" style={{ color: 'var(--text-muted)' }}>Pricing</Link>
-            <Link href="/#faq" className="text-sm font-medium transition-colors hover:text-brand-mustard" style={{ color: 'var(--text-muted)' }}>FAQ</Link>
-          </div>
 
-          {/* CTA */}
-          <div className="hidden md:flex items-center gap-3">
-            {session?.user ? (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/dashboard"
-                  className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-brand-forest hover:text-brand-mustard bg-brand-card/90 hover:bg-brand-cream border border-brand-mustard/30 transition-all group shadow-sm"
-                  title="Go to Subscriber Dashboard"
-                >
-                  <div className="w-5 h-5 rounded-full flex items-center justify-center text-[10px] font-black bg-brand-mustard text-brand-forest">
-                    {(session.user.name?.[0] || session.user.email?.[0] || 'U').toUpperCase()}
-                  </div>
-                  <span className="max-w-[110px] truncate">
-                    {session.user.name?.split(' ')[0] || 'Dashboard'}
-                  </span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => signOut({ callbackUrl: '/' })}
-                  className="p-2 rounded-xl text-brand-forest-muted hover:text-red-400 hover:bg-brand-cream/80 transition-all cursor-pointer"
-                  title="Log Out"
-                >
-                  <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
-                  </svg>
-                </button>
-              </div>
-            ) : (
-              <Link
-                href="/login"
-                className="flex items-center gap-2 px-3.5 py-2 text-sm font-semibold rounded-xl text-brand-forest hover:text-brand-mustard hover:bg-brand-cream/80 border border-brand-border/60 hover:border-brand-mustard/40 transition-all group"
-                title="Customer Login & Sign Up"
-              >
-                <svg
-                  className="w-4 h-4 text-brand-mustard group-hover:scale-110 transition-transform"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                </svg>
-                <span>Log In</span>
+            {/* Desktop Navigation Links (FAQ removed as requested) */}
+            <div className="hidden xl:flex items-center gap-4 2xl:gap-6 shrink">
+              <Link href="/" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                Home
               </Link>
-            )}
-
-            <Link
-              href="/#trial"
-              className="px-5 py-2.5 text-sm font-bold rounded-xl text-brand-forest bg-brand-mustard hover:bg-brand-mustard transition-all hover:scale-105 shadow-md shadow-brand-mustard/20 flex items-center gap-1.5"
-            >
-              <span>Get 7D Trial</span>
-            </Link>
-          </div>
-
-          {/* Mobile hamburger */}
-          <button
-            className="md:hidden p-2.5 rounded-xl text-brand-forest hover:text-brand-forest bg-brand-card/80 border border-brand-border active:scale-95 transition-all min-h-[44px] min-w-[44px] flex items-center justify-center"
-            onClick={() => setMobileOpen(!mobileOpen)}
-            aria-label="Toggle menu"
-          >
-            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              {mobileOpen ? (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              ) : (
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-              )}
-            </svg>
-          </button>
-        </div>
-
-        {/* Mobile menu elevated drawer */}
-        {mobileOpen && (
-          <div className="md:hidden pb-4 pt-2 animate-fade-in-up">
-            <div className="p-3.5 rounded-2xl bg-brand-card/98 border border-brand-border shadow-2xl space-y-2">
-              {session?.user && (
-                <div className="flex items-center justify-between p-3 rounded-xl bg-brand-cream border border-brand-mustard/20 mb-1">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-black bg-brand-mustard text-brand-forest shrink-0">
-                      {(session.user.name?.[0] || session.user.email?.[0] || 'U').toUpperCase()}
-                    </div>
-                    <div className="overflow-hidden">
-                      <p className="text-xs font-bold text-brand-forest truncate">{session.user.name || 'Subscriber'}</p>
-                      <p className="text-[10px] text-brand-forest-muted truncate">{session.user.email}</p>
-                    </div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileOpen(false);
-                      signOut({ callbackUrl: '/' });
-                    }}
-                    className="text-xs text-red-400 hover:text-red-300 font-semibold px-2.5 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 min-h-[36px]"
-                  >
-                    Log Out
-                  </button>
-                </div>
-              )}
-
-              <Link
-                href="/#trial"
-                className="flex items-center justify-between px-3.5 py-3 text-sm font-bold rounded-xl text-brand-forest bg-brand-cream/80 hover:bg-brand-cream border border-brand-border/60 min-h-[44px]"
-                onClick={() => setMobileOpen(false)}
-              >
-                <span className="flex items-center gap-2">🌱 7D Fresh Nutrition Trial</span>
-              </Link>
+              <a href="/#bowls" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                Our Bowls
+              </a>
+              <a href="/#how-it-works" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                How It Works
+              </a>
+              <a href="/#plans" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                Plans
+              </a>
+              <a href="/#how-it-works" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                Our Story
+              </a>
+              <a href="/#reviews" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
+                Reviews
+              </a>
               <Link
                 href="/calculator"
-                className="flex items-center justify-between px-3.5 py-3 text-sm font-bold rounded-xl bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/30 min-h-[44px]"
-                onClick={() => setMobileOpen(false)}
+                className="text-xs xl:text-sm font-bold text-[#D97706] hover:text-[#B45309] transition-colors flex items-center gap-1 whitespace-nowrap"
               >
-                <span className="flex items-center gap-2">🧬 Bio Calculator</span>
-                <span className="text-[10px] px-2 py-0.5 rounded bg-brand-mustard text-brand-forest font-black">NEW</span>
+                <span>Bio Calc</span>
+                <span className="px-1.5 py-0.2 rounded-full text-[9px] bg-[#D97706]/15 font-black">NEW</span>
               </Link>
-              <Link
-                href="/#how-it-works"
-                className="block px-3.5 py-2.5 text-sm font-medium rounded-xl text-brand-forest-muted hover:bg-brand-cream hover:text-brand-forest min-h-[44px] flex items-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                How It Works
-              </Link>
-              <Link
-                href="/#pricing"
-                className="block px-3.5 py-2.5 text-sm font-medium rounded-xl text-brand-forest-muted hover:bg-brand-cream hover:text-brand-forest min-h-[44px] flex items-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Pricing &amp; Plans
-              </Link>
-              <Link
-                href="/#faq"
-                className="block px-3.5 py-2.5 text-sm font-medium rounded-xl text-brand-forest-muted hover:bg-brand-cream hover:text-brand-forest min-h-[44px] flex items-center"
-                onClick={() => setMobileOpen(false)}
-              >
-                Frequently Asked Questions
-              </Link>
+            </div>
 
+            {/* Right Action Icons: Perfectly Aligned with Uniform h-10 Height */}
+            <div className="hidden sm:flex items-center gap-2 xl:gap-2.5 shrink-0">
+              {/* Location Pill */}
+              <button
+                type="button"
+                onClick={() => setIsPincodeOpen(true)}
+                className="h-10 px-3.5 rounded-full bg-white border border-[#DDD5C0] text-xs font-semibold text-[#0D2818] hover:bg-[#F3EFE6] transition-all cursor-pointer shadow-2xs flex items-center gap-2"
+                title="Verify delivery pincode in Patna"
+              >
+                <span className="text-red-500 text-sm leading-none shrink-0">📍</span>
+                <div className="flex flex-col text-left justify-center leading-none">
+                  <span className="font-bold text-[11px] text-[#0D2818]">Patna</span>
+                  <span className="text-[9px] text-[#5E7A67]">{pincode ? `Pin: ${pincode}` : 'Freshly Delivered'}</span>
+                </div>
+              </button>
+
+              {/* Cart Indicator */}
+              <button
+                type="button"
+                onClick={openDrawer}
+                className="h-10 w-10 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#F3EFE6] transition-all cursor-pointer shadow-2xs flex items-center justify-center relative shrink-0"
+                title="View Cart"
+              >
+                <span className="text-base leading-none">🛒</span>
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#0F3826] text-white text-[10px] font-bold flex items-center justify-center">
+                  {selectedProduct ? 1 : 0}
+                </span>
+              </button>
+
+              {/* User Session or Login */}
               {session?.user ? (
                 <Link
                   href="/dashboard"
-                  className="flex items-center gap-2.5 px-3.5 py-3 text-sm font-bold rounded-xl text-brand-mustard bg-brand-mustard/15 border border-brand-mustard/30 min-h-[44px]"
-                  onClick={() => setMobileOpen(false)}
+                  className="h-10 px-4 text-xs font-semibold rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#F3EFE6] transition-all flex items-center justify-center whitespace-nowrap"
                 >
-                  <span>📊 My Subscriber Dashboard</span>
+                  Dashboard
                 </Link>
               ) : (
                 <Link
                   href="/login"
-                  className="flex items-center gap-2.5 px-3.5 py-3 text-sm font-medium rounded-xl text-brand-forest hover:bg-brand-cream hover:text-brand-mustard border border-brand-border min-h-[44px]"
-                  onClick={() => setMobileOpen(false)}
+                  className="h-10 px-4 text-xs font-semibold rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#F3EFE6] transition-all flex items-center justify-center whitespace-nowrap"
                 >
-                  <svg className="w-4 h-4 text-brand-mustard" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                  <span>Log In / Sign Up</span>
+                  Log In
                 </Link>
               )}
 
+              {/* Primary Order Now Button */}
               <Link
-                href="/#trial"
-                className="w-full mt-2 py-3 text-sm font-black text-center rounded-xl text-brand-forest bg-brand-mustard hover:bg-brand-mustard block shadow-lg shadow-brand-mustard/20 min-h-[44px] flex items-center justify-center"
-                onClick={() => setMobileOpen(false)}
+                href="/#plans"
+                className="h-10 px-5 rounded-full text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
-                Claim 7D Trial →
+                <span>Order Now</span>
+                <span className="text-sm">→</span>
+              </Link>
+            </div>
+
+            {/* Mobile hamburger button */}
+            <div className="flex xl:hidden items-center gap-2">
+              <button
+                type="button"
+                onClick={openDrawer}
+                className="h-10 w-10 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] relative flex items-center justify-center"
+              >
+                <span>🛒</span>
+                <span className="absolute -top-1 -right-1 w-4 h-4 rounded-full bg-[#0F3826] text-white text-[9px] font-black flex items-center justify-center">
+                  {selectedProduct ? 1 : 0}
+                </span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                className="h-10 w-10 rounded-xl bg-white border border-[#DDD5C0] text-[#0D2818] flex items-center justify-center"
+                aria-label="Toggle Navigation"
+              >
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {mobileOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile menu dropdown */}
+        {mobileOpen && (
+          <div className="xl:hidden px-4 pt-2 pb-6 bg-[#FAF7F2] border-b border-[#E8E2D2] space-y-3 animate-fade-in">
+            <div className="grid grid-cols-2 gap-2 pb-3 border-b border-[#EAE2D2]">
+              <button
+                onClick={() => {
+                  setMobileOpen(false);
+                  setIsPincodeOpen(true);
+                }}
+                className="p-2.5 rounded-xl bg-white border border-[#DDD5C0] text-xs font-semibold text-left flex items-center gap-2"
+              >
+                <span>📍</span>
+                <span>Patna ({pincode || 'Check Area'})</span>
+              </button>
+              <Link
+                href="/calculator"
+                onClick={() => setMobileOpen(false)}
+                className="p-2.5 rounded-xl bg-white border border-[#DDD5C0] text-xs font-bold text-[#D97706] text-center"
+              >
+                Bio Calculator ✨
+              </Link>
+            </div>
+
+            <div className="flex flex-col space-y-2 text-sm font-semibold text-[#0D2818]">
+              <Link href="/" onClick={() => setMobileOpen(false)} className="py-1">Home</Link>
+              <a href="/#bowls" onClick={() => setMobileOpen(false)} className="py-1">Our Bowls</a>
+              <a href="/#how-it-works" onClick={() => setMobileOpen(false)} className="py-1">How It Works</a>
+              <a href="/#plans" onClick={() => setMobileOpen(false)} className="py-1">Plans</a>
+              <a href="/#reviews" onClick={() => setMobileOpen(false)} className="py-1">Reviews</a>
+            </div>
+
+            <div className="pt-2 flex gap-2">
+              <Link
+                href="/login"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 py-3 rounded-full text-center text-xs font-semibold text-[#0D2818] bg-white border border-[#DDD5C0]"
+              >
+                Log In
+              </Link>
+              <Link
+                href="/#plans"
+                onClick={() => setMobileOpen(false)}
+                className="flex-1 py-3 rounded-full text-center text-xs font-bold text-white bg-[#0F3826]"
+              >
+                Order Now →
               </Link>
             </div>
           </div>
         )}
-      </div>
+      </nav>
 
-      {/* Backdrop overlay to close mobile menu when tapping outside */}
-      {mobileOpen && (
-        <div
-          className="fixed inset-0 top-16 bg-brand-cream/60 backdrop-blur-sm z-30 md:hidden animate-fade-in"
-          onClick={() => setMobileOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-    </nav>
+      {/* Embedded Pincode Modal */}
+      <PincodeModal
+        isOpen={isPincodeOpen}
+        onClose={() => setIsPincodeOpen(false)}
+        onVerified={handlePincodeVerified}
+      />
+    </>
   );
 }

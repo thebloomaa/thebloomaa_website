@@ -1,23 +1,29 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Inter:wght@400;500;600;700;800;900&family=Playfair+Display:ital,wght@0,500;0,600;0,700;0,800;0,900;1,600;1,700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 :root {
-  --brand-cream: #FDFBF7;
+  --brand-cream: #FAF7F2;
   --brand-card: #FFFFFF;
   --brand-forest: #0D2818;
+  --brand-forest-dark: #071F14;
+  --brand-forest-medium: #153E26;
   --brand-forest-muted: #3D5A47;
-  --brand-mustard: #DDA15E;
-  --brand-mustard-hover: #BC6C25;
-  --brand-border: #E6E2D6;
+  --brand-mustard: #D97706;
+  --brand-mustard-hover: #B45309;
+  --brand-border: #E8E3D7;
 
   --bg-dark: var(--brand-cream);
   --bg-card-var: var(--brand-card);
   --bg-card-hover: #F8F5EC;
-  --bg-surface: #E6E2D6;
+  --bg-surface: #EAE5D9;
 
   --text-primary: var(--brand-forest);
   --text-secondary: var(--brand-forest-muted);
-  --text-muted: #6B8775;
+  --text-muted: #5E7A67;
+
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Caveat', cursive;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
   --danger: #EF4444;
   --border-subtle: var(--brand-border);
@@ -35,29 +41,48 @@
   --color-brand-cream: var(--brand-cream);
   --color-brand-card: var(--brand-card);
   --color-brand-forest: var(--brand-forest);
+  --color-brand-forest-dark: var(--brand-forest-dark);
+  --color-brand-forest-medium: var(--brand-forest-medium);
   --color-brand-forest-muted: var(--brand-forest-muted);
   --color-brand-mustard: var(--brand-mustard);
   --color-brand-mustard-hover: var(--brand-mustard-hover);
   --color-brand-border: var(--brand-border);
 
-  --font-sans: 'Inter', sans-serif;
+  --font-sans: 'Plus Jakarta Sans', 'Inter', sans-serif;
+  --font-serif: 'Playfair Display', Georgia, serif;
+  --font-script: 'Caveat', cursive;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
-* {
-  box-sizing: border-box;
+.font-serif {
+  font-family: 'Playfair Display', Georgia, serif !important;
 }
 
-html {
-  scroll-behavior: smooth;
+.font-script {
+  font-family: 'Caveat', cursive !important;
 }
 
-body {
-  background: var(--bg-dark);
-  color: var(--text-primary);
-  font-family: 'Inter', sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+.font-sans {
+  font-family: 'Plus Jakarta Sans', 'Inter', sans-serif !important;
+}
+
+/* Sticky Post-it note aesthetic */
+.sticky-note {
+  background: #FFF8C6;
+  box-shadow: 2px 4px 14px rgba(0, 0, 0, 0.12), 0 1px 3px rgba(0, 0, 0, 0.08);
+  transform: rotate(-3deg);
+  transition: transform 0.2s ease;
+}
+.sticky-note:hover {
+  transform: rotate(-1deg) scale(1.02);
+}
+
+/* Polaroid frame aesthetic */
+.polaroid-frame {
+  background: #FFFFFF;
+  padding: 12px 12px 36px 12px;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.06);
+  border-radius: 4px;
 }
 
 /* Utility animation classes */
