@@ -219,14 +219,7 @@ export default function BowlsSection() {
     setCurrentSlide((prev) => (prev >= totalSlides - 1 ? 0 : prev + 1));
   };
 
-  const goToDay = (dayIdx: number) => {
-    if (isMobile) {
-      setCurrentSlide(dayIdx);
-    } else {
-      const slideIdx = Math.floor(dayIdx / 2);
-      setCurrentSlide(slideIdx);
-    }
-  };
+
 
   const handleSelectBowl = (bowl: BowlItem) => {
     selectProduct({
@@ -391,45 +384,7 @@ export default function BowlsSection() {
             </span>
           </div>
 
-          {/* Day Tabs with Navigation Controls */}
-          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-4 max-w-full overflow-x-auto pb-1 no-scrollbar px-2">
-            {/* Quick Prev Arrow in Tab Bar */}
-            <button
-              onClick={prevSlide}
-              aria-label="Previous bowl"
-              className="w-7 h-7 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-xs font-bold cursor-pointer active:scale-95 shrink-0"
-            >
-              ‹
-            </button>
 
-            {weeklyBowls.map((bowl, idx) => {
-              const isActive = isMobile
-                ? currentSlide === idx
-                : currentSlide === Math.floor(idx / 2);
-              return (
-                <button
-                  key={idx}
-                  onClick={() => goToDay(idx)}
-                  className={`px-3 py-1 rounded-full text-[11px] sm:text-xs font-bold transition-all shadow-2xs cursor-pointer whitespace-nowrap active:scale-95 border ${
-                    isActive
-                      ? 'bg-[#0F3826] text-white border-[#0F3826] shadow-sm'
-                      : 'bg-white hover:bg-[#0F3826] hover:text-white text-[#0D2818] border-[#DDD5C0]'
-                  }`}
-                >
-                  {bowl.day}
-                </button>
-              );
-            })}
-
-            {/* Quick Next Arrow in Tab Bar */}
-            <button
-              onClick={nextSlide}
-              aria-label="Next bowl"
-              className="w-7 h-7 rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#0F3826] hover:text-white transition-all shadow-2xs flex items-center justify-center text-xs font-bold cursor-pointer active:scale-95 shrink-0"
-            >
-              ›
-            </button>
-          </div>
         </div>
 
         {/* ========================================================
@@ -508,42 +463,7 @@ export default function BowlsSection() {
           </div>
         </div>
 
-        {/* Section Bottom Banner & CTA */}
-        <div className="mt-8 p-5 sm:p-6 rounded-2xl bg-white border border-[#E6DFC6] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 relative overflow-hidden max-w-sm sm:max-w-2xl lg:max-w-5xl xl:max-w-6xl mx-auto">
-          {/* Left Side: Delivery Badges & Tagline */}
-          <div className="space-y-1.5 text-center md:text-left">
-            <h3 className="font-serif text-lg sm:text-xl font-bold text-[#0D2818]">
-              Wholesome Bowls. Happier People. A Healthier Patna.
-            </h3>
-            <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 text-xs font-semibold text-[#5E7A67]">
-              <span className="flex items-center gap-1">
-                <span>🛵</span>
-                <span>Fresh Daily</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <span>📍</span>
-                <span>Morning Drops in Patna</span>
-              </span>
-              <span>•</span>
-              <span className="flex items-center gap-1">
-                <span>📅</span>
-                <span>Daily · Weekly · Monthly</span>
-              </span>
-            </div>
-          </div>
 
-          {/* Right Side: CTA Button */}
-          <div className="shrink-0 w-full md:w-auto">
-            <a
-              href="#plans"
-              className="w-full md:w-auto inline-flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-xs sm:text-sm font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-sm hover:scale-105 active:scale-95 cursor-pointer"
-            >
-              <span>Choose Your Bowl</span>
-              <span className="text-sm">→</span>
-            </a>
-          </div>
-        </div>
       </div>
 
       {/* Details Modal */}
