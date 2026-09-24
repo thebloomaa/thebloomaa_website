@@ -40,14 +40,14 @@ export default function TopAnnouncementBar() {
             <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
           </span>
           <span className="font-black uppercase tracking-wider text-[#E6BE68] text-[10px] sm:text-[11px] whitespace-nowrap">
-            {isLive ? '🚀 NOW LIVE' : '🚀 LAUNCHING 1 OCT'}
+            {isLive ? '🚀 NOW LIVE' : '🚀 LAUNCHING 30 SEPT'}
           </span>
         </div>
 
         {/* Center: Message + Live Countdown Timer */}
         <div className="flex items-center justify-center gap-2 sm:gap-3 flex-1 text-center truncate">
           <span className="hidden md:inline text-white/90">
-            Patna morning living diet bowl deliveries go live on <strong>October 1st!</strong>
+            Patna morning living diet bowl deliveries go live on <strong>September 30th!</strong>
           </span>
 
           {/* Countdown Pill */}

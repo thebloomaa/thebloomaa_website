@@ -38,7 +38,7 @@ export default function ComingSoonBanner() {
                   <span>
                     We Are Launching in Patna on{' '}
                     <span className="text-[#E6BE68] underline decoration-[#D97706] decoration-wavy decoration-1 underline-offset-6">
-                      1st October!
+                      30th September!
                     </span>{' '}
                     🌱
                   </span>
@@ -160,7 +160,7 @@ export default function ComingSoonBanner() {
                 <div className="pt-3 border-t border-white/10 flex items-center justify-between text-xs text-white/80">
                   <span className="flex items-center gap-1">
                     <span>🗓️</span>
-                    <span>1 October 2026</span>
+                    <span>30 September 2026</span>
                   </span>
                   <span className="flex items-center gap-1 font-bold text-[#E6BE68]">
                     <span>📍</span>

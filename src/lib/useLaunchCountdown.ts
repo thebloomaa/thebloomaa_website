@@ -11,8 +11,8 @@ export interface CountdownState {
   isMounted: boolean;
 }
 
-// Official Launch Date: 1 October 2026 at 6:00 AM IST (Morning delivery start)
-export const LAUNCH_DATE_ISO = '2026-10-01T06:00:00+05:30';
+// Official Launch Date: 30 September 2026 at 6:00 AM IST (Morning delivery start)
+export const LAUNCH_DATE_ISO = '2026-09-30T06:00:00+05:30';
 
 export function useLaunchCountdown(): CountdownState {
   const [mounted, setMounted] = useState(false);

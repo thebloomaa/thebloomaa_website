@@ -108,7 +108,7 @@ export default function HeroSection() {
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
             </span>
             <span className="text-xs sm:text-[12px] font-black tracking-wider text-[#0F3826] uppercase">
-              🚀 Launching in Patna on 1st October • Pre-Orders Live
+              🚀 Launching in Patna on 30th September • Pre-Orders Live
             </span>
           </div>
 
