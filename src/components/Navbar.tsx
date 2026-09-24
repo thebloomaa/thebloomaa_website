@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { useSession } from 'next-auth/react';
 import { useBundleStore } from '@/store/useBundleStore';
 import PincodeModal from '@/components/PincodeModal';
+import TopAnnouncementBar from '@/components/TopAnnouncementBar';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -19,9 +20,11 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8E2D2] transition-all">
-        <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20 gap-3 xl:gap-4">
+      <header className="fixed top-0 left-0 right-0 z-50 transition-all">
+        <TopAnnouncementBar />
+        <nav className="bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8E2D2] transition-all">
+          <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-18 sm:h-20 gap-3 xl:gap-4">
             {/* Brand Logo Left */}
             <Link href="/" className="flex items-center gap-2.5 group shrink-0 mr-2 sm:mr-4 lg:mr-6">
               <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-[#0F3826] bg-white flex items-center justify-center shadow-xs">
@@ -207,6 +210,7 @@ export default function Navbar() {
           </div>
         )}
       </nav>
+    </header>
 
       {/* Embedded Pincode Modal */}
       <PincodeModal

@@ -90,7 +90,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-18 pb-6 sm:pt-20 sm:pb-8 lg:pt-22 lg:pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
+    <section className="relative pt-28 pb-6 sm:pt-32 sm:pb-8 lg:pt-36 lg:pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
       {/* Decorative leaf backdrop silhouette */}
       <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none opacity-5">
         <svg viewBox="0 0 100 100" fill="#0D2818">
@@ -101,10 +101,14 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
         {/* Left Column: Headlines & Call to Actions */}
         <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-          {/* Subtitle / Kicker */}
-          <div className="inline-block">
-            <span className="text-xs sm:text-[13px] font-bold tracking-[0.25em] text-[#2A5237] uppercase">
-              Fresh. Natural. Wholesome.
+          {/* Subtitle / Pre-Launch Kicker */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F3826]/10 border border-[#0F3826]/20">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
+            </span>
+            <span className="text-xs sm:text-[12px] font-black tracking-wider text-[#0F3826] uppercase">
+              🚀 Launching in Patna on 1st October • Pre-Orders Live
             </span>
           </div>
 

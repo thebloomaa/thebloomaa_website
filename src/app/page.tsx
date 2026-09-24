@@ -2,6 +2,7 @@ import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
 import TrustBanner from '@/components/TrustBanner';
+import ComingSoonBanner from '@/components/ComingSoonBanner';
 import BowlsSection from '@/components/BowlsSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
 import NutritionAndPlansSection from '@/components/NutritionAndPlansSection';
@@ -22,6 +23,9 @@ export default function Home() {
 
       {/* 3. Trust Strip & Patna eats together banner */}
       <TrustBanner />
+
+      {/* 3.5. Official Pre-Launch Countdown & Early Pre-Order Banner */}
+      <ComingSoonBanner />
 
       {/* 4. Our Bowls: Five Goals. A Healthier You. */}
       <BowlsSection />
