@@ -39,7 +39,7 @@ export default function ComingSoonBanner() {
                 ) : (
                   <span>
                     We Are Launching in Patna on{' '}
-                    <span className="text-[#E6BE68] underline decoration-[#D97706] decoration-wavy decoration-1 underline-offset-4">
+                    <span className="text-[#E6BE68]">
                       30th September!
                     </span>{' '}
                     🌱
