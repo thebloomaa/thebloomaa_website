@@ -14,20 +14,32 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
-    const placedDate = searchParams.get('placedDate');
+    const deliveryDateParam = searchParams.get('deliveryDate'); // YYYY-MM-DD in IST
 
     const where: any = {};
     if (status && status !== 'ALL') {
       where.status = status;
     }
-    if (placedDate) {
-      const startOfDay = new Date(`${placedDate}T00:00:00.000Z`);
-      const endOfDay = new Date(`${placedDate}T23:59:59.999Z`);
-      where.createdAt = {
-        gte: startOfDay,
-        lte: endOfDay,
-      };
+
+    // Filter by DELIVERY DATE (IST-aware)
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+    let deliveryDateStart: Date;
+    let deliveryDateEnd: Date;
+
+    if (deliveryDateParam) {
+      deliveryDateStart = new Date(`${deliveryDateParam}T00:00:00+05:30`);
+      deliveryDateEnd   = new Date(`${deliveryDateParam}T23:59:59+05:30`);
+    } else {
+      // Default: today in IST
+      const todayIST = new Date(Date.now() + IST_OFFSET_MS);
+      const yyyy = todayIST.getUTCFullYear();
+      const mm   = String(todayIST.getUTCMonth() + 1).padStart(2, '0');
+      const dd   = String(todayIST.getUTCDate()).padStart(2, '0');
+      deliveryDateStart = new Date(`${yyyy}-${mm}-${dd}T00:00:00+05:30`);
+      deliveryDateEnd   = new Date(`${yyyy}-${mm}-${dd}T23:59:59+05:30`);
     }
+
+    where.deliveryDate = { gte: deliveryDateStart, lte: deliveryDateEnd };
 
     const [orders, allRiders] = await Promise.all([
       prisma.order.findMany({
@@ -42,8 +54,8 @@ export async function GET(request: Request) {
           },
           rider: { select: { id: true, name: true, phone: true, vehicleType: true } },
         },
-        orderBy: { createdAt: 'desc' },
-        take: 100,
+        orderBy: { deliveryTime: 'asc' },
+        take: 500,
       }),
       prisma.rider.findMany({
         where: { active: true },
@@ -64,6 +76,7 @@ export async function GET(request: Request) {
     return NextResponse.json({ error: 'Failed to fetch orders' }, { status: 500 });
   }
 }
+
 
 export async function PATCH(request: Request) {
   try {
