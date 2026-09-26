@@ -55,9 +55,6 @@ export default function Navbar() {
               <a href="/#bowls" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
                 Our Bowls
               </a>
-              <a href="/#how-it-works" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
-                How It Works
-              </a>
               <a href="/#plans" className="text-xs xl:text-sm font-semibold text-[#0D2818] hover:text-[#D97706] transition-colors whitespace-nowrap">
                 Plans
               </a>
@@ -186,7 +183,6 @@ export default function Navbar() {
             <div className="flex flex-col space-y-2 text-sm font-semibold text-[#0D2818]">
               <Link href="/" onClick={() => setMobileOpen(false)} className="py-1">Home</Link>
               <a href="/#bowls" onClick={() => setMobileOpen(false)} className="py-1">Our Bowls</a>
-              <a href="/#how-it-works" onClick={() => setMobileOpen(false)} className="py-1">How It Works</a>
               <a href="/#plans" onClick={() => setMobileOpen(false)} className="py-1">Plans</a>
               <a href="/#reviews" onClick={() => setMobileOpen(false)} className="py-1">Reviews</a>
             </div>

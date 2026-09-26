@@ -4,7 +4,6 @@ import HeroSection from '@/components/HeroSection';
 import LivingNutritionAndTrustSection from '@/components/LivingNutritionAndTrustSection';
 import ComingSoonBanner from '@/components/ComingSoonBanner';
 import BowlsSection from '@/components/BowlsSection';
-import HowItWorksSection from '@/components/HowItWorksSection';
 import NutritionAndPlansSection from '@/components/NutritionAndPlansSection';
 import TestimonialsAndFaqSection from '@/components/TestimonialsAndFaqSection';
 import CtaBannerPatna from '@/components/CtaBannerPatna';
@@ -34,10 +33,7 @@ export default function Home() {
       {/* 4. Our Bowls: Five Goals. A Healthier You. */}
       <BowlsSection />
 
-      {/* 5. How It Works: From nature's best to your doorstep */}
-      <HowItWorksSection />
-
-      {/* 6. Nutrition You Can See & Choose Your Plan */}
+      {/* 5. Nutrition You Can See & Choose Your Plan */}
       <NutritionAndPlansSection />
 
       {/* 7. Real People. Real Stories & Frequently Asked Questions */}
