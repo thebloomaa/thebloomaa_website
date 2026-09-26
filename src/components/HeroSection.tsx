@@ -133,13 +133,6 @@ export default function HeroSection() {
               <span className="text-lg leading-none">→</span>
             </Link>
 
-            <a
-              href="#bowls"
-              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 rounded-full text-sm font-semibold text-[#0D2818] bg-white border border-[#DDD5C0] hover:bg-[#F4EFE6] transition-all shadow-xs cursor-pointer"
-            >
-              <span>Explore 6-Day Menu 🥗</span>
-            </a>
-
             <Link
               href="/calculator"
               className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 rounded-full text-xs sm:text-sm font-semibold text-[#5E7A67] hover:text-[#0D2818] hover:bg-white/80 transition-all border border-transparent hover:border-[#DDD5C0]"
