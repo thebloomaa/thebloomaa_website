@@ -357,47 +357,15 @@ export default function BowlsSection() {
       <div className="max-w-[1536px] mx-auto">
         {/* Section Header */}
         <div className="flex flex-col items-center text-center mb-6">
-          <div className="flex items-center gap-2 mb-1.5">
-            <span className="text-xl">🌱</span>
-            <span className="text-xs sm:text-sm font-bold tracking-[0.2em] text-[#2A5237] uppercase">
-              TheBloomaa Weekly Diet Bowl Menu
-            </span>
-          </div>
-
           <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0D2818] tracking-tight">
             TheBloomaa&apos;s Diet Bowl <span className="text-[#16A34A]">for Your Health Goal</span>
           </h2>
 
           <p className="text-xs sm:text-sm text-[#5E7A67] font-medium max-w-xl mx-auto mt-1 leading-snug">
-            Each of these 6 functional living bowls rotates across Monday–Saturday as part of your <strong>7-Day Weekly</strong> or <strong>Monthly Routine</strong>. Freshly prepared daily at 5:00 AM.
+            6 functional living bowls — fruits, sprouts, veggies & seeds. Daily rotating A/c to Healthy Functional. Freshly prepared at 5:00 AM.
           </p>
-
-          <div className="flex items-center justify-center gap-2 mt-2 text-xs sm:text-sm font-medium text-[#5E7A67]">
-            <span className="text-red-500">❤️</span>
-            <span className="font-script text-lg sm:text-xl text-[#8C3A27]">
-              Good Food, Happier People, A Healthier Patna
-            </span>
-            <span className="text-red-500">❤️</span>
-          </div>
-
-          {/* 4 Mini Trust Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-2.5 mt-3">
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#DDD5C0] text-[#0D2818] shadow-2xs">
-              ✓ 100% Natural
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#DDD5C0] text-[#0D2818] shadow-2xs">
-              🚫 0% Cooking
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#DDD5C0] text-[#0D2818] shadow-2xs">
-              📍 Fresh Daily in Patna
-            </span>
-            <span className="px-2.5 py-0.5 rounded-full text-[11px] font-semibold bg-white border border-[#DDD5C0] text-[#0D2818] shadow-2xs">
-              ❤️ Made with Care
-            </span>
-          </div>
-
-
         </div>
+
 
         {/* ========================================================
             SLIDER CONTAINER: 1 CARD ON MOBILE, 2 CARDS ON DESKTOP
