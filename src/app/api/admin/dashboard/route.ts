@@ -14,8 +14,10 @@ export async function GET(request: Request) {
     }
 
     const { searchParams } = new URL(request.url);
-    const placedDate = searchParams.get('placedDate');
+    const deliveryDateParam = searchParams.get('deliveryDate'); // YYYY-MM-DD in IST
 
+    // Compute IST "today" boundaries (UTC = IST - 5:30)
+    const now = new Date();
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const tomorrow = new Date(today);
@@ -84,21 +86,36 @@ export async function GET(request: Request) {
       monthlyRevenue += sub.product.price;
     });
 
-    // 2. Systematic Orders List (with rider assignments, verification timestamps & status)
-    const orderWhere: any = {};
-    if (placedDate) {
-      const startOfDay = new Date(`${placedDate}T00:00:00.000Z`);
-      const endOfDay = new Date(`${placedDate}T23:59:59.999Z`);
-      orderWhere.createdAt = {
-        gte: startOfDay,
-        lte: endOfDay,
-      };
+    // 2. Systematic Orders List — filtered by DELIVERY DATE (not placed date)
+    // IST midnight = UTC midnight - 5h30m
+    const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
+
+    let deliveryDateStart: Date;
+    let deliveryDateEnd: Date;
+
+    if (deliveryDateParam) {
+      // Parse as IST date: e.g. "2026-09-27" → IST midnight → UTC
+      deliveryDateStart = new Date(new Date(`${deliveryDateParam}T00:00:00+05:30`).getTime());
+      deliveryDateEnd = new Date(new Date(`${deliveryDateParam}T23:59:59+05:30`).getTime());
+    } else {
+      // Default: today in IST
+      const todayIST = new Date(now.getTime() + IST_OFFSET_MS);
+      const yyyy = todayIST.getUTCFullYear();
+      const mm = String(todayIST.getUTCMonth() + 1).padStart(2, '0');
+      const dd = String(todayIST.getUTCDate()).padStart(2, '0');
+      deliveryDateStart = new Date(`${yyyy}-${mm}-${dd}T00:00:00+05:30`);
+      deliveryDateEnd = new Date(`${yyyy}-${mm}-${dd}T23:59:59+05:30`);
     }
 
     const rawOrders = await prisma.order.findMany({
-      where: orderWhere,
-      take: 200,
-      orderBy: { createdAt: 'desc' },
+      where: {
+        deliveryDate: {
+          gte: deliveryDateStart,
+          lte: deliveryDateEnd,
+        },
+      },
+      take: 500,
+      orderBy: { deliveryTime: 'asc' },
       include: {
         user: { select: { id: true, name: true, phone: true, email: true, allergies: true, fitnessGoal: true, dietaryPreference: true } },
         address: true,

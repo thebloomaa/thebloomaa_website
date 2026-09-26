@@ -135,8 +135,12 @@ export default function AdminDashboard() {
   // Filters for Orders Tab
   const [orderFilter, setOrderFilter] = useState<'ALL' | 'UNASSIGNED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'QUEUED'>('ALL');
   const [orderSearch, setOrderSearch] = useState('');
-  const [placedDateFilter, setPlacedDateFilter] = useState<'ALL' | 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'CUSTOM'>('ALL');
-  const [customPlacedDate, setCustomPlacedDate] = useState('');
+
+  // Delivery Date Mode: defaults smart based on IST time
+  type DeliveryDateMode = 'TODAY' | 'TOMORROW' | 'CUSTOM';
+  const [deliveryDateMode, setDeliveryDateMode] = useState<DeliveryDateMode>('TODAY');
+  const [customDeliveryDate, setCustomDeliveryDate] = useState('');
+
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
@@ -151,10 +155,27 @@ export default function AdminDashboard() {
   const [customerSearch, setCustomerSearch] = useState('');
   const [dietFilter, setDietFilter] = useState('ALL');
 
-  const fetchDashboardData = async () => {
+  // Helper: Compute the target delivery date string (YYYY-MM-DD IST)
+  const getTargetDeliveryDateStr = (mode: DeliveryDateMode, custom: string): string => {
+    if (mode === 'CUSTOM' && custom) return custom;
+    const base = new Date();
+    if (mode === 'TOMORROW') base.setDate(base.getDate() + 1);
+    // Format as IST YYYY-MM-DD
+    const istMs = base.getTime() + 5.5 * 60 * 60 * 1000;
+    const d = new Date(istMs);
+    const yyyy = d.getUTCFullYear();
+    const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+    const dd = String(d.getUTCDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  };
+
+  const fetchDashboardData = async (mode?: DeliveryDateMode, custom?: string) => {
+    const resolvedMode = mode ?? deliveryDateMode;
+    const resolvedCustom = custom ?? customDeliveryDate;
+    const dateStr = getTargetDeliveryDateStr(resolvedMode, resolvedCustom);
     try {
       setRefreshing(true);
-      const res = await fetch('/api/admin/dashboard');
+      const res = await fetch(`/api/admin/dashboard?deliveryDate=${dateStr}`);
       if (res.ok) {
         const d = await res.json();
         setData(d);
@@ -167,9 +188,22 @@ export default function AdminDashboard() {
     }
   };
 
+  // On mount: smart default — after 10pm IST switch to TOMORROW
   useEffect(() => {
-    fetchDashboardData();
+    const nowIST = new Date(Date.now() + 5.5 * 60 * 60 * 1000);
+    const hourIST = nowIST.getUTCHours();
+    const initialMode: DeliveryDateMode = hourIST >= 22 ? 'TOMORROW' : 'TODAY';
+    setDeliveryDateMode(initialMode);
+    fetchDashboardData(initialMode, '');
   }, []);
+
+  // Auto-refresh every 2 minutes when on Orders tab
+  useEffect(() => {
+    if (activeTab !== 'ORDERS') return;
+    const interval = setInterval(() => fetchDashboardData(), 2 * 60 * 1000);
+    return () => clearInterval(interval);
+  }, [activeTab, deliveryDateMode, customDeliveryDate]);
+
 
   // Handler: 1-click Rider Assignment
   const handleAssignRider = async (orderId: string, riderId: string) => {
@@ -359,44 +393,14 @@ export default function AdminDashboard() {
   }
 
   // Filter Orders for Tab 1
+  // Date filtering is now done SERVER-SIDE by deliveryDate param.
+  // Client only handles status + search filters.
   const filteredOrders = (data.orders || []).filter((o) => {
     // Status Filter
     if (orderFilter === 'UNASSIGNED' && (o.riderId !== null || o.status === 'DELIVERED')) return false;
     if (orderFilter === 'RIDER_DELIVERED' && o.status !== 'RIDER_DELIVERED') return false;
     if (orderFilter === 'DELIVERED' && o.status !== 'DELIVERED') return false;
     if (orderFilter === 'QUEUED' && o.status !== 'QUEUED') return false;
-
-    // Placed Date Filter
-    if (placedDateFilter !== 'ALL') {
-      if (!o.createdAt) return false;
-      const orderDate = new Date(o.createdAt);
-      const now = new Date();
-
-      const getLocalDateStr = (d: Date) => {
-        const year = d.getFullYear();
-        const month = String(d.getMonth() + 1).padStart(2, '0');
-        const day = String(d.getDate()).padStart(2, '0');
-        return `${year}-${month}-${day}`;
-      };
-
-      const orderDayStr = getLocalDateStr(orderDate);
-      const todayStr = getLocalDateStr(now);
-
-      if (placedDateFilter === 'TODAY') {
-        if (orderDayStr !== todayStr) return false;
-      } else if (placedDateFilter === 'YESTERDAY') {
-        const yesterday = new Date(now);
-        yesterday.setDate(now.getDate() - 1);
-        if (orderDayStr !== getLocalDateStr(yesterday)) return false;
-      } else if (placedDateFilter === 'LAST_7_DAYS') {
-        const sevenDaysAgo = new Date(now);
-        sevenDaysAgo.setDate(now.getDate() - 7);
-        sevenDaysAgo.setHours(0, 0, 0, 0);
-        if (orderDate < sevenDaysAgo) return false;
-      } else if (placedDateFilter === 'CUSTOM' && customPlacedDate) {
-        if (orderDayStr !== customPlacedDate) return false;
-      }
-    }
 
     // Search Query Filter
     if (!orderSearch.trim()) return true;
@@ -411,6 +415,7 @@ export default function AdminDashboard() {
       (o.rider?.name && o.rider.name.toLowerCase().includes(q))
     );
   });
+
 
   // Filter Customers for Tab 3
   const filteredCustomers = (data.customers || []).filter((c) => {
@@ -437,6 +442,16 @@ export default function AdminDashboard() {
       .replace(/7-Day/gi, 'Weekly')
       .trim();
   };
+
+  // Helper: Strip base64 image data from delivery note for table preview
+  const displayNote = (note: string | null): string => {
+    if (!note) return '';
+    return note
+      .replace(/PROOF:\s*data:[^\s|\]]+/g, 'PROOF: [📸 Screenshot]')
+      .replace(/\s*\|\s*$/, '')
+      .trim();
+  };
+
 
   // Helper: 1-Click Export Filtered Dispatch to CSV
   const handleExportCSV = () => {
@@ -572,7 +587,7 @@ export default function AdminDashboard() {
             Operations &amp; Dispatch Intelligence
           </h1>
           <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
-            Assign orders to riders, verify morning drops, and double-mark deliveries in real-time.
+            View today&apos;s scheduled deliveries, assign riders, verify drops, and prep tomorrow&apos;s manifest.
           </p>
         </div>
 
@@ -589,7 +604,7 @@ export default function AdminDashboard() {
           </button>
           <button
             type="button"
-            onClick={fetchDashboardData}
+            onClick={() => fetchDashboardData()}
             disabled={refreshing}
             className="px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-card border border-brand-border hover:border-brand-border text-brand-forest hover:text-brand-forest transition-all flex items-center gap-1.5 cursor-pointer"
           >
@@ -788,62 +803,65 @@ export default function AdminDashboard() {
               </div>
             </div>
 
-            {/* Row 2: Date Order Placed Filter */}
+            {/* Row 2: Delivery Date Switcher */}
             <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-brand-border/70">
               <div className="flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold text-brand-forest flex items-center gap-1.5">
-                  <span className="text-sm">📅</span>
-                  <span>Date Placed:</span>
+                  <span className="text-sm">🚚</span>
+                  <span>Delivery Date:</span>
                 </span>
 
-                {/* Quick Presets */}
+                {/* Mode Buttons */}
                 <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { id: 'ALL', label: 'All Dates' },
-                    { id: 'TODAY', label: 'Today' },
-                    { id: 'YESTERDAY', label: 'Yesterday' },
-                    { id: 'LAST_7_DAYS', label: 'Last 7 Days' },
-                  ].map((preset) => (
+                  {([
+                    { id: 'TODAY' as const, label: "Today's Deliveries" },
+                    { id: 'TOMORROW' as const, label: '🌙 Tomorrow (Prep Mode)' },
+                  ] as { id: 'TODAY' | 'TOMORROW'; label: string }[]).map((btn) => (
                     <button
-                      key={preset.id}
+                      key={btn.id}
                       type="button"
                       onClick={() => {
-                        setPlacedDateFilter(preset.id as any);
-                        if (preset.id !== 'CUSTOM') setCustomPlacedDate('');
+                        setDeliveryDateMode(btn.id);
+                        setCustomDeliveryDate('');
+                        fetchDashboardData(btn.id, '');
                       }}
                       className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                        placedDateFilter === preset.id && !customPlacedDate
+                        deliveryDateMode === btn.id && !customDeliveryDate
                           ? 'bg-brand-mustard text-brand-forest shadow-xs'
                           : 'bg-brand-cream/80 text-brand-forest-muted hover:text-brand-forest border border-brand-border'
                       }`}
                     >
-                      {preset.label}
+                      {btn.label}
                     </button>
                   ))}
                 </div>
 
-                {/* Custom Date Input */}
+                {/* Custom Date Picker */}
                 <div className="flex items-center gap-1.5">
                   <span className="text-[11px] text-brand-forest-muted">or Pick Date:</span>
                   <input
                     type="date"
-                    value={customPlacedDate}
+                    value={customDeliveryDate}
                     onChange={(e) => {
-                      setCustomPlacedDate(e.target.value);
-                      if (e.target.value) {
-                        setPlacedDateFilter('CUSTOM');
+                      const val = e.target.value;
+                      setCustomDeliveryDate(val);
+                      if (val) {
+                        setDeliveryDateMode('CUSTOM');
+                        fetchDashboardData('CUSTOM', val);
                       } else {
-                        setPlacedDateFilter('ALL');
+                        setDeliveryDateMode('TODAY');
+                        fetchDashboardData('TODAY', '');
                       }
                     }}
                     className="px-2.5 py-1 rounded-lg text-xs bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard font-mono cursor-pointer"
                   />
-                  {customPlacedDate && (
+                  {customDeliveryDate && (
                     <button
                       type="button"
                       onClick={() => {
-                        setCustomPlacedDate('');
-                        setPlacedDateFilter('ALL');
+                        setCustomDeliveryDate('');
+                        setDeliveryDateMode('TODAY');
+                        fetchDashboardData('TODAY', '');
                       }}
                       className="px-2 py-1 rounded-lg text-[11px] font-bold bg-brand-cream text-brand-forest-muted hover:text-red-500 border border-brand-border cursor-pointer"
                       title="Clear custom date"
@@ -854,47 +872,53 @@ export default function AdminDashboard() {
                 </div>
               </div>
 
-              {/* Filter feedback summary badge */}
-              {placedDateFilter !== 'ALL' && (
+              {/* Status Badge: order count + prep mode banner */}
+              <div className="flex items-center gap-2 flex-wrap">
+                {deliveryDateMode === 'TOMORROW' && !customDeliveryDate && (
+                  <div className="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 flex items-center gap-1.5 animate-pulse">
+                    <span>🌙</span>
+                    <span>Prep Mode — Tomorrow&apos;s orders</span>
+                  </div>
+                )}
                 <div className="text-xs font-semibold text-brand-mustard bg-brand-mustard/15 px-3 py-1 rounded-full border border-brand-mustard/30 flex items-center gap-1.5">
-                  <span>Filtered:</span>
+                  <span>📦</span>
                   <span className="font-bold font-mono text-brand-forest">{filteredOrders.length}</span>
-                  <span>order{filteredOrders.length === 1 ? '' : 's'} placed {
-                    placedDateFilter === 'TODAY'
-                      ? 'today'
-                      : placedDateFilter === 'YESTERDAY'
-                      ? 'yesterday'
-                      : placedDateFilter === 'LAST_7_DAYS'
-                      ? 'in last 7 days'
-                      : `on ${new Date(`${customPlacedDate}T00:00:00`).toLocaleDateString('en-IN', {
-                          day: 'numeric',
-                          month: 'short',
-                          year: 'numeric',
-                        })}`
-                  }</span>
+                  <span>
+                    order{filteredOrders.length === 1 ? '' : 's'}{' '}
+                    {deliveryDateMode === 'TODAY' && !customDeliveryDate ? 'for today' :
+                     deliveryDateMode === 'TOMORROW' && !customDeliveryDate ? 'for tomorrow' :
+                     customDeliveryDate ? `for ${new Date(`${customDeliveryDate}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'short' })}` : ''}
+                  </span>
                 </div>
-              )}
+              </div>
             </div>
           </div>
+
 
           {/* Orders Table */}
           <div className="rounded-2xl bg-brand-card/90 border border-brand-border overflow-hidden shadow-xl">
             {filteredOrders.length === 0 ? (
-              <div className="p-12 text-center text-brand-forest-muted/70 text-xs font-medium">
-                No orders found matching the filter criteria.
+              <div className="p-12 text-center space-y-2">
+                <p className="text-brand-forest-muted/70 text-xs font-medium">
+                  No orders scheduled for delivery on{' '}
+                  {deliveryDateMode === 'TODAY' && !customDeliveryDate ? 'today' :
+                   deliveryDateMode === 'TOMORROW' && !customDeliveryDate ? 'tomorrow' :
+                   customDeliveryDate ? new Date(`${customDeliveryDate}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'the selected date'}.
+                </p>
+                <p className="text-[11px] text-brand-forest-muted/50">Try switching to a different delivery date above.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
                     <tr className="bg-brand-cream/80 border-b border-brand-border text-brand-forest-muted uppercase tracking-wider text-[10px] font-black">
-                      <th className="p-3.5">Order / Customer</th>
-                      <th className="p-3.5">Delivery Address &amp; GPS</th>
-                      <th className="p-3.5">Diet Plan</th>
-                      <th className="p-3.5">Slot &amp; Note</th>
-                      <th className="p-3.5">Assigned Rider</th>
-                      <th className="p-3.5">Status &amp; Drop Info</th>
-                      <th className="p-3.5 text-right">Admin Verification</th>
+                      <th className="p-3.5 w-[170px]">Order / Customer</th>
+                      <th className="p-3.5 w-[180px]">Delivery Address</th>
+                      <th className="p-3.5 w-[120px]">Diet Plan</th>
+                      <th className="p-3.5 w-[160px]">Slot &amp; Note</th>
+                      <th className="p-3.5 w-[150px]">Assigned Rider</th>
+                      <th className="p-3.5 w-[160px]">Status &amp; Payment</th>
+                      <th className="p-3.5 text-right w-[180px]">Admin Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-brand-border/80">
@@ -983,14 +1007,14 @@ export default function AdminDashboard() {
                           </td>
 
                           {/* Slot & Note */}
-                          <td className="p-3.5 align-top">
+                          <td className="p-3.5 align-top w-[160px] max-w-[160px]">
                             <span className="inline-block px-2 py-0.5 rounded bg-brand-cream text-brand-forest-muted font-mono text-[10px] mb-1">
                               ⏰ {order.deliveryTime || '07:00 AM'}
                             </span>
                             {order.user.allergies && order.user.allergies !== 'None' && (
                               <div
                                 onClick={() => setSelectedOrder(order)}
-                                className="mb-1 p-1.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-bold max-w-[170px] leading-tight flex items-start gap-1 cursor-pointer hover:bg-amber-100 transition-all shadow-xs"
+                                className="mb-1 p-1.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-bold leading-tight flex items-start gap-1 cursor-pointer hover:bg-amber-100 transition-all shadow-xs"
                                 title={`Allergies: ${order.user.allergies} (Click to inspect)`}
                               >
                                 <span>⚠️</span>
@@ -1000,11 +1024,11 @@ export default function AdminDashboard() {
                             {order.deliveryNote && (
                               <div
                                 onClick={() => setSelectedOrder(order)}
-                                className="p-1.5 rounded-lg bg-brand-mustard/10 border border-brand-mustard/30 text-brand-forest text-[10px] font-medium max-w-[170px] cursor-pointer hover:bg-brand-mustard/20 transition-all line-clamp-2"
-                                title="Click to view full note in inspector"
+                                className="p-1.5 rounded-lg bg-brand-mustard/10 border border-brand-mustard/30 text-brand-forest text-[10px] font-medium cursor-pointer hover:bg-brand-mustard/20 transition-all line-clamp-3 break-words"
+                                title="Click to view full note & receipt in inspector"
                               >
                                 <span>📝 </span>
-                                <span>{order.deliveryNote}</span>
+                                <span>{displayNote(order.deliveryNote)}</span>
                               </div>
                             )}
                           </td>
@@ -1120,13 +1144,13 @@ export default function AdminDashboard() {
                             </div>
                           </td>
 
-                          {/* Admin Verification Actions */}
+                          {/* Admin Actions */}
                           <td className="p-3.5 align-top text-right">
-                            <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                            <div className="flex flex-col items-end gap-1.5">
                               <button
                                 type="button"
                                 onClick={() => setSelectedOrder(order)}
-                                className="px-2 py-1 rounded-lg bg-white hover:bg-brand-cream text-brand-forest border border-brand-border font-bold text-[10px] cursor-pointer transition-all shadow-xs flex items-center gap-1"
+                                className="px-2.5 py-1 rounded-lg bg-white hover:bg-brand-cream text-brand-forest border border-brand-border font-bold text-[10px] cursor-pointer transition-all shadow-xs flex items-center gap-1 whitespace-nowrap"
                                 title="Inspect complete order details, allergies, address and rider"
                               >
                                 <span>👁️</span>
@@ -1137,7 +1161,7 @@ export default function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => handleActivateSubscription(order.id)}
-                                  className="px-2 py-1 rounded-lg bg-brand-mustard/20 hover:bg-brand-mustard/30 text-brand-forest-muted border border-brand-mustard/40 font-bold text-[10px] cursor-pointer transition-all whitespace-nowrap"
+                                  className="px-2.5 py-1 rounded-lg bg-brand-mustard/20 hover:bg-brand-mustard/30 text-brand-forest-muted border border-brand-mustard/40 font-bold text-[10px] cursor-pointer transition-all whitespace-nowrap"
                                   title="Activate subscription and verify payment"
                                 >
                                   Verify Plan ⚡
@@ -1148,11 +1172,11 @@ export default function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => handleDoubleVerify(order.id)}
-                                  className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-brand-mustard to-teal-400 hover:from-brand-mustard hover:to-brand-mustard-hover text-brand-forest font-black text-[11px] cursor-pointer transition-all shadow-md flex items-center gap-1 whitespace-nowrap"
-                                  title="Confirm doorstep drop with customer and mark double verified"
+                                  className="px-2.5 py-1.5 rounded-lg bg-gradient-to-r from-brand-mustard to-teal-400 hover:opacity-90 text-brand-forest font-black text-[10px] cursor-pointer transition-all shadow-md flex items-center gap-1 whitespace-nowrap"
+                                  title="Confirm doorstep drop and mark double verified"
                                 >
-                                  <span>Double-Mark Verified</span>
                                   <span>✓✓</span>
+                                  <span>Double-Verify</span>
                                 </button>
                               )}
 
@@ -1160,7 +1184,7 @@ export default function AdminDashboard() {
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
-                                  className="px-2.5 py-1.5 rounded-lg bg-brand-mustard text-brand-forest font-bold text-[10px] hover:bg-brand-mustard cursor-pointer transition-all whitespace-nowrap"
+                                  className="px-2.5 py-1.5 rounded-lg bg-brand-mustard text-brand-forest font-bold text-[10px] hover:opacity-90 cursor-pointer transition-all whitespace-nowrap"
                                 >
                                   Delivered ✓
                                 </button>
@@ -1174,7 +1198,7 @@ export default function AdminDashboard() {
                                     setFailReason('Customer unreachable / phone switched off');
                                     setCustomFailReason('');
                                   }}
-                                  className="px-2 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 font-bold text-[10px] hover:bg-red-100 cursor-pointer transition-all shadow-xs"
+                                  className="px-2.5 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 font-bold text-[10px] hover:bg-red-100 cursor-pointer transition-all whitespace-nowrap"
                                   title="Mark order as failed with reason dialog"
                                 >
                                   Fail ✕
