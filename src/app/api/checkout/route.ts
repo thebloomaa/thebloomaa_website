@@ -246,7 +246,7 @@ export async function POST(req: Request) {
           amount: finalAmount,
           currency: 'INR',
           gateway: paymentGateway,
-          gatewayPaymentId: screenshotUrl ? `${effectiveUtr}#${screenshotUrl}` : effectiveUtr,
+          gatewayPaymentId: effectiveUtr,
           gatewayOrderId: `PREBOOK-${subscription.id.slice(0, 8).toUpperCase()}`,
           method: paymentMethod,
           status: paymentStatus,

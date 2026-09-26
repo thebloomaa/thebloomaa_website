@@ -170,24 +170,43 @@ function CheckoutPageInner() {
 
     setUploadingScreenshot(true);
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-
-      const res = await fetch('/api/upload', {
-        method: 'POST',
-        body: formData,
-      });
-
-      const data = await res.json();
-      if (res.ok && data.success && data.url) {
-        setScreenshotUrl(data.url);
-      } else {
-        setUploadError(data.error || 'Failed to upload screenshot. Please try again.');
-      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 800;
+          if (width > height && width > maxDim) {
+            height *= maxDim / width;
+            width = maxDim;
+          } else if (height > maxDim) {
+            width *= maxDim / height;
+            height = maxDim;
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          const base64Url = canvas.toDataURL('image/jpeg', 0.6);
+          setScreenshotUrl(base64Url);
+          setUploadingScreenshot(false);
+        };
+        img.onerror = () => {
+          setUploadError('Failed to process image format.');
+          setUploadingScreenshot(false);
+        };
+        img.src = e.target?.result as string;
+      };
+      reader.onerror = () => {
+        setUploadError('Error reading file.');
+        setUploadingScreenshot(false);
+      };
+      reader.readAsDataURL(file);
     } catch (err) {
-      console.error('Upload failed:', err);
-      setUploadError('Network error uploading screenshot. Please try again.');
-    } finally {
+      console.error('Upload processing failed:', err);
+      setUploadError('Error processing screenshot. Please try again.');
       setUploadingScreenshot(false);
     }
   };
@@ -356,8 +375,8 @@ function CheckoutPageInner() {
     // Strict validation for online payment modes
     if (!isMonthlyProduct && effectiveMode !== 'PAY_ON_DELIVERY') {
       const cleanUtr = utrInput.trim();
-      if (effectiveMode === 'QR_SCAN' && !screenshotUrl) {
-        setSubmitError('Please attach a screenshot of your payment receipt before confirming.');
+      if (effectiveMode === 'QR_SCAN' && !screenshotUrl && cleanUtr.length < 8) {
+        setSubmitError('Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.');
         return;
       }
       if (effectiveMode === 'UPI_APP' && cleanUtr.length < 8 && !screenshotUrl) {
@@ -1286,9 +1305,6 @@ function CheckoutPageInner() {
                           >
                             <span>📸</span>
                             <span>Scan QR / Transfer</span>
-                            <span className="text-[9px] bg-red-500/20 text-red-700 px-1.5 py-0.5 rounded-full font-black">
-                              Screenshot Req.
-                            </span>
                           </button>
 
                           <button
@@ -1363,15 +1379,12 @@ function CheckoutPageInner() {
                               <div className="flex items-center justify-between">
                                 <div className="flex items-center gap-1.5 text-xs font-black text-brand-forest uppercase tracking-wider">
                                   <span>📸</span>
-                                  <span>Attach Payment Screenshot *</span>
+                                  <span>Attach Payment Screenshot (Optional)</span>
                                 </div>
-                                <span className="text-[10px] font-bold text-red-600 bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/20">
-                                  Mandatory for QR Scan
-                                </span>
                               </div>
 
                               <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                                After scanning or transferring ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, take a screenshot of the completed payment receipt and upload it here.
+                                After scanning or transferring ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, enter the 12-digit UTR below OR upload a screenshot of the completed payment receipt here.
                               </p>
 
                               {/* Upload Error Banner */}
@@ -1447,20 +1460,25 @@ function CheckoutPageInner() {
                             </div>
 
                             {/* Confirm Button for QR Scan */}
-                            <button
-                              type="button"
-                              disabled={submitting || uploadingScreenshot || !screenshotUrl}
-                              onClick={() => handleConfirmPayment('QR_SCAN')}
-                              className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
-                            >
-                              {submitting ? (
-                                <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
-                              ) : !screenshotUrl ? (
-                                <><span>📸 Attach Payment Screenshot to Confirm</span></>
-                              ) : (
-                                <><span>✅ Confirm Pre-Booking with Receipt (₹{pricing.price})</span><span>→</span></>
-                              )}
-                            </button>
+                            {(() => {
+                              const hasProof = utrInput.trim().length >= 8 || Boolean(screenshotUrl);
+                              return (
+                                <button
+                                  type="button"
+                                  disabled={submitting || uploadingScreenshot || !hasProof}
+                                  onClick={() => handleConfirmPayment('QR_SCAN')}
+                                  className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                                >
+                                  {submitting ? (
+                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
+                                  ) : !hasProof ? (
+                                    <><span>⚠️ Enter 12-Digit UTR or Attach Screenshot to Confirm</span></>
+                                  ) : (
+                                    <><span>✅ Confirm Pre-Booking (₹{pricing.price})</span><span>→</span></>
+                                  )}
+                                </button>
+                              );
+                            })()}
                           </div>
                         )}
 
