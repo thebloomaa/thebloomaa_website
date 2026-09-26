@@ -9,7 +9,8 @@
     "lint": "eslint",
     "studio": "prisma studio",
     "view-data": "npx tsx src/scripts/view-data.ts",
-    "sync-admin": "npx tsx src/scripts/seed-admin.ts"
+    "sync-admin": "npx tsx src/scripts/seed-admin.ts",
+    "clear-bookings": "node --env-file=.env src/scripts/clear-bookings.js"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
