@@ -341,10 +341,19 @@ export default function DashboardPage() {
         }}
       >
         {sub.status === 'PENDING' && (
-          <div className="mb-4 p-3.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted flex items-center gap-2.5">
-            <span className="text-base">✨</span>
+          <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-brand-forest flex items-center gap-2.5">
+            <span className="text-base">⏳</span>
             <span>
-              <strong>Prep Queued &amp; Scheduled:</strong> Your subscription is confirmed! Kitchen prep begins at 5:00 AM and morning delivery runs 6:00 AM – 9:00 AM.
+              <strong>Verification Pending:</strong> Waiting for confirmation from TheBlooma Team. Once verified, your deliveries will be scheduled!
+            </span>
+          </div>
+        )}
+
+        {sub.status === 'ACTIVE' && (
+          <div className="mb-4 p-3.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-900 flex items-center gap-2.5 shadow-sm">
+            <span className="text-base">✅</span>
+            <span>
+              <strong>Order Confirmed &amp; Verified!</strong> Your payment has been verified by the admin and your plan is active. Kitchen prep begins at 5:00 AM and morning delivery runs 6:00 AM – 9:00 AM.
             </span>
           </div>
         )}
