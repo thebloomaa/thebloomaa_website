@@ -71,8 +71,8 @@ export default function ComingSoonBanner() {
                 <div className="p-3 rounded-2xl bg-white/10 border border-white/10 backdrop-blur-xs flex items-center gap-3">
                   <span className="text-2xl shrink-0">🎁</span>
                   <div className="text-left">
-                    <span className="text-xs font-bold block text-white">Zero Advance Pay</span>
-                    <span className="text-[10px] text-white/70">Price TBA pre-booking</span>
+                    <span className="text-xs font-bold block text-white">Price TBA</span>
+                    <span className="text-[10px] text-white/70">Announced on 30 Sept launch</span>
                   </div>
                 </div>
               </div>

@@ -774,8 +774,8 @@ function CheckoutPageInner() {
                       <strong className="text-brand-forest font-mono">{form.phone}</strong>
                     </div>
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
-                      <span className="text-brand-forest-muted">Payment Due Today:</span>
-                      <strong className="text-brand-mustard font-bold">₹0 (Price TBA)</strong>
+                      <span className="text-brand-forest-muted">Subscription Pricing:</span>
+                      <strong className="text-brand-mustard font-bold">Price TBA (Pre-Launch)</strong>
                     </div>
                   </div>
 

@@ -8,7 +8,7 @@ const planPerks = [
   'Flexible 7-Day & Monthly routines',
   'Pause, skip or reschedule anytime',
   'Cold-prepared fresh at 5:00 AM daily',
-  'Zero advance payment today (Price TBA)',
+  'Price announced on 30 Sept launch',
   'Dedicated WhatsApp subscriber support',
 ];
 
@@ -29,7 +29,7 @@ export default function NutritionAndPlansSection() {
             Choose Your Plan
           </h2>
           <p className="text-xs sm:text-sm text-[#5E7A67] font-medium mt-1.5 leading-relaxed">
-            Fresh living nutrition delivered across Patna every morning between <strong>6:00 AM – 9:00 AM</strong>. Lock your slot with zero advance payment.
+            Fresh living nutrition delivered across Patna every morning between <strong>6:00 AM – 9:00 AM</strong>. Lock your slot ahead of our 30th September launch.
           </p>
         </div>
 
@@ -60,7 +60,7 @@ export default function NutritionAndPlansSection() {
                   Price TBA
                 </strong>
                 <span className="text-[11px] text-[#5E7A67] font-semibold block">
-                  Zero advance pay • 30 Sept Launch
+                  Announced on 30 Sept Launch
                 </span>
               </div>
 

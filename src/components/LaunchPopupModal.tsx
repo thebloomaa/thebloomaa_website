@@ -155,7 +155,7 @@ export default function LaunchPopupModal() {
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
               <span className="text-sm sm:text-base block">🎁</span>
               <span className="text-[10px] font-bold text-white block mt-0.5">Price TBA</span>
-              <span className="text-[8px] text-white/60 block">Zero advance pay</span>
+              <span className="text-[8px] text-white/60 block">Announced on launch</span>
             </div>
           </div>
 
