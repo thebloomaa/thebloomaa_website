@@ -460,45 +460,47 @@ export default function BowlsSection() {
 
       {/* Details Modal */}
       {selectedBowlModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
-          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 border border-[#DDD5C0] shadow-2xl relative">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/70 backdrop-blur-xs overflow-y-auto animate-fade-in">
+          <div className="bg-white rounded-3xl max-w-sm sm:max-w-md w-full p-4 sm:p-6 border border-[#DDD5C0] shadow-2xl relative my-auto max-h-[92vh] overflow-y-auto no-scrollbar">
             <button
               onClick={() => setSelectedBowlModal(null)}
-              className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[#FAF7F2] text-[#0D2818] flex items-center justify-center hover:bg-[#EAE2D2] transition-colors"
+              className="absolute top-3 right-3 sm:top-4 sm:right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-[#FAF7F2] text-[#0D2818] flex items-center justify-center hover:bg-[#EAE2D2] transition-colors text-xs sm:text-sm font-bold cursor-pointer z-10"
+              aria-label="Close modal"
             >
               ✕
             </button>
 
             <div className="text-center">
-              <span className={`inline-block px-3 py-0.5 rounded-full text-[11px] font-black uppercase tracking-wider border ${selectedBowlModal.badgeColor} mb-2`}>
+              <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-wider border ${selectedBowlModal.badgeColor} mb-1.5`}>
                 {selectedBowlModal.day} Special
               </span>
-              <h3 className="font-serif text-2xl font-bold text-[#0D2818] mb-1">
+              <h3 className="font-serif text-xl sm:text-2xl font-bold text-[#0D2818] mb-1 leading-snug">
                 {selectedBowlModal.name}
               </h3>
-              <p className="text-xs text-[#5E7A67] mb-4">
+              <p className="text-xs text-[#5E7A67] mb-3">
                 {selectedBowlModal.subtitle}
               </p>
 
               {/* Bowl Image in Modal */}
-              <div className="relative w-36 h-36 mx-auto rounded-full overflow-hidden border-4 border-[#FAF7F2] shadow-md mb-4 bg-white">
+              <div className="relative w-28 h-28 sm:w-32 sm:h-32 mx-auto rounded-full overflow-hidden border-4 border-[#FAF7F2] shadow-md mb-3 bg-white">
                 <Image
                   src={selectedBowlModal.image}
                   alt={selectedBowlModal.name}
                   fill
+                  sizes="128px"
                   className="object-cover"
                 />
               </div>
 
               {/* Ingredient Types */}
-              <div className="p-3 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4 text-left">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E7A67] block mb-2 text-center">
+              <div className="p-2.5 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-3 text-left">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E7A67] block mb-1.5 text-center">
                   Key Ingredients Breakdown
                 </span>
-                <div className="grid grid-cols-2 gap-2">
+                <div className="grid grid-cols-2 gap-1.5">
                   {selectedBowlModal.ingredientTypes.map((item, idx) => (
-                    <div key={idx} className="flex items-center gap-2 p-1.5 rounded-lg bg-white border border-[#EAE2D2] text-xs font-semibold text-[#0D2818]">
-                      <span>{item.icon}</span>
+                    <div key={idx} className="flex items-center gap-1.5 p-1 rounded-lg bg-white border border-[#EAE2D2] text-[11px] font-semibold text-[#0D2818]">
+                      <span className="text-xs">{item.icon}</span>
                       <span>{item.label}</span>
                     </div>
                   ))}
@@ -506,41 +508,41 @@ export default function BowlsSection() {
               </div>
 
               {/* Macros */}
-              <div className="grid grid-cols-3 gap-2 p-3 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-6">
+              <div className="grid grid-cols-3 gap-2 p-2 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-3">
                 <div>
                   <span className="text-[10px] text-[#5E7A67] block">Protein</span>
-                  <strong className="text-sm font-black text-[#16A34A]">{selectedBowlModal.macros.protein}</strong>
+                  <strong className="text-xs sm:text-sm font-black text-[#16A34A]">{selectedBowlModal.macros.protein}</strong>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#5E7A67] block">Fiber</span>
-                  <strong className="text-sm font-black text-[#D97706]">{selectedBowlModal.macros.fiber}</strong>
+                  <strong className="text-xs sm:text-sm font-black text-[#D97706]">{selectedBowlModal.macros.fiber}</strong>
                 </div>
                 <div>
                   <span className="text-[10px] text-[#5E7A67] block">Calories</span>
-                  <strong className="text-sm font-black text-[#0D2818]">{selectedBowlModal.macros.calories}</strong>
+                  <strong className="text-xs sm:text-sm font-black text-[#0D2818]">{selectedBowlModal.macros.calories}</strong>
                 </div>
               </div>
 
               {/* Rotation Info Pill */}
-              <div className="mb-4 py-2 px-3 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] text-center">
-                <span className="text-[11px] font-semibold text-[#0F3826] flex items-center justify-center gap-1.5">
+              <div className="mb-3 py-1.5 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] text-center">
+                <span className="text-[10px] sm:text-[11px] font-semibold text-[#0F3826] flex items-center justify-center gap-1.5">
                   <span>🌱</span>
                   <span>Delivered fresh every <strong>{selectedBowlModal.day} morning</strong> as part of the 7-Day Plan</span>
                 </span>
               </div>
 
-              <div className="flex gap-2.5 sm:gap-3">
+              <div className="flex gap-2 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedBowlModal(null)}
-                  className="py-3 px-5 rounded-full text-xs font-bold text-[#3D5A47] bg-[#FAF7F2] hover:bg-[#F3EFE6] border border-[#DDD5C0] transition-all cursor-pointer"
+                  className="py-2.5 px-4 rounded-full text-xs font-bold text-[#3D5A47] bg-[#FAF7F2] hover:bg-[#F3EFE6] border border-[#DDD5C0] transition-all cursor-pointer"
                 >
                   Close
                 </button>
                 <button
                   type="button"
                   onClick={handlePreBookWeekly}
-                  className="flex-1 py-3 px-4 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
+                  className="flex-1 py-2.5 px-4 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
                 >
                   <span>Pre-Book 7-Day Plan</span>
                   <span>→</span>
