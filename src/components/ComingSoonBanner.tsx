@@ -47,7 +47,7 @@ export default function ComingSoonBanner() {
 
               {/* Subtitle Description */}
               <p className="text-xs sm:text-[13px] text-white/80 max-w-xl leading-relaxed">
-                Our morning living food kitchen and cold-pressed prep facility in Patna are gearing up for sunrise deliveries. Pre-orders are now officially open so you can lock in your 7-Day Weekly or Custom Monthly plan before our limited first batch fills up!
+                Our morning living food kitchen and cold-pressed prep facility in Patna are gearing up for sunrise deliveries. Pre-orders are now officially open — lock in your <strong>Just Bloom Plan</strong> or <strong>Custom Monthly</strong> plan before our limited first batch of 100 fills up!
               </p>
 
               {/* 3 Pre-Launch Value Badges */}
@@ -71,8 +71,11 @@ export default function ComingSoonBanner() {
                 <div className="p-2 sm:p-2.5 rounded-xl bg-white/10 border border-white/10 backdrop-blur-xs flex items-center gap-2.5">
                   <span className="text-xl shrink-0">🎁</span>
                   <div className="text-left">
-                    <span className="text-[11px] font-bold block text-white">Price TBA</span>
-                    <span className="text-[9.5px] text-white/70">Announced on 30 Sept launch</span>
+                    <div className="flex items-baseline gap-1">
+                      <span className="text-[13px] font-black text-white line-through opacity-60 font-mono">₹599</span>
+                      <span className="text-base font-black text-[#E6BE68] font-mono">₹499</span>
+                    </div>
+                    <span className="text-[9.5px] text-white/70">First 100 customers only</span>
                   </div>
                 </div>
               </div>
@@ -83,7 +86,7 @@ export default function ComingSoonBanner() {
                   href="/checkout?plan=trial"
                   className="px-5 py-2.5 rounded-full text-xs font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-md hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Pre-Book Your Plan (Price TBA)</span>
+                  <span>Pre-Book Just Bloom Plan ₹499 →</span>
                   <span>→</span>
                 </Link>
 

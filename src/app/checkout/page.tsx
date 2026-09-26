@@ -503,10 +503,18 @@ function CheckoutPageInner() {
                   <div className="flex-grow text-center sm:text-left">
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                       <h3 className="text-xl sm:text-2xl font-black text-brand-forest">{selectedProduct.name}</h3>
-                      <div className="text-xl font-black text-brand-mustard font-mono">
-                        {isMonthlyProduct
-                          ? '30-Day Living Plan (Price TBA)'
-                          : '7-Day Living Routine (Price TBA)'}
+                      <div className="text-right">
+                        {isMonthlyProduct ? (
+                          <span className="text-xl font-black text-brand-mustard font-mono">Custom Monthly Plan (Price TBA)</span>
+                        ) : (
+                          <div className="flex flex-col items-end">
+                            <div className="flex items-baseline gap-2">
+                              <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
+                              <span className="text-xl font-black text-brand-mustard font-mono">₹499</span>
+                            </div>
+                            <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 mt-0.5">🎁 Early Bird • First 100 Only</span>
+                          </div>
+                        )}
                       </div>
                     </div>
 
@@ -532,15 +540,15 @@ function CheckoutPageInner() {
                   </div>
                 </div>
 
-                {/* Trial Plan Logistics Alert */}
+                {/* Just Bloom Plan Logistics Alert */}
                 {isTrialProduct && (
                   <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted space-y-1">
                     <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px] text-brand-mustard">
                       <span>🚚</span>
-                      <span>7-Day Fresh Living Food Schedule</span>
+                      <span>Just Bloom Plan — What’s Included</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered across <strong>7 fresh mornings between 6:00 AM – 9:00 AM</strong> across Patna starting from official launch on <strong>30th September 2026</strong>. Freshly cold-prepared daily with zero cooking oils.
+                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>7:00 AM – 9:00 AM</strong> across Patna from <strong>30th September 2026</strong>. Fruits, sprouts, veggies & wet/dry seeds — daily rotating A/c to Healthy Functional. Zero cooking oils.
                     </p>
                   </div>
                 )}
@@ -601,13 +609,22 @@ function CheckoutPageInner() {
                 </h4>
 
                 <div className="space-y-2.5 text-xs">
+                  {!isMonthlyProduct && (
+                    <div className="flex justify-between items-center p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20">
+                      <span className="font-black text-brand-mustard">🎁 Early Bird Price</span>
+                      <div className="flex items-baseline gap-1.5">
+                        <span className="text-brand-forest-muted line-through font-mono">₹599</span>
+                        <span className="font-black text-brand-mustard font-mono text-base">₹499</span>
+                      </div>
+                    </div>
+                  )}
                   <div className="flex justify-between text-brand-forest-muted">
-                    <span>Effective daily rate:</span>
-                    <span className="font-bold text-brand-forest font-mono">TBA</span>
+                    <span>What’s included:</span>
+                    <span className="font-bold text-brand-forest">{isMonthlyProduct ? '30-Day Plan' : '6 Boxes + 1 Surprise Box'}</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
-                    <span>Scheduled duration:</span>
-                    <span className="font-bold text-brand-forest font-mono">{finalDays} days</span>
+                    <span>Delivery window:</span>
+                    <span className="font-bold text-brand-forest font-mono">7:00 AM – 9:00 AM</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Doorstep morning delivery:</span>
@@ -615,8 +632,18 @@ function CheckoutPageInner() {
                   </div>
                   <div className="pt-3 border-t border-brand-border flex justify-between items-baseline">
                     <span className="text-base font-bold text-brand-forest">Total Payable:</span>
-                    <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
+                    {isMonthlyProduct ? (
+                      <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
+                    ) : (
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
+                        <span className="text-2xl font-black text-brand-mustard font-mono">₹499</span>
+                      </div>
+                    )}
                   </div>
+                  {!isMonthlyProduct && (
+                    <p className="text-[10px] text-brand-forest-muted text-right">🎁 Early bird offer for first 100 customers only</p>
+                  )}
                 </div>
 
                 <div className="mt-6 flex justify-end">
@@ -976,7 +1003,7 @@ function CheckoutPageInner() {
                   <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest text-left max-w-md mx-auto space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-brand-forest-muted">Selected Plan:</span>
-                      <strong className="text-brand-forest font-bold">{selectedProduct?.name || '7-Day Weekly Plan'}</strong>
+                      <strong className="text-brand-forest font-bold">{selectedProduct?.name || 'Just Bloom Plan'}</strong>
                     </div>
                     <div className="flex justify-between items-center">
                       <span className="text-brand-forest-muted">Morning Drop Window:</span>
@@ -991,13 +1018,16 @@ function CheckoutPageInner() {
                       <strong className="text-brand-forest font-mono">{form.phone}</strong>
                     </div>
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
-                      <span className="text-brand-forest-muted">Subscription Pricing:</span>
-                      <strong className="text-brand-mustard font-bold">Price TBA (Pre-Launch)</strong>
+                      <span className="text-brand-forest-muted">Plan Price:</span>
+                      <div className="flex items-baseline gap-1.5">
+                        {!isMonthlyProduct && <span className="text-brand-forest-muted line-through font-mono text-xs">₹599</span>}
+                        <strong className="text-brand-mustard font-bold">{isMonthlyProduct ? 'TBA' : '₹499 🎁 Early Bird'}</strong>
+                      </div>
                     </div>
                   </div>
 
                   <p className="text-xs text-brand-forest-muted max-w-md mx-auto leading-relaxed">
-                    Our team will contact you via WhatsApp at <strong>{form.phone}</strong> with introductory founding member rates and delivery confirmation prior to launch day.
+                    Our team will contact you via WhatsApp at <strong>{form.phone}</strong> to confirm your delivery slot and payment details before 30th September launch day.
                   </p>
 
                   <div className="pt-3 flex flex-col sm:flex-row gap-3 justify-center">
@@ -1009,7 +1039,7 @@ function CheckoutPageInner() {
                       ← Back to Homepage
                     </Link>
                     <a
-                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi Thebloomaa, I just pre-booked my ${selectedProduct?.name || '7-Day Weekly Plan'} for the 30th September launch!`)}`}
+                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi TheBloomaa! I just pre-booked my Just Bloom Plan (₹499 early bird) for the 30th September launch! 🌱`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-6 py-3 rounded-full text-xs font-black text-white bg-[#25D366] hover:bg-[#1EBE5D] transition-all flex items-center justify-center gap-1.5 shadow-md"

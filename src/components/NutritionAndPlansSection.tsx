@@ -5,10 +5,10 @@ import Link from 'next/link';
 
 const planPerks = [
   'Free doorstep delivery in Patna',
-  'Flexible 7-Day & Monthly routines',
+  'Just Bloom & Monthly routines available',
   'Pause, skip or reschedule anytime',
   'Cold-prepared fresh at 5:00 AM daily',
-  'Price announced on 30 Sept launch',
+  'Early bird price: ₹499 for first 100 customers',
   'Dedicated WhatsApp subscriber support',
 ];
 
@@ -36,31 +36,32 @@ export default function NutritionAndPlansSection() {
         {/* 3 High-Impact Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch max-w-6xl mx-auto">
           
-          {/* Card 1: 7-Day Weekly Plan (Most Popular) */}
+          {/* Card 1: Just Bloom Plan (Most Popular) */}
           <div className="rounded-3xl p-6 sm:p-7 bg-white border-2 border-[#D97706] shadow-md flex flex-col justify-between text-center relative transition-all hover:shadow-xl hover:-translate-y-1">
             <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#D97706] text-white shadow-sm whitespace-nowrap">
-              Most Popular • 7 Days
+              Most Popular • Early Bird
             </span>
 
             <div>
               <div className="w-13 h-13 rounded-2xl bg-[#FEF3EE] border border-[#FCD8C7] flex items-center justify-center mx-auto mb-3 text-2xl mt-1">
                 🥗
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#0D2818]">7-Day Weekly Plan</h3>
+              <h3 className="font-serif text-xl font-bold text-[#0D2818]">Just Bloom Plan</h3>
               <p className="text-xs text-[#5E7A67] mt-1 mb-4 leading-snug">
-                7 distinct raw living bowls delivered across Monday to Sunday mornings
+                6 rotating raw living bowls + 1 Surprise Bloom Box — fruits, sprouts, veggies & seeds
               </p>
               
               {/* Price Block */}
-              <div className="py-4 px-3 rounded-2xl bg-[#FEF9EC] border border-[#FDE3B2] mb-5">
+              <div className="py-4 px-3 rounded-2xl bg-[#FEF9EC] border border-[#FDE3B2] mb-3">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">
-                  Signature Living Routine
+                  🎁 First 100 Customers Only
                 </span>
-                <strong className="text-3xl font-black text-[#0D2818] block font-sans tracking-tight my-1">
-                  Price TBA
-                </strong>
+                <div className="flex items-baseline justify-center gap-2 my-1">
+                  <span className="text-2xl font-black text-[#5E7A67] line-through font-mono">₹599</span>
+                  <strong className="text-3xl font-black text-[#D97706] font-mono">₹499</strong>
+                </div>
                 <span className="text-[11px] text-[#5E7A67] font-semibold block">
-                  Announced on 30 Sept Launch
+                  7 to 9 AM Delivery • Patna
                 </span>
               </div>
 
@@ -68,15 +69,15 @@ export default function NutritionAndPlansSection() {
               <div className="space-y-2 text-left mb-6 text-xs text-[#183925]">
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Daily rotating functional ingredients</span>
+                  <span>Fruits, Sprouts, Veggies, Wet & Dry Seeds</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Sprouted organic seeds &amp; vitality microgreens</span>
+                  <span>Daily rotating A/c to Healthy Functional</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Guaranteed 6:00 AM – 9:00 AM drop</span>
+                  <span>1 Surprise Bloom Box included 🎁</span>
                 </div>
               </div>
             </div>
@@ -85,7 +86,7 @@ export default function NutritionAndPlansSection() {
               href="/checkout?plan=trial"
               className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-white bg-[#D97706] hover:bg-[#B45309] transition-all block cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
-              Pre-Book Weekly Plan →
+              Pre-Book Just Bloom Plan →
             </Link>
           </div>
 

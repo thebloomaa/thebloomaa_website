@@ -129,7 +129,7 @@ export default function HeroSection() {
               href="/checkout?plan=trial"
               className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 rounded-full text-sm sm:text-base font-bold text-white bg-[#0F3826] hover:bg-[#164D35] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-md shadow-[#0F3826]/20 cursor-pointer"
             >
-              <span>Pre-Book 7-Day Plan</span>
+              <span>Pre-Book Just Bloom Plan</span>
               <span className="text-lg leading-none">→</span>
             </Link>
 

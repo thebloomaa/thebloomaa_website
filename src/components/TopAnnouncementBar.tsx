@@ -75,7 +75,7 @@ export default function TopAnnouncementBar() {
       {/* 5. Pre-Booking Callout */}
       <span className="inline-flex items-center gap-1.5 text-white/95 whitespace-nowrap">
         <span>🎁</span>
-        <span>Early Pre-Orders Live: 7-Day Weekly &amp; Custom Monthly Plans</span>
+        <span>🎁 Early Pre-Orders Live: Just Bloom Plan ₹499 & Custom Monthly</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>

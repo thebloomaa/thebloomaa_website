@@ -7,7 +7,7 @@ import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
 
 const BUNDLE_OPTIONS: { type: BundleType; label: string; days: number; discountPct: number; discountLabel?: string; badge?: string }[] = [
-  { type: 'DAYS_7', label: '7-Day Weekly Plan', days: 7, discountPct: 0, badge: 'Most Popular' },
+  { type: 'DAYS_7', label: 'Just Bloom Plan', days: 7, discountPct: 0, badge: 'Most Popular' },
   { type: 'DAYS_30', label: 'Custom Monthly Plan', days: 30, discountPct: 20, discountLabel: 'Best Value', badge: '30 Days' },
 ];
 
@@ -145,8 +145,8 @@ export default function MiniCartDrawer() {
                 >
                   <div>
                     <span className="text-[10px] font-black uppercase text-[#D97706] tracking-wider block">Most Popular</span>
-                    <strong className="text-xs font-bold text-[#0D2818] block">7-Day Weekly Plan</strong>
-                    <span className="text-[10px] text-[#5E7A67]">Rotating living bowls each morning</span>
+                    <strong className="text-xs font-bold text-[#0D2818] block">Just Bloom Plan</strong>
+                    <span className="text-[10px] text-[#5E7A67]">6 rotating bowls + 1 Surprise Box</span>
                   </div>
                   <span className="text-xs font-bold text-[#D97706] group-hover:translate-x-1 transition-transform">
                     Pre-Book →
@@ -179,7 +179,7 @@ export default function MiniCartDrawer() {
                   }}
                   className="text-xs font-semibold text-[#5E7A67] hover:text-[#0D2818] underline transition-colors cursor-pointer"
                 >
-                  ← Browse Weekly Bowls Menu
+                  ← Browse Our Bloom Menu
                 </button>
               </div>
             </div>
