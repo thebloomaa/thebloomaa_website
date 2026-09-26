@@ -1693,11 +1693,18 @@ export default function AdminDashboard() {
                           <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block mb-1">
                             Payment Receipt Screenshot:
                           </span>
-                          <a
-                            href={screenshotUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block relative rounded-xl overflow-hidden border border-[#E6E0CF] group max-w-[220px]"
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.preventDefault();
+                              if (screenshotUrl.startsWith('data:')) {
+                                const win = window.open();
+                                win?.document.write(`<iframe src="${screenshotUrl}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+                              } else {
+                                window.open(screenshotUrl, '_blank');
+                              }
+                            }}
+                            className="block relative rounded-xl overflow-hidden border border-[#E6E0CF] group max-w-[220px] cursor-pointer"
                           >
                             <img
                               src={screenshotUrl}
@@ -1707,7 +1714,7 @@ export default function AdminDashboard() {
                             <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold">
                               Click to Open ↗
                             </div>
-                          </a>
+                          </button>
                         </div>
                       )}
                     </div>
