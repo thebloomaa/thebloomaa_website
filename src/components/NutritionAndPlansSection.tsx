@@ -102,7 +102,8 @@ export default function NutritionAndPlansSection() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Daily rotating A/c to Healthy Functional</span>
+                  <span>Bloom your health goal regularly</span>
+
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>

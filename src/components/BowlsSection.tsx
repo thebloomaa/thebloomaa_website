@@ -362,7 +362,7 @@ export default function BowlsSection() {
           </h2>
 
           <p className="text-xs sm:text-sm text-[#5E7A67] font-medium max-w-xl mx-auto mt-1 leading-snug">
-            6 functional living bowls — fruits, sprouts, veggies & seeds. Daily rotating A/c to Healthy Functional. Freshly prepared at 5:00 AM.
+            6 functional living bowls — fruits, sprouts, veggies &amp; seeds. Bloom your health goal regularly. Freshly prepared at 5:00 AM.
           </p>
         </div>
 
