@@ -337,7 +337,7 @@ export default function BowlsSection() {
           onClick={() => handlePreBookWeekly()}
           className="w-full py-2.5 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-98 cursor-pointer hover:scale-[1.02]"
         >
-          <span>Pre-Book Weekly Routine</span>
+          <span>Pre-Book Just Bloom Plan</span>
           <span className="text-xs">→</span>
         </button>
 
@@ -441,10 +441,10 @@ export default function BowlsSection() {
               {' • Auto-sliding (Hover to pause)'}
             </span>
 
-            {/* Day 7 / Sunday Weekly Rotation Clarification */}
+            {/* Just Bloom Plan Surprise Box Note */}
             <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#DDD5C0] shadow-2xs text-[10.5px] sm:text-[11px] font-medium text-[#183925]">
-              <span className="font-bold text-[#D97706]">✨ 7-Day Plan Note:</span>
-              <span>Sunday features Chef&apos;s Seasonal Living Detox Bowl or Rest Day as chosen</span>
+              <span className="font-bold text-[#D97706]">✨ Surprise Bloom Box:</span>
+              <span>Includes 6 daily functional living bowls + 1 Surprise Bloom Box</span>
             </div>
           </div>
         </div>
@@ -521,7 +521,7 @@ export default function BowlsSection() {
               <div className="mb-3 py-1.5 px-2.5 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] text-center">
                 <span className="text-[10px] sm:text-[11px] font-semibold text-[#0F3826] flex items-center justify-center gap-1.5">
                   <span>🌱</span>
-                  <span>Delivered fresh every <strong>{selectedBowlModal.day} morning</strong> as part of the 7-Day Plan</span>
+                  <span>Delivered fresh every <strong>{selectedBowlModal.day} morning</strong> as part of the Just Bloom Plan</span>
                 </span>
               </div>
 
@@ -531,7 +531,7 @@ export default function BowlsSection() {
                   onClick={() => handlePreBookWeekly()}
                   className="w-full py-3 px-4 rounded-full text-xs sm:text-sm font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>Pre-Book 7-Day Plan (Includes {selectedBowlModal.day} Bowl)</span>
+                  <span>Pre-Book Just Bloom Plan (Includes {selectedBowlModal.day} Bowl)</span>
                   <span>→</span>
                 </button>
 

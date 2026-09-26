@@ -45,19 +45,21 @@ export async function POST(
     nextDelivery.setHours(0, 0, 0, 0);
 
     const result = await prisma.$transaction(async (tx) => {
-      // Find and close any active pause
-      const activePause = await tx.subscriptionPause.findFirst({
+      // Find and close any active pause (both indefinite and date-bounded)
+      const activePauses = await tx.subscriptionPause.findMany({
         where: {
           subscriptionId: id,
-          endDate: null,
+          OR: [
+            { endDate: null },
+            { endDate: { gte: now } },
+          ],
         },
       });
 
-      let updatedPause = null;
-      if (activePause) {
-        updatedPause = await tx.subscriptionPause.update({
-          where: { id: activePause.id },
-          data: { endDate: new Date() },
+      for (const p of activePauses) {
+        await tx.subscriptionPause.update({
+          where: { id: p.id },
+          data: { endDate: now },
         });
       }
 
@@ -70,13 +72,53 @@ export async function POST(
         },
       });
 
-      return { pause: updatedPause, subscription: updatedSub };
+      // Ensure an order is queued for nextDeliveryDate
+      const startOfDay = new Date(nextDelivery);
+      startOfDay.setHours(0, 0, 0, 0);
+      const endOfDay = new Date(nextDelivery);
+      endOfDay.setHours(23, 59, 59, 999);
+
+      const existingOrder = await tx.order.findFirst({
+        where: {
+          subscriptionId: id,
+          deliveryDate: {
+            gte: startOfDay,
+            lte: endOfDay,
+          },
+        },
+      });
+
+      if (!existingOrder) {
+        await tx.order.create({
+          data: {
+            subscriptionId: id,
+            userId: subscription.userId,
+            addressId: subscription.addressId,
+            status: 'QUEUED',
+            deliveryDate: nextDelivery,
+            deliveryTime: subscription.deliveryTime || '07:00 AM',
+            deliveryNote: `Morning delivery resumed by customer. Slot: ${subscription.deliveryTime || '07:00 AM'}`,
+          },
+        });
+      } else if (existingOrder.status === 'SKIPPED') {
+        await tx.order.update({
+          where: { id: existingOrder.id },
+          data: {
+            status: 'QUEUED',
+            deliveryNote: `Reactivated: Morning delivery resumed by customer. Slot: ${subscription.deliveryTime || '07:00 AM'}`,
+          },
+        });
+      }
+
+      return { subscription: updatedSub };
     });
 
     return NextResponse.json({
       success: true,
       ...result,
-      message: `Plan resumed! Deliveries resume on ${nextDelivery.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })}.`,
+      message: isPastCutoff
+        ? `Plan resumed! Note: Because it is past the 8:30 PM cutoff, tomorrow morning's kitchen prep is locked. Deliveries will restart on ${nextDelivery.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })} at ${subscription.deliveryTime || '07:00 AM'}.`
+        : `Plan resumed! Morning deliveries restart tomorrow (${nextDelivery.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' })}) at ${subscription.deliveryTime || '07:00 AM'}.`,
     });
   } catch (error) {
     console.error('Resume API error:', error);

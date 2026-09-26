@@ -18,6 +18,7 @@ export async function POST(req: Request) {
       customerName,
       customerPhone,
       customerEmail,
+      utr,
     } = body;
 
     if (!address || !address.street || !address.pincode) {
@@ -89,17 +90,38 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3. Normalize plan to 7-Day Weekly or 30-Day Monthly
+    // 3. Normalize plan to Just Bloom Plan or Custom Monthly Plan
     const isMonthly = bundleType === 'DAYS_30';
     const effectiveBundleType = isMonthly ? 'DAYS_30' : 'DAYS_7';
     const bundleDays = isMonthly ? 30 : 7;
+
+    // Check first 100 early bird customer threshold
+    const earlyBirdSlots = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_SLOTS || '100');
+    const earlyBirdPrice = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_PRICE || '499');
+    const regularPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
+
+    let isEarlyBird = true;
+    let finalAmount = 0;
+
+    if (!isMonthly) {
+      const currentBookedCount = await prisma.subscription.count({
+        where: {
+          productId: 'prod-just-bloomed-7d-trial',
+          status: { in: ['PENDING', 'ACTIVE', 'CONFIRMED', 'PRE_BOOK'] },
+        },
+      });
+      isEarlyBird = currentBookedCount < earlyBirdSlots;
+      finalAmount = isEarlyBird ? earlyBirdPrice : regularPrice;
+    }
 
     // Launch target date: 30 September 2026 06:00 AM IST
     const launchDate = new Date('2026-09-30T06:00:00+05:30');
     const now = new Date();
     const firstDeliveryDate = launchDate > now ? launchDate : new Date(now.setDate(now.getDate() + 1));
 
-    const effectiveUtr = `PRE_BOOK_${Date.now().toString().slice(-8)}`;
+    const effectiveUtr = utr && utr.trim().length > 0
+      ? utr.trim()
+      : `PRE_BOOK_${Date.now().toString().slice(-8)}`;
 
     // 4. Perform Atomic Database Transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -131,6 +153,13 @@ export async function POST(req: Request) {
         },
       });
 
+      // Payment info note
+      const paymentInfoTag = isMonthly
+        ? '[Custom Monthly Plan - Price TBA]'
+        : `[Paid ₹${finalAmount} via UPI | UTR: ${effectiveUtr} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
+
+      const combinedOrderNote = [deliveryNote, paymentInfoTag].filter(Boolean).join(' | ');
+
       // Create queued first order
       const order = await tx.order.create({
         data: {
@@ -140,7 +169,7 @@ export async function POST(req: Request) {
           status: 'QUEUED',
           deliveryDate: firstDeliveryDate,
           deliveryTime: deliveryTime || '07:00 AM',
-          deliveryNote: deliveryNote || `Pre-Launch Pre-Order for 30 Sept. Slot: ${deliveryTime || '07:00 AM'}`,
+          deliveryNote: combinedOrderNote || `Pre-Launch Pre-Order for 30 Sept. Slot: ${deliveryTime || '07:00 AM'}`,
         },
       });
 
@@ -156,22 +185,29 @@ export async function POST(req: Request) {
         }
       }
 
-      // Record zero-advance pre-booking placeholder payment
+      // Record pre-booking payment record with actual amount paid
       await tx.payment.create({
         data: {
           subscriptionId: subscription.id,
-          amount: 0,
+          amount: finalAmount,
           currency: 'INR',
-          gateway: 'pre_launch_booking',
+          gateway: isMonthly ? 'pre_launch_booking' : 'upi_direct',
           gatewayPaymentId: effectiveUtr,
           gatewayOrderId: `PREBOOK-${subscription.id.slice(0, 8).toUpperCase()}`,
-          method: 'PRE_BOOK',
+          method: isMonthly ? 'PRE_BOOK' : 'UPI',
           status: 'PRE_BOOK_CONFIRMED',
           paidAt: new Date(),
         },
       });
 
-      return { subscriptionId: subscription.id, orderId: order.id, launchDate: '30 September 2026' };
+      return {
+        subscriptionId: subscription.id,
+        orderId: order.id,
+        launchDate: '30 September 2026',
+        amount: finalAmount,
+        isEarlyBird,
+        utr: effectiveUtr,
+      };
     });
 
     return NextResponse.json({ success: true, ...result });

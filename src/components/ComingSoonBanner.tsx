@@ -4,9 +4,11 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { useLaunchCountdown } from '@/lib/useLaunchCountdown';
+import { useLivePricing } from '@/lib/useLivePricing';
 
 export default function ComingSoonBanner() {
   const { days, hours, minutes, seconds, isLive, isMounted } = useLaunchCountdown();
+  const pricing = useLivePricing();
 
   return (
     <section className="py-4 sm:py-6 px-3 sm:px-6 lg:px-8 bg-[#FAF7F2] overflow-hidden">
@@ -72,10 +74,14 @@ export default function ComingSoonBanner() {
                   <span className="text-xl shrink-0">🎁</span>
                   <div className="text-left">
                     <div className="flex items-baseline gap-1">
-                      <span className="text-[13px] font-black text-white line-through opacity-60 font-mono">₹599</span>
-                      <span className="text-base font-black text-[#E6BE68] font-mono">₹499</span>
+                      {pricing.isEarlyBird && (
+                        <span className="text-[13px] font-black text-white line-through opacity-60 font-mono">₹{pricing.originalPrice}</span>
+                      )}
+                      <span className="text-base font-black text-[#E6BE68] font-mono">₹{pricing.price}</span>
                     </div>
-                    <span className="text-[9.5px] text-white/70">First 100 customers only</span>
+                    <span className="text-[9.5px] text-white/70">
+                      {pricing.isEarlyBird ? `${pricing.spotsLeft} spots left of 100` : 'Standard pre-book price'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -86,8 +92,7 @@ export default function ComingSoonBanner() {
                   href="/checkout?plan=trial"
                   className="px-5 py-2.5 rounded-full text-xs font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-md hover:scale-105 active:scale-95 flex items-center gap-1.5 cursor-pointer"
                 >
-                  <span>Pre-Book Just Bloom Plan ₹499 →</span>
-                  <span>→</span>
+                  <span>Pre-Book Just Bloom Plan ₹{pricing.price} →</span>
                 </Link>
 
                 <a

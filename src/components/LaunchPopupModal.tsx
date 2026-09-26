@@ -102,7 +102,7 @@ export default function LaunchPopupModal() {
           </h2>
 
           <p className="text-xs sm:text-[13px] text-white/85 mt-1.5 leading-snug max-w-sm sm:max-w-md mx-auto">
-            Our cloud kitchen and cold-prep facility in Patna are opening for sunrise deliveries. Early pre-bookings are now open for our limited first batch of <strong>7-Day Weekly</strong> and <strong>Custom Monthly</strong> plans!
+            Our cloud kitchen and cold-prep facility in Patna are opening for sunrise deliveries. Early pre-bookings are now open for our limited first batch of <strong>Just Bloom Plan</strong> and <strong>Custom Monthly</strong> plans!
           </p>
 
           {/* Live Countdown Blocks */}
@@ -144,7 +144,7 @@ export default function LaunchPopupModal() {
           <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-left mb-3.5 sm:mb-4">
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
               <span className="text-sm sm:text-base block">🛵</span>
-              <span className="text-[10px] font-bold text-white block mt-0.5">6–9 AM Drop</span>
+              <span className="text-[10px] font-bold text-white block mt-0.5">7–9 AM Drop</span>
               <span className="text-[8px] text-white/60 block">Guaranteed slot</span>
             </div>
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
@@ -154,8 +154,11 @@ export default function LaunchPopupModal() {
             </div>
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
               <span className="text-sm sm:text-base block">🎁</span>
-              <span className="text-[10px] font-bold text-white block mt-0.5">Price TBA</span>
-              <span className="text-[8px] text-white/60 block">Announced on launch</span>
+              <div className="flex items-baseline justify-center gap-1 mt-0.5">
+                <span className="text-[10px] text-white/60 line-through font-mono">₹599</span>
+                <span className="text-xs font-black text-[#E6BE68] font-mono">₹499</span>
+              </div>
+              <span className="text-[8px] text-white/70 block">First 100 only</span>
             </div>
           </div>
 
@@ -166,7 +169,7 @@ export default function LaunchPopupModal() {
               onClick={handlePreBookClick}
               className="w-full py-3 px-5 rounded-full text-xs sm:text-sm font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xl hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
-              <span>Pre-Book Your Plan (Price TBA)</span>
+              <span>Pre-Book Just Bloom Plan (₹499 Early Bird)</span>
               <span>→</span>
             </button>
 
@@ -175,7 +178,7 @@ export default function LaunchPopupModal() {
               onClick={handleMenuClick}
               className="w-full py-2 px-4 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 transition-all border border-white/15 flex items-center justify-center gap-1.5 cursor-pointer"
             >
-              <span>Explore 7-Day Weekly Menu 🥗</span>
+              <span>Explore Daily Living Bowls 🥗</span>
             </button>
 
             <button

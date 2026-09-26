@@ -35,6 +35,23 @@ export default function DashboardPage() {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
   }, [now]);
 
+  // 8:30 PM cutoff calculation (20:30)
+  const isPastCutoff = useMemo(() => {
+    return now.getHours() > 20 || (now.getHours() === 20 && now.getMinutes() >= 30);
+  }, [now]);
+
+  const tomorrowFormatted = useMemo(() => {
+    const d = new Date(now);
+    d.setDate(now.getDate() + 1);
+    return d.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+  }, [now]);
+
+  const dayAfterTomorrowFormatted = useMemo(() => {
+    const d = new Date(now);
+    d.setDate(now.getDate() + 2);
+    return d.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+  }, [now]);
+
   const [currentMonth, setCurrentMonth] = useState(now.getMonth());
   const [currentYear] = useState(now.getFullYear());
 
@@ -44,12 +61,14 @@ export default function DashboardPage() {
   const [skipError, setSkipError] = useState<string | null>(null);
 
   const [pauseModalOpen, setPauseModalOpen] = useState(false);
+  const [resumeModalOpen, setResumeModalOpen] = useState(false);
+  const [pauseType, setPauseType] = useState<'INDEFINITE' | 'ONE_DAY'>('INDEFINITE');
   const [pauseLoading, setPauseLoading] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
   const fetchDashboardData = useCallback(async () => {
     try {
-      const res = await fetch('/api/dashboard');
+      const res = await fetch('/api/dashboard', { cache: 'no-store' });
       const data = await res.json();
       if (data.subscription) {
         const bundleDays =
@@ -61,15 +80,16 @@ export default function DashboardPage() {
 
         setSub({
           id: data.subscription.id,
-          meal: data.subscription.product?.name || 'Chef Diet Prep',
+          meal: data.subscription.product?.name || 'Just Bloom Plan',
           bundleDays,
           deliveriesLeft: data.subscription.deliveriesLeft,
           status: data.subscription.status,
           startDate: data.subscription.startDate,
           nextDeliveryDate: data.subscription.nextDeliveryDate,
           deliveryTime: data.subscription.deliveryTime || '07:00 AM',
-          perDay: Math.round((data.subscription.product?.price || 451) / bundleDays),
+          perDay: Math.round((data.subscription.product?.price || 499) / bundleDays),
           orders: data.subscription.orders || [],
+          pauseEndDate: data.subscription.pauses?.[0]?.endDate || null,
         });
 
         setDeliveryDays(generateDeliveryDays(data.subscription.orders));
@@ -170,7 +190,10 @@ export default function DashboardPage() {
       const res = await fetch(`/api/subscriptions/${sub.id}/pause`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ startDate: new Date().toISOString() }),
+        body: JSON.stringify({
+          startDate: new Date().toISOString(),
+          pauseType: pauseType,
+        }),
       });
       const data = await res.json();
 
@@ -178,7 +201,11 @@ export default function DashboardPage() {
         setPauseModalOpen(false);
         setActionFeedback({
           type: 'success',
-          text: 'Subscription successfully paused. Morning deliveries are on hold until you resume.',
+          text:
+            data.message ||
+            (pauseType === 'ONE_DAY'
+              ? 'Tomorrow’s delivery is paused. Your plan automatically resumes the day after tomorrow!'
+              : 'Subscription successfully paused. Morning deliveries are on hold until you tap Resume Plan.'),
         });
         fetchDashboardData();
       } else {
@@ -203,6 +230,7 @@ export default function DashboardPage() {
       const data = await res.json();
 
       if (res.ok) {
+        setResumeModalOpen(false);
         setActionFeedback({
           type: 'success',
           text: data.message || 'Plan resumed! Morning deliveries scheduled.',
@@ -298,11 +326,27 @@ export default function DashboardPage() {
         )}
 
         {isPaused && (
-          <div className="mb-4 p-3.5 rounded-xl bg-brand-mustard/15 border border-brand-mustard/30 text-xs text-brand-forest-muted flex items-center gap-2.5">
-            <span className="text-base">⏸️</span>
-            <span>
-              <strong>Plan Paused:</strong> Deliveries are paused and your days are preserved. Tap &quot;Resume Plan&quot; whenever you are ready to restart.
-            </span>
+          <div className="mb-4 p-3.5 rounded-xl bg-brand-mustard/15 border border-brand-mustard/30 text-xs text-brand-forest flex items-start gap-2.5">
+            <span className="text-base leading-none mt-0.5">⏸️</span>
+            <div>
+              {sub.pauseEndDate ? (
+                <>
+                  <strong>1-Day Pause Active:</strong> Tomorrow&apos;s morning delivery is skipped. Deliveries will automatically resume on{' '}
+                  <span className="font-bold underline">
+                    {new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
+                      weekday: 'short',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </span>
+                  . Tap <strong>&quot;Resume Plan&quot;</strong> anytime to restart sooner.
+                </>
+              ) : (
+                <>
+                  <strong>Plan Paused Indefinitely:</strong> Morning deliveries are on hold and your remaining {sub.deliveriesLeft} days are safely preserved. Tap <strong>&quot;Resume Plan&quot;</strong> whenever you&apos;re ready to restart.
+                </>
+              )}
+            </div>
           </div>
         )}
 
@@ -329,7 +373,7 @@ export default function DashboardPage() {
                     : 'var(--brand-accent)',
                 }}
               >
-                {sub.status === 'PENDING' ? 'Scheduled & Queued' : sub.status}
+                {sub.status === 'PENDING' ? 'Scheduled & Queued' : isPaused ? '⏸️ PAUSED' : sub.status}
               </span>
             </div>
             <h2 className="text-xl font-black text-brand-forest">{sub.meal}</h2>
@@ -337,7 +381,13 @@ export default function DashboardPage() {
               Next delivery:{' '}
               <span className="font-semibold text-brand-forest">
                 {isPaused
-                  ? 'Paused (No upcoming drop)'
+                  ? sub.pauseEndDate
+                    ? `Auto-resumes ${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
+                        weekday: 'short',
+                        month: 'short',
+                        day: 'numeric',
+                      })} · ${sub.deliveryTime}`
+                    : 'Paused (On hold until you tap Resume)'
                   : `${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
                       weekday: 'short',
                       month: 'short',
@@ -347,33 +397,49 @@ export default function DashboardPage() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            {isPaused ? (
-              <button
-                type="button"
-                onClick={handleResumeSubscription}
-                disabled={pauseLoading}
-                className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
-              >
-                {pauseLoading ? 'Resuming...' : '▶️ Resume Plan'}
-              </button>
-            ) : (
-              <button
-                type="button"
-                onClick={() => setPauseModalOpen(true)}
-                disabled={pauseLoading}
-                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 cursor-pointer bg-brand-mustard/15 text-brand-forest-muted border border-brand-mustard/30 hover:bg-brand-mustard/25"
-              >
-                ⏸️ Pause Plan
-              </button>
-            )}
+          <div className="flex flex-col sm:items-end gap-1.5">
+            <div className="flex flex-wrap gap-2">
+              {isPaused ? (
+                <button
+                  type="button"
+                  onClick={() => setResumeModalOpen(true)}
+                  disabled={pauseLoading}
+                  className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all hover:scale-105 cursor-pointer shadow-md disabled:opacity-50"
+                >
+                  {pauseLoading ? 'Resuming...' : '▶️ Resume Plan'}
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setPauseModalOpen(true)}
+                  disabled={pauseLoading}
+                  className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 cursor-pointer bg-brand-mustard/15 text-brand-forest-muted border border-brand-border hover:bg-brand-mustard/25"
+                >
+                  ⏸️ Pause Plan
+                </button>
+              )}
 
-            <Link
-              href="/#trial"
-              className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 flex items-center bg-brand-cream text-brand-forest-muted border border-brand-border hover:bg-brand-border"
-            >
-              🔄 Change Plan
-            </Link>
+              <Link
+                href="/#trial"
+                className="px-4 py-2 rounded-xl text-xs font-bold transition-all hover:scale-105 flex items-center bg-brand-cream text-brand-forest-muted border border-brand-border hover:bg-brand-border"
+              >
+                🔄 Change Plan
+              </Link>
+            </div>
+
+            {/* Clear 8:30 PM cutoff notice right next to buttons */}
+            <div className="text-[11px] text-brand-forest-muted flex items-center gap-1.5 font-medium">
+              <span className={`w-2 h-2 rounded-full shrink-0 ${isPastCutoff ? 'bg-amber-500' : 'bg-emerald-500'}`} />
+              <span>
+                {isPaused
+                  ? isPastCutoff
+                    ? `Past 8:30 PM: Resumes ${dayAfterTomorrowFormatted}`
+                    : `Before 8:30 PM: Resumes tomorrow (${tomorrowFormatted})`
+                  : isPastCutoff
+                  ? `Past 8:30 PM: Pauses from ${dayAfterTomorrowFormatted}`
+                  : `Before 8:30 PM: Pauses from tomorrow (${tomorrowFormatted})`}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -503,6 +569,17 @@ export default function DashboardPage() {
                 . Your plan day is not lost—it will be automatically extended at the end.
               </p>
 
+              {/* 8:30 PM cutoff notice in Skip Modal */}
+              <div className="mt-3 p-3 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/25 text-xs text-brand-forest-muted flex items-start gap-2 text-left">
+                <span className="text-base leading-none mt-0.5">⏰</span>
+                <div>
+                  <span className="font-bold text-brand-forest">8:30 PM Evening Cut-off:</span>
+                  <p className="text-[11px] mt-0.5 leading-relaxed">
+                    Skips must be requested before 8:30 PM on the evening before delivery so the kitchen doesn&apos;t prep the morning harvest.
+                  </p>
+                </div>
+              </div>
+
               {skipError && (
                 <div className="mt-3 p-2.5 rounded-xl bg-red-950/40 border border-red-500/30 text-red-300 text-xs text-left">
                   ⚠️ {skipError}
@@ -534,14 +611,99 @@ export default function DashboardPage() {
 
       {/* Pause Confirmation Modal */}
       {pauseModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-brand-cream/80 backdrop-blur-sm animate-fade-in">
-          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-sm bg-brand-card border border-brand-border shadow-2xl animate-fade-in-up">
-            <div className="text-center">
-              <div className="text-3xl mb-2">⏸️</div>
-              <h3 className="text-lg font-bold text-brand-forest">Pause Subscription?</h3>
-              <p className="text-xs text-brand-forest-muted mt-2 leading-relaxed">
-                Traveling or taking a break? Pausing freezes your deliveries starting tomorrow morning. All your remaining deliveries ({sub.deliveriesLeft} days) stay safe and ready when you resume.
-              </p>
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-md bg-brand-card border border-brand-border shadow-2xl animate-fade-in-up">
+            <div className="text-left">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl p-2.5 rounded-2xl bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard">⏸️</span>
+                <div>
+                  <h3 className="text-lg font-bold text-brand-forest">Pause Subscription</h3>
+                  <p className="text-xs text-brand-forest-muted">Choose your pause duration for morning deliveries</p>
+                </div>
+              </div>
+
+              {/* Pause duration options */}
+              <div className="space-y-3 my-4">
+                {/* Option 1: Indefinite */}
+                <button
+                  type="button"
+                  onClick={() => setPauseType('INDEFINITE')}
+                  className={`w-full p-3.5 rounded-2xl text-left border transition-all cursor-pointer flex items-start gap-3 ${
+                    pauseType === 'INDEFINITE'
+                      ? 'border-brand-mustard bg-brand-mustard/10 shadow-sm ring-1 ring-brand-mustard'
+                      : 'border-brand-border bg-brand-cream/60 hover:bg-brand-cream'
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-1 shrink-0 ${
+                    pauseType === 'INDEFINITE' ? 'border-brand-mustard' : 'border-brand-forest-muted/50'
+                  }`}>
+                    {pauseType === 'INDEFINITE' && (
+                      <div className="w-2 h-2 rounded-full bg-brand-mustard" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-brand-forest">Permanent Pause (Until I Resume)</span>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-brand-mustard/20 text-brand-mustard">Vacation</span>
+                    </div>
+                    <p className="text-[11px] text-brand-forest-muted mt-1 leading-relaxed">
+                      Deliveries remain on hold until you tap &quot;Resume Plan&quot;. All your {sub.deliveriesLeft} remaining days are saved safely.
+                    </p>
+                  </div>
+                </button>
+
+                {/* Option 2: 1-Day Pause */}
+                <button
+                  type="button"
+                  onClick={() => setPauseType('ONE_DAY')}
+                  className={`w-full p-3.5 rounded-2xl text-left border transition-all cursor-pointer flex items-start gap-3 ${
+                    pauseType === 'ONE_DAY'
+                      ? 'border-brand-mustard bg-brand-mustard/10 shadow-sm ring-1 ring-brand-mustard'
+                      : 'border-brand-border bg-brand-cream/60 hover:bg-brand-cream'
+                  }`}
+                >
+                  <div className={`w-4 h-4 rounded-full border-2 flex items-center justify-center mt-1 shrink-0 ${
+                    pauseType === 'ONE_DAY' ? 'border-brand-mustard' : 'border-brand-forest-muted/50'
+                  }`}>
+                    {pauseType === 'ONE_DAY' && (
+                      <div className="w-2 h-2 rounded-full bg-brand-mustard" />
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black text-brand-forest">Pause for 1 Day</span>
+                      <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-blue-500/15 text-blue-600">Quick 24h</span>
+                    </div>
+                    <p className="text-[11px] text-brand-forest-muted mt-1 leading-relaxed">
+                      {isPastCutoff
+                        ? `Skips ${dayAfterTomorrowFormatted}. Deliveries automatically restart the following day. No days lost.`
+                        : `Skips tomorrow morning (${tomorrowFormatted}). Deliveries automatically restart ${dayAfterTomorrowFormatted}. No days lost.`}
+                    </p>
+                  </div>
+                </button>
+              </div>
+
+              {/* Real-time 8:30 PM Cutoff Alert Box */}
+              <div className={`p-3.5 rounded-2xl border text-xs flex items-start gap-2.5 ${
+                isPastCutoff
+                  ? 'bg-amber-500/10 border-amber-500/30 text-brand-forest'
+                  : 'bg-emerald-500/10 border-emerald-500/30 text-brand-forest'
+              }`}>
+                <span className="text-base leading-none mt-0.5">{isPastCutoff ? '🌙' : '🟢'}</span>
+                <div>
+                  <div className="font-bold flex items-center gap-1.5">
+                    <span>{isPastCutoff ? 'Past 8:30 PM Kitchen Cut-off' : 'Before 8:30 PM Cut-off (On Time)'}</span>
+                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-black/5 font-semibold">
+                      {isPastCutoff ? 'Starts Day After Tomorrow' : 'Starts Tomorrow Morning'}
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-brand-forest-muted mt-0.5 leading-relaxed">
+                    {isPastCutoff
+                      ? `Tomorrow's (${tomorrowFormatted}) 5:00 AM harvest is locked. Your pause will take effect starting ${dayAfterTomorrowFormatted}.`
+                      : `Pausing now will stop deliveries starting tomorrow morning (${tomorrowFormatted}) at 6:00 AM – 9:00 AM.`}
+                  </p>
+                </div>
+              </div>
 
               <div className="flex gap-3 mt-5">
                 <button
@@ -556,9 +718,81 @@ export default function DashboardPage() {
                   type="button"
                   disabled={pauseLoading}
                   onClick={handlePauseSubscription}
-                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-mustard text-brand-forest hover:bg-brand-mustard cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-mustard text-brand-forest hover:bg-brand-mustard cursor-pointer disabled:opacity-50 shadow-md"
                 >
-                  {pauseLoading ? 'Pausing...' : 'Pause Plan'}
+                  {pauseLoading
+                    ? 'Pausing...'
+                    : pauseType === 'ONE_DAY'
+                    ? 'Pause 1 Day'
+                    : 'Pause Until Resumed'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Resume Confirmation Modal */}
+      {resumeModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fade-in">
+          <div className="rounded-3xl p-6 sm:p-7 w-full max-w-md bg-brand-card border border-brand-border shadow-2xl animate-fade-in-up">
+            <div className="text-left">
+              <div className="flex items-center gap-3 mb-2">
+                <span className="text-2xl p-2.5 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-600">▶️</span>
+                <div>
+                  <h3 className="text-lg font-bold text-brand-forest">Resume Subscription</h3>
+                  <p className="text-xs text-brand-forest-muted">Restart your fresh living diet morning deliveries</p>
+                </div>
+              </div>
+
+              {/* 8:30 PM Cutoff Explainer in Resume Modal */}
+              <div className="my-4 space-y-3">
+                <div className={`p-3.5 rounded-2xl border text-xs flex items-start gap-2.5 ${
+                  isPastCutoff
+                    ? 'bg-amber-500/10 border-amber-500/30 text-brand-forest'
+                    : 'bg-emerald-500/10 border-emerald-500/30 text-brand-forest'
+                }`}>
+                  <span className="text-base leading-none mt-0.5">{isPastCutoff ? '🌙' : '🟢'}</span>
+                  <div>
+                    <div className="font-bold flex items-center gap-1.5">
+                      <span>{isPastCutoff ? 'Past 8:30 PM Kitchen Cut-off' : 'Before 8:30 PM Cut-off (Active)'}</span>
+                    </div>
+                    <p className="text-[11px] text-brand-forest-muted mt-0.5 leading-relaxed">
+                      {isPastCutoff
+                        ? `Tomorrow's (${tomorrowFormatted}) 5:00 AM kitchen prep list is already closed. Morning deliveries will restart on ${dayAfterTomorrowFormatted} between 6:00 AM – 9:00 AM.`
+                        : `Great timing! Resuming now means your Living Box will be freshly harvested and delivered tomorrow morning (${tomorrowFormatted}) between 6:00 AM – 9:00 AM.`}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest-muted space-y-1.5">
+                  <div className="flex justify-between font-bold text-brand-forest">
+                    <span>Remaining Days in Bundle:</span>
+                    <span className="text-brand-mustard">{sub.deliveriesLeft} days</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span>Morning Delivery Slot:</span>
+                    <span>6:00 AM – 9:00 AM ({sub.deliveryTime || '07:00 AM'})</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex gap-3 mt-5">
+                <button
+                  type="button"
+                  disabled={pauseLoading}
+                  onClick={() => setResumeModalOpen(false)}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-cream text-brand-forest-muted hover:bg-brand-border border border-brand-border cursor-pointer"
+                >
+                  Keep Paused
+                </button>
+                <button
+                  type="button"
+                  disabled={pauseLoading}
+                  onClick={handleResumeSubscription}
+                  className="flex-1 py-2.5 rounded-xl text-xs font-bold bg-brand-mustard text-brand-forest hover:bg-brand-mustard cursor-pointer disabled:opacity-50 shadow-md"
+                >
+                  {pauseLoading ? 'Resuming...' : 'Confirm Resume'}
                 </button>
               </div>
             </div>

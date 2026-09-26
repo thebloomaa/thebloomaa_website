@@ -46,7 +46,7 @@ const faqs = [
   },
   {
     q: 'Can I customize my plan and delivery days?',
-    a: 'Yes! You can choose between our 7-Day Weekly Plan (enjoying our rotating daily living bowls from Monday to Saturday, plus Sunday seasonal reset) or a Custom Monthly Plan. You can easily pause, skip days, or adjust delivery timing anytime.',
+    a: 'Yes! You can choose between our Just Bloom Plan (enjoying our rotating daily living bowls from Monday to Saturday, plus Sunday seasonal reset) or a Custom Monthly Plan. You can easily pause, skip days, or adjust delivery timing anytime.',
   },
   {
     q: 'What if I have food allergies?',

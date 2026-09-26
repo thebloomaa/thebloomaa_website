@@ -26,7 +26,7 @@ const livingFaqs = [
   },
   {
     q: 'Can I customize my diets after calculating my bio profile?',
-    a: 'Yes! Once your profile is calculated, you can select the recommended diet plan and proceed to pre-book, or choose between our 7-Day Weekly or 30-Day Monthly Plan directly.',
+    a: 'Yes! Once your profile is calculated, you can select the recommended diet plan and proceed to pre-book, or choose between our Just Bloom Plan or 30-Day Monthly Plan directly.',
   },
 ];
 

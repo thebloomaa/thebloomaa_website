@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
+import { useLivePricing } from '@/lib/useLivePricing';
 
 const BUNDLE_OPTIONS: { type: BundleType; label: string; days: number; discountPct: number; discountLabel?: string; badge?: string }[] = [
   { type: 'DAYS_7', label: 'Just Bloom Plan', days: 7, discountPct: 0, badge: 'Most Popular' },
@@ -13,6 +14,7 @@ const BUNDLE_OPTIONS: { type: BundleType; label: string; days: number; discountP
 
 export default function MiniCartDrawer() {
   const router = useRouter();
+  const pricing = useLivePricing();
   const {
     selectedProduct,
     selectProduct,
@@ -248,7 +250,18 @@ export default function MiniCartDrawer() {
                           </div>
 
                           <div className="text-right">
-                            <span className="text-xs font-black text-[#D97706] font-mono">Price TBA</span>
+                            {opt.type === 'DAYS_7' ? (
+                              pricing.isEarlyBird ? (
+                                <div className="flex flex-col items-end">
+                                  <span className="text-[10px] text-[#5E7A67] line-through font-mono">₹{pricing.originalPrice}</span>
+                                  <span className="text-xs font-black text-[#D97706] font-mono">₹{pricing.price}</span>
+                                </div>
+                              ) : (
+                                <span className="text-xs font-black text-[#D97706] font-mono">₹{pricing.price}</span>
+                              )
+                            ) : (
+                              <span className="text-xs font-black text-[#0F3826] font-mono">Price TBA</span>
+                            )}
                           </div>
                         </div>
                       </button>

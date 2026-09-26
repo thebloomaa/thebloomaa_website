@@ -8,6 +8,10 @@ import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
 import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
+import { useLivePricing } from '@/lib/useLivePricing';
+
+const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || '8863002959@ptyes';
+const UPI_NAME = 'TheBloomaa';
 
 // ─── Delivery Zone: Pincode 800023, Patna ───────────────────────────────────
 const DELIVERY_PINCODE = '800023';
@@ -96,6 +100,7 @@ const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discoun
 function CheckoutPageInner() {
   const router = useRouter();
   const { data: session } = useSession();
+  const pricing = useLivePricing();
   const {
     selectedProduct,
     selectProduct,
@@ -111,11 +116,22 @@ function CheckoutPageInner() {
   } = useBundleStore();
 
   const [step, setStep] = useState<'summary' | 'address' | 'pay'>('summary');
+  const [utrInput, setUtrInput] = useState('');
+  const [upiPaid, setUpiPaid] = useState(false);
+  const [copiedUpi, setCopiedUpi] = useState(false);
 
   const [submitting, setSubmitting] = useState(false);
   const [pincodeError, setPincodeError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [orderSuccess, setOrderSuccess] = useState(false);
+
+  const handleCopyUpi = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(UPI_ID);
+      setCopiedUpi(true);
+      setTimeout(() => setCopiedUpi(false), 2000);
+    }
+  };
 
   // Address Form State
   const [form, setForm] = useState({
@@ -267,7 +283,7 @@ function CheckoutPageInner() {
     setSubmitError(null);
     try {
       const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
-      const effectiveUtr = `PRE_BOOK_${Date.now().toString().slice(-8)}`;
+      const effectiveUtr = utrInput.trim() || `PRE_BOOK_${Date.now().toString().slice(-8)}`;
 
       const allergyTag = form.allergies ? `⚠️ ALLERGIES / EXCLUSIONS: ${form.allergies}` : '';
       const combinedDeliveryNote = [allergyTag, form.deliveryNote].filter(Boolean).join(' | ');
@@ -281,7 +297,7 @@ function CheckoutPageInner() {
           deliveryTime: form.deliveryTime,
           deliveryNote: isMonthlyProduct
             ? `CUSTOM MONTHLY PLAN (30 Days). ${combinedDeliveryNote}`
-            : `7-DAY WEEKLY PLAN (7 Days). ${combinedDeliveryNote}`,
+            : `JUST BLOOM PLAN. ${combinedDeliveryNote}`,
           allergies: form.allergies,
           customerName: form.name,
           customerPhone: form.phone,
@@ -359,7 +375,7 @@ function CheckoutPageInner() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
             <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
-              Pre-book your 7-Day Weekly Plan to start your sunrise living routine, lock in the Custom Monthly Plan, or run the Bio Calculator.
+              Pre-book your Just Bloom Plan to start your sunrise living routine, lock in the Custom Monthly Plan, or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
               <button
@@ -383,7 +399,7 @@ function CheckoutPageInner() {
                 }}
                 className="px-5 py-3 rounded-xl text-xs font-black text-white bg-[#D97706] hover:bg-[#B45309] transition-all shadow-md cursor-pointer"
               >
-                7-Day Weekly Plan →
+                Just Bloom Plan →
               </button>
               <button
                 type="button"
@@ -509,10 +525,20 @@ function CheckoutPageInner() {
                         ) : (
                           <div className="flex flex-col items-end">
                             <div className="flex items-baseline gap-2">
-                              <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
-                              <span className="text-xl font-black text-brand-mustard font-mono">₹499</span>
+                              {pricing.isEarlyBird && (
+                                <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
+                              )}
+                              <span className="text-xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                             </div>
-                            <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 mt-0.5">🎁 Early Bird • First 100 Only</span>
+                            {pricing.isEarlyBird ? (
+                              <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 mt-0.5">
+                                🎁 Early Bird • First 100 Only ({pricing.spotsLeft} left)
+                              </span>
+                            ) : (
+                              <span className="text-[10px] font-bold text-brand-forest-muted bg-brand-cream px-2 py-0.5 rounded-full border border-brand-border mt-0.5">
+                                Standard Launch Pricing
+                              </span>
+                            )}
                           </div>
                         )}
                       </div>
@@ -611,16 +637,20 @@ function CheckoutPageInner() {
                 <div className="space-y-2.5 text-xs">
                   {!isMonthlyProduct && (
                     <div className="flex justify-between items-center p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20">
-                      <span className="font-black text-brand-mustard">🎁 Early Bird Price</span>
+                      <span className="font-black text-brand-mustard">
+                        {pricing.isEarlyBird ? '🎁 Early Bird Price' : 'Plan Price'}
+                      </span>
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-brand-forest-muted line-through font-mono">₹599</span>
-                        <span className="font-black text-brand-mustard font-mono text-base">₹499</span>
+                        {pricing.isEarlyBird && (
+                          <span className="text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
+                        )}
+                        <span className="font-black text-brand-mustard font-mono text-base">₹{pricing.price}</span>
                       </div>
                     </div>
                   )}
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>What’s included:</span>
-                    <span className="font-bold text-brand-forest">{isMonthlyProduct ? '30-Day Plan' : '6 Boxes + 1 Surprise Box'}</span>
+                    <span className="font-bold text-brand-forest">{isMonthlyProduct ? '30-Day Plan' : '6 Bloom Boxes + 1 Surprise Box'}</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Delivery window:</span>
@@ -636,13 +666,15 @@ function CheckoutPageInner() {
                       <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
                     ) : (
                       <div className="flex items-baseline gap-2">
-                        <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
-                        <span className="text-2xl font-black text-brand-mustard font-mono">₹499</span>
+                        {pricing.isEarlyBird && (
+                          <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
+                        )}
+                        <span className="text-2xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                       </div>
                     )}
                   </div>
-                  {!isMonthlyProduct && (
-                    <p className="text-[10px] text-brand-forest-muted text-right">🎁 Early bird offer for first 100 customers only</p>
+                  {!isMonthlyProduct && pricing.isEarlyBird && (
+                    <p className="text-[10px] text-brand-forest-muted text-right">🎁 Early bird offer for first 100 customers only ({pricing.spotsLeft} spots remaining)</p>
                   )}
                 </div>
 
@@ -1020,8 +1052,12 @@ function CheckoutPageInner() {
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
                       <span className="text-brand-forest-muted">Plan Price:</span>
                       <div className="flex items-baseline gap-1.5">
-                        {!isMonthlyProduct && <span className="text-brand-forest-muted line-through font-mono text-xs">₹599</span>}
-                        <strong className="text-brand-mustard font-bold">{isMonthlyProduct ? 'TBA' : '₹499 🎁 Early Bird'}</strong>
+                        {!isMonthlyProduct && pricing.isEarlyBird && (
+                          <span className="text-brand-forest-muted line-through font-mono text-xs">₹{pricing.originalPrice}</span>
+                        )}
+                        <strong className="text-brand-mustard font-bold">
+                          {isMonthlyProduct ? 'TBA' : `₹${pricing.price} ${pricing.isEarlyBird ? '🎁 Early Bird' : ''}`}
+                        </strong>
                       </div>
                     </div>
                   </div>
@@ -1039,7 +1075,7 @@ function CheckoutPageInner() {
                       ← Back to Homepage
                     </Link>
                     <a
-                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi TheBloomaa! I just pre-booked my Just Bloom Plan (₹499 early bird) for the 30th September launch! 🌱`)}`}
+                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi TheBloomaa! I just pre-booked my Just Bloom Plan (₹${pricing.price}) for the 30th September launch! 🌱`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-6 py-3 rounded-full text-xs font-black text-white bg-[#25D366] hover:bg-[#1EBE5D] transition-all flex items-center justify-center gap-1.5 shadow-md"
@@ -1056,7 +1092,9 @@ function CheckoutPageInner() {
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Confirm Pre-Booking</h2>
                     <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
-                      No payment required at this time. We will contact you once pricing is finalized.
+                      {isMonthlyProduct
+                        ? 'No payment required at this time. We will contact you once pricing is finalized.'
+                        : `Pay ₹${pricing.price} via UPI to reserve your early bird morning delivery slot.`}
                     </p>
                   </div>
 
@@ -1074,26 +1112,179 @@ function CheckoutPageInner() {
                     </div>
                   )}
 
-                  <div className="rounded-3xl p-6 sm:p-10 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-6 text-center">
-                      <p className="text-brand-forest-muted">Please confirm your pre-booking for {selectedProduct.name}. Pricing will be announced soon.</p>
-                      <button
+                  <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/90 border border-brand-border shadow-2xl space-y-5">
+
+                    {/* Price Summary */}
+                    <div className="text-center pb-4 border-b border-brand-border">
+                      <p className="text-xs text-brand-forest-muted mb-1">Amount to Pay</p>
+                      <div className="flex items-baseline justify-center gap-2">
+                        {!isMonthlyProduct && pricing.isEarlyBird && (
+                          <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
+                        )}
+                        <span className="text-4xl font-black text-brand-mustard font-mono">
+                          ₹{isMonthlyProduct ? 'TBA' : pricing.price}
+                        </span>
+                      </div>
+                      {!isMonthlyProduct && pricing.isEarlyBird && (
+                        <span className="text-xs font-bold text-brand-mustard bg-brand-mustard/10 px-3 py-0.5 rounded-full border border-brand-mustard/20 mt-1 inline-block">
+                          🎁 Early Bird • {pricing.spotsLeft} spots left of 100
+                        </span>
+                      )}
+                    </div>
+
+                    {isMonthlyProduct ? (
+                      /* Monthly = No payment yet, just confirm */
+                      <div className="text-center space-y-3">
+                        <p className="text-sm text-brand-forest-muted">Pricing for Custom Monthly Plan will be shared via WhatsApp before launch.</p>
+                        <button
                           type="button"
                           disabled={submitting}
                           onClick={() => handleConfirmPayment()}
-                          className="w-full sm:w-auto px-8 py-4 mx-auto rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                          className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                        >
+                          {submitting ? <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming...</span></> : <><span>Confirm Pre-Booking</span><span>→</span></>}
+                        </button>
+                      </div>
+                    ) : (
+                      /* Just Bloom Plan = UPI Payment Flow */
+                      <div className="space-y-4">
+
+                        {/* Step A: Pay via UPI */}
+                        <div>
+                          <div className="flex items-center justify-between mb-2">
+                            <p className="text-xs font-black uppercase tracking-wider text-brand-forest-muted">
+                              Step 1 — Pay ₹{pricing.price} via UPI
+                            </p>
+                            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
+                              Instant Auto-Fill Amount
+                            </span>
+                          </div>
+
+                          {/* Desktop & Mobile QR scan block */}
+                          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-brand-cream/70 border border-brand-border mb-3">
+                            <div className="w-32 h-32 rounded-xl bg-white p-2 border border-brand-border shadow-xs flex-shrink-0 flex items-center justify-center">
+                              <img
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`)}`}
+                                alt="Scan UPI QR Code"
+                                className="w-full h-full object-contain"
+                              />
+                            </div>
+                            <div className="text-center sm:text-left space-y-1.5 flex-1">
+                              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-brand-forest">
+                                <span>📸</span>
+                                <span>Scan with GPay, PhonePe, or Paytm</span>
+                              </div>
+                              <p className="text-[11px] text-brand-forest-muted leading-snug">
+                                Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your UPI scanner.
+                              </p>
+                              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={handleCopyUpi}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-brand-border text-brand-forest hover:bg-brand-card transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                                >
+                                  <span>{copiedUpi ? '✓ Copied!' : '📋 Copy UPI ID'}</span>
+                                </button>
+                                <span className="font-mono text-xs text-brand-forest font-bold bg-white/90 px-2.5 py-1 rounded-md border border-brand-border select-all">
+                                  {UPI_ID}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+
+                          {/* Quick Mobile UPI App Links */}
+                          <p className="text-[11px] font-bold text-brand-forest mb-2">Or tap to open your UPI app directly on mobile:</p>
+                          <div className="grid grid-cols-3 gap-2">
+                            {/* PhonePe */}
+                            <a
+                              href={`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              onClick={() => setUpiPaid(true)}
+                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#5f259f]/10 border border-[#5f259f]/30 hover:bg-[#5f259f]/20 transition-all cursor-pointer group"
+                            >
+                              <span className="text-2xl">📱</span>
+                              <span className="text-[10px] font-black text-[#5f259f] uppercase tracking-wider">PhonePe</span>
+                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                            </a>
+
+                            {/* Google Pay */}
+                            <a
+                              href={`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              onClick={() => setUpiPaid(true)}
+                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-all cursor-pointer group"
+                            >
+                              <span className="text-2xl">🔵</span>
+                              <span className="text-[10px] font-black text-blue-500 uppercase tracking-wider">Google Pay</span>
+                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                            </a>
+
+                            {/* Paytm */}
+                            <a
+                              href={`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              onClick={() => setUpiPaid(true)}
+                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 transition-all cursor-pointer group"
+                            >
+                              <span className="text-2xl">💳</span>
+                              <span className="text-[10px] font-black text-sky-500 uppercase tracking-wider">Paytm</span>
+                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                            </a>
+                          </div>
+
+                          {/* Any UPI fallback */}
+                          <a
+                            href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                            onClick={() => setUpiPaid(true)}
+                            className="mt-2.5 w-full py-2.5 rounded-xl border border-brand-mustard/40 text-xs font-bold text-brand-mustard bg-brand-mustard/5 hover:bg-brand-mustard/15 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                          >
+                            <span>🔗</span>
+                            <span>Open Default UPI App — ₹{pricing.price} pre-filled</span>
+                          </a>
+                        </div>
+
+                        {/* Step B: Enter UTR after payment */}
+                        <div className={`transition-all pt-2 border-t border-brand-border ${upiPaid ? 'opacity-100' : 'opacity-70'}`}>
+                          <p className="text-xs font-black uppercase tracking-wider text-brand-forest mb-1.5 flex items-center justify-between">
+                            <span>Step 2 — Enter Transaction ID / UTR</span>
+                            {upiPaid && <span className="text-[10px] text-emerald-600 font-bold">Payment app opened ✓</span>}
+                          </p>
+                          <input
+                            type="text"
+                            placeholder="e.g. 426819273640 (from your UPI app receipt)"
+                            value={utrInput}
+                            onChange={(e) => {
+                              setUtrInput(e.target.value);
+                              if (!upiPaid) setUpiPaid(true);
+                            }}
+                            className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono min-h-[46px]"
+                          />
+                          <p className="text-[10px] text-brand-forest-muted mt-1">
+                            Find the 12-digit UTR or Reference Number in your UPI app receipt after making the ₹{pricing.price} payment.
+                          </p>
+                        </div>
+
+                        {/* Step C: Confirm Booking */}
+                        <button
+                          type="button"
+                          disabled={submitting || (!upiPaid && utrInput.trim().length < 6)}
+                          onClick={() => handleConfirmPayment()}
+                          className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                         >
                           {submitting ? (
-                            <>
-                              <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
-                              <span>Confirming...</span>
-                            </>
+                            <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
                           ) : (
-                            <>
-                              <span>Confirm Pre-Booking</span>
-                              <span>→</span>
-                            </>
+                            <><span>✅ Confirm Pre-Booking with UPI (₹{pricing.price})</span><span>→</span></>
                           )}
                         </button>
+
+                        {/* Skip / pay on delivery option */}
+                        <button
+                          type="button"
+                          onClick={() => { setUpiPaid(true); setUtrInput('PAY_ON_DELIVERY'); }}
+                          className="w-full text-[10px] text-brand-forest-muted underline hover:text-brand-forest transition-colors cursor-pointer text-center pt-1"
+                        >
+                          Want to pay on delivery or confirm via WhatsApp? Click here to pre-book without UTR
+                        </button>
+                      </div>
+                    )}
                   </div>
 
                 </>

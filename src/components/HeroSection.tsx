@@ -169,7 +169,7 @@ export default function HeroSection() {
           {/* Handwritten Tag positioned above the image frame */}
           <div className="w-full max-w-lg flex justify-end pr-2 pb-2">
             <span className="font-script text-base sm:text-2xl font-bold text-[#8C3A27] tracking-wide drop-shadow-xs rotate-2 block text-right leading-snug">
-              Good Food Happier People A Healthier Patna ❤️
+              Bloomaa the Natural choice
             </span>
           </div>
 
@@ -199,13 +199,6 @@ export default function HeroSection() {
 
             {/* Overhanging Botanical Glow Overlay */}
             <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/15 pointer-events-none z-20" />
-
-            {/* Branded bowl caption tag */}
-            <div className="absolute bottom-4 left-4 z-20 px-3.5 py-1.5 rounded-full bg-white/90 backdrop-blur-md border border-[#E6E0CF] shadow-md flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="text-xs font-bold text-[#0D2818]">Thebloomaa</span>
-              <span className="text-[10px] text-[#5E7A67] italic font-serif">Bloom your day with bloomaa</span>
-            </div>
 
             {/* Carousel navigation arrows */}
             <button
