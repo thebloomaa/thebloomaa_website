@@ -1089,6 +1089,34 @@ export default function AdminDashboard() {
                                   UTR: {order.subscription.utr}
                                 </span>
                               )}
+
+                              {(() => {
+                                const note = order.deliveryNote || '';
+                                const proofMatch = note.match(/PROOF:\s*([^\s|\]]+)/);
+                                const screenshotUrl = proofMatch ? proofMatch[1] : null;
+                                const modeMatch = note.match(/Mode:\s*([^|\]]+)/);
+                                const mode = modeMatch ? modeMatch[1].trim() : null;
+
+                                return (
+                                  <div className="mt-1 space-y-0.5">
+                                    {mode === 'Pay on Delivery' ? (
+                                      <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-500/15 text-amber-800 border border-amber-500/30">
+                                        🚚 POD
+                                      </span>
+                                    ) : screenshotUrl ? (
+                                      <button
+                                        type="button"
+                                        onClick={() => setSelectedOrder(order)}
+                                        className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-2xs transition-all"
+                                        title="Click to view payment receipt screenshot in inspector"
+                                      >
+                                        <span>📸</span>
+                                        <span>Receipt Proof</span>
+                                      </button>
+                                    ) : null}
+                                  </div>
+                                );
+                              })()}
                             </div>
                           </td>
 
@@ -1643,6 +1671,48 @@ export default function AdminDashboard() {
                     Payment UTR: {selectedOrder.subscription.utr}
                   </p>
                 )}
+
+                {(() => {
+                  const note = selectedOrder.deliveryNote || '';
+                  const proofMatch = note.match(/PROOF:\s*([^\s|\]]+)/);
+                  const screenshotUrl = proofMatch ? proofMatch[1] : null;
+                  const modeMatch = note.match(/Mode:\s*([^|\]]+)/);
+                  const mode = modeMatch ? modeMatch[1].trim() : null;
+
+                  if (!mode && !screenshotUrl) return null;
+
+                  return (
+                    <div className="space-y-2 pt-2 border-t border-[#E6E0CF]/60">
+                      {mode && (
+                        <p className="text-xs font-bold text-brand-forest">
+                          Payment Mode: <span className="text-brand-mustard font-black">{mode}</span>
+                        </p>
+                      )}
+                      {screenshotUrl && (
+                        <div>
+                          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block mb-1">
+                            Payment Receipt Screenshot:
+                          </span>
+                          <a
+                            href={screenshotUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block relative rounded-xl overflow-hidden border border-[#E6E0CF] group max-w-[220px]"
+                          >
+                            <img
+                              src={screenshotUrl}
+                              alt="Receipt proof"
+                              className="w-full h-32 object-cover group-hover:scale-105 transition-transform"
+                            />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity text-white text-xs font-bold">
+                              Click to Open ↗
+                            </div>
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })()}
               </div>
 
               {/* Assigned Rider & Fleet */}

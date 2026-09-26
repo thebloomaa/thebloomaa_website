@@ -14,6 +14,37 @@ export default function AdminOrdersPage() {
   const [customPlacedDate, setCustomPlacedDate] = useState('');
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [autoAssignMsg, setAutoAssignMsg] = useState<string | null>(null);
+  const [previewReceipt, setPreviewReceipt] = useState<{
+    url: string;
+    orderId: string;
+    customerName: string;
+    customerPhone: string;
+    utr?: string | null;
+    mode?: string;
+  } | null>(null);
+
+  const parsePaymentInfo = (order: any) => {
+    const note = order.deliveryNote || '';
+    let screenshotUrl: string | null = null;
+    const proofMatch = note.match(/PROOF:\s*([^\s|\]]+)/);
+    if (proofMatch) {
+      screenshotUrl = proofMatch[1];
+    }
+
+    let mode = 'UPI Payment';
+    const modeMatch = note.match(/Mode:\s*([^|\]]+)/);
+    if (modeMatch) {
+      mode = modeMatch[1].trim();
+    }
+
+    let utr = order.subscription?.utr || null;
+    const utrMatch = note.match(/UTR:\s*([^|\]]+)/);
+    if (utrMatch) {
+      utr = utrMatch[1].trim();
+    }
+
+    return { mode, utr, screenshotUrl };
+  };
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -388,6 +419,7 @@ export default function AdminOrdersPage() {
                   const shortId = `ORD-${order.id.slice(-5).toUpperCase()}`;
                   const isDelivered = order.status === 'DELIVERED';
                   const hasSpecialNote = Boolean(order.deliveryNote);
+                  const paymentInfo = parsePaymentInfo(order);
 
                   return (
                     <tr key={order.id} className="hover:bg-brand-cream/40 transition-colors">
@@ -550,19 +582,42 @@ export default function AdminOrdersPage() {
                           )}
                         </div>
 
-                        {order.subscription?.utr && (
-                          <div className="mt-1.5">
-                            {order.subscription.utr.startsWith('DIRECT_UPI_') ? (
-                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-mustard/15 text-brand-forest-muted border border-brand-mustard/30" title="User paid via 1-click UPI app intent without typing UTR">
-                                📲 1-Tap UPI ({order.subscription.utr.slice(-6)})
-                              </span>
-                            ) : (
-                              <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-mustard/15 text-brand-mustard-hover border border-brand-mustard/30" title="Verified UPI UTR">
-                                🔑 UTR: {order.subscription.utr}
-                              </span>
-                            )}
-                          </div>
-                        )}
+                        {/* Payment Details & Receipt Lightbox Trigger */}
+                        <div className="mt-2 space-y-1">
+                          {paymentInfo.mode === 'Pay on Delivery' ? (
+                            <span className="inline-block px-2 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-800 border border-amber-500/30">
+                              🚚 Pay on Delivery
+                            </span>
+                          ) : (
+                            <div className="flex items-center gap-1.5 flex-wrap">
+                              {paymentInfo.utr && (
+                                <span className="inline-block px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-brand-mustard/15 text-brand-forest border border-brand-mustard/30">
+                                  🔑 UTR: {paymentInfo.utr}
+                                </span>
+                              )}
+                              {paymentInfo.screenshotUrl && (
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setPreviewReceipt({
+                                      url: paymentInfo.screenshotUrl!,
+                                      orderId: order.id,
+                                      customerName: order.user?.name || 'Patna Customer',
+                                      customerPhone: order.user?.phone || '',
+                                      utr: paymentInfo.utr,
+                                      mode: paymentInfo.mode,
+                                    })
+                                  }
+                                  className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] font-black shadow-xs cursor-pointer transition-all"
+                                  title="Click to view full-resolution payment receipt screenshot"
+                                >
+                                  <span>📸</span>
+                                  <span>Receipt Proof</span>
+                                </button>
+                              )}
+                            </div>
+                          )}
+                        </div>
                       </td>
 
                       <td className="p-4 text-right">
@@ -620,6 +675,85 @@ export default function AdminOrdersPage() {
           </div>
         )}
       </div>
+
+      {/* RECEIPT LIGHTBOX MODAL */}
+      {previewReceipt && (
+        <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in">
+          <div className="bg-brand-card border border-brand-border rounded-3xl max-w-2xl w-full max-h-[90vh] flex flex-col overflow-hidden shadow-2xl">
+            {/* Header */}
+            <div className="p-4 sm:p-5 border-b border-brand-border flex items-center justify-between bg-brand-cream/40">
+              <div>
+                <h3 className="text-base font-black text-brand-forest flex items-center gap-2">
+                  <span>📸</span>
+                  <span>Payment Receipt Verification</span>
+                </h3>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
+                  Order ID: <span className="font-mono font-bold text-brand-forest">ORD-{previewReceipt.orderId.slice(-5).toUpperCase()}</span> • Customer: <strong className="text-brand-forest">{previewReceipt.customerName}</strong>
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setPreviewReceipt(null)}
+                className="w-8 h-8 rounded-full bg-brand-cream border border-brand-border hover:bg-brand-card text-brand-forest font-bold flex items-center justify-center cursor-pointer transition-colors"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Receipt Image Area */}
+            <div className="flex-1 overflow-auto p-4 sm:p-6 bg-black/20 flex items-center justify-center min-h-[300px]">
+              <img
+                src={previewReceipt.url}
+                alt="Payment Receipt Screenshot"
+                className="max-h-[60vh] max-w-full object-contain rounded-xl border border-brand-border shadow-lg"
+              />
+            </div>
+
+            {/* Modal Footer / Quick Actions */}
+            <div className="p-4 sm:p-5 border-t border-brand-border bg-brand-card flex flex-col sm:flex-row items-center justify-between gap-3">
+              <div className="text-xs text-brand-forest-muted space-y-0.5 text-center sm:text-left">
+                {previewReceipt.utr && (
+                  <div>UTR / Reference: <span className="font-mono font-bold text-brand-forest">{previewReceipt.utr}</span></div>
+                )}
+                {previewReceipt.customerPhone && (
+                  <div>
+                    Customer Phone: <span className="font-mono font-bold text-brand-forest">{previewReceipt.customerPhone}</span>
+                    <a
+                      href={`https://wa.me/91${previewReceipt.customerPhone.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-2 text-brand-mustard hover:underline font-bold"
+                    >
+                      (Chat on WhatsApp)
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                <a
+                  href={previewReceipt.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all"
+                >
+                  Open Original ↗
+                </a>
+                <button
+                  type="button"
+                  onClick={() => {
+                    handleActivateSubscription(previewReceipt.orderId);
+                    setPreviewReceipt(null);
+                  }}
+                  className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-md cursor-pointer"
+                >
+                  Verify & Activate Plan ⚡
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

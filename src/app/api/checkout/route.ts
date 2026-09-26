@@ -18,6 +18,8 @@ export async function POST(req: Request) {
       customerPhone,
       customerEmail,
       utr,
+      paymentMode,
+      screenshotUrl,
     } = body;
 
     if (!address || !address.street || !address.pincode) {
@@ -113,14 +115,48 @@ export async function POST(req: Request) {
       finalAmount = isEarlyBird ? earlyBirdPrice : regularPrice;
     }
 
+    // Strict Anti-Fraud Validation for Just Bloom Plan (Requires ₹499 payment proof)
+    if (!isMonthly && paymentMode !== 'PAY_ON_DELIVERY') {
+      const cleanUtr = utr ? String(utr).trim() : '';
+      const hasScreenshot = Boolean(screenshotUrl && String(screenshotUrl).trim().length > 0);
+      const hasValidUtr = cleanUtr.length >= 8;
+
+      if (paymentMode === 'QR_SCAN') {
+        if (!hasScreenshot) {
+          return NextResponse.json(
+            { error: 'Payment screenshot is required when paying via QR Code or mobile transfer.' },
+            { status: 400 }
+          );
+        }
+      } else if (paymentMode === 'UPI_APP') {
+        if (!hasValidUtr && !hasScreenshot) {
+          return NextResponse.json(
+            { error: 'Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.' },
+            { status: 400 }
+          );
+        }
+      }
+    }
+
     // Launch target date: 30 September 2026 06:00 AM IST
     const launchDate = new Date('2026-09-30T06:00:00+05:30');
     const now = new Date();
     const firstDeliveryDate = launchDate > now ? launchDate : new Date(now.setDate(now.getDate() + 1));
 
-    const effectiveUtr = utr && utr.trim().length > 0
-      ? utr.trim()
-      : `PRE_BOOK_${Date.now().toString().slice(-8)}`;
+    const cleanUtr = utr && String(utr).trim().length >= 6 ? String(utr).trim() : null;
+    const effectiveUtr = cleanUtr
+      ? cleanUtr
+      : paymentMode === 'PAY_ON_DELIVERY'
+      ? `POD_${Date.now().toString().slice(-8)}`
+      : screenshotUrl
+      ? `RECEIPT_${Date.now().toString().slice(-8)}`
+      : `PENDING_${Date.now().toString().slice(-8)}`;
+
+    const modeLabel = paymentMode === 'QR_SCAN'
+      ? 'QR Code Scan'
+      : paymentMode === 'PAY_ON_DELIVERY'
+      ? 'Pay on Delivery'
+      : 'UPI App Direct';
 
     // 4. Perform Atomic Database Transaction
     const result = await prisma.$transaction(async (tx) => {
@@ -144,7 +180,7 @@ export async function POST(req: Request) {
           addressId: newAddress.id,
           bundleType: effectiveBundleType,
           deliveriesLeft: bundleDays,
-          status: 'PENDING', // Awaiting 30 Sept launch confirmation
+          status: 'PENDING', // Awaiting admin verification & 30 Sept launch confirmation
           utr: effectiveUtr,
           startDate: firstDeliveryDate,
           nextDeliveryDate: firstDeliveryDate,
@@ -152,10 +188,11 @@ export async function POST(req: Request) {
         },
       });
 
-      // Payment info note
+      // Payment info note for kitchen/admin
+      const proofSnippet = screenshotUrl ? ` | PROOF: ${screenshotUrl}` : '';
       const paymentInfoTag = isMonthly
         ? '[Custom Monthly Plan - Price TBA]'
-        : `[Paid ₹${finalAmount} via UPI | UTR: ${effectiveUtr} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
+        : `[Mode: ${modeLabel} | Paid: ₹${finalAmount} | UTR: ${effectiveUtr}${proofSnippet} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
 
       const combinedOrderNote = [deliveryNote, paymentInfoTag].filter(Boolean).join(' | ');
 
@@ -184,18 +221,36 @@ export async function POST(req: Request) {
         }
       }
 
-      // Record pre-booking payment record with actual amount paid
+      // Record pre-booking payment record with actual amount paid and verification status
+      const paymentGateway = paymentMode === 'QR_SCAN'
+        ? 'upi_qr_scan'
+        : paymentMode === 'PAY_ON_DELIVERY'
+        ? 'pay_on_delivery'
+        : 'upi_app_direct';
+
+      const paymentMethod = paymentMode === 'PAY_ON_DELIVERY'
+        ? 'PAY_ON_DELIVERY'
+        : isMonthly
+        ? 'PRE_BOOK'
+        : paymentMode === 'QR_SCAN'
+        ? 'UPI_QR'
+        : 'UPI_APP';
+
+      const paymentStatus = paymentMode === 'PAY_ON_DELIVERY'
+        ? 'PENDING_ON_DELIVERY'
+        : 'AWAITING_ADMIN_VERIFICATION';
+
       await tx.payment.create({
         data: {
           subscriptionId: subscription.id,
           amount: finalAmount,
           currency: 'INR',
-          gateway: isMonthly ? 'pre_launch_booking' : 'upi_direct',
-          gatewayPaymentId: effectiveUtr,
+          gateway: paymentGateway,
+          gatewayPaymentId: screenshotUrl ? `${effectiveUtr}#${screenshotUrl}` : effectiveUtr,
           gatewayOrderId: `PREBOOK-${subscription.id.slice(0, 8).toUpperCase()}`,
-          method: isMonthly ? 'PRE_BOOK' : 'UPI',
-          status: 'PRE_BOOK_CONFIRMED',
-          paidAt: new Date(),
+          method: paymentMethod,
+          status: paymentStatus,
+          paidAt: paymentMode === 'PAY_ON_DELIVERY' ? null : new Date(),
         },
       });
 
@@ -206,6 +261,8 @@ export async function POST(req: Request) {
         amount: finalAmount,
         isEarlyBird,
         utr: effectiveUtr,
+        paymentMode: paymentMode || 'UPI_APP',
+        screenshotUrl: screenshotUrl || null,
       };
     });
 

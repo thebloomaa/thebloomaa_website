@@ -121,6 +121,17 @@ function CheckoutPageInner() {
   const [upiPaid, setUpiPaid] = useState(false);
   const [copiedUpi, setCopiedUpi] = useState(false);
 
+  // Payment Mode & Verification State
+  const [paymentMode, setPaymentMode] = useState<'QR_SCAN' | 'UPI_APP' | 'PAY_ON_DELIVERY'>('QR_SCAN');
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
+  const [screenshotUrl, setScreenshotUrl] = useState<string | null>(null);
+  const [uploadingScreenshot, setUploadingScreenshot] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
+  const [selectedUpiApp, setSelectedUpiApp] = useState<string | null>(null);
+  const [appOpened, setAppOpened] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const [submitting, setSubmitting] = useState(false);
   const [pincodeError, setPincodeError] = useState<string | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -140,6 +151,57 @@ function CheckoutPageInner() {
       navigator.clipboard.writeText(UPI_PHONE);
       setCopiedPhone(true);
       setTimeout(() => setCopiedPhone(false), 2000);
+    }
+  };
+
+  const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 10 * 1024 * 1024) {
+      setUploadError('Screenshot size must be under 10MB.');
+      return;
+    }
+
+    setUploadError(null);
+    setScreenshotFile(file);
+    const localUrl = URL.createObjectURL(file);
+    setScreenshotPreview(localUrl);
+
+    setUploadingScreenshot(true);
+    try {
+      const formData = new FormData();
+      formData.append('file', file);
+
+      const res = await fetch('/api/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      const data = await res.json();
+      if (res.ok && data.success && data.url) {
+        setScreenshotUrl(data.url);
+      } else {
+        setUploadError(data.error || 'Failed to upload screenshot. Please try again.');
+      }
+    } catch (err) {
+      console.error('Upload failed:', err);
+      setUploadError('Network error uploading screenshot. Please try again.');
+    } finally {
+      setUploadingScreenshot(false);
+    }
+  };
+
+  const handleRemoveScreenshot = () => {
+    setScreenshotFile(null);
+    if (screenshotPreview) {
+      URL.revokeObjectURL(screenshotPreview);
+    }
+    setScreenshotPreview(null);
+    setScreenshotUrl(null);
+    setUploadError(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -286,14 +348,29 @@ function CheckoutPageInner() {
     }
   }, [isMonthlyProduct, bundleType, selectBundle]);
 
-  const handleConfirmPayment = async () => {
+  const handleConfirmPayment = async (overrideMode?: 'QR_SCAN' | 'UPI_APP' | 'PAY_ON_DELIVERY') => {
     if (!selectedProduct) return;
+
+    const effectiveMode = overrideMode || paymentMode;
+
+    // Strict validation for online payment modes
+    if (!isMonthlyProduct && effectiveMode !== 'PAY_ON_DELIVERY') {
+      const cleanUtr = utrInput.trim();
+      if (effectiveMode === 'QR_SCAN' && !screenshotUrl) {
+        setSubmitError('Please attach a screenshot of your payment receipt before confirming.');
+        return;
+      }
+      if (effectiveMode === 'UPI_APP' && cleanUtr.length < 8 && !screenshotUrl) {
+        setSubmitError('Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.');
+        return;
+      }
+    }
 
     setSubmitting(true);
     setSubmitError(null);
     try {
       const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
-      const effectiveUtr = utrInput.trim() || `PRE_BOOK_${Date.now().toString().slice(-8)}`;
+      const cleanUtr = utrInput.trim() || undefined;
 
       const allergyTag = form.allergies ? `⚠️ ALLERGIES / EXCLUSIONS: ${form.allergies}` : '';
       const combinedDeliveryNote = [allergyTag, form.deliveryNote].filter(Boolean).join(' | ');
@@ -312,7 +389,9 @@ function CheckoutPageInner() {
           customerName: form.name,
           customerPhone: form.phone,
           customerEmail: form.email,
-          utr: effectiveUtr,
+          utr: cleanUtr,
+          paymentMode: effectiveMode,
+          screenshotUrl: screenshotUrl || undefined,
           address: {
             street: fullStreet,
             city: form.city,
@@ -330,7 +409,7 @@ function CheckoutPageInner() {
             useBundleStore.getState().reset();
             router.push('/dashboard');
             router.refresh();
-          }, 3000);
+          }, 3500);
         }
       } else {
         setSubmitError(data.error || 'Failed to confirm pre-booking. Please try again.');
@@ -1042,6 +1121,20 @@ function CheckoutPageInner() {
                     Your morning living food slot has been reserved! Deliveries begin on Official Launch Day: <strong className="text-brand-mustard font-bold">Wednesday, 30th September 2026</strong>.
                   </p>
 
+                  {/* MANDATORY CONFIRMATION NOTICE */}
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 text-left max-w-md mx-auto space-y-1.5 shadow-sm">
+                    <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-amber-900">
+                      <span className="text-base">📧</span>
+                      <span>Order Verification in Progress</span>
+                    </div>
+                    <p className="text-xs text-amber-950 font-bold leading-relaxed">
+                      Once admin confirms your order, you will receive a confirmation email.
+                    </p>
+                    <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                      Our cloud kitchen team verifies payment receipts and delivery locations. You will also receive an update on WhatsApp at <strong>{form.phone}</strong>.
+                    </p>
+                  </div>
+
                   <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest text-left max-w-md mx-auto space-y-2">
                     <div className="flex justify-between items-center">
                       <span className="text-brand-forest-muted">Selected Plan:</span>
@@ -1059,6 +1152,28 @@ function CheckoutPageInner() {
                       <span className="text-brand-forest-muted">Contact Phone:</span>
                       <strong className="text-brand-forest font-mono">{form.phone}</strong>
                     </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-brand-forest-muted">Payment Mode:</span>
+                      <span className="text-[11px] font-bold text-brand-forest">
+                        {paymentMode === 'QR_SCAN'
+                          ? '📸 QR Code Scan'
+                          : paymentMode === 'PAY_ON_DELIVERY'
+                          ? '🚚 Pay on Delivery'
+                          : '📱 UPI App Direct'}
+                      </span>
+                    </div>
+                    {screenshotUrl && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-brand-forest-muted">Receipt Proof:</span>
+                        <span className="text-[11px] font-bold text-emerald-600">✓ Screenshot Attached</span>
+                      </div>
+                    )}
+                    {utrInput && (
+                      <div className="flex justify-between items-center">
+                        <span className="text-brand-forest-muted">UTR / Ref ID:</span>
+                        <strong className="text-brand-forest font-mono text-[11px]">{utrInput}</strong>
+                      </div>
+                    )}
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
                       <span className="text-brand-forest-muted">Plan Price:</span>
                       <div className="flex items-baseline gap-1.5">
@@ -1071,10 +1186,6 @@ function CheckoutPageInner() {
                       </div>
                     </div>
                   </div>
-
-                  <p className="text-xs text-brand-forest-muted max-w-md mx-auto leading-relaxed">
-                    Our team will contact you via WhatsApp at <strong>{form.phone}</strong> to confirm your delivery slot and payment details before 30th September launch day.
-                  </p>
 
                   <div className="pt-3 flex flex-col sm:flex-row gap-3 justify-center">
                     <Link
@@ -1110,12 +1221,12 @@ function CheckoutPageInner() {
 
                   {/* Submission Error Banner */}
                   {submitError && (
-                    <div className="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center justify-between">
+                    <div className="p-4 rounded-2xl bg-red-500/15 border border-red-500/40 text-red-300 text-xs flex items-center justify-between animate-fade-in">
                       <span>⚠️ {submitError}</span>
                       <button
                         type="button"
                         onClick={() => setSubmitError(null)}
-                        className="text-brand-forest-muted hover:text-brand-forest text-sm font-bold ml-2"
+                        className="text-brand-forest-muted hover:text-brand-forest text-sm font-bold ml-2 cursor-pointer"
                       >
                         ×
                       </button>
@@ -1149,172 +1260,387 @@ function CheckoutPageInner() {
                         <button
                           type="button"
                           disabled={submitting}
-                          onClick={() => handleConfirmPayment()}
+                          onClick={() => handleConfirmPayment('PAY_ON_DELIVERY')}
                           className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                         >
                           {submitting ? <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming...</span></> : <><span>Confirm Pre-Booking</span><span>→</span></>}
                         </button>
                       </div>
                     ) : (
-                      /* Just Bloom Plan = UPI Payment Flow */
-                      <div className="space-y-4">
+                      /* Just Bloom Plan = Dual Method Payment Selection */
+                      <div className="space-y-5">
 
-                        {/* Step A: Pay via UPI */}
-                        <div>
-                          <div className="flex items-center justify-between mb-2">
-                            <p className="text-xs font-black uppercase tracking-wider text-brand-forest-muted">
-                              Step 1 — Pay ₹{pricing.price} via UPI
-                            </p>
-                            <span className="text-[10px] text-emerald-600 font-bold bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">
-                              Instant Auto-Fill Amount
-                            </span>
-                          </div>
-
-                          {/* Desktop & Mobile QR scan block */}
-                          <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-brand-cream/70 border border-brand-border mb-3">
-                            <div className="w-32 h-32 rounded-xl bg-white p-2 border border-brand-border shadow-xs flex-shrink-0 flex items-center justify-center">
-                              <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`)}`}
-                                alt="Scan UPI QR Code"
-                                className="w-full h-full object-contain"
-                              />
-                            </div>
-                            <div className="text-center sm:text-left space-y-2 flex-1">
-                              <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-brand-forest">
-                                <span>📸</span>
-                                <span>Scan with Paytm, PhonePe, or GPay</span>
-                              </div>
-                              <p className="text-[11px] text-brand-forest-muted leading-snug">
-                                Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your scanner.
-                              </p>
-                              <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
-                                <button
-                                  type="button"
-                                  onClick={handleCopyPhone}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
-                                >
-                                  <span>{copiedPhone ? '✓ Number Copied!' : '📱 Copy Mobile: ' + UPI_PHONE}</span>
-                                </button>
-                                <button
-                                  type="button"
-                                  onClick={handleCopyUpi}
-                                  className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-brand-border text-brand-forest hover:bg-brand-card transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
-                                >
-                                  <span>{copiedUpi ? '✓ UPI ID Copied!' : '📋 Copy UPI ID'}</span>
-                                </button>
-                              </div>
-                              <div className="text-[10px] text-brand-forest-muted font-medium">
-                                Recipient: <strong className="text-brand-forest">{UPI_NAME}</strong> (Verified Bank A/c)
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Paytm Alert Helper Callout */}
-                          <div className="mb-3 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-left text-xs">
-                            <div className="flex items-center gap-1.5 font-bold text-amber-900 mb-1">
-                              <span className="text-base">💡</span>
-                              <span>Seeing a &quot;Payment Alert&quot; or Risk Policy popup in Paytm?</span>
-                            </div>
-                            <p className="text-[11px] text-amber-950 leading-relaxed font-medium">
-                              In Paytm&apos;s alert, simply tap <strong className="font-bold underline text-amber-900">&quot;Pay via Mobile Number&quot;</strong>, or open your UPI app and pay to mobile number <strong className="font-mono font-bold text-amber-900 bg-amber-100 px-1 py-0.5 rounded">{UPI_PHONE}</strong> ({UPI_NAME}). This bypasses the alert safely and completes your pre-booking instantly!
-                            </p>
-                          </div>
-
-                          {/* Quick Mobile UPI App Links */}
-                          <p className="text-[11px] font-bold text-brand-forest mb-2">Or tap to open your UPI app directly on mobile:</p>
-                          <div className="grid grid-cols-3 gap-2">
-                            {/* PhonePe */}
-                            <a
-                              href={`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
-                              onClick={() => setUpiPaid(true)}
-                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#5f259f]/10 border border-[#5f259f]/30 hover:bg-[#5f259f]/20 transition-all cursor-pointer group"
-                            >
-                              <span className="text-2xl">📱</span>
-                              <span className="text-[10px] font-black text-[#5f259f] uppercase tracking-wider">PhonePe</span>
-                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
-                            </a>
-
-                            {/* Google Pay */}
-                            <a
-                              href={`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
-                              onClick={() => setUpiPaid(true)}
-                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-all cursor-pointer group"
-                            >
-                              <span className="text-2xl">🔵</span>
-                              <span className="text-[10px] font-black text-blue-500 uppercase tracking-wider">Google Pay</span>
-                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
-                            </a>
-
-                            {/* Paytm */}
-                            <a
-                              href={`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
-                              onClick={() => setUpiPaid(true)}
-                              className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 transition-all cursor-pointer group"
-                            >
-                              <span className="text-2xl">💳</span>
-                              <span className="text-[10px] font-black text-sky-500 uppercase tracking-wider">Paytm</span>
-                              <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
-                            </a>
-                          </div>
-
-                          {/* Any UPI fallback */}
-                          <a
-                            href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
-                            onClick={() => setUpiPaid(true)}
-                            className="mt-2.5 w-full py-2.5 rounded-xl border border-brand-mustard/40 text-xs font-bold text-brand-mustard bg-brand-mustard/5 hover:bg-brand-mustard/15 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
-                          >
-                            <span>🔗</span>
-                            <span>Open Default UPI App — ₹{pricing.price} pre-filled</span>
-                          </a>
-                        </div>
-
-                        {/* Step B: Enter UTR after payment */}
-                        <div className={`transition-all pt-2 border-t border-brand-border ${upiPaid ? 'opacity-100' : 'opacity-70'}`}>
-                          <p className="text-xs font-black uppercase tracking-wider text-brand-forest mb-1.5 flex items-center justify-between">
-                            <span>Step 2 — Enter Transaction ID / UTR</span>
-                            {upiPaid && <span className="text-[10px] text-emerald-600 font-bold">Payment app opened ✓</span>}
-                          </p>
-                          <input
-                            type="text"
-                            placeholder="e.g. 426819273640 (from your UPI app receipt)"
-                            value={utrInput}
-                            onChange={(e) => {
-                              setUtrInput(e.target.value);
-                              if (!upiPaid) setUpiPaid(true);
+                        {/* Payment Mode Selection Tabs */}
+                        <div className="grid grid-cols-2 gap-2 p-1.5 bg-brand-cream/80 rounded-2xl border border-brand-border">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPaymentMode('QR_SCAN');
+                              setSubmitError(null);
                             }}
-                            className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono min-h-[46px]"
-                          />
-                          <p className="text-[10px] text-brand-forest-muted mt-1">
-                            Find the 12-digit UTR or Reference Number in your UPI app receipt after making the ₹{pricing.price} payment.
-                          </p>
+                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                              paymentMode === 'QR_SCAN'
+                                ? 'bg-brand-mustard text-brand-forest shadow-md'
+                                : 'text-brand-forest-muted hover:text-brand-forest'
+                            }`}
+                          >
+                            <span>📸</span>
+                            <span>Scan QR / Transfer</span>
+                            <span className="text-[9px] bg-red-500/20 text-red-700 px-1.5 py-0.5 rounded-full font-black">
+                              Screenshot Req.
+                            </span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPaymentMode('UPI_APP');
+                              setSubmitError(null);
+                            }}
+                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                              paymentMode === 'UPI_APP'
+                                ? 'bg-brand-mustard text-brand-forest shadow-md'
+                                : 'text-brand-forest-muted hover:text-brand-forest'
+                            }`}
+                          >
+                            <span>📱</span>
+                            <span>Pay with UPI App</span>
+                          </button>
                         </div>
 
-                        {/* Step C: Confirm Booking */}
-                        <button
-                          type="button"
-                          disabled={submitting || (!upiPaid && utrInput.trim().length < 6)}
-                          onClick={() => handleConfirmPayment()}
-                          className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
-                        >
-                          {submitting ? (
-                            <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
-                          ) : (
-                            <><span>✅ Confirm Pre-Booking with UPI (₹{pricing.price})</span><span>→</span></>
-                          )}
-                        </button>
+                        {/* Hidden File Input for Receipt Upload */}
+                        <input
+                          type="file"
+                          ref={fileInputRef}
+                          accept="image/jpeg,image/png,image/webp,image/jpg"
+                          onChange={handleFileSelect}
+                          className="hidden"
+                        />
 
-                        {/* Skip / pay on delivery option */}
-                        <button
-                          type="button"
-                          onClick={() => { setUpiPaid(true); setUtrInput('PAY_ON_DELIVERY'); }}
-                          className="w-full text-[10px] text-brand-forest-muted underline hover:text-brand-forest transition-colors cursor-pointer text-center pt-1"
-                        >
-                          Want to pay on delivery or confirm via WhatsApp? Click here to pre-book without UTR
-                        </button>
+                        {/* TAB 1: SCAN QR / MOBILE NUMBER (REQUIRES SCREENSHOT) */}
+                        {paymentMode === 'QR_SCAN' && (
+                          <div className="space-y-4 animate-fade-in">
+                            <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-brand-cream/70 border border-brand-border">
+                              <div className="w-32 h-32 rounded-xl bg-white p-2 border border-brand-border shadow-xs flex-shrink-0 flex items-center justify-center">
+                                <img
+                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`)}`}
+                                  alt="Scan UPI QR Code"
+                                  className="w-full h-full object-contain"
+                                />
+                              </div>
+                              <div className="text-center sm:text-left space-y-2 flex-1">
+                                <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-brand-forest">
+                                  <span>📸</span>
+                                  <span>Scan with Paytm, PhonePe, or GPay</span>
+                                </div>
+                                <p className="text-[11px] text-brand-forest-muted leading-snug">
+                                  Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your scanner.
+                                </p>
+                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                  <button
+                                    type="button"
+                                    onClick={handleCopyPhone}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                  >
+                                    <span>{copiedPhone ? '✓ Number Copied!' : '📱 Copy Mobile: ' + UPI_PHONE}</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={handleCopyUpi}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-brand-border text-brand-forest hover:bg-brand-card transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
+                                  >
+                                    <span>{copiedUpi ? '✓ UPI ID Copied!' : '📋 Copy UPI ID'}</span>
+                                  </button>
+                                </div>
+                                <div className="text-[10px] text-brand-forest-muted font-medium">
+                                  Recipient: <strong className="text-brand-forest">{UPI_NAME}</strong> (Verified Bank A/c)
+                                </div>
+                              </div>
+                            </div>
+
+                            {/* MANDATORY SCREENSHOT UPLOAD COMPONENT */}
+                            <div className="p-4 rounded-2xl bg-brand-card border-2 border-dashed border-brand-mustard/40 space-y-3">
+                              <div className="flex items-center justify-between">
+                                <div className="flex items-center gap-1.5 text-xs font-black text-brand-forest uppercase tracking-wider">
+                                  <span>📸</span>
+                                  <span>Attach Payment Screenshot *</span>
+                                </div>
+                                <span className="text-[10px] font-bold text-red-600 bg-red-500/10 px-2 py-0.5 rounded-full border border-red-500/20">
+                                  Mandatory for QR Scan
+                                </span>
+                              </div>
+
+                              <p className="text-[11px] text-brand-forest-muted leading-relaxed">
+                                After scanning or transferring ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, take a screenshot of the completed payment receipt and upload it here.
+                              </p>
+
+                              {/* Upload Error Banner */}
+                              {uploadError && (
+                                <div className="p-2.5 rounded-xl bg-red-500/10 border border-red-500/30 text-red-600 text-xs font-semibold">
+                                  ⚠️ {uploadError}
+                                </div>
+                              )}
+
+                              {/* Upload Area or Preview */}
+                              {screenshotUrl ? (
+                                <div className="flex items-center justify-between p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                                  <div className="flex items-center gap-3">
+                                    {screenshotPreview && (
+                                      <img
+                                        src={screenshotPreview}
+                                        alt="Payment receipt preview"
+                                        className="w-14 h-14 object-cover rounded-lg border border-emerald-500/40 shadow-xs"
+                                      />
+                                    )}
+                                    <div>
+                                      <p className="text-xs font-bold text-emerald-800 flex items-center gap-1">
+                                        <span>✓</span>
+                                        <span>Receipt screenshot uploaded</span>
+                                      </p>
+                                      <p className="text-[10px] text-brand-forest-muted mt-0.5">
+                                        Ready for admin verification
+                                      </p>
+                                    </div>
+                                  </div>
+                                  <button
+                                    type="button"
+                                    onClick={handleRemoveScreenshot}
+                                    className="px-3 py-1.5 rounded-lg text-xs font-bold text-red-600 hover:bg-red-50 border border-red-200 transition-colors cursor-pointer"
+                                  >
+                                    ✕ Remove
+                                  </button>
+                                </div>
+                              ) : uploadingScreenshot ? (
+                                <div className="p-6 rounded-xl bg-brand-cream/50 text-center flex flex-col items-center justify-center gap-2">
+                                  <div className="w-6 h-6 border-2 border-brand-mustard border-t-transparent rounded-full animate-spin" />
+                                  <span className="text-xs font-bold text-brand-forest">Uploading receipt image...</span>
+                                </div>
+                              ) : (
+                                <button
+                                  type="button"
+                                  onClick={() => fileInputRef.current?.click()}
+                                  className="w-full py-4 px-4 rounded-xl border border-brand-border bg-brand-cream/60 hover:bg-brand-cream transition-all flex flex-col items-center justify-center gap-1 cursor-pointer group"
+                                >
+                                  <span className="text-2xl group-hover:scale-110 transition-transform">📤</span>
+                                  <span className="text-xs font-bold text-brand-forest group-hover:text-brand-mustard transition-colors">
+                                    Click to Upload Screenshot or Photo
+                                  </span>
+                                  <span className="text-[10px] text-brand-forest-muted">
+                                    Supports JPG, PNG, WebP (up to 10MB)
+                                  </span>
+                                </button>
+                              )}
+
+                              {/* Optional UTR Field for QR Scan */}
+                              <div className="pt-2 border-t border-brand-border/60">
+                                <label className="block text-[11px] font-bold text-brand-forest-muted mb-1">
+                                  UPI UTR / Reference ID (Optional if screenshot attached)
+                                </label>
+                                <input
+                                  type="text"
+                                  placeholder="e.g. 426819273640 (12 digits)"
+                                  value={utrInput}
+                                  onChange={(e) => setUtrInput(e.target.value)}
+                                  className="w-full px-3 py-2 rounded-xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest focus:outline-none focus:border-brand-mustard font-mono"
+                                />
+                              </div>
+                            </div>
+
+                            {/* Confirm Button for QR Scan */}
+                            <button
+                              type="button"
+                              disabled={submitting || uploadingScreenshot || !screenshotUrl}
+                              onClick={() => handleConfirmPayment('QR_SCAN')}
+                              className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                            >
+                              {submitting ? (
+                                <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
+                              ) : !screenshotUrl ? (
+                                <><span>📸 Attach Payment Screenshot to Confirm</span></>
+                              ) : (
+                                <><span>✅ Confirm Pre-Booking with Receipt (₹{pricing.price})</span><span>→</span></>
+                              )}
+                            </button>
+                          </div>
+                        )}
+
+                        {/* TAB 2: PAY WITH UPI APP (STRICT ANTI-FRAUD VERIFICATION) */}
+                        {paymentMode === 'UPI_APP' && (
+                          <div className="space-y-4 animate-fade-in">
+                            <p className="text-[11px] font-bold text-brand-forest">
+                              Tap an app below to open and pay ₹{pricing.price}:
+                            </p>
+
+                            <div className="grid grid-cols-3 gap-2">
+                              {/* PhonePe */}
+                              <a
+                                href={`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
+                                onClick={() => {
+                                  setSelectedUpiApp('PhonePe');
+                                  setAppOpened(true);
+                                }}
+                                className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#5f259f]/10 border border-[#5f259f]/30 hover:bg-[#5f259f]/20 transition-all cursor-pointer group"
+                              >
+                                <span className="text-2xl">📱</span>
+                                <span className="text-[10px] font-black text-[#5f259f] uppercase tracking-wider">PhonePe</span>
+                                <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                              </a>
+
+                              {/* Google Pay */}
+                              <a
+                                href={`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
+                                onClick={() => {
+                                  setSelectedUpiApp('Google Pay');
+                                  setAppOpened(true);
+                                }}
+                                className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-all cursor-pointer group"
+                              >
+                                <span className="text-2xl">🔵</span>
+                                <span className="text-[10px] font-black text-blue-500 uppercase tracking-wider">Google Pay</span>
+                                <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                              </a>
+
+                              {/* Paytm */}
+                              <a
+                                href={`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
+                                onClick={() => {
+                                  setSelectedUpiApp('Paytm');
+                                  setAppOpened(true);
+                                }}
+                                className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 transition-all cursor-pointer group"
+                              >
+                                <span className="text-2xl">💳</span>
+                                <span className="text-[10px] font-black text-sky-500 uppercase tracking-wider">Paytm</span>
+                                <span className="text-[9px] text-brand-forest-muted font-bold">₹{pricing.price} auto-filled</span>
+                              </a>
+                            </div>
+
+                            {/* Any UPI fallback */}
+                            <a
+                              href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
+                              onClick={() => {
+                                setSelectedUpiApp('Default UPI App');
+                                setAppOpened(true);
+                              }}
+                              className="w-full py-2.5 rounded-xl border border-brand-mustard/40 text-xs font-bold text-brand-mustard bg-brand-mustard/5 hover:bg-brand-mustard/15 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
+                            >
+                              <span>🔗</span>
+                              <span>Open Default UPI App — ₹{pricing.price} pre-filled</span>
+                            </a>
+
+                            {/* ANTI-FRAUD VERIFICATION GUARD */}
+                            <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border space-y-3">
+                              <div className="flex items-center justify-between">
+                                <span className="text-xs font-black uppercase tracking-wider text-brand-forest flex items-center gap-1.5">
+                                  <span>🔒</span>
+                                  <span>Payment Proof Verification</span>
+                                </span>
+                                {appOpened && (
+                                  <span className="text-[10px] font-bold text-emerald-700 bg-emerald-500/15 px-2 py-0.5 rounded-full">
+                                    App opened ✓
+                                  </span>
+                                )}
+                              </div>
+
+                              <p className="text-[11px] text-brand-forest-muted leading-relaxed">
+                                {appOpened
+                                  ? `After completing payment in ${selectedUpiApp || 'your UPI app'}, enter your 12-digit UTR below or upload a screenshot to unlock confirmation:`
+                                  : 'To verify your transaction, enter your 12-digit UTR from the payment receipt or upload a screenshot:'}
+                              </p>
+
+                              {/* 12-Digit UTR Input */}
+                              <div>
+                                <div className="flex items-center justify-between mb-1">
+                                  <label className="text-[11px] font-bold text-brand-forest">
+                                    12-Digit UPI UTR / Reference ID
+                                  </label>
+                                  {utrInput.trim().length >= 8 && (
+                                    <span className="text-[10px] text-emerald-600 font-bold">✓ Valid UTR format</span>
+                                  )}
+                                </div>
+                                <input
+                                  type="text"
+                                  placeholder="e.g. 426819273640 (from receipt)"
+                                  value={utrInput}
+                                  onChange={(e) => setUtrInput(e.target.value)}
+                                  className="w-full px-4 py-3 rounded-xl bg-brand-card border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono min-h-[46px]"
+                                />
+                              </div>
+
+                              {/* OR Screenshot Alternative */}
+                              <div className="pt-2 border-t border-brand-border/60">
+                                <div className="flex items-center justify-between">
+                                  <span className="text-[11px] font-bold text-brand-forest-muted">
+                                    Or attach payment screenshot instead:
+                                  </span>
+                                  {screenshotUrl ? (
+                                    <button
+                                      type="button"
+                                      onClick={handleRemoveScreenshot}
+                                      className="text-[10px] font-bold text-red-600 hover:underline cursor-pointer"
+                                    >
+                                      ✕ Remove
+                                    </button>
+                                  ) : (
+                                    <button
+                                      type="button"
+                                      onClick={() => fileInputRef.current?.click()}
+                                      className="text-[10px] font-bold text-brand-mustard hover:underline cursor-pointer"
+                                    >
+                                      📸 Upload screenshot
+                                    </button>
+                                  )}
+                                </div>
+
+                                {screenshotUrl && (
+                                  <div className="mt-2 p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-[11px] text-emerald-800 font-semibold flex items-center gap-2">
+                                    <span>✓</span>
+                                    <span>Screenshot attached as payment proof</span>
+                                  </div>
+                                )}
+                              </div>
+                            </div>
+
+                            {/* Confirm Button for UPI App */}
+                            {(() => {
+                              const hasProof = utrInput.trim().length >= 8 || Boolean(screenshotUrl);
+                              return (
+                                <button
+                                  type="button"
+                                  disabled={submitting || !hasProof}
+                                  onClick={() => handleConfirmPayment('UPI_APP')}
+                                  className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                                >
+                                  {submitting ? (
+                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
+                                  ) : !hasProof ? (
+                                    <><span>⚠️ Enter 12-Digit UTR or Attach Screenshot to Confirm</span></>
+                                  ) : (
+                                    <><span>✅ Confirm Pre-Booking (₹{pricing.price})</span><span>→</span></>
+                                  )}
+                                </button>
+                              );
+                            })()}
+                          </div>
+                        )}
+
+                        {/* Pay on Delivery Option */}
+                        <div className="pt-2 text-center">
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (confirm('Confirm pre-booking with Pay on Delivery (₹' + pricing.price + ')?')) {
+                                handleConfirmPayment('PAY_ON_DELIVERY');
+                              }
+                            }}
+                            className="text-xs text-brand-forest-muted underline hover:text-brand-forest transition-colors cursor-pointer"
+                          >
+                            🚚 Want to pay ₹{pricing.price} on morning delivery instead? Click here
+                          </button>
+                        </div>
                       </div>
                     )}
                   </div>
-
                 </>
               )}
             </div>
