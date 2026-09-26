@@ -1,7 +1,7 @@
 import React from 'react';
 import Navbar from '@/components/Navbar';
 import HeroSection from '@/components/HeroSection';
-import TrustBanner from '@/components/TrustBanner';
+import LivingNutritionAndTrustSection from '@/components/LivingNutritionAndTrustSection';
 import ComingSoonBanner from '@/components/ComingSoonBanner';
 import BowlsSection from '@/components/BowlsSection';
 import HowItWorksSection from '@/components/HowItWorksSection';
@@ -25,8 +25,8 @@ export default function Home() {
       {/* 2. Hero Section: Maa-like Care & Nature-like Nourishment */}
       <HeroSection />
 
-      {/* 3. Trust Strip & Patna eats together banner */}
-      <TrustBanner />
+      {/* 3. Living Nutrition Proof & Patna Trust Guarantee (Combined) */}
+      <LivingNutritionAndTrustSection />
 
       {/* 3.5. Official Pre-Launch Countdown & Early Pre-Order Banner */}
       <ComingSoonBanner />
