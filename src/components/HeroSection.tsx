@@ -168,7 +168,7 @@ export default function HeroSection() {
         <div className="lg:col-span-6 relative flex flex-col items-center pt-2 sm:pt-4 lg:pt-0">
           {/* Handwritten Tag positioned above the image frame */}
           <div className="w-full max-w-lg flex justify-end pr-2 pb-2">
-            <span className="font-script text-xl sm:text-2xl font-bold text-[#8C3A27] tracking-wide drop-shadow-xs rotate-2 block whitespace-nowrap">
+            <span className="font-script text-base sm:text-2xl font-bold text-[#8C3A27] tracking-wide drop-shadow-xs rotate-2 block text-right leading-snug">
               Good Food Happier People A Healthier Patna ❤️
             </span>
           </div>
