@@ -125,19 +125,27 @@ export default function HeroSection() {
 
           {/* Primary CTA Buttons — Pixel-aligned with matching h-12 */}
           <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
+            <Link
+              href="/checkout?plan=trial"
+              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 rounded-full text-sm sm:text-base font-bold text-white bg-[#0F3826] hover:bg-[#164D35] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-md shadow-[#0F3826]/20 cursor-pointer"
+            >
+              <span>Pre-Book 7-Day Plan</span>
+              <span className="text-[11px] bg-[#E6BE68] text-[#0D2818] font-black px-2 py-0.5 rounded-full uppercase tracking-wider">₹0 Today</span>
+              <span className="text-lg leading-none">→</span>
+            </Link>
+
             <a
               href="#bowls"
-              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 rounded-full text-sm sm:text-base font-bold text-white bg-[#0F3826] hover:bg-[#164D35] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-md shadow-[#0F3826]/20 cursor-pointer"
+              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 rounded-full text-sm font-semibold text-[#0D2818] bg-white border border-[#DDD5C0] hover:bg-[#F4EFE6] transition-all shadow-xs cursor-pointer"
             >
-              <span>Find Your Bowl</span>
-              <span className="text-lg leading-none">→</span>
+              <span>Explore 6-Day Menu 🥗</span>
             </a>
 
             <Link
               href="/calculator"
-              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-7 rounded-full text-sm font-semibold text-[#0D2818] bg-white border border-[#DDD5C0] hover:bg-[#F4EFE6] transition-all shadow-xs"
+              className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-1.5 px-5 rounded-full text-xs sm:text-sm font-semibold text-[#5E7A67] hover:text-[#0D2818] hover:bg-white/80 transition-all border border-transparent hover:border-[#DDD5C0]"
             >
-              <span>✨ Free Bio Calculator</span>
+              <span>✨ Bio Calculator</span>
             </Link>
           </div>
 

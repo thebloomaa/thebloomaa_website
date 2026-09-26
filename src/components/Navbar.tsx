@@ -119,12 +119,12 @@ export default function Navbar() {
                 </Link>
               )}
 
-              {/* Primary Order Now Button */}
+              {/* Primary Pre-Book Button */}
               <Link
-                href="/#plans"
+                href="/checkout?plan=trial"
                 className="h-10 px-5 rounded-full text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
-                <span>Order Now</span>
+                <span>Pre-Book</span>
                 <span className="text-sm">→</span>
               </Link>
             </div>
@@ -200,11 +200,11 @@ export default function Navbar() {
                 Log In
               </Link>
               <Link
-                href="/#plans"
+                href="/checkout?plan=trial"
                 onClick={() => setMobileOpen(false)}
                 className="flex-1 py-3 rounded-full text-center text-xs font-bold text-white bg-[#0F3826]"
               >
-                Order Now →
+                Pre-Book →
               </Link>
             </div>
           </div>

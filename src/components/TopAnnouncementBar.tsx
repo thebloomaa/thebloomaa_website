@@ -72,7 +72,7 @@ export default function TopAnnouncementBar() {
         {/* Right: Pre-Book CTA Button + Dismiss Button */}
         <div className="flex items-center gap-2 shrink-0">
           <Link
-            href="/#plans"
+            href="/checkout?plan=trial"
             className="inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] sm:text-[11px] font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xs hover:scale-105 active:scale-95 whitespace-nowrap"
           >
             <span>Pre-Book Now</span>

@@ -79,13 +79,13 @@ export default function ComingSoonBanner() {
 
               {/* Action Buttons */}
               <div className="pt-3 flex flex-wrap items-center justify-center lg:justify-start gap-3">
-                <a
-                  href="#plans"
+                <Link
+                  href="/checkout?plan=trial"
                   className="px-6 py-3 rounded-full text-xs sm:text-sm font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-lg hover:scale-105 active:scale-95 flex items-center gap-2 cursor-pointer"
                 >
                   <span>Pre-Book Your Plan (Price TBA)</span>
                   <span>→</span>
-                </a>
+                </Link>
 
                 <a
                   href="#bowls"

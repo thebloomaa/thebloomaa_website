@@ -223,12 +223,12 @@ export default function BowlsSection() {
 
   const handlePreBookWeekly = () => {
     setSelectedBowlModal(null);
-    const plansElem = document.getElementById('plans');
-    if (plansElem) {
-      plansElem.scrollIntoView({ behavior: 'smooth' });
-    } else {
-      router.push('/checkout?plan=trial');
-    }
+    router.push('/checkout?plan=trial');
+  };
+
+  const handlePreBookMonthly = () => {
+    setSelectedBowlModal(null);
+    router.push('/checkout?plan=monthly');
   };
 
   const renderBowlCard = (bowl: BowlItem) => (
@@ -237,12 +237,16 @@ export default function BowlsSection() {
       className={`w-full rounded-[1.75rem] p-4 sm:p-5 ${bowl.bgClass} border ${bowl.borderClass} flex flex-col justify-between transition-all duration-300 hover:-translate-y-1 hover:shadow-lg shadow-2xs group`}
     >
       <div>
-        {/* Day Badge & Bowl Title */}
-        <div className="text-center mb-2.5">
+        {/* Day Badge & Bowl Title (Clickable to view details) */}
+        <div
+          className="text-center mb-2.5 cursor-pointer group/title"
+          onClick={() => setSelectedBowlModal(bowl)}
+          title="Click to view full nutrition details"
+        >
           <span className={`inline-block px-3 py-0.5 rounded-full text-[10px] sm:text-[11px] font-black uppercase tracking-wider border ${bowl.badgeColor} mb-1.5 shadow-2xs`}>
             {bowl.day} Bowl
           </span>
-          <h3 className="font-serif text-base sm:text-lg lg:text-xl font-bold text-[#0D2818] tracking-tight leading-snug">
+          <h3 className="font-serif text-base sm:text-lg lg:text-xl font-bold text-[#0D2818] tracking-tight leading-snug group-hover/title:text-[#16A34A] transition-colors">
             {bowl.name}
           </h3>
           <p className="text-[11px] sm:text-xs text-[#5E7A67] mt-0.5 leading-snug line-clamp-2">
@@ -250,8 +254,12 @@ export default function BowlsSection() {
           </p>
         </div>
 
-        {/* Circular Bowl Image */}
-        <div className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full overflow-hidden border-3 sm:border-4 border-white shadow-md my-2.5 group-hover:scale-105 transition-transform duration-500 bg-white">
+        {/* Circular Bowl Image (Clickable to view details) */}
+        <div
+          className="relative w-24 h-24 sm:w-28 sm:h-28 mx-auto rounded-full overflow-hidden border-3 sm:border-4 border-white shadow-md my-2.5 group-hover:scale-105 transition-transform duration-500 bg-white cursor-pointer"
+          onClick={() => setSelectedBowlModal(bowl)}
+          title="Click to view full nutrition details"
+        >
           <Image
             src={bowl.image}
             alt={bowl.name}
@@ -322,15 +330,23 @@ export default function BowlsSection() {
         </div>
       </div>
 
-      {/* Action Button */}
-      <div className="pt-0.5">
+      {/* Dual Action Buttons */}
+      <div className="pt-1 space-y-1.5">
+        <button
+          type="button"
+          onClick={() => handlePreBookWeekly()}
+          className="w-full py-2.5 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-98 cursor-pointer hover:scale-[1.02]"
+        >
+          <span>Pre-Book Weekly Routine</span>
+          <span className="text-xs">→</span>
+        </button>
+
         <button
           type="button"
           onClick={() => setSelectedBowlModal(bowl)}
-          className="w-full py-2.5 rounded-full text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-98 cursor-pointer"
+          className="w-full py-1 text-[11px] font-semibold text-[#5E7A67] hover:text-[#0D2818] transition-colors flex items-center justify-center gap-1 cursor-pointer"
         >
-          <span>View Details & Nutrition</span>
-          <span className="text-xs">→</span>
+          <span>🔍 View Ingredients &amp; Nutrition</span>
         </button>
       </div>
     </div>
@@ -352,7 +368,11 @@ export default function BowlsSection() {
             Your Goal. <span className="text-[#16A34A]">Your Bowl.</span> Your Bloom.
           </h2>
 
-          <div className="flex items-center justify-center gap-2 mt-1.5 text-xs sm:text-sm font-medium text-[#5E7A67]">
+          <p className="text-xs sm:text-sm text-[#5E7A67] font-medium max-w-xl mx-auto mt-1 leading-snug">
+            Each of these 6 functional living bowls rotates across Monday–Saturday as part of your <strong>7-Day Weekly</strong> or <strong>Monthly Routine</strong>. Freshly prepared daily at 5:00 AM.
+          </p>
+
+          <div className="flex items-center justify-center gap-2 mt-2 text-xs sm:text-sm font-medium text-[#5E7A67]">
             <span className="text-red-500">❤️</span>
             <span className="font-script text-lg sm:text-xl text-[#8C3A27]">
               Good Food, Happier People, A Healthier Patna
@@ -537,22 +557,32 @@ export default function BowlsSection() {
                 </span>
               </div>
 
-              <div className="flex gap-2 sm:gap-3">
+              <div className="space-y-2.5">
                 <button
                   type="button"
-                  onClick={() => setSelectedBowlModal(null)}
-                  className="py-2.5 px-4 rounded-full text-xs font-bold text-[#3D5A47] bg-[#FAF7F2] hover:bg-[#F3EFE6] border border-[#DDD5C0] transition-all cursor-pointer"
+                  onClick={() => handlePreBookWeekly()}
+                  className="w-full py-3 px-4 rounded-full text-xs sm:text-sm font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                 >
-                  Close
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePreBookWeekly}
-                  className="flex-1 py-2.5 px-4 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
-                >
-                  <span>Pre-Book 7-Day Plan</span>
+                  <span>Pre-Book 7-Day Plan (Includes {selectedBowlModal.day} Bowl)</span>
                   <span>→</span>
                 </button>
+
+                <div className="flex items-center justify-between px-2 text-xs">
+                  <button
+                    type="button"
+                    onClick={() => setSelectedBowlModal(null)}
+                    className="text-xs font-semibold text-[#5E7A67] hover:text-[#0D2818] transition-colors cursor-pointer"
+                  >
+                    ✕ Close Details
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePreBookMonthly}
+                    className="text-xs font-bold text-[#D97706] hover:text-[#B45309] transition-colors cursor-pointer"
+                  >
+                    Pre-Book 30-Day Monthly →
+                  </button>
+                </div>
               </div>
             </div>
           </div>

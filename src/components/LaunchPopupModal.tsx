@@ -1,9 +1,11 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useLaunchCountdown } from '@/lib/useLaunchCountdown';
 
 export default function LaunchPopupModal() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
   const { days, hours, minutes, seconds, isLive, isMounted } = useLaunchCountdown();
 
@@ -33,10 +35,7 @@ export default function LaunchPopupModal() {
 
   const handlePreBookClick = () => {
     handleClose();
-    const plansElem = document.getElementById('plans');
-    if (plansElem) {
-      plansElem.scrollIntoView({ behavior: 'smooth' });
-    }
+    router.push('/checkout?plan=trial');
   };
 
   const handleMenuClick = () => {

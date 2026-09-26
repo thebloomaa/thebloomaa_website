@@ -41,10 +41,10 @@ export default function CtaBannerPatna() {
 
               <div className="pt-1.5">
                 <Link
-                  href="/#plans"
+                  href="/checkout?plan=trial"
                   className="inline-flex items-center gap-2 px-7 py-3 rounded-full text-xs sm:text-sm font-bold text-[#8C3A27] bg-[#FDF3E3] hover:bg-white transition-all shadow-md hover:scale-105 active:scale-95"
                 >
-                  <span>Pre-Book Your Plan</span>
+                  <span>Pre-Book Your Plan (₹0 Today)</span>
                   <span className="text-sm font-black">→</span>
                 </Link>
               </div>
