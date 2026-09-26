@@ -138,7 +138,7 @@ function OptionCard({
 export default function BioCalculator() {
   const router = useRouter();
   const { inputs, setInputs, currentStep, nextStep, prevStep, goToStep, results, calculate } = useBioCalcStore();
-  const { selectProduct } = useBundleStore();
+  const { selectProduct, selectBundle } = useBundleStore();
 
   const [isMounted, setIsMounted] = useState(false);
   const [showAdvancedBody, setShowAdvancedBody] = useState(false);
@@ -174,6 +174,7 @@ export default function BioCalculator() {
       fats: prod.fats,
       dietaryPreference: prod.dietaryPreference,
     });
+    selectBundle('DAYS_7');
     router.push('/checkout');
   };
 

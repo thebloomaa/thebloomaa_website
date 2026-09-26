@@ -26,7 +26,7 @@ const livingFaqs = [
   },
   {
     q: 'Can I customize my diets after calculating my bio profile?',
-    a: 'Yes! Once your profile is calculated, you can select the recommended diet plan and proceed to checkout, or customize your delivery time and bundle duration (7, 15, or 30 days) directly.',
+    a: 'Yes! Once your profile is calculated, you can select the recommended diet plan and proceed to pre-book, or choose between our 7-Day Weekly or 30-Day Monthly Plan directly.',
   },
 ];
 

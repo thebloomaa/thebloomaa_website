@@ -98,12 +98,12 @@ export default function LoginPage() {
               <div className="pt-2 flex items-center justify-center lg:justify-start gap-4 text-xs font-semibold text-brand-forest-muted">
                 <span className="flex items-center gap-1.5">
                   <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
-                  Patna Fleet Active
+                  Patna Kitchen Ready
                 </span>
                 <span>·</span>
-                <span>98% On-Time Drops</span>
+                <span>Launching 30 Sept</span>
                 <span>·</span>
-                <span>5,000+ Preps Served</span>
+                <span>100 Founding Slots</span>
               </div>
             </div>
 

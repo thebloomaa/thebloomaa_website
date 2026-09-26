@@ -452,6 +452,12 @@ export default function BowlsSection() {
                 : `Showing: ${bowlPairs[currentSlide]?.[0]?.day} & ${bowlPairs[currentSlide]?.[1]?.day}`}
               {' • Auto-sliding (Hover to pause)'}
             </span>
+
+            {/* Day 7 / Sunday Weekly Rotation Clarification */}
+            <div className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/90 border border-[#DDD5C0] shadow-2xs text-[10.5px] sm:text-[11px] font-medium text-[#183925]">
+              <span className="font-bold text-[#D97706]">✨ 7-Day Plan Note:</span>
+              <span>Sunday features Chef&apos;s Seasonal Living Detox Bowl or Rest Day as chosen</span>
+            </div>
           </div>
         </div>
 

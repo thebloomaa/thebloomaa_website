@@ -131,26 +131,17 @@ function CheckoutPageInner() {
     }
   }, [planParam, selectProduct, selectBundle]);
 
-  const isSingleProduct = Boolean(
-    selectedProduct &&
-      (selectedProduct.id === 'prod-single-day-diet-pack' ||
-        selectedProduct.price === 70 ||
-        bundleType === 'DAYS_1' ||
-        (selectedProduct as any).isSinglePack ||
-        selectedProduct.name.toLowerCase().includes('single'))
-  );
-
   const isTrialProduct = Boolean(
-    !isSingleProduct &&
     selectedProduct &&
     (selectedProduct.name.toLowerCase().includes('just bloomed') ||
+      selectedProduct.name.toLowerCase().includes('7-day') ||
+      selectedProduct.name.toLowerCase().includes('weekly') ||
       selectedProduct.type === 'TRIAL_PLAN' ||
       selectedProduct.dietaryPreference === 'LIVING_RAW' ||
       selectedProduct.isTrialPlan)
   );
 
   const isMonthlyProduct = Boolean(
-    !isSingleProduct &&
     !isTrialProduct &&
     selectedProduct &&
     (selectedProduct.id === 'prod-monthly-living-diet' ||
@@ -158,19 +149,15 @@ function CheckoutPageInner() {
       selectedProduct.name.toLowerCase().includes('monthly'))
   );
 
-  const finalDays = isSingleProduct ? 1 : isTrialProduct ? 7 : isMonthlyProduct ? 30 : getBundleDays();
+  const finalDays = isMonthlyProduct ? 30 : 7;
 
   useEffect(() => {
-    if (isSingleProduct && bundleType !== 'DAYS_1') {
-      selectBundle('DAYS_1');
-    } else if (isTrialProduct && bundleType !== 'DAYS_7') {
-      selectBundle('DAYS_7');
-    } else if (isMonthlyProduct && bundleType !== 'DAYS_30') {
+    if (isMonthlyProduct && bundleType !== 'DAYS_30') {
       selectBundle('DAYS_30');
+    } else if (!isMonthlyProduct && bundleType !== 'DAYS_7') {
+      selectBundle('DAYS_7');
     }
-  }, [isSingleProduct, isTrialProduct, isMonthlyProduct, bundleType, selectBundle]);
-
-
+  }, [isMonthlyProduct, bundleType, selectBundle]);
 
   const handleConfirmPayment = async () => {
     if (!selectedProduct) return;
@@ -189,14 +176,15 @@ function CheckoutPageInner() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: selectedProduct.id,
-          bundleType: isSingleProduct ? 'DAYS_1' : isTrialProduct ? 'DAYS_7' : (bundleType || 'DAYS_15'),
+          bundleType: isMonthlyProduct ? 'DAYS_30' : 'DAYS_7',
           deliveryTime: form.deliveryTime,
-          deliveryNote: isSingleProduct
-            ? `1-DAY SINGLE PACK: Morning fresh diet box. ${combinedDeliveryNote}`
-            : isTrialProduct
-            ? `6+1 BUNDLE DROP: Just Bloomed 7D Trial. ${combinedDeliveryNote}`
-            : (combinedDeliveryNote || form.deliveryNote),
+          deliveryNote: isMonthlyProduct
+            ? `CUSTOM MONTHLY PLAN (30 Days). ${combinedDeliveryNote}`
+            : `7-DAY WEEKLY PLAN (7 Days). ${combinedDeliveryNote}`,
           allergies: form.allergies,
+          customerName: form.name,
+          customerPhone: form.phone,
+          customerEmail: form.email,
           utr: effectiveUtr,
           address: {
             street: fullStreet,
@@ -207,25 +195,22 @@ function CheckoutPageInner() {
         }),
       });
 
-      if (res.status === 401) {
-        router.push('/login?callbackUrl=/checkout');
-        return;
-      }
-
       const data = await res.json();
       if (res.ok && data.success) {
         setOrderSuccess(true);
-        setTimeout(() => {
-          useBundleStore.getState().reset();
-          router.push('/dashboard');
-          router.refresh();
-        }, 2000);
+        if (session?.user) {
+          setTimeout(() => {
+            useBundleStore.getState().reset();
+            router.push('/dashboard');
+            router.refresh();
+          }, 3000);
+        }
       } else {
-        setSubmitError(data.error || 'Failed to confirm order. Please try again.');
+        setSubmitError(data.error || 'Failed to confirm pre-booking. Please try again.');
       }
     } catch (err) {
       console.error('Checkout error:', err);
-      setSubmitError('Network error occurred during payment confirmation.');
+      setSubmitError('Network error occurred during pre-booking confirmation.');
     } finally {
       setSubmitting(false);
     }
@@ -267,32 +252,9 @@ function CheckoutPageInner() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
             <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
-              Order our Single Day Pack to try tomorrow morning, claim the 7-Day Living Reset, or run the Bio Calculator.
+              Pre-book your 7-Day Weekly Plan to start your sunrise living routine, lock in the Custom Monthly Plan, or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
-              <button
-                type="button"
-                onClick={() => {
-                  const p = BLOOMAA_PRODUCTS.SINGLE_DAY_TRIAL;
-                  selectProduct({
-                    id: p.id,
-                    name: p.name,
-                    description: p.description,
-                    price: p.price,
-                    imageUrl: p.imageUrl,
-                    type: p.type,
-                    calories: p.calories,
-                    protein: p.protein,
-                    carbs: p.carbs,
-                    fats: p.fats,
-                    dietaryPreference: p.dietaryPreference,
-                  });
-                  selectBundle('DAYS_1');
-                }}
-                className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-mustard-hover transition-all shadow-md cursor-pointer"
-              >
-                1-Day Pack
-              </button>
               <button
                 type="button"
                 onClick={() => {
@@ -312,15 +274,38 @@ function CheckoutPageInner() {
                   });
                   selectBundle('DAYS_7');
                 }}
-                className="px-5 py-3 rounded-xl text-xs font-black text-brand-forest bg-brand-mustard hover:bg-brand-forest-muted transition-all shadow-md cursor-pointer"
+                className="px-5 py-3 rounded-xl text-xs font-black text-white bg-[#D97706] hover:bg-[#B45309] transition-all shadow-md cursor-pointer"
               >
-                7-Day Trial
+                7-Day Weekly Plan →
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const p = BLOOMAA_PRODUCTS.MONTHLY_SUBSCRIPTION;
+                  selectProduct({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    price: p.price,
+                    imageUrl: p.imageUrl,
+                    type: p.type,
+                    calories: p.calories,
+                    protein: p.protein,
+                    carbs: p.carbs,
+                    fats: p.fats,
+                    dietaryPreference: p.dietaryPreference,
+                  });
+                  selectBundle('DAYS_30');
+                }}
+                className="px-5 py-3 rounded-xl text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md cursor-pointer"
+              >
+                Custom Monthly Plan →
               </button>
               <Link
                 href="/calculator"
-                className="px-4 py-3 rounded-xl text-xs font-bold text-brand-forest bg-brand-cream hover:bg-brand-border transition-all flex items-center justify-center"
+                className="px-4 py-3 rounded-xl text-xs font-bold text-brand-forest bg-white border border-brand-border hover:bg-brand-cream transition-all flex items-center justify-center"
               >
-                Calculator
+                Bio Calculator ✨
               </Link>
             </div>
           </div>
@@ -412,13 +397,9 @@ function CheckoutPageInner() {
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                       <h3 className="text-xl sm:text-2xl font-black text-brand-forest">{selectedProduct.name}</h3>
                       <div className="text-xl font-black text-brand-mustard font-mono">
-                        {isSingleProduct
-                          ? 'Single Day Diet Pack (Price TBA)'
-                          : isTrialProduct
-                          ? '7-Day Living Routine (Price TBA)'
-                          : isMonthlyProduct
+                        {isMonthlyProduct
                           ? '30-Day Living Plan (Price TBA)'
-                          : `Price TBA`}
+                          : '7-Day Living Routine (Price TBA)'}
                       </div>
                     </div>
 
@@ -429,33 +410,20 @@ function CheckoutPageInner() {
                     {/* Bloom Badges */}
                     <div className="flex flex-wrap gap-2.5 mt-4 justify-center sm:justify-start">
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20 font-mono">
-                        🔥 {selectedProduct.calories} kcal
+                        🔥 {selectedProduct.calories || 340} kcal
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-blue-500/10 text-blue-400 border border-blue-500/20 font-mono">
-                        💪 {selectedProduct.protein}g Protein
+                        💪 {selectedProduct.protein || 16}g Protein
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-forest-muted border border-brand-mustard/20 font-mono">
-                        🍞 {selectedProduct.carbs}g Carbs
+                        🍞 {selectedProduct.carbs || 45}g Carbs
                       </span>
                       <span className="px-3 py-1 rounded-xl text-xs font-bold bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20 font-mono">
-                        🥑 {selectedProduct.fats}g Fats
+                        🥑 {selectedProduct.fats || 15}g Fats
                       </span>
                     </div>
                   </div>
                 </div>
-
-                {/* Single Pack 1-Day Logistics Alert */}
-                {isSingleProduct && (
-                  <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-mustard-hover space-y-1">
-                    <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px]">
-                      <span>🌱</span>
-                      <span>1-Day Fresh Morning Drop</span>
-                    </div>
-                    <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered tomorrow morning between <strong>6:00 AM – 9:00 AM</strong> at your Patna address with dedicated doorstep delivery and zero recurring commitments.
-                    </p>
-                  </div>
-                )}
 
                 {/* Trial Plan Logistics Alert */}
                 {isTrialProduct && (
@@ -465,7 +433,7 @@ function CheckoutPageInner() {
                       <span>7-Day Fresh Living Food Schedule</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered across <strong>7 fresh mornings between 6:00 AM – 9:00 AM</strong> across Patna. Freshly cold-prepared daily with zero cooking oils.
+                      Delivered across <strong>7 fresh mornings between 6:00 AM – 9:00 AM</strong> across Patna starting from official launch on <strong>30th September 2026</strong>. Freshly cold-prepared daily with zero cooking oils.
                     </p>
                   </div>
                 )}
@@ -478,14 +446,14 @@ function CheckoutPageInner() {
                       <span>30-Day Transformation Schedule</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered every morning between <strong>6:00 AM – 9:00 AM</strong> across Patna. Enjoy continuous living nutrition with the flexibility to pause or skip any day via your dashboard.
+                      Delivered every morning between <strong>6:00 AM – 9:00 AM</strong> across Patna starting <strong>30th September 2026</strong>. Enjoy continuous living nutrition with the flexibility to pause or skip any day via your dashboard.
                     </p>
                   </div>
                 )}
               </div>
 
-              {/* Standard Meal Plan Bundle Selector (Hidden for Trial, Single Pack & Monthly) */}
-              {!isTrialProduct && !isSingleProduct && !isMonthlyProduct && (
+              {/* Standard Meal Plan Bundle Selector (Hidden for Trial & Monthly) */}
+              {!isTrialProduct && !isMonthlyProduct && (
                 <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/80 border border-brand-border">
                   <h4 className="text-sm font-black uppercase tracking-wider text-brand-forest-muted mb-4">
                     Subscription Duration
@@ -782,15 +750,55 @@ function CheckoutPageInner() {
                     ✓
                   </div>
                   <h2 className="text-2xl sm:text-3xl font-black text-brand-forest">
-                    Subscription Confirmed! 🎉
+                    Pre-Booking Confirmed! 🎉
                   </h2>
-                  <p className="text-sm text-brand-forest-muted max-w-md mx-auto leading-relaxed">
-                    Your morning diet prep has been scheduled. Cold-chain morning drop begins tomorrow at{' '}
-                    <strong className="text-brand-mustard font-mono">{form.deliveryTime || '07:00'} AM</strong>.
+                  <p className="text-sm text-brand-forest-muted max-w-lg mx-auto leading-relaxed">
+                    Your morning living food slot has been reserved! Deliveries begin on Official Launch Day: <strong className="text-brand-mustard font-bold">Wednesday, 30th September 2026</strong>.
                   </p>
-                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-brand-cream text-xs font-mono text-brand-mustard">
-                    <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
-                    Redirecting to your Subscriber Dashboard...
+
+                  <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest text-left max-w-md mx-auto space-y-2">
+                    <div className="flex justify-between items-center">
+                      <span className="text-brand-forest-muted">Selected Plan:</span>
+                      <strong className="text-brand-forest font-bold">{selectedProduct?.name || '7-Day Weekly Plan'}</strong>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-brand-forest-muted">Morning Drop Window:</span>
+                      <strong className="text-brand-forest font-mono">{form.deliveryTime || '07:00'} AM</strong>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-brand-forest-muted">Patna Address:</span>
+                      <span className="text-right text-brand-forest truncate max-w-[200px]">{form.street}</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-brand-forest-muted">Contact Phone:</span>
+                      <strong className="text-brand-forest font-mono">{form.phone}</strong>
+                    </div>
+                    <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
+                      <span className="text-brand-forest-muted">Payment Due Today:</span>
+                      <strong className="text-brand-mustard font-bold">₹0 (Price TBA)</strong>
+                    </div>
+                  </div>
+
+                  <p className="text-xs text-brand-forest-muted max-w-md mx-auto leading-relaxed">
+                    Our team will contact you via WhatsApp at <strong>{form.phone}</strong> with introductory founding member rates and delivery confirmation prior to launch day.
+                  </p>
+
+                  <div className="pt-3 flex flex-col sm:flex-row gap-3 justify-center">
+                    <Link
+                      href="/"
+                      onClick={() => useBundleStore.getState().reset()}
+                      className="px-6 py-3 rounded-full text-xs font-bold text-brand-forest bg-brand-cream border border-brand-border hover:bg-brand-card transition-all"
+                    >
+                      ← Back to Homepage
+                    </Link>
+                    <a
+                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi Thebloomaa, I just pre-booked my ${selectedProduct?.name || '7-Day Weekly Plan'} for the 30th September launch!`)}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-6 py-3 rounded-full text-xs font-black text-white bg-[#25D366] hover:bg-[#1EBE5D] transition-all flex items-center justify-center gap-1.5 shadow-md"
+                    >
+                      <span>💬 Chat with Us on WhatsApp</span>
+                    </a>
                   </div>
                 </div>
               ) : (

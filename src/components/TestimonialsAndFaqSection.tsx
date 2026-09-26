@@ -45,8 +45,8 @@ const faqs = [
     a: 'We deliver morning drops (6:00 AM – 9:00 AM) across major Patna neighborhoods including Punaichak, Boring Road, Kankarbagh, Bailey Road, Patliputra, and Rajendra Nagar.',
   },
   {
-    q: 'Can I customize my plan?',
-    a: 'Yes! You can choose between our 5 goal-targeted bowls (Skin & Glow, Active & Fitness, Focus & Brain, Joint Care, and Gut Health Detox) and adjust delivery timing directly from your customer dashboard.',
+    q: 'Can I customize my plan and delivery days?',
+    a: 'Yes! You can choose between our 7-Day Weekly Plan (enjoying our rotating daily living bowls from Monday to Saturday, plus Sunday seasonal reset) or a Custom Monthly Plan. You can easily pause, skip days, or adjust delivery timing anytime.',
   },
   {
     q: 'What if I have food allergies?',

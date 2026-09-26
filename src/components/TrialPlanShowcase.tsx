@@ -135,7 +135,7 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
               6+1 Logistics Protocol
             </div>
             <p className="text-xs text-brand-forest-muted leading-relaxed">
-              <strong>Logistics Note:</strong> Delivered across <strong>6 mornings (5:00 AM – 8:00 AM)</strong>. Box 6 &amp; Box 7 arrive together on Day 6 for your Day 7 Gut Reset.
+              <strong>Logistics Note:</strong> Delivered across <strong>6 mornings (6:00 AM – 9:00 AM)</strong>. Box 6 &amp; Box 7 arrive together on Day 6 for your Day 7 Gut Reset.
             </p>
           </div>
         </div>
