@@ -360,12 +360,12 @@ export default function BowlsSection() {
           <div className="flex items-center gap-2 mb-1.5">
             <span className="text-xl">🌱</span>
             <span className="text-xs sm:text-sm font-bold tracking-[0.2em] text-[#2A5237] uppercase">
-              The Blooमाँ Weekly Diet Bowl Menu
+              TheBloomaa Weekly Diet Bowl Menu
             </span>
           </div>
 
           <h2 className="font-serif text-2xl sm:text-3xl lg:text-4xl font-bold text-[#0D2818] tracking-tight">
-            Your Goal. <span className="text-[#16A34A]">Your Bowl.</span> Your Bloom.
+            TheBloomaa&apos;s Diet Bowl <span className="text-[#16A34A]">for Your Health Goal</span>
           </h2>
 
           <p className="text-xs sm:text-sm text-[#5E7A67] font-medium max-w-xl mx-auto mt-1 leading-snug">
