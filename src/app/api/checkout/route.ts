@@ -115,28 +115,20 @@ export async function POST(req: Request) {
       finalAmount = isEarlyBird ? earlyBirdPrice : regularPrice;
     }
 
-    // Strict Anti-Fraud Validation for Just Bloom Plan (Requires ₹499 payment proof)
+    // Require at least one proof: UTR (≥8 chars) OR screenshot
     if (!isMonthly && paymentMode !== 'PAY_ON_DELIVERY') {
       const cleanUtr = utr ? String(utr).trim() : '';
       const hasScreenshot = Boolean(screenshotUrl && String(screenshotUrl).trim().length > 0);
       const hasValidUtr = cleanUtr.length >= 8;
 
-      if (paymentMode === 'QR_SCAN') {
-        if (!hasScreenshot) {
-          return NextResponse.json(
-            { error: 'Payment screenshot is required when paying via QR Code or mobile transfer.' },
-            { status: 400 }
-          );
-        }
-      } else if (paymentMode === 'UPI_APP') {
-        if (!hasValidUtr && !hasScreenshot) {
-          return NextResponse.json(
-            { error: 'Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.' },
-            { status: 400 }
-          );
-        }
+      if (!hasValidUtr && !hasScreenshot) {
+        return NextResponse.json(
+          { error: 'Please enter your UPI UTR / reference number, or attach a payment screenshot to verify your payment.' },
+          { status: 400 }
+        );
       }
     }
+
 
     // Launch target date: 30 September 2026 06:00 AM IST
     const launchDate = new Date('2026-09-30T06:00:00+05:30');

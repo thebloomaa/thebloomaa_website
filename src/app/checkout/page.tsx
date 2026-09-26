@@ -372,18 +372,17 @@ function CheckoutPageInner() {
 
     const effectiveMode = overrideMode || paymentMode;
 
-    // Strict validation for online payment modes
+    // Require at least one proof: UTR (≥8 chars) OR screenshot
     if (!isMonthlyProduct && effectiveMode !== 'PAY_ON_DELIVERY') {
       const cleanUtr = utrInput.trim();
-      if (effectiveMode === 'QR_SCAN' && !screenshotUrl && cleanUtr.length < 8) {
-        setSubmitError('Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.');
-        return;
-      }
-      if (effectiveMode === 'UPI_APP' && cleanUtr.length < 8 && !screenshotUrl) {
-        setSubmitError('Please enter your 12-digit UPI UTR number or attach your payment screenshot to verify payment.');
+      const hasValidUtr = cleanUtr.length >= 8;
+      const hasScreenshot = Boolean(screenshotUrl);
+      if (!hasValidUtr && !hasScreenshot) {
+        setSubmitError('Please enter your UPI UTR / reference number, or attach a payment screenshot to verify your payment.');
         return;
       }
     }
+
 
     setSubmitting(true);
     setSubmitError(null);
@@ -1373,7 +1372,7 @@ function CheckoutPageInner() {
                               </div>
 
                               <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                                After scanning or transferring ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, enter the 12-digit UTR below OR upload a screenshot of the completed payment receipt here.
+                                After paying ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, provide <strong>either</strong> the UTR / reference number <em>or</em> a screenshot — you only need one.
                               </p>
 
                               {/* Upload Error Banner */}
