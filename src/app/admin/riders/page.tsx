@@ -276,9 +276,9 @@ export default function AdminRidersPage() {
 
       {/* Auto-assign feedback banner */}
       {autoAssignMsg && (
-        <div className="p-4 rounded-2xl bg-emerald-950/40 border border-brand-mustard/40 text-brand-mustard-hover text-xs flex items-center justify-between animate-fade-in">
+        <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center justify-between animate-fade-in shadow-xs">
           <div className="flex items-center gap-2">
-            <span>✓</span>
+            <span className="font-bold text-emerald-700">✓</span>
             <span className="font-semibold">{autoAssignMsg}</span>
           </div>
           <button
@@ -293,7 +293,7 @@ export default function AdminRidersPage() {
 
       {/* Enrolled rider success credentials card */}
       {enrolledRiderSuccess && (
-        <div className="p-4 sm:p-5 rounded-2xl bg-amber-950/40 border border-brand-mustard/40 text-amber-200 text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in">
+        <div className="p-4 sm:p-5 rounded-2xl bg-amber-50 border border-amber-300 text-brand-forest text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-3 animate-fade-in shadow-xs">
           <div className="flex items-center gap-3">
             <span className="text-2xl">🎉</span>
             <div>
@@ -445,7 +445,7 @@ export default function AdminRidersPage() {
                         />
                       </div>
                     ) : (
-                      <div className="p-2.5 rounded-xl bg-red-950/30 border border-red-500/20 text-red-300 text-[11px] font-semibold flex items-center gap-2">
+                      <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-red-700 text-[11px] font-semibold flex items-center gap-2">
                         <span>⚠️</span>
                         <span>No rider assigned to this zone!</span>
                       </div>
@@ -674,7 +674,7 @@ export default function AdminRidersPage() {
             </div>
 
             {modalError && (
-              <div className="mb-4 p-3 rounded-xl bg-red-950/40 border border-red-500/40 text-red-300 text-xs font-semibold">
+              <div className="mb-4 p-3 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-semibold">
                 ⚠️ {modalError}
               </div>
             )}

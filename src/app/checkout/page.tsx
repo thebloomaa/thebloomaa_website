@@ -11,7 +11,8 @@ import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector'
 import { useLivePricing } from '@/lib/useLivePricing';
 
 const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || '8863002959@ptyes';
-const UPI_NAME = 'TheBloomaa';
+const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Rahul Kumar Sharma';
+const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || '8863002959';
 
 // ─── Delivery Zone: Pincode 800023, Patna ───────────────────────────────────
 const DELIVERY_PINCODE = '800023';
@@ -130,6 +131,15 @@ function CheckoutPageInner() {
       navigator.clipboard.writeText(UPI_ID);
       setCopiedUpi(true);
       setTimeout(() => setCopiedUpi(false), 2000);
+    }
+  };
+
+  const [copiedPhone, setCopiedPhone] = useState(false);
+  const handleCopyPhone = () => {
+    if (typeof navigator !== 'undefined' && navigator.clipboard) {
+      navigator.clipboard.writeText(UPI_PHONE);
+      setCopiedPhone(true);
+      setTimeout(() => setCopiedPhone(false), 2000);
     }
   };
 
@@ -1164,32 +1174,50 @@ function CheckoutPageInner() {
                           <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-brand-cream/70 border border-brand-border mb-3">
                             <div className="w-32 h-32 rounded-xl bg-white p-2 border border-brand-border shadow-xs flex-shrink-0 flex items-center justify-center">
                               <img
-                                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`)}`}
+                                src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`)}`}
                                 alt="Scan UPI QR Code"
                                 className="w-full h-full object-contain"
                               />
                             </div>
-                            <div className="text-center sm:text-left space-y-1.5 flex-1">
+                            <div className="text-center sm:text-left space-y-2 flex-1">
                               <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-brand-forest">
                                 <span>📸</span>
-                                <span>Scan with GPay, PhonePe, or Paytm</span>
+                                <span>Scan with Paytm, PhonePe, or GPay</span>
                               </div>
                               <p className="text-[11px] text-brand-forest-muted leading-snug">
-                                Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your UPI scanner.
+                                Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your scanner.
                               </p>
                               <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
+                                <button
+                                  type="button"
+                                  onClick={handleCopyPhone}
+                                  className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
+                                >
+                                  <span>{copiedPhone ? '✓ Number Copied!' : '📱 Copy Mobile: ' + UPI_PHONE}</span>
+                                </button>
                                 <button
                                   type="button"
                                   onClick={handleCopyUpi}
                                   className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-brand-border text-brand-forest hover:bg-brand-card transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                                 >
-                                  <span>{copiedUpi ? '✓ Copied!' : '📋 Copy UPI ID'}</span>
+                                  <span>{copiedUpi ? '✓ UPI ID Copied!' : '📋 Copy UPI ID'}</span>
                                 </button>
-                                <span className="font-mono text-xs text-brand-forest font-bold bg-white/90 px-2.5 py-1 rounded-md border border-brand-border select-all">
-                                  {UPI_ID}
-                                </span>
+                              </div>
+                              <div className="text-[10px] text-brand-forest-muted font-medium">
+                                Recipient: <strong className="text-brand-forest">{UPI_NAME}</strong> (Verified Bank A/c)
                               </div>
                             </div>
+                          </div>
+
+                          {/* Paytm Alert Helper Callout */}
+                          <div className="mb-3 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-left text-xs">
+                            <div className="flex items-center gap-1.5 font-bold text-amber-900 mb-1">
+                              <span className="text-base">💡</span>
+                              <span>Seeing a &quot;Payment Alert&quot; or Risk Policy popup in Paytm?</span>
+                            </div>
+                            <p className="text-[11px] text-amber-950 leading-relaxed font-medium">
+                              In Paytm&apos;s alert, simply tap <strong className="font-bold underline text-amber-900">&quot;Pay via Mobile Number&quot;</strong>, or open your UPI app and pay to mobile number <strong className="font-mono font-bold text-amber-900 bg-amber-100 px-1 py-0.5 rounded">{UPI_PHONE}</strong> ({UPI_NAME}). This bypasses the alert safely and completes your pre-booking instantly!
+                            </p>
                           </div>
 
                           {/* Quick Mobile UPI App Links */}
@@ -1197,7 +1225,7 @@ function CheckoutPageInner() {
                           <div className="grid grid-cols-3 gap-2">
                             {/* PhonePe */}
                             <a
-                              href={`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              href={`phonepe://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
                               onClick={() => setUpiPaid(true)}
                               className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-[#5f259f]/10 border border-[#5f259f]/30 hover:bg-[#5f259f]/20 transition-all cursor-pointer group"
                             >
@@ -1208,7 +1236,7 @@ function CheckoutPageInner() {
 
                             {/* Google Pay */}
                             <a
-                              href={`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              href={`tez://upi/pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
                               onClick={() => setUpiPaid(true)}
                               className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-blue-500/10 border border-blue-500/30 hover:bg-blue-500/20 transition-all cursor-pointer group"
                             >
@@ -1219,7 +1247,7 @@ function CheckoutPageInner() {
 
                             {/* Paytm */}
                             <a
-                              href={`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                              href={`paytmmp://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
                               onClick={() => setUpiPaid(true)}
                               className="flex flex-col items-center gap-1.5 p-3 rounded-2xl bg-sky-500/10 border border-sky-500/30 hover:bg-sky-500/20 transition-all cursor-pointer group"
                             >
@@ -1231,7 +1259,7 @@ function CheckoutPageInner() {
 
                           {/* Any UPI fallback */}
                           <a
-                            href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=${encodeURIComponent('Just Bloom Plan - TheBloomaa')}`}
+                            href={`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`}
                             onClick={() => setUpiPaid(true)}
                             className="mt-2.5 w-full py-2.5 rounded-xl border border-brand-mustard/40 text-xs font-bold text-brand-mustard bg-brand-mustard/5 hover:bg-brand-mustard/15 transition-all flex items-center justify-center gap-2 cursor-pointer shadow-2xs"
                           >

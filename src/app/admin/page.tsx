@@ -6,6 +6,7 @@ import Link from 'next/link';
 interface OrderRecord {
   id: string;
   status: string;
+  createdAt?: string;
   deliveryDate: string;
   deliveryTime: string | null;
   deliveryNote: string | null;
@@ -17,6 +18,9 @@ interface OrderRecord {
     name: string;
     phone: string;
     email: string;
+    allergies?: string | null;
+    fitnessGoal?: string | null;
+    dietaryPreference?: string | null;
   };
   address: {
     id: string;
@@ -131,8 +135,17 @@ export default function AdminDashboard() {
   // Filters for Orders Tab
   const [orderFilter, setOrderFilter] = useState<'ALL' | 'UNASSIGNED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'QUEUED'>('ALL');
   const [orderSearch, setOrderSearch] = useState('');
+  const [placedDateFilter, setPlacedDateFilter] = useState<'ALL' | 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'CUSTOM'>('ALL');
+  const [customPlacedDate, setCustomPlacedDate] = useState('');
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
+
+  // Inspector & Actions Modal State
+  const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
+  const [failingOrder, setFailingOrder] = useState<OrderRecord | null>(null);
+  const [failReason, setFailReason] = useState<string>('Customer unreachable / phone switched off');
+  const [customFailReason, setCustomFailReason] = useState<string>('');
+  const [submittingFail, setSubmittingFail] = useState(false);
 
   // Filters for Customers Tab
   const [customerSearch, setCustomerSearch] = useState('');
@@ -353,6 +366,38 @@ export default function AdminDashboard() {
     if (orderFilter === 'DELIVERED' && o.status !== 'DELIVERED') return false;
     if (orderFilter === 'QUEUED' && o.status !== 'QUEUED') return false;
 
+    // Placed Date Filter
+    if (placedDateFilter !== 'ALL') {
+      if (!o.createdAt) return false;
+      const orderDate = new Date(o.createdAt);
+      const now = new Date();
+
+      const getLocalDateStr = (d: Date) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const orderDayStr = getLocalDateStr(orderDate);
+      const todayStr = getLocalDateStr(now);
+
+      if (placedDateFilter === 'TODAY') {
+        if (orderDayStr !== todayStr) return false;
+      } else if (placedDateFilter === 'YESTERDAY') {
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        if (orderDayStr !== getLocalDateStr(yesterday)) return false;
+      } else if (placedDateFilter === 'LAST_7_DAYS') {
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+        if (orderDate < sevenDaysAgo) return false;
+      } else if (placedDateFilter === 'CUSTOM' && customPlacedDate) {
+        if (orderDayStr !== customPlacedDate) return false;
+      }
+    }
+
     // Search Query Filter
     if (!orderSearch.trim()) return true;
     const q = orderSearch.toLowerCase();
@@ -382,6 +427,135 @@ export default function AdminDashboard() {
 
     return matchSearch && matchDiet;
   });
+
+  // Helper: Sanitize Legacy Plan Names
+  const formatPlanName = (rawName?: string | null) => {
+    if (!rawName) return 'Fresh Bloom Prep';
+    return rawName
+      .replace(/7D\s*Trial/gi, 'Trial')
+      .replace(/7-DAY\s*WEEKLY\s*PLAN\s*\(7\s*Days\)/gi, 'Weekly Plan')
+      .replace(/7-Day/gi, 'Weekly')
+      .trim();
+  };
+
+  // Helper: 1-Click Export Filtered Dispatch to CSV
+  const handleExportCSV = () => {
+    if (filteredOrders.length === 0) {
+      alert('No orders in the current filtered view to export.');
+      return;
+    }
+
+    const headers = [
+      'Order ID',
+      'Date Placed',
+      'Delivery Date',
+      'Delivery Slot',
+      'Customer Name',
+      'Phone',
+      'Address',
+      'Pincode',
+      'Diet Plan',
+      'Calories',
+      'Dietary Preference',
+      'Customer Allergies',
+      'Delivery Note',
+      'Assigned Rider',
+      'Rider Phone',
+      'Status',
+      'Payment UTR',
+    ];
+
+    const escapeCSV = (val: any) => {
+      if (val === null || val === undefined) return '""';
+      const str = String(val).replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const rows = filteredOrders.map((o) => [
+      escapeCSV(`ORD-${o.id.slice(-5).toUpperCase()}`),
+      escapeCSV(o.createdAt ? new Date(o.createdAt).toLocaleString('en-IN') : ''),
+      escapeCSV(new Date(o.deliveryDate).toLocaleDateString('en-IN')),
+      escapeCSV(o.deliveryTime || '07:00 AM'),
+      escapeCSV(o.user.name),
+      escapeCSV(o.user.phone),
+      escapeCSV(o.address.street),
+      escapeCSV(o.address.pincode),
+      escapeCSV(formatPlanName(o.subscription?.product?.name)),
+      escapeCSV(o.subscription?.product?.calories || ''),
+      escapeCSV(o.user.dietaryPreference || 'VEG'),
+      escapeCSV(o.user.allergies || 'None'),
+      escapeCSV(o.deliveryNote || ''),
+      escapeCSV(o.rider?.name || 'Unassigned'),
+      escapeCSV(o.rider?.phone || ''),
+      escapeCSV(o.status),
+      escapeCSV(o.subscription?.utr || ''),
+    ]);
+
+    const csvContent = [headers.join(','), ...rows.map((r) => r.join(','))].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    const timestamp = new Date().toISOString().slice(0, 10);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `thebloomaa_dispatch_${timestamp}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  // Handler: Confirm Order Failure with Reason
+  const handleConfirmFail = async () => {
+    if (!failingOrder) return;
+    const finalReason = failReason === 'OTHER' ? customFailReason.trim() : failReason;
+    if (!finalReason) {
+      alert('Please specify the reason why delivery could not be completed.');
+      return;
+    }
+    setSubmittingFail(true);
+    try {
+      const existingNote = failingOrder.deliveryNote ? `${failingOrder.deliveryNote} | ` : '';
+      const updatedNote = `${existingNote}⚠️ FAILED: ${finalReason}`;
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          orderId: failingOrder.id,
+          status: 'FAILED',
+          deliveryNote: updatedNote,
+        }),
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          const updatedOrders = prev.orders.map((o) =>
+            o.id === failingOrder.id
+              ? { ...o, status: 'FAILED', deliveryNote: updatedNote }
+              : o
+          );
+          const failedCount = updatedOrders.filter((o) => o.status === 'FAILED').length;
+          return {
+            ...prev,
+            orders: updatedOrders,
+            metrics: { ...prev.metrics, failedToday: failedCount },
+          };
+        });
+        setFeedbackMsg({ text: `Order marked as FAILED (${finalReason}).`, type: 'success' });
+        if (selectedOrder?.id === failingOrder.id) {
+          setSelectedOrder((prev) => prev ? { ...prev, status: 'FAILED', deliveryNote: updatedNote } : null);
+        }
+        setFailingOrder(null);
+        setFailReason('Customer unreachable / phone switched off');
+        setCustomFailReason('');
+      } else {
+        setFeedbackMsg({ text: 'Failed to update order status.', type: 'error' });
+      }
+    } catch {
+      setFeedbackMsg({ text: 'Network error updating order.', type: 'error' });
+    } finally {
+      setSubmittingFail(false);
+    }
+  };
 
   return (
     <div className="space-y-6 animate-fade-in max-w-7xl mx-auto pb-12">
@@ -428,10 +602,10 @@ export default function AdminDashboard() {
       {/* Instant Action Feedback Toast */}
       {feedbackMsg && (
         <div
-          className={`p-3.5 rounded-xl border text-xs flex items-center justify-between animate-fade-in ${
+          className={`p-3.5 rounded-xl border text-xs flex items-center justify-between animate-fade-in shadow-xs ${
             feedbackMsg.type === 'success'
-              ? 'bg-emerald-950/50 border-brand-mustard/40 text-brand-mustard-hover'
-              : 'bg-red-950/50 border-red-500/40 text-red-300'
+              ? 'bg-emerald-50 border-emerald-300 text-emerald-900'
+              : 'bg-red-50 border-red-200 text-red-700'
           }`}
         >
           <span className="font-medium">
@@ -563,40 +737,143 @@ export default function AdminDashboard() {
       {activeTab === 'ORDERS' && (
         <div className="space-y-4">
           {/* Controls Bar */}
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3 p-4 rounded-2xl bg-brand-card/90 border border-brand-border">
-            {/* Filter Pills */}
-            <div className="flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
-              {[
-                { id: 'ALL', label: 'All Orders' },
-                { id: 'UNASSIGNED', label: `🚨 Unassigned (${data.metrics.unassignedOrdersCount})` },
-                { id: 'RIDER_DELIVERED', label: `⏳ Needs Verification (${data.metrics.needsVerificationCount})` },
-                { id: 'DELIVERED', label: '✓✓ Double Verified' },
-                { id: 'QUEUED', label: 'Queued' },
-              ].map((pill) => (
+          <div className="flex flex-col gap-3.5 p-4 rounded-2xl bg-brand-card/90 border border-brand-border">
+            {/* Row 1: Status Pills & Search Box */}
+            <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+              {/* Filter Pills */}
+              <div className="flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
+                {[
+                  { id: 'ALL', label: 'All Orders' },
+                  { id: 'UNASSIGNED', label: `🚨 Unassigned (${data.metrics.unassignedOrdersCount})` },
+                  { id: 'RIDER_DELIVERED', label: `⏳ Needs Verification (${data.metrics.needsVerificationCount})` },
+                  { id: 'DELIVERED', label: '✓✓ Double Verified' },
+                  { id: 'QUEUED', label: 'Queued' },
+                ].map((pill) => (
+                  <button
+                    key={pill.id}
+                    onClick={() => setOrderFilter(pill.id as any)}
+                    className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap min-h-[38px] ${
+                      orderFilter === pill.id
+                        ? 'bg-brand-mustard text-brand-forest shadow-sm'
+                        : 'bg-brand-cream text-brand-forest-muted hover:text-brand-forest border border-brand-border'
+                    }`}
+                  >
+                    {pill.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* Search Box & Export */}
+              <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 w-full sm:w-auto">
+                <div className="relative w-full sm:w-auto">
+                  <input
+                    type="text"
+                    placeholder="Search order, customer, phone, PIN..."
+                    value={orderSearch}
+                    onChange={(e) => setOrderSearch(e.target.value)}
+                    className="w-full sm:w-64 px-3.5 py-2 pl-8 rounded-xl bg-brand-cream border border-brand-border text-base sm:text-xs text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard min-h-[40px]"
+                  />
+                  <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-brand-forest-muted/70">🔍</span>
+                </div>
+
                 <button
-                  key={pill.id}
-                  onClick={() => setOrderFilter(pill.id as any)}
-                  className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap min-h-[38px] ${
-                    orderFilter === pill.id
-                      ? 'bg-brand-mustard text-brand-forest shadow-sm'
-                      : 'bg-brand-cream text-brand-forest-muted hover:text-brand-forest border border-brand-border'
-                  }`}
+                  type="button"
+                  onClick={handleExportCSV}
+                  className="px-3.5 py-2 rounded-xl text-xs font-bold bg-white hover:bg-brand-cream text-brand-forest border border-brand-border transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-xs min-h-[40px] whitespace-nowrap"
+                  title="Download CSV manifest of current filtered view"
                 >
-                  {pill.label}
+                  <span>📥</span>
+                  <span>Export Manifest</span>
                 </button>
-              ))}
+              </div>
             </div>
 
-            {/* Search Box */}
-            <div className="relative w-full sm:w-auto">
-              <input
-                type="text"
-                placeholder="Search order, customer, phone, PIN..."
-                value={orderSearch}
-                onChange={(e) => setOrderSearch(e.target.value)}
-                className="w-full sm:w-72 px-3.5 py-2 pl-8 rounded-xl bg-brand-cream border border-brand-border text-base sm:text-xs text-brand-forest placeholder:text-brand-forest-muted/70 focus:outline-none focus:border-brand-mustard min-h-[40px]"
-              />
-              <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-xs text-brand-forest-muted/70">🔍</span>
+            {/* Row 2: Date Order Placed Filter */}
+            <div className="flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-brand-border/70">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="text-xs font-bold text-brand-forest flex items-center gap-1.5">
+                  <span className="text-sm">📅</span>
+                  <span>Date Placed:</span>
+                </span>
+
+                {/* Quick Presets */}
+                <div className="flex flex-wrap gap-1.5">
+                  {[
+                    { id: 'ALL', label: 'All Dates' },
+                    { id: 'TODAY', label: 'Today' },
+                    { id: 'YESTERDAY', label: 'Yesterday' },
+                    { id: 'LAST_7_DAYS', label: 'Last 7 Days' },
+                  ].map((preset) => (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      onClick={() => {
+                        setPlacedDateFilter(preset.id as any);
+                        if (preset.id !== 'CUSTOM') setCustomPlacedDate('');
+                      }}
+                      className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                        placedDateFilter === preset.id && !customPlacedDate
+                          ? 'bg-brand-mustard text-brand-forest shadow-xs'
+                          : 'bg-brand-cream/80 text-brand-forest-muted hover:text-brand-forest border border-brand-border'
+                      }`}
+                    >
+                      {preset.label}
+                    </button>
+                  ))}
+                </div>
+
+                {/* Custom Date Input */}
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[11px] text-brand-forest-muted">or Pick Date:</span>
+                  <input
+                    type="date"
+                    value={customPlacedDate}
+                    onChange={(e) => {
+                      setCustomPlacedDate(e.target.value);
+                      if (e.target.value) {
+                        setPlacedDateFilter('CUSTOM');
+                      } else {
+                        setPlacedDateFilter('ALL');
+                      }
+                    }}
+                    className="px-2.5 py-1 rounded-lg text-xs bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard font-mono cursor-pointer"
+                  />
+                  {customPlacedDate && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setCustomPlacedDate('');
+                        setPlacedDateFilter('ALL');
+                      }}
+                      className="px-2 py-1 rounded-lg text-[11px] font-bold bg-brand-cream text-brand-forest-muted hover:text-red-500 border border-brand-border cursor-pointer"
+                      title="Clear custom date"
+                    >
+                      ✕ Clear
+                    </button>
+                  )}
+                </div>
+              </div>
+
+              {/* Filter feedback summary badge */}
+              {placedDateFilter !== 'ALL' && (
+                <div className="text-xs font-semibold text-brand-mustard bg-brand-mustard/15 px-3 py-1 rounded-full border border-brand-mustard/30 flex items-center gap-1.5">
+                  <span>Filtered:</span>
+                  <span className="font-bold font-mono text-brand-forest">{filteredOrders.length}</span>
+                  <span>order{filteredOrders.length === 1 ? '' : 's'} placed {
+                    placedDateFilter === 'TODAY'
+                      ? 'today'
+                      : placedDateFilter === 'YESTERDAY'
+                      ? 'yesterday'
+                      : placedDateFilter === 'LAST_7_DAYS'
+                      ? 'in last 7 days'
+                      : `on ${new Date(`${customPlacedDate}T00:00:00`).toLocaleDateString('en-IN', {
+                          day: 'numeric',
+                          month: 'short',
+                          year: 'numeric',
+                        })}`
+                  }</span>
+                </div>
+              )}
             </div>
           </div>
 
@@ -630,8 +907,27 @@ export default function AdminDashboard() {
                         <tr key={order.id} className="hover:bg-brand-cream/30 transition-colors">
                           {/* Order / Customer */}
                           <td className="p-3.5 align-top">
-                            <span className="font-mono font-bold text-brand-forest block text-xs">{shortId}</span>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedOrder(order)}
+                              className="font-mono font-bold text-brand-forest hover:text-brand-mustard text-xs text-left cursor-pointer underline decoration-dotted flex items-center gap-1"
+                              title="Click to view full manifest & customer inspector"
+                            >
+                              <span>{shortId}</span>
+                              <span className="text-[10px] text-brand-mustard">🔍</span>
+                            </button>
                             <span className="font-semibold text-brand-forest-muted block mt-0.5">{order.user.name}</span>
+                            {order.createdAt && (
+                              <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-brand-forest-muted/80 bg-brand-cream/60 px-1.5 py-0.5 rounded border border-brand-border/60 mt-1">
+                                🕒 Placed: {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                                  day: 'numeric',
+                                  month: 'short',
+                                })}, {new Date(order.createdAt).toLocaleTimeString('en-IN', {
+                                  hour: '2-digit',
+                                  minute: '2-digit',
+                                })}
+                              </span>
+                            )}
                             {order.user.phone ? (
                               <div className="flex items-center gap-1.5 mt-0.5">
                                 <span className="text-[11px] text-brand-forest-muted font-mono">📱 {order.user.phone}</span>
@@ -674,11 +970,16 @@ export default function AdminDashboard() {
                           {/* Diet Plan */}
                           <td className="p-3.5 align-top">
                             <span className="font-bold text-brand-forest block">
-                              {order.subscription?.product?.name || 'Fresh Bloom Prep'}
+                              {formatPlanName(order.subscription?.product?.name)}
                             </span>
                             <span className="text-[10px] text-brand-forest-muted block mt-0.5">
                               🔥 {order.subscription?.product?.calories || 520} kcal
                             </span>
+                            {order.user.dietaryPreference && (
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 mt-1">
+                                {order.user.dietaryPreference}
+                              </span>
+                            )}
                           </td>
 
                           {/* Slot & Note */}
@@ -686,9 +987,24 @@ export default function AdminDashboard() {
                             <span className="inline-block px-2 py-0.5 rounded bg-brand-cream text-brand-forest-muted font-mono text-[10px] mb-1">
                               ⏰ {order.deliveryTime || '07:00 AM'}
                             </span>
+                            {order.user.allergies && order.user.allergies !== 'None' && (
+                              <div
+                                onClick={() => setSelectedOrder(order)}
+                                className="mb-1 p-1.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-bold max-w-[170px] leading-tight flex items-start gap-1 cursor-pointer hover:bg-amber-100 transition-all shadow-xs"
+                                title={`Allergies: ${order.user.allergies} (Click to inspect)`}
+                              >
+                                <span>⚠️</span>
+                                <span className="truncate">Allergies: {order.user.allergies}</span>
+                              </div>
+                            )}
                             {order.deliveryNote && (
-                              <div className="p-1 rounded bg-brand-mustard/15 border border-brand-mustard/30 text-brand-forest-muted text-[10px] font-bold max-w-[160px]">
-                                ⚠️ {order.deliveryNote}
+                              <div
+                                onClick={() => setSelectedOrder(order)}
+                                className="p-1.5 rounded-lg bg-brand-mustard/10 border border-brand-mustard/30 text-brand-forest text-[10px] font-medium max-w-[170px] cursor-pointer hover:bg-brand-mustard/20 transition-all line-clamp-2"
+                                title="Click to view full note in inspector"
+                              >
+                                <span>📝 </span>
+                                <span>{order.deliveryNote}</span>
                               </div>
                             )}
                           </td>
@@ -733,8 +1049,8 @@ export default function AdminDashboard() {
                                     : isRiderDelivered
                                     ? 'bg-brand-mustard/20 text-brand-forest-muted border border-brand-mustard/40 animate-pulse'
                                     : order.status === 'FAILED'
-                                    ? 'bg-red-500/20 text-red-400 border border-red-500/30'
-                                    : 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
+                                    ? 'bg-red-500/20 text-red-600 border border-red-500/30'
+                                    : 'bg-blue-500/20 text-blue-600 border border-blue-500/30'
                                 }`}
                               >
                                 {isRiderDelivered
@@ -779,6 +1095,16 @@ export default function AdminDashboard() {
                           {/* Admin Verification Actions */}
                           <td className="p-3.5 align-top text-right">
                             <div className="flex items-center justify-end gap-1.5 flex-wrap">
+                              <button
+                                type="button"
+                                onClick={() => setSelectedOrder(order)}
+                                className="px-2 py-1 rounded-lg bg-white hover:bg-brand-cream text-brand-forest border border-brand-border font-bold text-[10px] cursor-pointer transition-all shadow-xs flex items-center gap-1"
+                                title="Inspect complete order details, allergies, address and rider"
+                              >
+                                <span>👁️</span>
+                                <span>Details</span>
+                              </button>
+
                               {order.subscription?.status === 'PENDING' && (
                                 <button
                                   type="button"
@@ -812,13 +1138,18 @@ export default function AdminDashboard() {
                                 </button>
                               )}
 
-                              {order.status !== 'DELIVERED' && (
+                              {order.status !== 'DELIVERED' && order.status !== 'FAILED' && (
                                 <button
                                   type="button"
-                                  onClick={() => handleUpdateStatus(order.id, 'FAILED')}
-                                  className="px-2 py-1.5 rounded-lg bg-brand-cream text-red-400 font-bold text-[10px] hover:bg-brand-border cursor-pointer transition-all"
+                                  onClick={() => {
+                                    setFailingOrder(order);
+                                    setFailReason('Customer unreachable / phone switched off');
+                                    setCustomFailReason('');
+                                  }}
+                                  className="px-2 py-1.5 rounded-lg bg-red-50 text-red-600 border border-red-200 font-bold text-[10px] hover:bg-red-100 cursor-pointer transition-all shadow-xs"
+                                  title="Mark order as failed with reason dialog"
                                 >
-                                  Fail
+                                  Fail ✕
                                 </button>
                               )}
                             </div>
@@ -1158,6 +1489,380 @@ export default function AdminDashboard() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* MODAL 1: ORDER DETAILS & MANIFEST INSPECTOR                           */}
+      {/* ===================================================================== */}
+      {selectedOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-2xl bg-white border border-[#E6E0CF] rounded-3xl p-6 sm:p-7 shadow-2xl space-y-5 my-8 text-brand-forest">
+            {/* Header */}
+            <div className="flex items-start justify-between border-b border-[#E6E0CF] pb-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="font-mono font-bold text-xs px-2.5 py-0.5 rounded-full bg-brand-mustard/15 text-brand-forest border border-brand-mustard/30">
+                    ORD-{selectedOrder.id.slice(-5).toUpperCase()}
+                  </span>
+                  <span
+                    className={`px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider ${
+                      selectedOrder.status === 'DELIVERED'
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-300'
+                        : selectedOrder.status === 'RIDER_DELIVERED'
+                        ? 'bg-amber-50 text-amber-800 border border-amber-300 animate-pulse'
+                        : selectedOrder.status === 'FAILED'
+                        ? 'bg-red-50 text-red-700 border border-red-200'
+                        : 'bg-blue-50 text-blue-700 border border-blue-200'
+                    }`}
+                  >
+                    {selectedOrder.status === 'RIDER_DELIVERED'
+                      ? '🚴 Dropped (Pending Double-Verification)'
+                      : selectedOrder.status === 'DELIVERED'
+                      ? '✓✓ Double Verified'
+                      : selectedOrder.status}
+                  </span>
+                </div>
+                <h2 className="text-xl font-black text-brand-forest">Order Manifest Inspector</h2>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
+                  Placed: {selectedOrder.createdAt ? new Date(selectedOrder.createdAt).toLocaleString('en-IN') : 'N/A'}
+                </p>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setSelectedOrder(null)}
+                className="p-2 rounded-xl text-brand-forest-muted hover:text-brand-forest hover:bg-brand-cream transition-colors text-sm font-bold cursor-pointer"
+                title="Close dialog"
+              >
+                ✕
+              </button>
+            </div>
+
+            {/* Allergies / Special Exclusions Banner (Priority Alert) */}
+            {((selectedOrder.user.allergies && selectedOrder.user.allergies !== 'None') || selectedOrder.deliveryNote) && (
+              <div className="p-4 rounded-2xl bg-amber-50 border border-amber-300 shadow-xs space-y-1.5">
+                <div className="flex items-center gap-2">
+                  <span className="text-base">⚠️</span>
+                  <h4 className="text-xs font-black uppercase tracking-wider text-amber-900">
+                    Kitchen Prep &amp; Allergy Caution
+                  </h4>
+                </div>
+                {selectedOrder.user.allergies && selectedOrder.user.allergies !== 'None' && (
+                  <p className="text-xs font-bold text-amber-950">
+                    Customer Allergies: <span className="underline decoration-amber-500 font-extrabold">{selectedOrder.user.allergies}</span>
+                  </p>
+                )}
+                {selectedOrder.deliveryNote && (
+                  <p className="text-xs text-amber-900 leading-relaxed font-medium">
+                    Delivery &amp; Customer Note: {selectedOrder.deliveryNote}
+                  </p>
+                )}
+              </div>
+            )}
+
+            {/* Grid: Customer & Delivery Details */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Customer Box */}
+              <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E6E0CF] space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block">
+                  Customer Profile
+                </span>
+                <p className="text-sm font-bold text-brand-forest">{selectedOrder.user.name}</p>
+                <div className="flex items-center gap-2 text-xs font-mono text-brand-forest">
+                  <span>📱 {selectedOrder.user.phone || 'No phone'}</span>
+                  {selectedOrder.user.phone && (
+                    <a
+                      href={`https://wa.me/91${selectedOrder.user.phone.replace(/\D/g, '')}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="px-2 py-0.5 rounded-md text-[10px] font-bold bg-emerald-600 text-white hover:bg-emerald-700 transition-colors"
+                    >
+                      WhatsApp 💬
+                    </a>
+                  )}
+                </div>
+                <p className="text-xs text-brand-forest-muted font-mono">{selectedOrder.user.email}</p>
+                <div className="flex items-center gap-2 pt-1 border-t border-[#E6E0CF]/60 text-[11px]">
+                  <span className="px-2 py-0.5 rounded bg-white border border-[#E6E0CF] font-bold text-brand-forest">
+                    {selectedOrder.user.dietaryPreference || 'VEG'}
+                  </span>
+                  <span className="text-brand-forest-muted">
+                    Goal: {selectedOrder.user.fitnessGoal || 'FITNESS'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Destination Box */}
+              <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E6E0CF] space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block">
+                  Delivery Destination
+                </span>
+                <p className="text-xs font-medium text-brand-forest leading-relaxed">
+                  {selectedOrder.address.street}
+                </p>
+                <p className="text-xs font-mono font-bold text-brand-mustard">
+                  PIN: {selectedOrder.address.pincode} · {selectedOrder.address.city}
+                </p>
+                {selectedOrder.address.mapsUrl && (
+                  <div className="pt-1">
+                    <a
+                      href={selectedOrder.address.mapsUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-bold bg-white hover:bg-brand-cream border border-[#E6E0CF] text-brand-forest transition-colors shadow-xs"
+                    >
+                      <span>🗺️</span>
+                      <span>Open in Google Maps →</span>
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {/* Grid: Plan & Assigned Fleet */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {/* Diet Plan Box */}
+              <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E6E0CF] space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block">
+                  Diet Plan &amp; Slot
+                </span>
+                <p className="text-sm font-black text-brand-forest">
+                  {formatPlanName(selectedOrder.subscription?.product?.name)}
+                </p>
+                <div className="flex items-center gap-3 text-xs text-brand-forest-muted">
+                  <span>🔥 {selectedOrder.subscription?.product?.calories || 520} kcal</span>
+                  <span>⏰ Slot: {selectedOrder.deliveryTime || '07:00 AM'}</span>
+                </div>
+                <p className="text-xs font-mono text-brand-forest-muted">
+                  Deliveries remaining: {selectedOrder.subscription?.deliveriesLeft ?? 0}
+                </p>
+                {selectedOrder.subscription?.utr && (
+                  <p className="text-xs font-mono text-brand-forest bg-white px-2 py-1 rounded border border-[#E6E0CF]">
+                    Payment UTR: {selectedOrder.subscription.utr}
+                  </p>
+                )}
+              </div>
+
+              {/* Assigned Rider & Fleet */}
+              <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#E6E0CF] space-y-2">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-brand-forest-muted block">
+                  Assigned Fleet Rider
+                </span>
+                <div className="space-y-2">
+                  <select
+                    value={selectedOrder.riderId || ''}
+                    onChange={(e) => {
+                      const newRiderId = e.target.value;
+                      handleAssignRider(selectedOrder.id, newRiderId);
+                      const riderObj = data.riders.find((r) => r.id === newRiderId) || null;
+                      setSelectedOrder((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              riderId: newRiderId || null,
+                              rider: riderObj
+                                ? { id: riderObj.id, name: riderObj.name, phone: riderObj.phone, vehicleType: riderObj.vehicleType }
+                                : null,
+                            }
+                          : null
+                      );
+                    }}
+                    className="w-full px-3 py-2 rounded-xl bg-white border border-[#E6E0CF] text-xs font-bold text-brand-forest focus:outline-none focus:border-brand-mustard shadow-xs"
+                  >
+                    <option value="">🚨 Unassigned (No Rider)</option>
+                    {data.riders.map((r) => (
+                      <option key={r.id} value={r.id}>
+                        {r.name} ({r.vehicleType || 'Bike'} - {r.phone})
+                      </option>
+                    ))}
+                  </select>
+
+                  {selectedOrder.rider && (
+                    <div className="flex items-center justify-between text-xs pt-1">
+                      <span className="font-mono text-brand-forest">📱 {selectedOrder.rider.phone}</span>
+                      <a
+                        href={`https://wa.me/91${selectedOrder.rider.phone.replace(/\D/g, '')}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-2 py-0.5 rounded text-[10px] font-bold bg-white border border-[#E6E0CF] text-brand-forest hover:text-brand-mustard"
+                      >
+                        WhatsApp Rider 💬
+                      </a>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Footer Quick Actions */}
+            <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E6E0CF]">
+              <div className="flex items-center gap-2">
+                {selectedOrder.status !== 'DELIVERED' && selectedOrder.status !== 'FAILED' && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setFailingOrder(selectedOrder);
+                      setFailReason('Customer unreachable / phone switched off');
+                      setCustomFailReason('');
+                    }}
+                    className="px-3.5 py-2 rounded-xl text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-all cursor-pointer shadow-xs"
+                  >
+                    Mark Failed ✕
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-2">
+                {selectedOrder.status === 'RIDER_DELIVERED' && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await handleDoubleVerify(selectedOrder.id);
+                      setSelectedOrder((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              status: 'DELIVERED',
+                              adminVerifiedAt: new Date().toISOString(),
+                              deliveredAt: prev.deliveredAt || new Date().toISOString(),
+                            }
+                          : null
+                      );
+                    }}
+                    className="px-4 py-2 rounded-xl text-xs font-black bg-gradient-to-r from-brand-mustard to-teal-500 text-brand-forest hover:opacity-90 shadow-md cursor-pointer transition-all flex items-center gap-1.5"
+                  >
+                    <span>Double-Mark Verified</span>
+                    <span>✓✓</span>
+                  </button>
+                )}
+
+                {selectedOrder.status === 'QUEUED' && (
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      await handleUpdateStatus(selectedOrder.id, 'DELIVERED');
+                      setSelectedOrder((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              status: 'DELIVERED',
+                              deliveredAt: new Date().toISOString(),
+                              adminVerifiedAt: new Date().toISOString(),
+                            }
+                          : null
+                      );
+                    }}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-mustard hover:bg-brand-mustard-hover text-white transition-all cursor-pointer shadow-sm"
+                  >
+                    Mark Delivered ✓
+                  </button>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => setSelectedOrder(null)}
+                  className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all cursor-pointer shadow-xs"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* MODAL 2: CONFIRM ORDER FAILURE WITH REASON                            */}
+      {/* ===================================================================== */}
+      {failingOrder && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto animate-fade-in">
+          <div className="relative w-full max-w-md bg-white border border-[#E6E0CF] rounded-3xl p-6 shadow-2xl space-y-4 my-8 text-brand-forest">
+            <div className="flex items-start justify-between border-b border-[#E6E0CF] pb-3">
+              <div>
+                <h3 className="text-base font-black text-red-600 flex items-center gap-1.5">
+                  <span>⚠️</span>
+                  <span>Mark Order as Failed</span>
+                </h3>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
+                  ORD-{failingOrder.id.slice(-5).toUpperCase()} for {failingOrder.user.name}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setFailingOrder(null)}
+                className="text-brand-forest-muted hover:text-brand-forest text-sm font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
+                Reason for delivery failure:
+              </label>
+              {[
+                'Customer unreachable / phone switched off',
+                'Door locked / gate security refused entry',
+                'Customer requested delivery reschedule',
+                'Incorrect or incomplete address provided',
+                'Kitchen or food prep delay',
+                'OTHER',
+              ].map((reason) => (
+                <label
+                  key={reason}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${
+                    failReason === reason
+                      ? 'bg-amber-50 border-brand-mustard text-brand-forest'
+                      : 'bg-[#FAF7F2] border-[#E6E0CF] text-brand-forest-muted hover:bg-brand-cream'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="failReason"
+                    value={reason}
+                    checked={failReason === reason}
+                    onChange={(e) => setFailReason(e.target.value)}
+                    className="accent-brand-mustard"
+                  />
+                  <span>{reason === 'OTHER' ? 'Other custom reason (type below)' : reason}</span>
+                </label>
+              ))}
+
+              {failReason === 'OTHER' && (
+                <textarea
+                  value={customFailReason}
+                  onChange={(e) => setCustomFailReason(e.target.value)}
+                  placeholder="Type specific failure reason here..."
+                  rows={2}
+                  className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E6E0CF] text-xs text-brand-forest placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-brand-mustard mt-1"
+                />
+              )}
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E6E0CF]">
+              <button
+                type="button"
+                disabled={submittingFail}
+                onClick={() => setFailingOrder(null)}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border cursor-pointer transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={submittingFail}
+                onClick={handleConfirmFail}
+                className="px-4 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-sm transition-all disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {submittingFail ? (
+                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span>Confirm Failure</span>
+                )}
+              </button>
+            </div>
           </div>
         </div>
       )}

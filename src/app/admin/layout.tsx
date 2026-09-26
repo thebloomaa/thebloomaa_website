@@ -43,7 +43,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // Loading state
   if (status === 'loading') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#070b14] text-brand-forest">
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F5EE] text-brand-forest">
         <div className="text-center space-y-3">
           <div className="w-10 h-10 border-3 border-brand-mustard border-t-transparent rounded-full animate-spin mx-auto" />
           <p className="text-xs text-brand-forest-muted font-mono">Verifying Admin Session...</p>
@@ -55,15 +55,15 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   // If authenticated but not admin, prevent render while redirecting
   if (status === 'authenticated' && (session?.user as any)?.role !== 'ADMIN') {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#070b14] text-brand-forest">
-        <div className="text-center space-y-3 p-6 rounded-2xl bg-red-950/40 border border-red-500/40 max-w-sm">
-          <p className="text-sm font-bold text-red-300">Access Restricted</p>
+      <div className="min-h-screen flex items-center justify-center bg-[#F8F5EE] text-brand-forest">
+        <div className="text-center space-y-3 p-6 rounded-2xl bg-white border border-red-500/30 shadow-xl max-w-sm">
+          <p className="text-sm font-bold text-red-600">Access Restricted</p>
           <p className="text-xs text-brand-forest-muted">Your account is not an authorized Administrator.</p>
           <button
             onClick={() => signOut({ callbackUrl: '/admin/login' })}
-            className="px-4 py-2 rounded-xl text-xs font-bold bg-red-500 text-brand-forest cursor-pointer"
+            className="px-4 py-2 rounded-xl text-xs font-bold bg-red-500 text-white cursor-pointer"
           >
-            Sign Out & Switch Account
+            Sign Out &amp; Switch Account
           </button>
         </div>
       </div>
@@ -71,11 +71,11 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   }
 
   return (
-    <div className="min-h-screen flex bg-[#070b14] text-brand-forest">
+    <div className="min-h-screen flex bg-[#F8F5EE] text-brand-forest">
       {/* Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 p-5 fixed top-0 left-0 h-full z-40 bg-[#0B1120] border-r border-brand-border">
+      <aside className="hidden md:flex flex-col w-64 p-5 fixed top-0 left-0 h-full z-40 bg-white border-r border-[#E6E0CF] shadow-xs">
         <div className="flex items-center gap-2.5 mb-8">
-          <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-brand-mustard/70 shrink-0">
+          <div className="relative w-9 h-9 rounded-xl overflow-hidden border border-brand-mustard/40 shrink-0 shadow-xs">
             <Image
               src="/logo.jpg"
               alt="thebloomaa"
@@ -98,8 +98,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                 href={item.href}
                 className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all ${
                   isActive
-                    ? 'bg-brand-mustard/10 text-brand-forest-muted border border-brand-mustard/30 shadow-sm shadow-brand-mustard/10'
-                    : 'text-brand-forest-muted hover:text-brand-forest hover:bg-brand-card border border-transparent'
+                    ? 'bg-brand-mustard/15 text-brand-mustard-hover border border-brand-mustard/30 shadow-xs'
+                    : 'text-brand-forest-muted hover:text-brand-forest hover:bg-brand-cream/80 border border-transparent'
                 }`}
               >
                 <span className="text-base">{item.icon}</span>
@@ -111,10 +111,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
 
         {/* Admin Session Profile & Logout */}
         <div className="pt-4 mt-4 border-t border-brand-border space-y-3">
-          <div className="p-3 rounded-xl bg-brand-card/80 border border-brand-border/80">
+          <div className="p-3 rounded-xl bg-brand-cream/70 border border-brand-border/80">
             <div className="flex items-center justify-between mb-1">
               <span className="text-[10px] uppercase font-black text-brand-mustard tracking-wider">Logged In</span>
-              <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
             </div>
             <p className="text-xs font-mono font-medium text-brand-forest truncate">
               {session?.user?.email || 'Authorized Administrator'}
@@ -131,7 +131,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
             </Link>
             <button
               onClick={() => signOut({ callbackUrl: '/admin/login' })}
-              className="text-red-400 hover:text-red-300 font-bold transition-colors text-[11px] cursor-pointer flex items-center gap-1"
+              className="text-red-500 hover:text-red-600 font-bold transition-colors text-[11px] cursor-pointer flex items-center gap-1"
             >
               <span>🚪</span>
               <span>Sign Out</span>
@@ -141,10 +141,10 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
       </aside>
 
       {/* Mobile Top Bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-[#0B1120]/95 backdrop-blur-md border-b border-brand-border">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-40 h-14 flex items-center justify-between px-4 bg-white/95 backdrop-blur-md border-b border-[#E6E0CF]">
         <div className="flex items-center gap-2">
           <span className="text-sm font-black text-brand-forest">thebloomaa</span>
-          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-mustard/20 text-brand-forest-muted uppercase">
+          <span className="text-[9px] font-bold px-1.5 py-0.5 rounded bg-brand-mustard/20 text-brand-mustard uppercase">
             Admin
           </span>
         </div>
@@ -154,7 +154,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               key={item.href}
               href={item.href}
               className={`w-8 h-8 rounded-lg flex items-center justify-center text-xs ${
-                pathname === item.href ? 'bg-brand-mustard/20 text-brand-forest-muted' : 'text-brand-forest-muted'
+                pathname === item.href ? 'bg-brand-mustard/20 text-brand-mustard-hover' : 'text-brand-forest-muted'
               }`}
             >
               {item.icon}
@@ -162,7 +162,7 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
           ))}
           <button
             onClick={() => signOut({ callbackUrl: '/admin/login' })}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-red-400 ml-1"
+            className="w-8 h-8 rounded-lg flex items-center justify-center text-xs text-red-500 ml-1"
             title="Sign Out"
           >
             🚪

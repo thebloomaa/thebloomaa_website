@@ -71,7 +71,7 @@ export default function NutritionAndPlansSection() {
                     <div className="w-full bg-[#FDE3B2] rounded-full h-2 overflow-hidden my-2">
                       <div
                         className="bg-[#D97706] h-full rounded-full transition-all duration-500"
-                        style={{ width: `${Math.max(6, pricing.percentFilled)}%` }}
+                        style={{ width: `${pricing.percentFilled}%` }}
                       />
                     </div>
                     <div className="flex items-center justify-between text-[10px] text-[#5E7A67] font-semibold">

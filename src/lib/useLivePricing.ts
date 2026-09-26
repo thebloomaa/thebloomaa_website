@@ -12,6 +12,9 @@ export interface LivePricing {
   isEarlyBird: boolean;
   percentFilled: number;
   isLoading: boolean;
+  isLocked: boolean;
+  opensAt: string;
+  opensAtLabel: string;
 }
 
 const DEFAULT: LivePricing = {
@@ -24,6 +27,9 @@ const DEFAULT: LivePricing = {
   isEarlyBird: true,
   percentFilled: 0,
   isLoading: true,
+  isLocked: true,
+  opensAt: '2026-09-26T18:30:00.000Z',
+  opensAtLabel: '12:00 AM Midnight Tonight (Patna Time)',
 };
 
 export function useLivePricing(): LivePricing {

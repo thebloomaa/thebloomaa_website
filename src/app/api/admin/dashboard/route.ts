@@ -5,13 +5,16 @@ import { authOptions } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session || !session.user || (session.user as any).role !== 'ADMIN') {
       return NextResponse.json({ error: 'Unauthorized: Admin privileges required' }, { status: 401 });
     }
+
+    const { searchParams } = new URL(request.url);
+    const placedDate = searchParams.get('placedDate');
 
     const today = new Date();
     today.setHours(0, 0, 0, 0);
@@ -82,11 +85,22 @@ export async function GET() {
     });
 
     // 2. Systematic Orders List (with rider assignments, verification timestamps & status)
+    const orderWhere: any = {};
+    if (placedDate) {
+      const startOfDay = new Date(`${placedDate}T00:00:00.000Z`);
+      const endOfDay = new Date(`${placedDate}T23:59:59.999Z`);
+      orderWhere.createdAt = {
+        gte: startOfDay,
+        lte: endOfDay,
+      };
+    }
+
     const rawOrders = await prisma.order.findMany({
-      take: 100,
+      where: orderWhere,
+      take: 200,
       orderBy: { createdAt: 'desc' },
       include: {
-        user: { select: { id: true, name: true, phone: true, email: true } },
+        user: { select: { id: true, name: true, phone: true, email: true, allergies: true, fitnessGoal: true, dietaryPreference: true } },
         address: true,
         subscription: {
           include: {
@@ -115,6 +129,7 @@ export async function GET() {
       return {
         id: o.id,
         status: o.status,
+        createdAt: o.createdAt.toISOString(),
         deliveryDate: o.deliveryDate.toISOString(),
         deliveryTime: o.deliveryTime || '07:00 AM',
         deliveryNote: o.deliveryNote,
@@ -126,6 +141,9 @@ export async function GET() {
           name: o.user.name || 'Patna Customer',
           phone: o.user.phone || '',
           email: o.user.email,
+          allergies: o.user.allergies || null,
+          fitnessGoal: o.user.fitnessGoal || null,
+          dietaryPreference: o.user.dietaryPreference || null,
         },
         address: {
           id: o.address?.id,

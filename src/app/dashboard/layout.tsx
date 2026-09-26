@@ -4,7 +4,7 @@ import React from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 
 const navItems = [
   { href: '/dashboard', label: 'Overview', icon: '📊' },
@@ -62,13 +62,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           })}
         </nav>
 
-        {/* Live User Session */}
-        <div className="pt-4 border-t border-brand-border">
+        {/* Live User Session & Logout */}
+        <div className="pt-4 border-t border-brand-border space-y-3">
           <div className="flex items-center gap-3 px-2">
             <div className="w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold bg-brand-mustard/20 text-brand-mustard border border-brand-mustard/30 shrink-0">
               {(session?.user?.name?.[0] || session?.user?.email?.[0] || 'U').toUpperCase()}
             </div>
-            <div className="overflow-hidden">
+            <div className="overflow-hidden flex-1">
               <p className="text-sm font-semibold text-brand-forest truncate">
                 {session?.user?.name || 'Patna Subscriber'}
               </p>
@@ -77,6 +77,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </p>
             </div>
           </div>
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="w-full py-2 px-3 rounded-xl text-xs font-bold text-red-600 hover:text-red-700 bg-red-50 hover:bg-red-100 border border-red-200 transition-all flex items-center justify-center gap-1.5 cursor-pointer shadow-2xs"
+          >
+            <span>🚪</span>
+            <span>Log Out</span>
+          </button>
         </div>
       </aside>
 
@@ -111,6 +119,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </Link>
             );
           })}
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="px-2.5 py-1 rounded-lg text-xs font-bold text-red-600 bg-red-50 border border-red-200 ml-1 cursor-pointer"
+            title="Log Out"
+          >
+            Log Out
+          </button>
         </div>
       </div>
 

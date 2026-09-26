@@ -76,7 +76,7 @@ export default function AdminZonesPage() {
           <p className="text-sm" style={{ color: 'var(--text-muted)' }}>Manage which pincodes you deliver to.</p>
         </div>
         <button onClick={() => setShowForm(!showForm)}
-          className="px-4 py-2 rounded-xl text-sm font-bold text-brand-forest"
+          className="px-4 py-2 rounded-xl text-sm font-bold text-white shadow-sm"
           style={{ background: showForm ? 'var(--danger)' : 'var(--brand-primary)' }}>
           {showForm ? '✕ Cancel' : '+ Add Zone'}
         </button>
@@ -92,7 +92,7 @@ export default function AdminZonesPage() {
             <input type="text" value={form.city} disabled className="px-4 py-2.5 rounded-xl text-sm opacity-60" style={inputStyle} />
             <input type="text" value={form.state} disabled className="px-4 py-2.5 rounded-xl text-sm opacity-60" style={inputStyle} />
           </div>
-          <button onClick={handleAdd} disabled={!form.pincode || !form.neighborhood} className="px-6 py-2.5 rounded-xl text-sm font-bold text-brand-forest disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
+          <button onClick={handleAdd} disabled={!form.pincode || !form.neighborhood} className="px-6 py-2.5 rounded-xl text-sm font-bold text-white shadow-sm disabled:opacity-40" style={{ background: 'var(--brand-primary)' }}>
             Add Zone
           </button>
         </div>

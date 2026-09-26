@@ -14,17 +14,26 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
+    const placedDate = searchParams.get('placedDate');
 
     const where: any = {};
     if (status && status !== 'ALL') {
       where.status = status;
+    }
+    if (placedDate) {
+      const startOfDay = new Date(`${placedDate}T00:00:00.000Z`);
+      const endOfDay = new Date(`${placedDate}T23:59:59.999Z`);
+      where.createdAt = {
+        gte: startOfDay,
+        lte: endOfDay,
+      };
     }
 
     const [orders, allRiders] = await Promise.all([
       prisma.order.findMany({
         where,
         include: {
-          user: { select: { id: true, name: true, phone: true, email: true } },
+          user: { select: { id: true, name: true, phone: true, email: true, allergies: true, fitnessGoal: true, dietaryPreference: true } },
           address: true,
           subscription: {
             include: {
@@ -64,7 +73,7 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { orderId, status, riderId, activateSubscription, doubleVerify } = body;
+    const { orderId, status, riderId, activateSubscription, doubleVerify, deliveryNote } = body;
 
     if (!orderId) {
       return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
@@ -84,6 +93,7 @@ export async function PATCH(request: Request) {
       data.deliveredAt = new Date();
     }
     if (riderId !== undefined) data.riderId = riderId || null;
+    if (deliveryNote !== undefined) data.deliveryNote = deliveryNote;
 
     const order = await prisma.order.update({
       where: { id: orderId },

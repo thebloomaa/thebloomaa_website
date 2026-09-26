@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useSession } from 'next-auth/react';
+import { useSession, signOut } from 'next-auth/react';
 import { useBundleStore } from '@/store/useBundleStore';
 import PincodeModal from '@/components/PincodeModal';
 import TopAnnouncementBar from '@/components/TopAnnouncementBar';
@@ -99,14 +99,25 @@ export default function Navbar() {
                 </span>
               </button>
 
-              {/* User Session or Login */}
+              {/* User Session or Login with Logout */}
               {session?.user ? (
-                <Link
-                  href="/dashboard"
-                  className="h-10 px-4 text-xs font-semibold rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#F3EFE6] transition-all flex items-center justify-center whitespace-nowrap"
-                >
-                  Dashboard
-                </Link>
+                <div className="flex items-center gap-1.5">
+                  <Link
+                    href="/dashboard"
+                    className="h-10 px-3.5 text-xs font-bold rounded-full bg-white border border-[#DDD5C0] text-[#0D2818] hover:bg-[#F3EFE6] transition-all flex items-center justify-center gap-1.5 whitespace-nowrap shadow-2xs"
+                  >
+                    <span>👤</span>
+                    <span>Dashboard</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => signOut({ callbackUrl: '/' })}
+                    className="h-10 px-3 text-xs font-bold rounded-full bg-white hover:bg-red-50 border border-[#DDD5C0] hover:border-red-200 text-red-600 transition-all flex items-center justify-center gap-1 cursor-pointer whitespace-nowrap shadow-2xs"
+                    title="Log out of your account"
+                  >
+                    <span>Log Out</span>
+                  </button>
+                </div>
               ) : (
                 <Link
                   href="/login"
@@ -117,13 +128,13 @@ export default function Navbar() {
               )}
 
               {/* Primary Pre-Book Button */}
-              <Link
-                href="/checkout?plan=trial"
+              <a
+                href="/#plans"
                 className="h-10 px-5 rounded-full text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all hover:scale-105 active:scale-95 shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
               >
                 <span>Pre-Book</span>
                 <span className="text-sm">→</span>
-              </Link>
+              </a>
             </div>
 
             {/* Mobile hamburger button */}
@@ -187,21 +198,45 @@ export default function Navbar() {
               <a href="/#reviews" onClick={() => setMobileOpen(false)} className="py-1">Reviews</a>
             </div>
 
-            <div className="pt-2 flex gap-2">
-              <Link
-                href="/login"
+            <div className="pt-2 flex flex-col gap-2">
+              {session?.user ? (
+                <div className="flex gap-2">
+                  <Link
+                    href="/dashboard"
+                    onClick={() => setMobileOpen(false)}
+                    className="flex-1 py-3 rounded-full text-center text-xs font-bold text-[#0D2818] bg-white border border-[#DDD5C0] flex items-center justify-center gap-1.5 shadow-2xs"
+                  >
+                    <span>👤</span>
+                    <span>Dashboard</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileOpen(false);
+                      signOut({ callbackUrl: '/' });
+                    }}
+                    className="flex-1 py-3 rounded-full text-center text-xs font-bold text-red-600 bg-red-50 border border-red-200 cursor-pointer shadow-2xs"
+                  >
+                    Log Out
+                  </button>
+                </div>
+              ) : (
+                <Link
+                  href="/login"
+                  onClick={() => setMobileOpen(false)}
+                  className="w-full py-3 rounded-full text-center text-xs font-semibold text-[#0D2818] bg-white border border-[#DDD5C0]"
+                >
+                  Log In
+                </Link>
+              )}
+              <a
+                href="/#plans"
                 onClick={() => setMobileOpen(false)}
-                className="flex-1 py-3 rounded-full text-center text-xs font-semibold text-[#0D2818] bg-white border border-[#DDD5C0]"
+                className="w-full py-3 rounded-full text-center text-xs font-bold text-white bg-[#0F3826] shadow-sm flex items-center justify-center gap-1"
               >
-                Log In
-              </Link>
-              <Link
-                href="/checkout?plan=trial"
-                onClick={() => setMobileOpen(false)}
-                className="flex-1 py-3 rounded-full text-center text-xs font-bold text-white bg-[#0F3826]"
-              >
-                Pre-Book →
-              </Link>
+                <span>View Plans &amp; Pre-Book</span>
+                <span>→</span>
+              </a>
             </div>
           </div>
         )}

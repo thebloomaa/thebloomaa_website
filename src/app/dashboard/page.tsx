@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
+import { signOut } from 'next-auth/react';
 
 // Generate calendar from actual orders
 const generateDeliveryDays = (orders: any[]) => {
@@ -255,13 +256,22 @@ export default function DashboardPage() {
       <div className="max-w-4xl mx-auto text-center p-12">
         <h1 className="text-2xl font-black mb-4">No Active Subscription</h1>
         <p className="text-[var(--text-muted)] mb-8">You don&apos;t have any active diet plans right now.</p>
-        <Link
-          href="/#trial"
-          className="inline-block px-6 py-3 rounded-xl font-bold text-brand-forest transition-all hover:scale-105"
-          style={{ background: 'var(--brand-primary)' }}
-        >
-          Explore Diet Plans &amp; 7D Trial
-        </Link>
+        <div className="flex items-center justify-center gap-3">
+          <Link
+            href="/#plans"
+            className="inline-block px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105"
+            style={{ background: '#D97706' }}
+          >
+            Explore Diet Plans
+          </Link>
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="px-5 py-3 rounded-xl font-bold text-red-600 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer text-sm"
+          >
+            🚪 Log Out
+          </button>
+        </div>
       </div>
     );
   }
@@ -278,16 +288,30 @@ export default function DashboardPage() {
           <p className="text-xs text-brand-forest-muted mt-1">Manage your living diet subscription and morning deliveries.</p>
         </div>
 
-        {/* WhatsApp Concierge Trigger */}
-        <a
-          href="https://wa.me/919999999999?text=Hi%20BlooMaa%20Team,%20I%20have%20a%20question%20about%20my%20morning%20diet%20delivery"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard-hover hover:bg-brand-mustard/25 transition-all w-fit cursor-pointer"
-        >
-          <span>💬</span>
-          <span>WhatsApp Concierge</span>
-        </a>
+        <div className="flex items-center gap-2">
+          {/* WhatsApp Concierge Trigger */}
+          <a
+            href="https://wa.me/919117501404?text=Hi%20Thebloomaa%20Team,%20I%20have%20a%20question%20about%20my%20morning%20diet%20delivery"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs font-bold bg-brand-mustard/15 border border-brand-mustard/30 text-brand-mustard-hover hover:bg-brand-mustard/25 transition-all w-fit cursor-pointer"
+          >
+            <span>💬</span>
+            <span className="hidden sm:inline">WhatsApp Concierge</span>
+            <span className="sm:hidden">Support</span>
+          </a>
+
+          {/* User Log Out button */}
+          <button
+            type="button"
+            onClick={() => signOut({ callbackUrl: '/' })}
+            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold bg-red-500/10 hover:bg-red-500/20 text-red-600 border border-red-500/20 transition-all cursor-pointer shadow-2xs"
+            title="Sign out of user account"
+          >
+            <span>🚪</span>
+            <span>Log Out</span>
+          </button>
+        </div>
       </div>
 
       {/* Global Feedback Alert */}

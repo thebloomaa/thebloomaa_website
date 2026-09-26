@@ -10,6 +10,8 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [statusFilter, setStatusFilter] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
+  const [placedDateFilter, setPlacedDateFilter] = useState<'ALL' | 'TODAY' | 'YESTERDAY' | 'LAST_7_DAYS' | 'CUSTOM'>('ALL');
+  const [customPlacedDate, setCustomPlacedDate] = useState('');
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [autoAssignMsg, setAutoAssignMsg] = useState<string | null>(null);
 
@@ -148,6 +150,38 @@ export default function AdminOrdersPage() {
   };
 
   const filteredOrders = orders.filter((o) => {
+    // Placed Date Filter
+    if (placedDateFilter !== 'ALL') {
+      if (!o.createdAt) return false;
+      const orderDate = new Date(o.createdAt);
+      const now = new Date();
+
+      const getLocalDateStr = (d: Date) => {
+        const year = d.getFullYear();
+        const month = String(d.getMonth() + 1).padStart(2, '0');
+        const day = String(d.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+      };
+
+      const orderDayStr = getLocalDateStr(orderDate);
+      const todayStr = getLocalDateStr(now);
+
+      if (placedDateFilter === 'TODAY') {
+        if (orderDayStr !== todayStr) return false;
+      } else if (placedDateFilter === 'YESTERDAY') {
+        const yesterday = new Date(now);
+        yesterday.setDate(now.getDate() - 1);
+        if (orderDayStr !== getLocalDateStr(yesterday)) return false;
+      } else if (placedDateFilter === 'LAST_7_DAYS') {
+        const sevenDaysAgo = new Date(now);
+        sevenDaysAgo.setDate(now.getDate() - 7);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+        if (orderDate < sevenDaysAgo) return false;
+      } else if (placedDateFilter === 'CUSTOM' && customPlacedDate) {
+        if (orderDayStr !== customPlacedDate) return false;
+      }
+    }
+
     if (!searchQuery.trim()) return true;
     const q = searchQuery.toLowerCase();
     return (
@@ -158,6 +192,15 @@ export default function AdminOrdersPage() {
       (o.subscription?.product?.name && o.subscription.product.name.toLowerCase().includes(q))
     );
   });
+
+  const formatPlanName = (rawName?: string | null) => {
+    if (!rawName) return 'Fresh Bloom Prep';
+    return rawName
+      .replace(/7D\s*Trial/gi, 'Trial')
+      .replace(/7-DAY\s*WEEKLY\s*PLAN\s*\(7\s*Days\)/gi, 'Weekly Plan')
+      .replace(/7-Day/gi, 'Weekly')
+      .trim();
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
@@ -198,9 +241,9 @@ export default function AdminOrdersPage() {
 
       {/* Auto-assign feedback banner */}
       {autoAssignMsg && (
-        <div className="p-3.5 rounded-xl bg-emerald-950/40 border border-brand-mustard/40 text-brand-mustard-hover text-xs flex items-center justify-between animate-fade-in">
-          <span>✓ {autoAssignMsg}</span>
-          <button onClick={() => setAutoAssignMsg(null)} className="font-bold text-brand-mustard cursor-pointer">✕</button>
+        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-300 text-emerald-900 text-xs flex items-center justify-between animate-fade-in shadow-xs">
+          <span className="font-semibold">✓ {autoAssignMsg}</span>
+          <button onClick={() => setAutoAssignMsg(null)} className="font-bold text-emerald-800 cursor-pointer">✕</button>
         </div>
       )}
 
@@ -226,6 +269,94 @@ export default function AdminOrdersPage() {
             {tab.label}
           </button>
         ))}
+      </div>
+
+      {/* Date Order Placed Filter */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-border">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold text-brand-forest flex items-center gap-1.5">
+            <span className="text-sm">📅</span>
+            <span>Date Placed:</span>
+          </span>
+
+          {/* Quick Presets */}
+          <div className="flex flex-wrap gap-1.5">
+            {[
+              { id: 'ALL', label: 'All Dates' },
+              { id: 'TODAY', label: 'Today' },
+              { id: 'YESTERDAY', label: 'Yesterday' },
+              { id: 'LAST_7_DAYS', label: 'Last 7 Days' },
+            ].map((preset) => (
+              <button
+                key={preset.id}
+                type="button"
+                onClick={() => {
+                  setPlacedDateFilter(preset.id as any);
+                  if (preset.id !== 'CUSTOM') setCustomPlacedDate('');
+                }}
+                className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  placedDateFilter === preset.id && !customPlacedDate
+                    ? 'bg-brand-mustard text-brand-forest shadow-xs'
+                    : 'bg-brand-cream/80 text-brand-forest-muted hover:text-brand-forest border border-brand-border'
+                }`}
+              >
+                {preset.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Custom Date Input */}
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] text-brand-forest-muted">or Pick Date:</span>
+            <input
+              type="date"
+              value={customPlacedDate}
+              onChange={(e) => {
+                setCustomPlacedDate(e.target.value);
+                if (e.target.value) {
+                  setPlacedDateFilter('CUSTOM');
+                } else {
+                  setPlacedDateFilter('ALL');
+                }
+              }}
+              className="px-2.5 py-1 rounded-lg text-xs bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard font-mono cursor-pointer"
+            />
+            {customPlacedDate && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomPlacedDate('');
+                  setPlacedDateFilter('ALL');
+                }}
+                className="px-2 py-1 rounded-lg text-[11px] font-bold bg-brand-cream text-brand-forest-muted hover:text-red-500 border border-brand-border cursor-pointer"
+                title="Clear custom date"
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        {/* Filter feedback badge */}
+        {placedDateFilter !== 'ALL' && (
+          <div className="text-xs font-semibold text-brand-mustard bg-brand-mustard/15 px-3 py-1 rounded-full border border-brand-mustard/30 flex items-center gap-1.5">
+            <span>Filtered:</span>
+            <span className="font-bold font-mono text-brand-forest">{filteredOrders.length}</span>
+            <span>order{filteredOrders.length === 1 ? '' : 's'} placed {
+              placedDateFilter === 'TODAY'
+                ? 'today'
+                : placedDateFilter === 'YESTERDAY'
+                ? 'yesterday'
+                : placedDateFilter === 'LAST_7_DAYS'
+                ? 'in last 7 days'
+                : `on ${new Date(`${customPlacedDate}T00:00:00`).toLocaleDateString('en-IN', {
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                  })}`
+            }</span>
+          </div>
+        )}
       </div>
 
       {/* Orders Table */}
@@ -267,6 +398,17 @@ export default function AdminOrdersPage() {
                         <span className="font-semibold text-brand-forest-muted block mt-0.5">
                           {order.user?.name || 'Patna Customer'}
                         </span>
+                        {order.createdAt && (
+                          <span className="inline-flex items-center gap-1 text-[10px] font-mono font-medium text-brand-forest-muted/80 bg-brand-cream/60 px-1.5 py-0.5 rounded border border-brand-border/60 mt-1">
+                            🕒 Placed: {new Date(order.createdAt).toLocaleDateString('en-IN', {
+                              day: 'numeric',
+                              month: 'short',
+                            })}, {new Date(order.createdAt).toLocaleTimeString('en-IN', {
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            })}
+                          </span>
+                        )}
                         {order.user?.phone ? (
                           <div className="flex items-center gap-1.5 mt-0.5">
                             <span className="text-[11px] text-brand-forest-muted font-mono">
@@ -300,20 +442,31 @@ export default function AdminOrdersPage() {
 
                       <td className="p-4">
                         <span className="font-bold text-brand-forest block">
-                          {order.subscription?.product?.name || 'Chef Diet Prep'}
+                          {formatPlanName(order.subscription?.product?.name)}
                         </span>
                         <span className="text-[10px] text-brand-forest-muted block">
                           🔥 {order.subscription?.product?.calories || 520} kcal
                         </span>
+                        {order.user?.dietaryPreference && (
+                          <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-black uppercase tracking-wider bg-emerald-50 text-emerald-800 border border-emerald-200 mt-1">
+                            {order.user.dietaryPreference}
+                          </span>
+                        )}
                       </td>
 
                       <td className="p-4">
                         <span className="inline-block px-2 py-0.5 rounded bg-brand-cream text-brand-forest-muted font-mono text-[11px] mb-1">
                           ⏰ {order.deliveryTime || '07:00 AM'}
                         </span>
+                        {order.user?.allergies && order.user.allergies !== 'None' && (
+                          <div className="mb-1 p-1.5 rounded-lg bg-amber-50 border border-amber-300 text-amber-900 text-[10px] font-bold max-w-[170px] leading-tight flex items-start gap-1 shadow-xs">
+                            <span>⚠️</span>
+                            <span className="truncate">Allergies: {order.user.allergies}</span>
+                          </div>
+                        )}
                         {hasSpecialNote && (
-                          <div className="p-1.5 rounded-lg bg-brand-mustard/15 border border-brand-mustard/30 text-brand-forest-muted text-[10px] font-bold">
-                            ⚠️ {order.deliveryNote}
+                          <div className="p-1.5 rounded-lg bg-brand-mustard/15 border border-brand-mustard/30 text-brand-forest text-[10px] font-medium max-w-[170px]">
+                            📝 {order.deliveryNote}
                           </div>
                         )}
                       </td>
