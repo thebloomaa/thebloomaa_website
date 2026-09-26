@@ -1121,6 +1121,19 @@ function CheckoutPageInner() {
                     Your morning living food slot has been reserved! Deliveries begin on Official Launch Day: <strong className="text-brand-mustard font-bold">Wednesday, 30th September 2026</strong>.
                   </p>
 
+                  {/* MANDATORY CONFIRMATION NOTICE */}
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border-2 border-amber-500/30 text-left max-w-md mx-auto space-y-1.5 shadow-sm">
+                    <div className="flex items-center gap-2 font-black text-xs uppercase tracking-wider text-amber-900">
+                      <span className="text-base">📧</span>
+                      <span>Order Verification in Progress</span>
+                    </div>
+                    <p className="text-xs text-amber-950 font-bold leading-relaxed">
+                      Once admin confirms your order, you will receive a confirmation email.
+                    </p>
+                    <p className="text-[11px] text-amber-900/80 leading-relaxed">
+                      Our cloud kitchen team verifies payment receipts and delivery locations. You will also receive an update on WhatsApp at <strong>{form.phone}</strong>.
+                    </p>
+                  </div>
 
                   <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest text-left max-w-md mx-auto space-y-2">
                     <div className="flex justify-between items-center">
@@ -1611,20 +1624,7 @@ function CheckoutPageInner() {
                           </div>
                         )}
 
-                        {/* Pay on Delivery Option */}
-                        <div className="pt-2 text-center">
-                          <button
-                            type="button"
-                            onClick={() => {
-                              if (confirm('Confirm pre-booking with Pay on Delivery (₹' + pricing.price + ')?')) {
-                                handleConfirmPayment('PAY_ON_DELIVERY');
-                              }
-                            }}
-                            className="text-xs text-brand-forest-muted underline hover:text-brand-forest transition-colors cursor-pointer"
-                          >
-                            🚚 Want to pay ₹{pricing.price} on morning delivery instead? Click here
-                          </button>
-                        </div>
+
                       </div>
                     )}
                   </div>
