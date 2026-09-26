@@ -124,92 +124,70 @@ export default function NutritionAndPlansSection() {
               </p>
             </div>
 
-            {/* 4 Cards Grid: Daily, Weekly (Most Popular), Monthly, Benefits */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5 items-stretch h-full">
+            {/* 3 Cards Grid: Weekly (Most Popular), Custom Monthly, and Plan Benefits */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 items-stretch h-full">
               
-              {/* 1. Daily Plan */}
-              <div className="rounded-2xl p-4 bg-white border border-[#DDD5C0] shadow-xs flex flex-col justify-between text-center transition-all hover:border-[#0F3826] hover:shadow-sm">
-                <div>
-                  <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] border border-[#DDD5C0] flex items-center justify-center mx-auto mb-2 text-base">
-                    🍃
-                  </div>
-                  <h3 className="font-serif text-base font-bold text-[#0D2818]">Daily Plan</h3>
-                  <p className="text-[11px] text-[#5E7A67] mb-3 leading-tight">Fresh nutrition every day</p>
-                  
-                  {/* Price Block */}
-                  <div className="py-2.5 px-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Intro Plan</span>
-                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
-                  </div>
-                </div>
-                
-                <Link
-                  href="/checkout?plan=single"
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
-                >
-                  Pre-Book Daily →
-                </Link>
-              </div>
-
-              {/* 2. Weekly Plan (Most Popular) */}
-              <div className="rounded-2xl p-4 bg-white border-2 border-[#D97706] shadow-md flex flex-col justify-between text-center relative transition-all hover:shadow-lg">
-                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-[#D97706] text-white shadow-xs whitespace-nowrap">
-                  Most Popular
+              {/* 1. 7-Day Weekly Plan (Most Popular) */}
+              <div className="rounded-3xl p-5 sm:p-6 bg-white border-2 border-[#D97706] shadow-md flex flex-col justify-between text-center relative transition-all hover:shadow-xl">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#D97706] text-white shadow-xs whitespace-nowrap">
+                  Most Popular • 7 Days
                 </span>
                 <div>
-                  <div className="w-9 h-9 rounded-xl bg-[#FEF3EE] border border-[#FCD8C7] flex items-center justify-center mx-auto mb-2 text-base mt-1">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FEF3EE] border border-[#FCD8C7] flex items-center justify-center mx-auto mb-2.5 text-lg mt-1">
                     🥗
                   </div>
-                  <h3 className="font-serif text-base font-bold text-[#0D2818]">Weekly Plan</h3>
-                  <p className="text-[11px] text-[#5E7A67] mb-3 leading-tight">Stay consistent all week</p>
+                  <h3 className="font-serif text-lg font-bold text-[#0D2818]">7-Day Weekly Plan</h3>
+                  <p className="text-xs text-[#5E7A67] mb-3 leading-snug">7 distinct raw &amp; living bowls delivered each morning</p>
                   
                   {/* Price Block */}
-                  <div className="py-2.5 px-1 rounded-xl bg-[#FEF9EC] border border-[#FDE3B2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">7-Day Routine</span>
-                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
+                  <div className="py-3 px-2 rounded-2xl bg-[#FEF9EC] border border-[#FDE3B2] mb-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">Signature Living Routine</span>
+                    <strong className="text-2xl sm:text-3xl font-black text-[#0D2818] block font-sans tracking-tight my-0.5">Price TBA</strong>
+                    <span className="text-[10px] text-[#5E7A67] font-semibold block">Pre-booking open • Morning delivery</span>
                   </div>
                 </div>
                 
                 <Link
                   href="/checkout?plan=trial"
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#D97706] hover:bg-[#B45309] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
+                  className="w-full py-3 rounded-xl text-xs font-black text-white bg-[#D97706] hover:bg-[#B45309] transition-all block cursor-pointer shadow-md active:scale-[0.98]"
                 >
-                  Pre-Book Weekly →
+                  Pre-Book Weekly Plan →
                 </Link>
               </div>
 
-              {/* 3. Monthly Plan */}
-              <div className="rounded-2xl p-4 bg-white border border-[#DDD5C0] shadow-xs flex flex-col justify-between text-center transition-all hover:border-[#0F3826] hover:shadow-sm">
+              {/* 2. Custom Monthly Plan */}
+              <div className="rounded-3xl p-5 sm:p-6 bg-white border-2 border-[#0F3826]/40 shadow-xs flex flex-col justify-between text-center relative transition-all hover:border-[#0F3826] hover:shadow-md">
+                <span className="absolute -top-3 left-1/2 -translate-x-1/2 px-3.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#0F3826] text-white shadow-xs whitespace-nowrap">
+                  Best Value • 30 Days
+                </span>
                 <div>
-                  <div className="w-9 h-9 rounded-xl bg-[#FAF7F2] border border-[#DDD5C0] flex items-center justify-center mx-auto mb-2 text-base">
+                  <div className="w-11 h-11 rounded-2xl bg-[#FAF7F2] border border-[#DDD5C0] flex items-center justify-center mx-auto mb-2.5 text-lg mt-1">
                     📅
                   </div>
-                  <h3 className="font-serif text-base font-bold text-[#0D2818]">Monthly Plan</h3>
-                  <p className="text-[11px] text-[#5E7A67] mb-3 leading-tight">A healthier you every month</p>
+                  <h3 className="font-serif text-lg font-bold text-[#0D2818]">Custom Monthly Plan</h3>
+                  <p className="text-xs text-[#5E7A67] mb-3 leading-snug">Personalized 30-day complete vitality transformation</p>
                   
                   {/* Price Block */}
-                  <div className="py-2.5 px-1 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4">
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#D97706] block">30-Day Transformation</span>
-                    <strong className="text-xl sm:text-2xl font-black text-[#0D2818] block font-sans tracking-tight">Price TBA</strong>
-                    <span className="text-[10px] text-[#5E7A67] block">Pre-booking open</span>
+                  <div className="py-3 px-2 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-4">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F3826] block">Customizable Plan</span>
+                    <strong className="text-2xl sm:text-3xl font-black text-[#0D2818] block font-sans tracking-tight my-0.5">Price TBA</strong>
+                    <span className="text-[10px] text-[#5E7A67] font-semibold block">Pre-booking open • Priority slot</span>
                   </div>
                 </div>
                 
                 <Link
                   href="/checkout?plan=monthly"
-                  className="w-full py-2.5 rounded-xl text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-xs active:scale-[0.98]"
+                  className="w-full py-3 rounded-xl text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-md active:scale-[0.98]"
                 >
-                  Pre-Book Monthly →
+                  Pre-Book Custom Monthly →
                 </Link>
               </div>
 
-              {/* 4. Plan Benefits Card */}
-              <div className="rounded-2xl p-4 bg-[#FAF7F2] border border-[#DDD5C0] flex flex-col justify-between shadow-2xs">
+              {/* 3. Plan Benefits Card */}
+              <div className="rounded-3xl p-5 sm:p-6 bg-[#FAF7F2] border border-[#DDD5C0] flex flex-col justify-between shadow-2xs">
                 <div>
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-[#0D2818] block pb-2 border-b border-[#EAE2D2] mb-3">
-                    Plan Benefits:
+                  <span className="text-xs font-bold uppercase tracking-wider text-[#0D2818] block pb-2 border-b border-[#EAE2D2] mb-3">
+                    Plan Benefits &amp; Flexibility:
                   </span>
                   <div className="space-y-2.5">
                     {planPerks.map((perk, i) => (
@@ -226,8 +204,8 @@ export default function NutritionAndPlansSection() {
                 </div>
 
                 <div className="pt-3 border-t border-[#EAE2D2] mt-3">
-                  <p className="text-[10px] text-[#5E7A67] leading-tight font-medium text-center">
-                    🌿 Pause, skip or cancel anytime via dashboard
+                  <p className="text-[11px] text-[#5E7A67] leading-tight font-medium text-center">
+                    🌿 Pause, skip or cancel anytime with 1-click in your portal
                   </p>
                 </div>
               </div>

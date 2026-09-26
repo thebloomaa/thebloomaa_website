@@ -221,22 +221,14 @@ export default function BowlsSection() {
 
 
 
-  const handleSelectBowl = (bowl: BowlItem) => {
-    selectProduct({
-      id: bowl.id,
-      name: `${bowl.day}: ${bowl.name}`,
-      description: bowl.subtitle,
-      price: 0,
-      imageUrl: bowl.image,
-      type: 'WEEKLY_BOWL_PLAN',
-      calories: parseInt(bowl.macros.calories) || 350,
-      protein: parseFloat(bowl.macros.protein) || 16,
-      carbs: 45,
-      fats: 14,
-      dietaryPreference: 'LIVING_RAW',
-      isTrialPlan: false,
-    });
-    router.push('/checkout?plan=single');
+  const handlePreBookWeekly = () => {
+    setSelectedBowlModal(null);
+    const plansElem = document.getElementById('plans');
+    if (plansElem) {
+      plansElem.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      router.push('/checkout?plan=trial');
+    }
   };
 
   const renderBowlCard = (bowl: BowlItem) => (
@@ -529,23 +521,29 @@ export default function BowlsSection() {
                 </div>
               </div>
 
-              <div className="flex gap-3">
+              {/* Rotation Info Pill */}
+              <div className="mb-4 py-2 px-3 rounded-xl bg-[#FAF7F2] border border-[#EAE2D2] text-center">
+                <span className="text-[11px] font-semibold text-[#0F3826] flex items-center justify-center gap-1.5">
+                  <span>🌱</span>
+                  <span>Delivered fresh every <strong>{selectedBowlModal.day} morning</strong> as part of the 7-Day Plan</span>
+                </span>
+              </div>
+
+              <div className="flex gap-2.5 sm:gap-3">
                 <button
                   type="button"
                   onClick={() => setSelectedBowlModal(null)}
-                  className="flex-1 py-3 rounded-full text-xs font-bold text-[#3D5A47] bg-[#FAF7F2] hover:bg-[#F3EFE6] border border-[#DDD5C0] transition-all"
+                  className="py-3 px-5 rounded-full text-xs font-bold text-[#3D5A47] bg-[#FAF7F2] hover:bg-[#F3EFE6] border border-[#DDD5C0] transition-all cursor-pointer"
                 >
                   Close
                 </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    handleSelectBowl(selectedBowlModal);
-                    setSelectedBowlModal(null);
-                  }}
-                  className="flex-1 py-3 rounded-full text-xs font-bold text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md cursor-pointer"
+                  onClick={handlePreBookWeekly}
+                  className="flex-1 py-3 px-4 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-1.5"
                 >
-                  Pre-order {selectedBowlModal.day} Bowl →
+                  <span>Pre-Book 7-Day Plan</span>
+                  <span>→</span>
                 </button>
               </div>
             </div>

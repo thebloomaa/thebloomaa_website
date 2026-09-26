@@ -47,7 +47,7 @@ export default function ComingSoonBanner() {
 
               {/* Subtitle Description */}
               <p className="text-sm sm:text-base text-white/85 max-w-2xl leading-relaxed">
-                Our morning living food kitchen and cold-pressed prep facility in Patna are gearing up for sunrise deliveries. Pre-orders are now officially open so you can lock in your daily, weekly, or monthly plan before our limited first batch fills up!
+                Our morning living food kitchen and cold-pressed prep facility in Patna are gearing up for sunrise deliveries. Pre-orders are now officially open so you can lock in your 7-Day Weekly or Custom Monthly plan before our limited first batch fills up!
               </p>
 
               {/* 3 Pre-Launch Value Badges */}

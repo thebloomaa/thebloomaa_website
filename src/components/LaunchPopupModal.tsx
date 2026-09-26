@@ -1,0 +1,196 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
+import Image from 'next/image';
+import { useLaunchCountdown } from '@/lib/useLaunchCountdown';
+
+export default function LaunchPopupModal() {
+  const [isOpen, setIsOpen] = useState(false);
+  const { days, hours, minutes, seconds, isLive, isMounted } = useLaunchCountdown();
+
+  useEffect(() => {
+    // Only show once per session after a short 1.5s delay
+    try {
+      const seen = sessionStorage.getItem('bloomaa_launch_popup_seen');
+      if (!seen) {
+        const timer = setTimeout(() => {
+          setIsOpen(true);
+        }, 1500);
+        return () => clearTimeout(timer);
+      }
+    } catch {
+      // Ignore storage errors in private mode
+    }
+  }, []);
+
+  const handleClose = () => {
+    setIsOpen(false);
+    try {
+      sessionStorage.setItem('bloomaa_launch_popup_seen', 'true');
+    } catch {
+      // Ignore storage errors
+    }
+  };
+
+  const handlePreBookClick = () => {
+    handleClose();
+    const plansElem = document.getElementById('plans');
+    if (plansElem) {
+      plansElem.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  const handleMenuClick = () => {
+    handleClose();
+    const bowlsElem = document.getElementById('bowls');
+    if (bowlsElem) {
+      bowlsElem.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-sm animate-fade-in">
+      <div
+        className="relative w-full max-w-lg rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#0F3826] via-[#134630] to-[#0A2215] text-[#FAF7F2] border-2 border-[#D97706]/50 shadow-2xl overflow-hidden animate-scale-up"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="popup-title"
+      >
+        {/* Glow Accents */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#E6BE68]/15 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/15 rounded-full blur-3xl pointer-events-none" />
+
+        {/* Close Button */}
+        <button
+          type="button"
+          onClick={handleClose}
+          aria-label="Close launch announcement"
+          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center text-sm transition-colors cursor-pointer z-10"
+        >
+          ✕
+        </button>
+
+        {/* Modal Content */}
+        <div className="relative z-10 text-center">
+          {/* Top Pulsing Badge */}
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#E6BE68]/40 shadow-xs mb-3">
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
+            </span>
+            <span className="text-[10px] sm:text-[11px] font-black uppercase tracking-wider text-[#E6BE68]">
+              {isLive ? '🚀 We Are Officially Live!' : '🚀 Grand Launch in Patna • 30 September'}
+            </span>
+          </div>
+
+          {/* Heading */}
+          <h2
+            id="popup-title"
+            className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight"
+          >
+            {isLive ? (
+              <span>Patna Morning Deliveries Are Live!</span>
+            ) : (
+              <span>
+                Launching on{' '}
+                <span className="text-[#E6BE68] underline decoration-[#D97706] decoration-wavy decoration-1 underline-offset-4">
+                  30th September!
+                </span>{' '}
+                🌱
+              </span>
+            )}
+          </h2>
+
+          <p className="text-xs sm:text-sm text-white/85 mt-2 leading-relaxed max-w-md mx-auto">
+            Our cloud kitchen and cold-prep facility in Patna are opening for sunrise deliveries. Early pre-bookings are now open for our limited first batch of <strong>7-Day Weekly</strong> and <strong>Custom Monthly</strong> plans!
+          </p>
+
+          {/* Live Countdown Blocks */}
+          {isMounted && !isLive && (
+            <div className="my-5 p-3.5 rounded-2xl bg-black/35 border border-[#E6BE68]/30 shadow-inner">
+              <span className="text-[10px] font-black uppercase tracking-widest text-[#E6BE68] block mb-2">
+                ⏳ Time Remaining Until First Sunrise Delivery
+              </span>
+              <div className="grid grid-cols-4 gap-2">
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                    {days}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase text-white/70">Days</span>
+                </div>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                    {String(hours).padStart(2, '0')}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase text-white/70">Hours</span>
+                </div>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                    {String(minutes).padStart(2, '0')}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase text-white/70">Mins</span>
+                </div>
+                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                    {String(seconds).padStart(2, '0')}
+                  </span>
+                  <span className="text-[9px] font-bold uppercase text-white/70">Secs</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* 3 Quick Value Badges */}
+          <div className="grid grid-cols-3 gap-2 text-left mb-5">
+            <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
+              <span className="text-base block">🛵</span>
+              <span className="text-[10px] font-bold text-white block mt-0.5">6–9 AM Drop</span>
+              <span className="text-[8px] text-white/60 block">Guaranteed slot</span>
+            </div>
+            <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
+              <span className="text-base block">🌱</span>
+              <span className="text-[10px] font-bold text-white block mt-0.5">100% Living</span>
+              <span className="text-[8px] text-white/60 block">Sprouts &amp; enzymes</span>
+            </div>
+            <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
+              <span className="text-base block">🎁</span>
+              <span className="text-[10px] font-bold text-white block mt-0.5">Price TBA</span>
+              <span className="text-[8px] text-white/60 block">Zero advance pay</span>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="space-y-2">
+            <button
+              type="button"
+              onClick={handlePreBookClick}
+              className="w-full py-3.5 px-6 rounded-full text-xs sm:text-sm font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xl hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+            >
+              <span>Pre-Book Your Plan (Price TBA)</span>
+              <span>→</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleMenuClick}
+              className="w-full py-2.5 px-4 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 transition-all border border-white/15 flex items-center justify-center gap-1.5 cursor-pointer"
+            >
+              <span>Explore 7-Day Weekly Menu 🥗</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handleClose}
+              className="text-[11px] text-white/60 hover:text-white/90 underline pt-1 transition-colors cursor-pointer"
+            >
+              Maybe later, continue browsing
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

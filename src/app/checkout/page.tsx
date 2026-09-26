@@ -96,23 +96,7 @@ function CheckoutPageInner() {
   const planParam = searchParams ? searchParams.get('plan') : null;
 
   useEffect(() => {
-    if (planParam === 'single') {
-      const singleProd = BLOOMAA_PRODUCTS.SINGLE_DAY_TRIAL;
-      selectProduct({
-        id: singleProd.id,
-        name: singleProd.name,
-        description: singleProd.description,
-        price: singleProd.price,
-        imageUrl: singleProd.imageUrl,
-        type: singleProd.type,
-        calories: singleProd.calories,
-        protein: singleProd.protein,
-        carbs: singleProd.carbs,
-        fats: singleProd.fats,
-        dietaryPreference: singleProd.dietaryPreference,
-      });
-      selectBundle('DAYS_1');
-    } else if (planParam === 'trial') {
+    if (planParam === 'single' || planParam === 'trial') {
       const trialProd = BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL;
       selectProduct({
         id: trialProd.id,
