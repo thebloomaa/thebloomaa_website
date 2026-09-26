@@ -1,8 +1,6 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
 import { useLaunchCountdown } from '@/lib/useLaunchCountdown';
 
 export default function LaunchPopupModal() {
@@ -52,9 +50,9 @@ export default function LaunchPopupModal() {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/65 backdrop-blur-sm animate-fade-in">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 bg-black/75 backdrop-blur-md overflow-y-auto animate-fade-in">
       <div
-        className="relative w-full max-w-lg rounded-3xl p-6 sm:p-8 bg-gradient-to-br from-[#0F3826] via-[#134630] to-[#0A2215] text-[#FAF7F2] border-2 border-[#D97706]/50 shadow-2xl overflow-hidden animate-scale-up"
+        className="relative w-full max-w-md sm:max-w-lg rounded-3xl p-5 sm:p-7 bg-gradient-to-br from-[#0F3826] via-[#134630] to-[#0A2215] text-[#FAF7F2] border-2 border-[#D97706]/60 shadow-2xl my-auto max-h-[92vh] overflow-y-auto no-scrollbar animate-scale-up"
         role="dialog"
         aria-modal="true"
         aria-labelledby="popup-title"
@@ -68,7 +66,7 @@ export default function LaunchPopupModal() {
           type="button"
           onClick={handleClose}
           aria-label="Close launch announcement"
-          className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white/80 hover:text-white flex items-center justify-center text-sm transition-colors cursor-pointer z-10"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-white/15 hover:bg-white/30 text-white flex items-center justify-center text-xs sm:text-sm font-bold transition-all cursor-pointer z-20 shadow-sm"
         >
           ✕
         </button>
@@ -76,7 +74,7 @@ export default function LaunchPopupModal() {
         {/* Modal Content */}
         <div className="relative z-10 text-center">
           {/* Top Pulsing Badge */}
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-[#E6BE68]/40 shadow-xs mb-3">
+          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 border border-[#E6BE68]/40 shadow-xs mb-2">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
@@ -89,7 +87,7 @@ export default function LaunchPopupModal() {
           {/* Heading */}
           <h2
             id="popup-title"
-            className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-white leading-tight"
+            className="font-serif text-xl sm:text-2xl lg:text-[26px] font-bold tracking-tight text-white leading-tight"
           >
             {isLive ? (
               <span>Patna Morning Deliveries Are Live!</span>
@@ -104,59 +102,59 @@ export default function LaunchPopupModal() {
             )}
           </h2>
 
-          <p className="text-xs sm:text-sm text-white/85 mt-2 leading-relaxed max-w-md mx-auto">
+          <p className="text-xs sm:text-[13px] text-white/85 mt-1.5 leading-snug max-w-sm sm:max-w-md mx-auto">
             Our cloud kitchen and cold-prep facility in Patna are opening for sunrise deliveries. Early pre-bookings are now open for our limited first batch of <strong>7-Day Weekly</strong> and <strong>Custom Monthly</strong> plans!
           </p>
 
           {/* Live Countdown Blocks */}
           {isMounted && !isLive && (
-            <div className="my-5 p-3.5 rounded-2xl bg-black/35 border border-[#E6BE68]/30 shadow-inner">
-              <span className="text-[10px] font-black uppercase tracking-widest text-[#E6BE68] block mb-2">
+            <div className="my-3 sm:my-4 p-2.5 sm:p-3 rounded-2xl bg-black/35 border border-[#E6BE68]/30 shadow-inner">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-[#E6BE68] block mb-1.5">
                 ⏳ Time Remaining Until First Sunrise Delivery
               </span>
-              <div className="grid grid-cols-4 gap-2">
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
-                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                <div className="p-1.5 sm:p-2 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-lg sm:text-xl font-black font-mono text-[#E6BE68]">
                     {days}
                   </span>
-                  <span className="text-[9px] font-bold uppercase text-white/70">Days</span>
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase text-white/70">Days</span>
                 </div>
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
-                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                <div className="p-1.5 sm:p-2 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-lg sm:text-xl font-black font-mono text-[#E6BE68]">
                     {String(hours).padStart(2, '0')}
                   </span>
-                  <span className="text-[9px] font-bold uppercase text-white/70">Hours</span>
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase text-white/70">Hours</span>
                 </div>
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
-                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                <div className="p-1.5 sm:p-2 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-lg sm:text-xl font-black font-mono text-[#E6BE68]">
                     {String(minutes).padStart(2, '0')}
                   </span>
-                  <span className="text-[9px] font-bold uppercase text-white/70">Mins</span>
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase text-white/70">Mins</span>
                 </div>
-                <div className="p-2 sm:p-2.5 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
-                  <span className="text-xl sm:text-2xl font-black font-mono text-[#E6BE68]">
+                <div className="p-1.5 sm:p-2 rounded-xl bg-[#0F3826]/90 border border-white/15 flex flex-col items-center">
+                  <span className="text-lg sm:text-xl font-black font-mono text-[#E6BE68]">
                     {String(seconds).padStart(2, '0')}
                   </span>
-                  <span className="text-[9px] font-bold uppercase text-white/70">Secs</span>
+                  <span className="text-[8px] sm:text-[9px] font-bold uppercase text-white/70">Secs</span>
                 </div>
               </div>
             </div>
           )}
 
           {/* 3 Quick Value Badges */}
-          <div className="grid grid-cols-3 gap-2 text-left mb-5">
+          <div className="grid grid-cols-3 gap-1.5 sm:gap-2 text-left mb-3.5 sm:mb-4">
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
-              <span className="text-base block">🛵</span>
+              <span className="text-sm sm:text-base block">🛵</span>
               <span className="text-[10px] font-bold text-white block mt-0.5">6–9 AM Drop</span>
               <span className="text-[8px] text-white/60 block">Guaranteed slot</span>
             </div>
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
-              <span className="text-base block">🌱</span>
+              <span className="text-sm sm:text-base block">🌱</span>
               <span className="text-[10px] font-bold text-white block mt-0.5">100% Living</span>
               <span className="text-[8px] text-white/60 block">Sprouts &amp; enzymes</span>
             </div>
             <div className="p-2 rounded-xl bg-white/10 border border-white/10 text-center">
-              <span className="text-base block">🎁</span>
+              <span className="text-sm sm:text-base block">🎁</span>
               <span className="text-[10px] font-bold text-white block mt-0.5">Price TBA</span>
               <span className="text-[8px] text-white/60 block">Zero advance pay</span>
             </div>
@@ -167,7 +165,7 @@ export default function LaunchPopupModal() {
             <button
               type="button"
               onClick={handlePreBookClick}
-              className="w-full py-3.5 px-6 rounded-full text-xs sm:text-sm font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xl hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
+              className="w-full py-3 px-5 rounded-full text-xs sm:text-sm font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xl hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
             >
               <span>Pre-Book Your Plan (Price TBA)</span>
               <span>→</span>
@@ -176,7 +174,7 @@ export default function LaunchPopupModal() {
             <button
               type="button"
               onClick={handleMenuClick}
-              className="w-full py-2.5 px-4 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 transition-all border border-white/15 flex items-center justify-center gap-1.5 cursor-pointer"
+              className="w-full py-2 px-4 rounded-full text-xs font-semibold bg-white/10 hover:bg-white/20 text-white/90 transition-all border border-white/15 flex items-center justify-center gap-1.5 cursor-pointer"
             >
               <span>Explore 7-Day Weekly Menu 🥗</span>
             </button>
@@ -184,7 +182,7 @@ export default function LaunchPopupModal() {
             <button
               type="button"
               onClick={handleClose}
-              className="text-[11px] text-white/60 hover:text-white/90 underline pt-1 transition-colors cursor-pointer"
+              className="text-[10px] text-white/60 hover:text-white/90 underline pt-0.5 transition-colors cursor-pointer"
             >
               Maybe later, continue browsing
             </button>
