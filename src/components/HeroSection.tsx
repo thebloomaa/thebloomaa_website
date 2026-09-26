@@ -114,8 +114,8 @@ export default function HeroSection() {
 
           {/* Primary Serif Headline */}
           <h1 className="font-serif text-4xl sm:text-5xl lg:text-[54px] font-bold leading-[1.12] text-[#0D2818] tracking-tight">
-            Maa-like Care.<br />
-            <span className="text-[#153E26]">Nature-like Nourishment.</span>
+            Bloom your day<br />
+            <span className="text-[#153E26]">with Bloomaa.</span>
           </h1>
 
           {/* Subheadline */}

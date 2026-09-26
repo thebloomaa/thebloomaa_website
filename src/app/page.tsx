@@ -20,7 +20,7 @@ export default function Home() {
       {/* 1. Navigation Bar */}
       <Navbar />
 
-      {/* 2. Hero Section: Maa-like Care & Nature-like Nourishment */}
+      {/* 2. Hero Section: Bloom your day with Bloomaa */}
       <HeroSection />
 
       {/* 3. Official Pre-Launch Countdown & Early Pre-Order Banner */}
