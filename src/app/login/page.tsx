@@ -11,7 +11,7 @@ export default function LoginPage() {
     <>
       <Navbar />
 
-      <main className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8 bg-brand-cream text-brand-forest flex items-center justify-center relative overflow-hidden">
+      <main className="min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-8 bg-brand-cream text-brand-forest flex items-center justify-center relative overflow-hidden">
         {/* Ambient background glows */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-15 blur-3xl pointer-events-none bg-brand-mustard" />
         <div className="absolute bottom-10 right-1/4 w-80 h-80 rounded-full opacity-10 blur-3xl pointer-events-none bg-brand-mustard" />

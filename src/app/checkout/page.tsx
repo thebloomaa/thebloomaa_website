@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState, useEffect, Suspense } from 'react';
+import React, { useState, useEffect, useRef, Suspense } from 'react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
@@ -8,6 +8,82 @@ import Navbar from '@/components/Navbar';
 import { useBundleStore, type BundleType } from '@/store/useBundleStore';
 import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
 import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
+
+// ─── Delivery Zone: Pincode 800023, Patna ───────────────────────────────────
+const DELIVERY_PINCODE = '800023';
+
+const PINCODE_800023_LOCALITIES = [
+  // Colonies & Residential Areas
+  'Punaichak Colony',
+  'Anisabad Colony',
+  'Rajendra Nagar',
+  'Kankarbagh Colony',
+  'Bailey Road Colony',
+  'Sheikhpura Colony',
+  'Hanuman Nagar',
+  'Patliputra Colony',
+  'Boring Road Area',
+  'Srikrishna Nagar',
+  'Indira Nagar',
+  'Jaganpura Colony',
+  'Saidpur Colony',
+  'Dak Bungalow Road Area',
+  'Exhibition Road Colony',
+  'Mithapur Colony',
+  'Nayatola',
+  'Shastri Nagar',
+  'Mahendru Colony',
+  'Buddha Colony',
+  'Gardanibagh Colony',
+  'Ramkrishna Nagar',
+  'Vidyapuri Colony',
+  'Agamkuan Colony',
+  'Lohanipur Colony',
+  'Chitkohra',
+  'Adalatganj',
+  'Kumhrar Colony',
+  // Chowks & Landmarks
+  'Punaichak Chowk',
+  'Anisabad Chowk',
+  'Kankarbagh Chowk',
+  'Rajendra Nagar Chowk',
+  'Sheikhpura Chowk',
+  'Boring Canal Road Chowk',
+  'Mahendru Chowk',
+  'Dak Bungalow Chowk',
+  'Exhibition Road Chowk',
+  'Khajpura Chowk',
+  'Zero Mile Chowk',
+  'Gandhi Maidan Area',
+  'Patna Junction Area',
+  'GPO Area',
+  // Apartments & Societies
+  'Laxmi Apartment, Punaichak',
+  'Green Valley Apartment, Boring Road',
+  'City Centre Apartment, Kankarbagh',
+  'Surya Vihar Apartment, Rajendra Nagar',
+  'Shanti Niketan Apartment, Sheikhpura',
+  'Anand Vihar Apartment, Anisabad',
+  'Sai Enclave, Kankarbagh',
+  'Rajveer Residency, Patliputra',
+  'Silver Oak Residency, Boring Road',
+  'Cosmos Towers, Bailey Road',
+  'Riviera Apartment, Sheikhpura',
+  'Ravi Apartment, Nayatola',
+  'Imperial Heights, Rajendra Nagar',
+  'Prestige Tower, Boring Canal Road',
+  // Roads & Streets
+  'Boring Road',
+  'Boring Canal Road',
+  'Bailey Road (800023 stretch)',
+  'Exhibition Road',
+  'Dak Bungalow Road',
+  'Kankarbagh Main Road',
+  'Rajendra Nagar Main Road',
+  'Punaichak Road',
+  'Sheikhpura Road',
+  'Hanuman Nagar Road',
+].sort();
 
 export const dynamic = 'force-dynamic';
 
@@ -47,6 +123,7 @@ function CheckoutPageInner() {
     phone: '',
     email: '',
     houseNo: '',
+    locality: '',
     street: '',
     city: 'Patna',
     state: 'Bihar',
@@ -55,6 +132,30 @@ function CheckoutPageInner() {
     deliveryNote: deliveryNote || '',
     allergies: '',
   });
+
+  // Locality search state
+  const [localitySearch, setLocalitySearch] = useState('');
+  const [showLocalityDropdown, setShowLocalityDropdown] = useState(false);
+  const localityRef = useRef<HTMLDivElement>(null);
+
+  // Close locality dropdown on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (localityRef.current && !localityRef.current.contains(e.target as Node)) {
+        setShowLocalityDropdown(false);
+      }
+    };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const filteredLocalities = PINCODE_800023_LOCALITIES.filter((l) =>
+    l.toLowerCase().includes(localitySearch.toLowerCase())
+  );
+
+  // Whether the pincode entered is outside our delivery zone
+  const isOutsideZone =
+    form.pincode.length === 6 && form.pincode !== DELIVERY_PINCODE;
 
   // Prefill from user session / profile if available
   useEffect(() => {
@@ -217,8 +318,8 @@ function CheckoutPageInner() {
   };
 
   const handleValidateAndProceedAddress = () => {
-    if (!form.name || !form.phone || !form.street || !form.pincode) {
-      alert('Please fill out all required address fields.');
+    if (!form.name || !form.phone || !form.locality || !form.pincode) {
+      alert('Please fill out all required address fields (Name, Phone, Locality, and Pincode).');
       return;
     }
 
@@ -227,8 +328,14 @@ function CheckoutPageInner() {
       return;
     }
 
-    // Combine House No & Street
-    const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+    if (form.pincode !== DELIVERY_PINCODE) {
+      setPincodeError(`We currently deliver only within pincode ${DELIVERY_PINCODE} (Patna). We\'re coming to your area soon!`);
+      return;
+    }
+
+    // Combine House No, Street detail & Locality into a full address string
+    const parts = [form.houseNo, form.street, form.locality].filter(Boolean);
+    const fullStreet = parts.join(', ');
 
     setAddress({
       street: fullStreet,
@@ -247,7 +354,7 @@ function CheckoutPageInner() {
     return (
       <>
         <Navbar />
-        <main className="min-h-screen pt-28 pb-16 px-4 flex items-center justify-center" style={{ background: 'var(--bg-dark)' }}>
+        <main className="min-h-screen pt-32 pb-16 px-4 flex items-center justify-center" style={{ background: 'var(--bg-dark)' }}>
           <div className="text-center max-w-md p-8 rounded-3xl bg-brand-card border border-brand-border shadow-2xl">
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
@@ -318,7 +425,7 @@ function CheckoutPageInner() {
     <>
       <Navbar />
 
-      <main className="min-h-screen pt-24 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-dark)' }}>
+      <main className="min-h-screen pt-32 pb-20 px-4 sm:px-6 lg:px-8" style={{ background: 'var(--bg-dark)' }}>
         <div className="max-w-4xl mx-auto">
           {/* Multi-Step Stepper Header */}
           <div className="flex items-center justify-center gap-3 mb-10">
@@ -607,7 +714,7 @@ function CheckoutPageInner() {
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                   <div className="sm:col-span-1">
                     <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                      Flat / House No. *
+                      Flat / House No.
                     </label>
                     <input
                       type="text"
@@ -619,17 +726,91 @@ function CheckoutPageInner() {
                   </div>
                   <div className="sm:col-span-2">
                     <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                      Street / Society / Landmark *
+                      Street / Building / Landmark (Optional)
                     </label>
                     <input
                       type="text"
-                      required
-                      placeholder="e.g. Punaichak, near Pumphouse"
+                      placeholder="e.g. near Pumphouse, opp. SBI Bank"
                       value={form.street}
                       onChange={(e) => setForm({ ...form, street: e.target.value })}
                       className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
                     />
                   </div>
+                </div>
+
+                {/* Locality Searchable Dropdown */}
+                <div ref={localityRef} className="relative">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
+                    Colony / Area / Locality * <span className="normal-case font-normal text-[10px] text-brand-mustard ml-1">(Select from delivery zones in Pincode 800023)</span>
+                  </label>
+                  <div
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus-within:border-brand-mustard min-h-[46px] flex items-center gap-2 cursor-text"
+                    onClick={() => setShowLocalityDropdown(true)}
+                  >
+                    {form.locality ? (
+                      <span className="flex-1 text-brand-forest font-semibold">{form.locality}</span>
+                    ) : (
+                      <span className="flex-1 text-brand-forest-muted/60">Search colony, chowk, apartment…</span>
+                    )}
+                    {form.locality && (
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setForm({ ...form, locality: '' });
+                          setLocalitySearch('');
+                        }}
+                        className="text-brand-forest-muted hover:text-brand-forest transition-colors text-base leading-none"
+                        aria-label="Clear locality"
+                      >
+                        ×
+                      </button>
+                    )}
+                    <span className="text-brand-forest-muted text-xs">{showLocalityDropdown ? '▲' : '▼'}</span>
+                  </div>
+
+                  {showLocalityDropdown && (
+                    <div className="absolute z-50 top-full left-0 right-0 mt-1.5 rounded-2xl bg-brand-card border border-brand-border shadow-2xl overflow-hidden">
+                      <div className="p-2 border-b border-brand-border">
+                        <input
+                          autoFocus
+                          type="text"
+                          placeholder="Type to search your area…"
+                          value={localitySearch}
+                          onChange={(e) => setLocalitySearch(e.target.value)}
+                          className="w-full px-3 py-2 rounded-xl bg-brand-cream/80 border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard"
+                        />
+                      </div>
+                      <div className="max-h-52 overflow-y-auto">
+                        {filteredLocalities.length > 0 ? (
+                          filteredLocalities.map((loc) => (
+                            <button
+                              key={loc}
+                              type="button"
+                              onClick={() => {
+                                setForm({ ...form, locality: loc });
+                                setLocalitySearch('');
+                                setShowLocalityDropdown(false);
+                              }}
+                              className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                                form.locality === loc
+                                  ? 'bg-brand-mustard/20 text-brand-forest font-bold'
+                                  : 'text-brand-forest-muted hover:bg-brand-cream hover:text-brand-forest'
+                              }`}
+                            >
+                              📍 {loc}
+                            </button>
+                          ))
+                        ) : (
+                          <div className="px-4 py-6 text-center text-xs text-brand-forest-muted">
+                            <div className="text-2xl mb-2">🗺️</div>
+                            <p className="font-bold text-brand-forest">Area not found</p>
+                            <p className="mt-1">We\'re expanding soon! Currently serving pincode 800023 only.</p>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
                 </div>
 
                 {/* City, State & Pincode */}
@@ -658,25 +839,61 @@ function CheckoutPageInner() {
                   </div>
                   <div>
                     <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                      Pincode (Patna) *
+                      Pincode *
                     </label>
                     <input
                       type="text"
                       maxLength={6}
                       required
-                      placeholder="e.g. 800001"
+                      placeholder="800023"
                       value={form.pincode}
                       onChange={(e) => {
                         const val = e.target.value.replace(/\D/g, '');
                         setForm({ ...form, pincode: val });
+                        if (pincodeError) setPincodeError(null);
                       }}
-                      className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard font-mono min-h-[46px]"
+                      className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm focus:outline-none font-mono min-h-[46px] transition-colors ${
+                        isOutsideZone
+                          ? 'bg-red-500/10 border-red-400/60 text-red-300 focus:border-red-400'
+                          : form.pincode === DELIVERY_PINCODE
+                          ? 'bg-green-500/10 border-green-400/60 text-brand-forest focus:border-green-400'
+                          : 'bg-brand-cream/80 border-brand-border text-brand-forest focus:border-brand-mustard'
+                      }`}
                     />
+                    {form.pincode === DELIVERY_PINCODE && (
+                      <p className="text-[11px] text-green-400 mt-1 flex items-center gap-1">
+                        <span>✓</span> Delivery available in your area!
+                      </p>
+                    )}
                     {pincodeError && (
                       <p className="text-[11px] text-red-400 mt-1">{pincodeError}</p>
                     )}
                   </div>
                 </div>
+
+                {/* Outside Zone Warning Banner */}
+                {isOutsideZone && (
+                  <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-400/40 flex gap-3 items-start animate-fade-in">
+                    <span className="text-2xl flex-shrink-0">🚚</span>
+                    <div>
+                      <p className="text-sm font-black text-amber-400">We're not in your area yet!</p>
+                      <p className="text-xs text-brand-forest-muted mt-0.5 leading-relaxed">
+                        TheBloomaa currently delivers only within <strong className="text-brand-forest">Pincode 800023</strong> (Patna). We\'re expanding rapidly and will be coming to your area very soon! 🌱
+                      </p>
+                      <p className="text-xs text-brand-mustard mt-1.5 font-semibold">
+                        💬 Want to be notified when we launch in your area?{' '}
+                        <a
+                          href="https://wa.me/919117501404?text=Hi%20TheBloomaa!%20Please%20notify%20me%20when%20you%20deliver%20to%20my%20area."
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="underline hover:text-brand-mustard-hover"
+                        >
+                          Message us on WhatsApp →
+                        </a>
+                      </p>
+                    </div>
+                  </div>
+                )}
 
                 {/* Delivery Time Slot & Notes */}
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">

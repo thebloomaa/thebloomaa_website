@@ -52,7 +52,7 @@ export default function OnboardingPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen pt-24 pb-16 px-4" style={{ background: 'var(--bg-dark)' }}>
+      <main className="min-h-screen pt-32 pb-16 px-4" style={{ background: 'var(--bg-dark)' }}>
         <div className="max-w-3xl mx-auto">
           <div className="text-center mb-10">
             <h1 className="text-3xl font-black mb-2">Complete Your Profile</h1>
