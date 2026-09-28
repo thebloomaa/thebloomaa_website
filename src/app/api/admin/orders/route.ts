@@ -23,23 +23,23 @@ export async function GET(request: Request) {
 
     // Filter by DELIVERY DATE (IST-aware)
     const IST_OFFSET_MS = 5.5 * 60 * 60 * 1000;
-    
-    if (deliveryDateParam === 'ALL') {
-      // Fetch all dates, no date filter applied
-    } else if (deliveryDateParam) {
-      const deliveryDateStart = new Date(`${deliveryDateParam}T00:00:00+05:30`);
-      const deliveryDateEnd   = new Date(`${deliveryDateParam}T23:59:59+05:30`);
-      where.deliveryDate = { gte: deliveryDateStart, lte: deliveryDateEnd };
+    let deliveryDateStart: Date;
+    let deliveryDateEnd: Date;
+
+    if (deliveryDateParam) {
+      deliveryDateStart = new Date(`${deliveryDateParam}T00:00:00+05:30`);
+      deliveryDateEnd   = new Date(`${deliveryDateParam}T23:59:59+05:30`);
     } else {
       // Default: today in IST
       const todayIST = new Date(Date.now() + IST_OFFSET_MS);
       const yyyy = todayIST.getUTCFullYear();
       const mm   = String(todayIST.getUTCMonth() + 1).padStart(2, '0');
       const dd   = String(todayIST.getUTCDate()).padStart(2, '0');
-      const deliveryDateStart = new Date(`${yyyy}-${mm}-${dd}T00:00:00+05:30`);
-      const deliveryDateEnd   = new Date(`${yyyy}-${mm}-${dd}T23:59:59+05:30`);
-      where.deliveryDate = { gte: deliveryDateStart, lte: deliveryDateEnd };
+      deliveryDateStart = new Date(`${yyyy}-${mm}-${dd}T00:00:00+05:30`);
+      deliveryDateEnd   = new Date(`${yyyy}-${mm}-${dd}T23:59:59+05:30`);
     }
+
+    where.deliveryDate = { gte: deliveryDateStart, lte: deliveryDateEnd };
 
     const [orders, allRiders] = await Promise.all([
       prisma.order.findMany({

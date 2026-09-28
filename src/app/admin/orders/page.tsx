@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 
 type OrderStatus = 'QUEUED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'FAILED' | 'SKIPPED';
-type DeliveryDateMode = 'TODAY' | 'TOMORROW' | 'CUSTOM' | 'ALL';
+type DeliveryDateMode = 'TODAY' | 'TOMORROW' | 'CUSTOM';
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<any[]>([]);
@@ -13,7 +13,7 @@ export default function AdminOrdersPage() {
   const [statusFilter, setStatusFilter] = useState('ALL');
 
   // Delivery Date Mode
-  const [deliveryDateMode, setDeliveryDateMode] = useState<DeliveryDateMode>('ALL');
+  const [deliveryDateMode, setDeliveryDateMode] = useState<DeliveryDateMode>('TODAY');
   const [customDeliveryDate, setCustomDeliveryDate] = useState('');
 
   const [searchQuery, setSearchQuery] = useState('');
@@ -46,7 +46,6 @@ export default function AdminOrdersPage() {
 
   const getTargetDeliveryDateStr = useCallback(
     (mode: DeliveryDateMode, custom: string): string => {
-      if (mode === 'ALL') return 'ALL';
       if (mode === 'CUSTOM' && custom) return custom;
       const base = new Date();
       if (mode === 'TOMORROW') base.setDate(base.getDate() + 1);
@@ -174,10 +173,12 @@ export default function AdminOrdersPage() {
     [deliveryDateMode, customDeliveryDate, statusFilter, getTargetDeliveryDateStr]
   );
 
-  // On mount: fetch all orders by default
+  // On mount: smart 10pm default
   useEffect(() => {
-    setDeliveryDateMode('ALL');
-    fetchOrders('ALL', '');
+    const hourIST = new Date(Date.now() + 5.5 * 60 * 60 * 1000).getUTCHours();
+    const initialMode: DeliveryDateMode = hourIST >= 22 ? 'TOMORROW' : 'TODAY';
+    setDeliveryDateMode(initialMode);
+    fetchOrders(initialMode, '');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -404,8 +405,6 @@ export default function AdminOrdersPage() {
       ? 'today'
       : deliveryDateMode === 'TOMORROW' && !customDeliveryDate
       ? 'tomorrow'
-      : deliveryDateMode === 'ALL'
-      ? 'all time'
       : customDeliveryDate
       ? new Date(`${customDeliveryDate}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' })
       : '';
@@ -548,6 +547,86 @@ export default function AdminOrdersPage() {
         ))}
       </div>
 
+      {/* ── Delivery Date Switcher ── */}
+      <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-2xl bg-brand-card/90 border border-brand-border">
+        <div className="flex flex-wrap items-center gap-2">
+          <span className="text-xs font-bold text-brand-forest flex items-center gap-1.5">
+            <span className="text-sm">🚚</span>
+            <span>Delivery Date:</span>
+          </span>
+
+          <div className="flex flex-wrap gap-1.5">
+            {([
+              { id: 'TODAY' as const, label: "Today's Deliveries" },
+              { id: 'TOMORROW' as const, label: '🌙 Tomorrow (Prep Mode)' },
+            ] as { id: DeliveryDateMode; label: string }[]).map((btn) => (
+              <button
+                key={btn.id}
+                type="button"
+                onClick={() => {
+                  setDeliveryDateMode(btn.id);
+                  setCustomDeliveryDate('');
+                  fetchOrders(btn.id, '');
+                }}
+                className={`px-2.5 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  deliveryDateMode === btn.id && !customDeliveryDate
+                    ? 'bg-brand-mustard text-brand-forest shadow-xs'
+                    : 'bg-brand-cream/80 text-brand-forest-muted hover:text-brand-forest border border-brand-border'
+                }`}
+              >
+                {btn.label}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex items-center gap-1.5">
+            <span className="text-[11px] text-brand-forest-muted">or Pick Date:</span>
+            <input
+              type="date"
+              value={customDeliveryDate}
+              onChange={(e) => {
+                const val = e.target.value;
+                setCustomDeliveryDate(val);
+                if (val) {
+                  setDeliveryDateMode('CUSTOM');
+                  fetchOrders('CUSTOM', val);
+                } else {
+                  setDeliveryDateMode('TODAY');
+                  fetchOrders('TODAY', '');
+                }
+              }}
+              className="px-2.5 py-1 rounded-lg text-xs bg-brand-cream border border-brand-border text-brand-forest focus:outline-none focus:border-brand-mustard font-mono cursor-pointer"
+            />
+            {customDeliveryDate && (
+              <button
+                type="button"
+                onClick={() => {
+                  setCustomDeliveryDate('');
+                  setDeliveryDateMode('TODAY');
+                  fetchOrders('TODAY', '');
+                }}
+                className="px-2 py-1 rounded-lg text-[11px] font-bold bg-brand-cream text-brand-forest-muted hover:text-red-500 border border-brand-border cursor-pointer"
+              >
+                ✕ Clear
+              </button>
+            )}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          {deliveryDateMode === 'TOMORROW' && !customDeliveryDate && (
+            <div className="text-xs font-semibold text-blue-700 bg-blue-50 px-3 py-1 rounded-full border border-blue-200 flex items-center gap-1.5 animate-pulse">
+              <span>🌙</span>
+              <span>Prep Mode — Tomorrow&apos;s orders</span>
+            </div>
+          )}
+          <div className="text-xs font-semibold text-brand-mustard bg-brand-mustard/15 px-3 py-1 rounded-full border border-brand-mustard/30 flex items-center gap-1.5">
+            <span>📦</span>
+            <span className="font-bold font-mono text-brand-forest">{filteredOrders.length}</span>
+            <span>order{filteredOrders.length === 1 ? '' : 's'} for {deliveryDateLabel}</span>
+          </div>
+        </div>
+      </div>
 
       {/* ── Orders Table ── */}
       <div className="rounded-2xl bg-brand-card border border-brand-border overflow-hidden shadow-xl">
