@@ -889,12 +889,9 @@ export default function AdminDashboard() {
             {filteredOrders.length === 0 ? (
               <div className="p-12 text-center space-y-2">
                 <p className="text-brand-forest-muted/70 text-xs font-medium">
-                  No orders scheduled for delivery on{' '}
-                  {deliveryDateMode === 'TODAY' && !customDeliveryDate ? 'today' :
-                   deliveryDateMode === 'TOMORROW' && !customDeliveryDate ? 'tomorrow' :
-                   customDeliveryDate ? new Date(`${customDeliveryDate}T00:00:00`).toLocaleDateString('en-IN', { day: 'numeric', month: 'long', year: 'numeric' }) : 'the selected date'}.
+                  No orders found.
                 </p>
-                <p className="text-[11px] text-brand-forest-muted/50">Try switching to a different delivery date above.</p>
+                <p className="text-[11px] text-brand-forest-muted/50">There are currently no orders to display.</p>
               </div>
             ) : (
               <div className="overflow-x-auto">

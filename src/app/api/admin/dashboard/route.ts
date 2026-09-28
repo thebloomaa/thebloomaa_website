@@ -108,12 +108,7 @@ export async function GET(request: Request) {
     }
 
     const rawOrders = await prisma.order.findMany({
-      where: {
-        deliveryDate: {
-          gte: deliveryDateStart,
-          lte: deliveryDateEnd,
-        },
-      },
+      where: {},
       take: 500,
       orderBy: { deliveryTime: 'asc' },
       include: {
