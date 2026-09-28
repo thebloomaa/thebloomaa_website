@@ -126,6 +126,7 @@ model Order {
   riderId          String?
   rider            Rider?             @relation(fields: [riderId], references: [id])
   status           String        
+  adminApproved    Boolean            @default(false)
   deliveryDate     DateTime           
   deliveryTime     String?
   deliveryNote     String?

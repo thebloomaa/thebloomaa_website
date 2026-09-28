@@ -144,6 +144,12 @@ export default function AdminDashboard() {
   const [autoAssigning, setAutoAssigning] = useState(false);
   const [feedbackMsg, setFeedbackMsg] = useState<{ text: string; type: 'success' | 'error' } | null>(null);
 
+  // Payment Approval / Rejection State
+  const [rejectingOrderId, setRejectingOrderId] = useState<string | null>(null);
+  const [rejectingOrderName, setRejectingOrderName] = useState('');
+  const [rejectReason, setRejectReason] = useState('');
+  const [submittingReject, setSubmittingReject] = useState(false);
+
   // Inspector & Actions Modal State
   const [selectedOrder, setSelectedOrder] = useState<OrderRecord | null>(null);
   const [failingOrder, setFailingOrder] = useState<OrderRecord | null>(null);
@@ -204,6 +210,72 @@ export default function AdminDashboard() {
     return () => clearInterval(interval);
   }, [activeTab, deliveryDateMode, customDeliveryDate]);
 
+
+  // Handler: Approve Payment & Schedule for Dispatch
+  const handleApproveOrder = async (orderId: string) => {
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId, approveOrder: true }),
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          const updatedOrders = prev.orders.map((o) =>
+            o.id === orderId
+              ? { ...o, adminApproved: true, subscription: o.subscription ? { ...o.subscription, status: 'ACTIVE' } : o.subscription }
+              : o
+          );
+          return { ...prev, orders: updatedOrders };
+        });
+        if (selectedOrder?.id === orderId) {
+          setSelectedOrder((prev) => prev ? { ...prev, adminApproved: true } : null);
+        }
+        setFeedbackMsg({ text: '✅ Order approved — now visible in dispatch queue.', type: 'success' });
+      } else {
+        setFeedbackMsg({ text: 'Failed to approve order.', type: 'error' });
+      }
+    } catch {
+      setFeedbackMsg({ text: 'Network error approving order.', type: 'error' });
+    }
+  };
+
+  // Handler: Reject Payment with Reason
+  const handleConfirmReject = async () => {
+    if (!rejectingOrderId || !rejectReason.trim()) {
+      alert('Please enter a rejection reason.');
+      return;
+    }
+    setSubmittingReject(true);
+    try {
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: rejectingOrderId, rejectOrder: true, rejectReason: rejectReason.trim() }),
+      });
+      if (res.ok) {
+        setData((prev) => {
+          if (!prev) return prev;
+          const updatedOrders = prev.orders.map((o) =>
+            o.id === rejectingOrderId
+              ? { ...o, status: 'FAILED', adminApproved: false, subscription: o.subscription ? { ...o.subscription, status: 'FAILED' } : o.subscription }
+              : o
+          );
+          return { ...prev, orders: updatedOrders };
+        });
+        setRejectingOrderId(null);
+        setRejectReason('');
+        setFeedbackMsg({ text: `❌ Payment rejected — customer notified via delivery note.`, type: 'success' });
+      } else {
+        setFeedbackMsg({ text: 'Failed to reject order.', type: 'error' });
+      }
+    } catch {
+      setFeedbackMsg({ text: 'Network error rejecting order.', type: 'error' });
+    } finally {
+      setSubmittingReject(false);
+    }
+  };
 
   // Handler: 1-click Rider Assignment
   const handleAssignRider = async (orderId: string, riderId: string) => {
@@ -393,10 +465,14 @@ export default function AdminDashboard() {
   }
 
   // Filter Orders for Tab 1
-  // Date filtering is now done SERVER-SIDE by deliveryDate param.
-  // Client only handles status + search filters.
+  const pendingPaymentOrders = (data.orders || []).filter(
+    (o) => !o.adminApproved && o.status !== 'FAILED' && o.subscription?.status === 'PENDING'
+  );
+  const pendingPaymentCount = pendingPaymentOrders.length;
+
   const filteredOrders = (data.orders || []).filter((o) => {
     // Status Filter
+    if (orderFilter === 'PENDING_PAYMENT') return !o.adminApproved && o.status !== 'FAILED' && o.subscription?.status === 'PENDING';
     if (orderFilter === 'UNASSIGNED' && (o.riderId !== null || o.status === 'DELIVERED')) return false;
     if (orderFilter === 'RIDER_DELIVERED' && o.status !== 'RIDER_DELIVERED') return false;
     if (orderFilter === 'DELIVERED' && o.status !== 'DELIVERED') return false;
@@ -759,6 +835,7 @@ export default function AdminDashboard() {
               <div className="flex flex-nowrap sm:flex-wrap gap-1.5 overflow-x-auto no-scrollbar pb-1 sm:pb-0">
                 {[
                   { id: 'ALL', label: 'All Orders' },
+                  { id: 'PENDING_PAYMENT', label: `🔔 Pending Payment (${pendingPaymentCount})`, urgent: pendingPaymentCount > 0 },
                   { id: 'UNASSIGNED', label: `🚨 Unassigned (${data.metrics.unassignedOrdersCount})` },
                   { id: 'RIDER_DELIVERED', label: `⏳ Needs Verification (${data.metrics.needsVerificationCount})` },
                   { id: 'DELIVERED', label: '✓✓ Double Verified' },
@@ -770,6 +847,8 @@ export default function AdminDashboard() {
                     className={`px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer whitespace-nowrap min-h-[38px] ${
                       orderFilter === pill.id
                         ? 'bg-brand-mustard text-brand-forest shadow-sm'
+                        : (pill as any).urgent
+                        ? 'bg-amber-100 text-amber-800 border border-amber-400 animate-pulse'
                         : 'bg-brand-cream text-brand-forest-muted hover:text-brand-forest border border-brand-border'
                     }`}
                   >
@@ -1062,20 +1141,54 @@ export default function AdminDashboard() {
                                 type="button"
                                 onClick={() => setSelectedOrder(order)}
                                 className="px-2.5 py-1 rounded-lg bg-white hover:bg-brand-cream text-brand-forest border border-brand-border font-bold text-[10px] cursor-pointer transition-all shadow-xs flex items-center gap-1 whitespace-nowrap"
-                                title="Inspect complete order details, allergies, address and rider"
+                                title="Inspect complete order details"
                               >
                                 <span>👁️</span>
                                 <span>Details</span>
                               </button>
 
-                              {order.subscription?.status === 'PENDING' && (
+                              {/* Payment Approval Gate */}
+                              {!order.adminApproved && order.subscription?.status === 'PENDING' && order.status !== 'FAILED' && (
+                                <>
+                                  <button
+                                    type="button"
+                                    onClick={() => handleApproveOrder(order.id)}
+                                    className="px-2.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-black text-[10px] cursor-pointer transition-all shadow-sm flex items-center gap-1 whitespace-nowrap"
+                                    title="Approve payment and queue for dispatch"
+                                  >
+                                    <span>✅</span>
+                                    <span>Approve</span>
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => {
+                                      setRejectingOrderId(order.id);
+                                      setRejectingOrderName(order.user.name);
+                                      setRejectReason('');
+                                    }}
+                                    className="px-2.5 py-1.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 font-bold text-[10px] cursor-pointer transition-all whitespace-nowrap"
+                                    title="Reject payment with reason"
+                                  >
+                                    Reject ✕
+                                  </button>
+                                </>
+                              )}
+
+                              {/* Already approved badge */}
+                              {order.adminApproved && (
+                                <span className="px-2 py-0.5 rounded-full text-[9px] font-black bg-emerald-50 text-emerald-700 border border-emerald-300">
+                                  ✅ Approved
+                                </span>
+                              )}
+
+                              {order.subscription?.status === 'PENDING' && order.adminApproved && (
                                 <button
                                   type="button"
                                   onClick={() => handleActivateSubscription(order.id)}
                                   className="px-2.5 py-1 rounded-lg bg-brand-mustard/20 hover:bg-brand-mustard/30 text-brand-forest-muted border border-brand-mustard/40 font-bold text-[10px] cursor-pointer transition-all whitespace-nowrap"
                                   title="Activate subscription and verify payment"
                                 >
-                                  Verify Plan ⚡
+                                  Activate Plan ⚡
                                 </button>
                               )}
 
@@ -1091,7 +1204,7 @@ export default function AdminDashboard() {
                                 </button>
                               )}
 
-                              {order.status === 'QUEUED' && (
+                              {order.status === 'QUEUED' && order.adminApproved && (
                                 <button
                                   type="button"
                                   onClick={() => handleUpdateStatus(order.id, 'DELIVERED')}
@@ -1711,6 +1824,43 @@ export default function AdminDashboard() {
             {/* Footer Quick Actions */}
             <div className="flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-[#E6E0CF]">
               <div className="flex items-center gap-2">
+                {/* Approve / Reject Payment for PENDING subscriptions */}
+                {selectedOrder.subscription?.status === 'PENDING' && selectedOrder.status !== 'FAILED' && (
+                  <>
+                    {!(selectedOrder as any).adminApproved ? (
+                      <>
+                        <button
+                          type="button"
+                          onClick={async () => {
+                            await handleApproveOrder(selectedOrder.id);
+                            setSelectedOrder(null);
+                          }}
+                          className="px-4 py-2 rounded-xl text-xs font-black bg-emerald-600 hover:bg-emerald-700 text-white shadow-md cursor-pointer transition-all flex items-center gap-1.5"
+                        >
+                          <span>✅</span>
+                          <span>Approve Payment</span>
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setRejectingOrderId(selectedOrder.id);
+                            setRejectingOrderName(selectedOrder.user.name);
+                            setRejectReason('');
+                            setSelectedOrder(null);
+                          }}
+                          className="px-3.5 py-2 rounded-xl text-xs font-bold bg-red-50 hover:bg-red-100 text-red-700 border border-red-200 transition-all cursor-pointer shadow-xs"
+                        >
+                          Reject Payment ✕
+                        </button>
+                      </>
+                    ) : (
+                      <span className="px-3 py-1.5 rounded-xl text-xs font-black bg-emerald-50 text-emerald-700 border border-emerald-300">
+                        ✅ Payment Approved
+                      </span>
+                    )}
+                  </>
+                )}
+
                 {selectedOrder.status !== 'DELIVERED' && selectedOrder.status !== 'FAILED' && (
                   <button
                     type="button"
@@ -1872,6 +2022,96 @@ export default function AdminDashboard() {
                   <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                 ) : (
                   <span>Confirm Failure</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ===================================================================== */}
+      {/* MODAL 3: REJECT PAYMENT WITH REASON                                   */}
+      {/* ===================================================================== */}
+      {rejectingOrderId && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fade-in">
+          <div className="relative w-full max-w-md bg-white border border-[#E6E0CF] rounded-3xl p-6 shadow-2xl space-y-4 my-8 text-brand-forest">
+            <div className="flex items-start justify-between border-b border-[#E6E0CF] pb-3">
+              <div>
+                <h3 className="text-base font-black text-red-600 flex items-center gap-1.5">
+                  <span>❌</span>
+                  <span>Reject Payment</span>
+                </h3>
+                <p className="text-xs text-brand-forest-muted mt-0.5">
+                  Order for <strong>{rejectingOrderName}</strong> — this will notify the customer.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => { setRejectingOrderId(null); setRejectReason(''); }}
+                className="text-brand-forest-muted hover:text-brand-forest text-sm font-bold cursor-pointer"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-2.5">
+              <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted">
+                Reason for rejection (shown to customer):
+              </label>
+              {[
+                'Payment screenshot is invalid or unclear',
+                'UTR number does not match our records',
+                'Payment amount is incorrect',
+                'Duplicate payment submission detected',
+                'Payment not received in our account',
+              ].map((reason) => (
+                <label
+                  key={reason}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-xl border text-xs font-medium cursor-pointer transition-colors ${
+                    rejectReason === reason
+                      ? 'bg-red-50 border-red-400 text-brand-forest'
+                      : 'bg-[#FAF7F2] border-[#E6E0CF] text-brand-forest-muted hover:bg-brand-cream'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="rejectReason"
+                    value={reason}
+                    checked={rejectReason === reason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                    className="accent-red-500"
+                  />
+                  <span>{reason}</span>
+                </label>
+              ))}
+              <textarea
+                value={rejectReason}
+                onChange={(e) => setRejectReason(e.target.value)}
+                placeholder="Or type a custom rejection reason here..."
+                rows={2}
+                className="w-full px-3 py-2 rounded-xl bg-[#FAF7F2] border border-[#E6E0CF] text-xs text-brand-forest placeholder:text-brand-forest-muted/60 focus:outline-none focus:border-red-400 mt-1"
+              />
+            </div>
+
+            <div className="flex items-center justify-end gap-2 pt-3 border-t border-[#E6E0CF]">
+              <button
+                type="button"
+                disabled={submittingReject}
+                onClick={() => { setRejectingOrderId(null); setRejectReason(''); }}
+                className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border cursor-pointer transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={submittingReject || !rejectReason.trim()}
+                onClick={handleConfirmReject}
+                className="px-4 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-sm transition-all disabled:opacity-50 flex items-center gap-1.5"
+              >
+                {submittingReject ? (
+                  <span className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                ) : (
+                  <span>Confirm Rejection</span>
                 )}
               </button>
             </div>

@@ -15,8 +15,15 @@ export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const status = searchParams.get('status');
     const deliveryDateParam = searchParams.get('deliveryDate'); // YYYY-MM-DD in IST
+    const approvedOnly = searchParams.get('approvedOnly') === 'true';
 
     const where: any = {};
+
+    // Only show admin-approved orders on the Order Management (dispatch) page
+    if (approvedOnly) {
+      where.adminApproved = true;
+    }
+
     if (status && status !== 'ALL') {
       where.status = status;
     }
@@ -86,13 +93,30 @@ export async function PATCH(request: Request) {
     }
 
     const body = await request.json();
-    const { orderId, status, riderId, activateSubscription, doubleVerify, deliveryNote } = body;
+    const { orderId, status, riderId, activateSubscription, doubleVerify, deliveryNote, approveOrder, rejectOrder, rejectReason } = body;
 
     if (!orderId) {
       return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
     }
 
     const data: any = {};
+
+    // ── Approve Payment & Schedule for Dispatch ──────────────────────────────
+    if (approveOrder) {
+      data.adminApproved = true;
+      // Subscription activated separately below
+    }
+
+    // ── Reject Payment ───────────────────────────────────────────────────────
+    if (rejectOrder) {
+      const existingOrder = await prisma.order.findUnique({ where: { id: orderId }, select: { deliveryNote: true } });
+      const existingNote = existingOrder?.deliveryNote ? `${existingOrder.deliveryNote} | ` : '';
+      data.status = 'FAILED';
+      data.deliveryNote = `${existingNote}⚠️ PAYMENT REJECTED: ${rejectReason || 'No reason provided'}`;
+      data.adminApproved = false;
+    }
+
+    // ── General Status Changes ────────────────────────────────────────────────
     if (status) {
       data.status = status;
       if (status === 'DELIVERED') {
@@ -117,11 +141,19 @@ export async function PATCH(request: Request) {
       },
     });
 
-    // Auto-promote subscription to ACTIVE upon delivery verification or explicit admin activation
-    if (order.subscriptionId && (activateSubscription || status === 'DELIVERED' || doubleVerify)) {
+    // Auto-promote subscription to ACTIVE upon payment approval, delivery verification, or explicit admin activation
+    if (order.subscriptionId && (approveOrder || activateSubscription || status === 'DELIVERED' || doubleVerify)) {
       await prisma.subscription.update({
         where: { id: order.subscriptionId },
         data: { status: 'ACTIVE' },
+      });
+    }
+
+    // Mark subscription as FAILED when payment rejected
+    if (order.subscriptionId && rejectOrder) {
+      await prisma.subscription.update({
+        where: { id: order.subscriptionId },
+        data: { status: 'FAILED' },
       });
     }
 

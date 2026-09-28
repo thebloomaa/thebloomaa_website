@@ -159,7 +159,7 @@ export default function AdminOrdersPage() {
       const dateStr = getTargetDeliveryDateStr(resolvedMode, resolvedCustom);
       setRefreshing(true);
       try {
-        const res = await fetch(`/api/admin/orders?status=${statusFilter}&deliveryDate=${dateStr}`);
+        const res = await fetch(`/api/admin/orders?status=${statusFilter}&deliveryDate=${dateStr}&approvedOnly=true`);
         const data = await res.json();
         if (data.orders) setOrders(data.orders);
         if (data.allRiders) setAllRiders(data.allRiders);
@@ -456,6 +456,21 @@ export default function AdminOrdersPage() {
             <span className="hidden sm:inline">Export Excel</span>
           </button>
         </div>
+      </div>
+
+      {/* ── Approved Orders Banner ── */}
+      <div className="flex items-center gap-3 p-3 rounded-xl bg-emerald-50 border border-emerald-200 text-xs">
+        <span className="text-base">✅</span>
+        <div className="flex-1">
+          <span className="font-black text-emerald-800">Showing admin-approved orders only</span>
+          <span className="text-emerald-700 ml-1.5">— Payment verified &amp; cleared for dispatch.</span>
+        </div>
+        <a
+          href="/admin"
+          className="px-3 py-1.5 rounded-lg text-[10px] font-black bg-emerald-100 hover:bg-emerald-200 text-emerald-800 border border-emerald-300 transition-all whitespace-nowrap"
+        >
+          ← Review Pending Payments
+        </a>
       </div>
 
       {/* ── Auto-assign feedback ── */}
