@@ -27,6 +27,11 @@ export default function AdminOrdersPage() {
   const [customFailReason, setCustomFailReason] = useState('');
   const [submittingFail, setSubmittingFail] = useState(false);
 
+  // Reject Receipt state
+  const [rejectingReceipt, setRejectingReceipt] = useState(false);
+  const [receiptRejectReason, setReceiptRejectReason] = useState('');
+  const [submittingReceiptReject, setSubmittingReceiptReject] = useState(false);
+
   // Receipt preview
   const [previewReceipt, setPreviewReceipt] = useState<{
     url: string;
@@ -291,6 +296,40 @@ export default function AdminOrdersPage() {
       alert('Failed to mark order as failed');
     } finally {
       setSubmittingFail(false);
+    }
+  };
+
+  const handleRejectReceipt = async () => {
+    if (!previewReceipt || !receiptRejectReason.trim()) {
+      alert('Please enter a rejection reason.');
+      return;
+    }
+    setSubmittingReceiptReject(true);
+    try {
+      const order = orders.find((o) => o.id === previewReceipt.orderId);
+      const existingNote = order?.deliveryNote ? `${order.deliveryNote} | ` : '';
+      const updatedNote = `${existingNote}⚠️ PAYMENT REJECTED: ${receiptRejectReason.trim()}`;
+      const res = await fetch('/api/admin/orders', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ orderId: previewReceipt.orderId, status: 'FAILED', deliveryNote: updatedNote }),
+      });
+      if (res.ok) {
+        setOrders((prev) =>
+          prev.map((o) =>
+            o.id === previewReceipt.orderId ? { ...o, status: 'FAILED', deliveryNote: updatedNote } : o
+          )
+        );
+        setPreviewReceipt(null);
+        setRejectingReceipt(false);
+        setReceiptRejectReason('');
+      } else {
+        alert('Failed to reject payment');
+      }
+    } catch {
+      alert('Failed to reject payment');
+    } finally {
+      setSubmittingReceiptReject(false);
     }
   };
 
@@ -937,7 +976,11 @@ export default function AdminOrdersPage() {
               </div>
               <button
                 type="button"
-                onClick={() => setPreviewReceipt(null)}
+                onClick={() => {
+                  setPreviewReceipt(null);
+                  setRejectingReceipt(false);
+                  setReceiptRejectReason('');
+                }}
                 className="w-8 h-8 rounded-full bg-brand-cream border border-brand-border hover:bg-brand-card text-brand-forest font-bold flex items-center justify-center cursor-pointer transition-colors"
               >
                 ✕
@@ -981,30 +1024,69 @@ export default function AdminOrdersPage() {
                 )}
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (previewReceipt.url.startsWith('data:')) {
-                      const win = window.open();
-                      win?.document.write(`<iframe src="${previewReceipt.url}" frameborder="0" style="border:0;top:0;left:0;bottom:0;right:0;width:100%;height:100%;" allowfullscreen></iframe>`);
-                    } else {
-                      window.open(previewReceipt.url, '_blank');
-                    }
-                  }}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all cursor-pointer"
-                >
-                  Open Full ↗
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    handleActivateSubscription(previewReceipt.orderId);
-                    setPreviewReceipt(null);
-                  }}
-                  className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:opacity-90 transition-all shadow-md cursor-pointer"
-                >
-                  Verify &amp; Activate Plan ⚡
-                </button>
+                {!rejectingReceipt ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={() => setRejectingReceipt(true)}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 transition-all cursor-pointer"
+                    >
+                      Reject ✕
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (previewReceipt.url.startsWith('data:')) {
+                          const win = window.open();
+                          win?.document.write(`<iframe src="${previewReceipt.url}" frameborder="0" style="border:0;top:0;left:0;bottom:0;right:0;width:100%;height:100%;" allowfullscreen></iframe>`);
+                        } else {
+                          window.open(previewReceipt.url, '_blank');
+                        }
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-brand-cream hover:bg-brand-border text-brand-forest border border-brand-border transition-all cursor-pointer"
+                    >
+                      Open Full ↗
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        handleActivateSubscription(previewReceipt.orderId);
+                        setPreviewReceipt(null);
+                      }}
+                      className="px-4 py-2 rounded-xl text-xs font-black bg-brand-mustard text-brand-forest hover:opacity-90 transition-all shadow-md cursor-pointer"
+                    >
+                      Verify &amp; Activate Plan ⚡
+                    </button>
+                  </>
+                ) : (
+                  <div className="flex items-center gap-2 w-full max-w-sm">
+                    <input
+                      type="text"
+                      placeholder="Reason for rejection..."
+                      value={receiptRejectReason}
+                      onChange={(e) => setReceiptRejectReason(e.target.value)}
+                      className="flex-1 px-3 py-2 rounded-xl bg-white border border-brand-border text-xs text-brand-forest focus:outline-none focus:border-red-400"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setRejectingReceipt(false);
+                        setReceiptRejectReason('');
+                      }}
+                      className="px-3 py-2 rounded-xl text-xs font-bold bg-brand-cream text-brand-forest border border-brand-border cursor-pointer hover:bg-brand-border transition-all"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="button"
+                      onClick={handleRejectReceipt}
+                      disabled={submittingReceiptReject}
+                      className="px-3 py-2 rounded-xl text-xs font-black bg-red-600 hover:bg-red-700 text-white cursor-pointer shadow-sm transition-all disabled:opacity-50 flex items-center gap-1.5"
+                    >
+                      {submittingReceiptReject ? '...' : 'Confirm'}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

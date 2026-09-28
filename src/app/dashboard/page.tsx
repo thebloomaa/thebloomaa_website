@@ -340,7 +340,16 @@ export default function DashboardPage() {
             : '2px solid rgba(16, 185, 129, 0.2)',
         }}
       >
-        {sub.status === 'PENDING' && (
+        {sub.status === 'PENDING' && sub.orders?.some((o: any) => o.status === 'FAILED' && o.deliveryNote?.includes('PAYMENT REJECTED')) ? (
+          <div className="mb-4 p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-xs text-red-700 flex items-start gap-3">
+            <span className="text-base mt-0.5">⚠️</span>
+            <div>
+              <strong className="text-sm">Payment Verification Failed</strong>
+              <p className="mt-1 font-medium">{sub.orders.find((o: any) => o.status === 'FAILED' && o.deliveryNote?.includes('PAYMENT REJECTED'))?.deliveryNote.split('PAYMENT REJECTED:')[1]?.trim()}</p>
+              <p className="mt-2">Please contact support or re-upload your payment proof to continue.</p>
+            </div>
+          </div>
+        ) : sub.status === 'PENDING' && (
           <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-brand-forest flex items-center gap-2.5">
             <span className="text-base">⏳</span>
             <span>
@@ -865,11 +874,13 @@ export default function DashboardPage() {
                         order.status === 'DELIVERED'
                           ? 'bg-brand-mustard/15 text-brand-mustard-hover'
                           : order.status === 'SKIPPED'
-                          ? 'bg-red-500/15 text-red-300'
+                          ? 'bg-amber-500/15 text-amber-500'
+                          : order.status === 'FAILED'
+                          ? 'bg-red-500/15 text-red-500'
                           : 'bg-blue-500/15 text-blue-300'
                       }`}
                     >
-                      {order.status === 'DELIVERED' ? '✓' : order.status === 'SKIPPED' ? '✕' : '●'}
+                      {order.status === 'DELIVERED' ? '✓' : order.status === 'SKIPPED' ? '✕' : order.status === 'FAILED' ? '!' : '●'}
                     </span>
                     <div>
                       <div className="flex items-center gap-2">
@@ -881,6 +892,8 @@ export default function DashboardPage() {
                           ? `Delivered by Patna Fleet · ${order.deliveryTime || 'Morning Slot'}`
                           : order.status === 'SKIPPED'
                           ? 'Delivery skipped by user'
+                          : order.status === 'FAILED'
+                          ? order.deliveryNote ? `${order.deliveryNote.split('⚠️').pop()?.replace('PAYMENT REJECTED:', 'Rejected:')?.trim() || order.deliveryNote}` : 'Delivery failed'
                           : `Scheduled for ${order.deliveryTime || '07:00 AM'}`}
                       </p>
                     </div>
@@ -891,7 +904,9 @@ export default function DashboardPage() {
                       order.status === 'DELIVERED'
                         ? 'bg-brand-mustard/15 text-brand-mustard border border-brand-mustard/30'
                         : order.status === 'SKIPPED'
-                        ? 'bg-red-500/15 text-red-400 border border-red-500/30'
+                        ? 'bg-amber-500/15 text-amber-500 border border-amber-500/30'
+                        : order.status === 'FAILED'
+                        ? 'bg-red-500/15 text-red-500 border border-red-500/30'
                         : 'bg-blue-500/15 text-blue-400 border border-blue-500/30'
                     }`}
                   >

@@ -14,10 +14,10 @@ const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || '8863002959@ptyes';
 const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Rahul Kumar Sharma';
 const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || '8863002959';
 
-// ─── Delivery Zone: Pincode 800023, Patna ───────────────────────────────────
-const DELIVERY_PINCODE = '800023';
+// ─── Delivery Zones: Patna ───────────────────────────────────
+const DELIVERY_PINCODES = ['800023', '800014', '800025', '800022', '800015'];
 
-const PINCODE_800023_LOCALITIES = [
+const PINCODE_LOCALITIES = [
   // Colonies & Residential Areas
   'Punaichak Colony',
   'Anisabad Colony',
@@ -256,13 +256,13 @@ function CheckoutPageInner() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const filteredLocalities = PINCODE_800023_LOCALITIES.filter((l) =>
+  const filteredLocalities = PINCODE_LOCALITIES.filter((l) =>
     l.toLowerCase().includes(localitySearch.toLowerCase())
   );
 
   // Whether the pincode entered is outside our delivery zone
   const isOutsideZone =
-    form.pincode.length === 6 && form.pincode !== DELIVERY_PINCODE;
+    form.pincode.length === 6 && !DELIVERY_PINCODES.includes(form.pincode);
 
   // Prefill from user session / profile if available
   useEffect(() => {
@@ -451,8 +451,8 @@ function CheckoutPageInner() {
       return;
     }
 
-    if (form.pincode !== DELIVERY_PINCODE) {
-      setPincodeError(`We currently deliver only within pincode ${DELIVERY_PINCODE} (Patna). We\'re coming to your area soon!`);
+    if (!DELIVERY_PINCODES.includes(form.pincode)) {
+      setPincodeError(`We currently deliver only within active pincodes (800023, 800014, 800025, 800022, 800015) in Patna. We\'re coming to your area soon!`);
       return;
     }
 
@@ -907,7 +907,7 @@ function CheckoutPageInner() {
                 {/* Locality Searchable Dropdown */}
                 <div ref={localityRef} className="relative">
                   <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                    Colony / Area / Locality * <span className="normal-case font-normal text-[10px] text-brand-mustard ml-1">(Select from delivery zones in Pincode 800023)</span>
+                    Colony / Area / Locality * <span className="normal-case font-normal text-[10px] text-brand-mustard ml-1">(Select from delivery zones)</span>
                   </label>
                   <div
                     className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus-within:border-brand-mustard min-h-[46px] flex items-center gap-2 cursor-text"
@@ -971,7 +971,7 @@ function CheckoutPageInner() {
                           <div className="px-4 py-6 text-center text-xs text-brand-forest-muted">
                             <div className="text-2xl mb-2">🗺️</div>
                             <p className="font-bold text-brand-forest">Area not found</p>
-                            <p className="mt-1">We\'re expanding soon! Currently serving pincode 800023 only.</p>
+                            <p className="mt-1">We\'re expanding soon! Currently serving selected Patna pincodes.</p>
                           </div>
                         )}
                       </div>
@@ -1021,12 +1021,12 @@ function CheckoutPageInner() {
                       className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm focus:outline-none font-mono min-h-[46px] transition-colors ${
                         isOutsideZone
                           ? 'bg-red-500/10 border-red-400/60 text-red-300 focus:border-red-400'
-                          : form.pincode === DELIVERY_PINCODE
+                          : DELIVERY_PINCODES.includes(form.pincode)
                           ? 'bg-green-500/10 border-green-400/60 text-brand-forest focus:border-green-400'
                           : 'bg-brand-cream/80 border-brand-border text-brand-forest focus:border-brand-mustard'
                       }`}
                     />
-                    {form.pincode === DELIVERY_PINCODE && (
+                    {DELIVERY_PINCODES.includes(form.pincode) && (
                       <p className="text-[11px] text-green-400 mt-1 flex items-center gap-1">
                         <span>✓</span> Delivery available in your area!
                       </p>
@@ -1044,7 +1044,7 @@ function CheckoutPageInner() {
                     <div>
                       <p className="text-sm font-black text-amber-400">We're not in your area yet!</p>
                       <p className="text-xs text-brand-forest-muted mt-0.5 leading-relaxed">
-                        TheBloomaa currently delivers only within <strong className="text-brand-forest">Pincode 800023</strong> (Patna). We\'re expanding rapidly and will be coming to your area very soon! 🌱
+                        TheBloomaa currently delivers only within <strong className="text-brand-forest">Pincodes 800023, 800014, 800025, 800022, 800015</strong> (Patna). We\'re expanding rapidly and will be coming to your area very soon! 🌱
                       </p>
                       <p className="text-xs text-brand-mustard mt-1.5 font-semibold">
                         💬 Want to be notified when we launch in your area?{' '}
