@@ -13,6 +13,7 @@ interface OrderRecord {
   deliveredAt: string | null;
   riderDeliveredAt: string | null;
   adminVerifiedAt: string | null;
+  adminApproved: boolean;
   user: {
     id: string;
     name: string;
@@ -133,7 +134,7 @@ export default function AdminDashboard() {
   const [refreshing, setRefreshing] = useState(false);
 
   // Filters for Orders Tab
-  const [orderFilter, setOrderFilter] = useState<'ALL' | 'UNASSIGNED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'QUEUED'>('ALL');
+  const [orderFilter, setOrderFilter] = useState<'ALL' | 'PENDING_PAYMENT' | 'UNASSIGNED' | 'RIDER_DELIVERED' | 'DELIVERED' | 'QUEUED'>('ALL');
   const [orderSearch, setOrderSearch] = useState('');
 
   // Delivery Date Mode: defaults smart based on IST time
@@ -881,9 +882,7 @@ export default function AdminDashboard() {
                 </button>
               </div>
             </div>
-
-
-
+          </div>
 
           {/* Orders Table */}
           <div className="rounded-2xl bg-brand-card/90 border border-brand-border overflow-hidden shadow-xl">
