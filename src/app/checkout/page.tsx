@@ -320,20 +320,20 @@ function CheckoutPageInner() {
         dietaryPreference: trialProd.dietaryPreference,
       });
       selectBundle('DAYS_7');
-    } else if (planParam === 'monthly') {
-      const monthlyProd = BLOOMAA_PRODUCTS.MONTHLY_SUBSCRIPTION;
+    } else if (planParam === 'bloom_care' || planParam === 'bloom_brain') {
+      const planProd = planParam === 'bloom_care' ? BLOOMAA_PRODUCTS.BLOOM_CARE_PLAN : BLOOMAA_PRODUCTS.BLOOM_BRAIN_PLAN;
       selectProduct({
-        id: monthlyProd.id,
-        name: monthlyProd.name,
-        description: monthlyProd.description,
-        price: monthlyProd.price,
-        imageUrl: monthlyProd.imageUrl,
-        type: monthlyProd.type,
-        calories: monthlyProd.calories,
-        protein: monthlyProd.protein,
-        carbs: monthlyProd.carbs,
-        fats: monthlyProd.fats,
-        dietaryPreference: monthlyProd.dietaryPreference,
+        id: planProd.id,
+        name: planProd.name,
+        description: planProd.description,
+        price: planProd.price,
+        imageUrl: planProd.imageUrl,
+        type: planProd.type,
+        calories: planProd.calories,
+        protein: planProd.protein,
+        carbs: planProd.carbs,
+        fats: planProd.fats,
+        dietaryPreference: planProd.dietaryPreference,
       });
       selectBundle('DAYS_30');
     }
@@ -349,23 +349,25 @@ function CheckoutPageInner() {
       selectedProduct.isTrialPlan)
   );
 
-  const isMonthlyProduct = Boolean(
+  const isComingSoonPlan = Boolean(
     !isTrialProduct &&
     selectedProduct &&
-    (selectedProduct.id === 'prod-monthly-living-diet' ||
+    (selectedProduct.id === 'prod-bloom-care-plan' ||
+      selectedProduct.id === 'prod-bloom-brain-plan' ||
       bundleType === 'DAYS_30' ||
-      selectedProduct.name.toLowerCase().includes('monthly'))
+      selectedProduct.name.toLowerCase().includes('bloom care') ||
+      selectedProduct.name.toLowerCase().includes('bloom brain'))
   );
 
-  const finalDays = isMonthlyProduct ? 30 : 7;
+  const finalDays = isComingSoonPlan ? 30 : 7;
 
   useEffect(() => {
-    if (isMonthlyProduct && bundleType !== 'DAYS_30') {
+    if (isComingSoonPlan && bundleType !== 'DAYS_30') {
       selectBundle('DAYS_30');
-    } else if (!isMonthlyProduct && bundleType !== 'DAYS_7') {
+    } else if (!isComingSoonPlan && bundleType !== 'DAYS_7') {
       selectBundle('DAYS_7');
     }
-  }, [isMonthlyProduct, bundleType, selectBundle]);
+  }, [isComingSoonPlan, bundleType, selectBundle]);
 
   const handleConfirmPayment = async (overrideMode?: 'QR_SCAN' | 'UPI_APP' | 'PAY_ON_DELIVERY') => {
     if (!selectedProduct) return;
@@ -373,7 +375,7 @@ function CheckoutPageInner() {
     const effectiveMode = overrideMode || paymentMode;
 
     // Require at least one proof: UTR (≥8 chars) OR screenshot
-    if (!isMonthlyProduct && effectiveMode !== 'PAY_ON_DELIVERY') {
+    if (!isComingSoonPlan && effectiveMode !== 'PAY_ON_DELIVERY') {
       const cleanUtr = utrInput.trim();
       const hasValidUtr = cleanUtr.length >= 8;
       const hasScreenshot = Boolean(screenshotUrl);
@@ -398,10 +400,10 @@ function CheckoutPageInner() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           productId: selectedProduct.id,
-          bundleType: isMonthlyProduct ? 'DAYS_30' : 'DAYS_7',
+          bundleType: isComingSoonPlan ? 'DAYS_30' : 'DAYS_7',
           deliveryTime: form.deliveryTime,
-          deliveryNote: isMonthlyProduct
-            ? `CUSTOM MONTHLY PLAN (30 Days). ${combinedDeliveryNote}`
+          deliveryNote: isComingSoonPlan
+            ? `${selectedProduct.name.toUpperCase()} (30 Days). ${combinedDeliveryNote}`
             : `JUST BLOOM PLAN. ${combinedDeliveryNote}`,
           allergies: form.allergies,
           customerName: form.name,
@@ -482,7 +484,7 @@ function CheckoutPageInner() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
             <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
-              Pre-book your Just Bloom Plan to start your sunrise living routine, lock in the Custom Monthly Plan, or run the Bio Calculator.
+              Pre-book your Just Bloom Plan to start your sunrise living routine, lock in the Bloom Care or Bloom Brain plans, or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
               <button
@@ -511,7 +513,7 @@ function CheckoutPageInner() {
               <button
                 type="button"
                 onClick={() => {
-                  const p = BLOOMAA_PRODUCTS.MONTHLY_SUBSCRIPTION;
+                  const p = BLOOMAA_PRODUCTS.BLOOM_CARE_PLAN;
                   selectProduct({
                     id: p.id,
                     name: p.name,
@@ -527,9 +529,32 @@ function CheckoutPageInner() {
                   });
                   selectBundle('DAYS_30');
                 }}
-                className="px-5 py-3 rounded-xl text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md cursor-pointer"
+                className="px-5 py-3 rounded-xl text-xs font-black text-[#0F3826] bg-[#FAF7F2] border border-[#0F3826] hover:bg-[#0F3826] hover:text-white transition-all shadow-sm cursor-pointer"
               >
-                Custom Monthly Plan →
+                Bloom Care →
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  const p = BLOOMAA_PRODUCTS.BLOOM_BRAIN_PLAN;
+                  selectProduct({
+                    id: p.id,
+                    name: p.name,
+                    description: p.description,
+                    price: p.price,
+                    imageUrl: p.imageUrl,
+                    type: p.type,
+                    calories: p.calories,
+                    protein: p.protein,
+                    carbs: p.carbs,
+                    fats: p.fats,
+                    dietaryPreference: p.dietaryPreference,
+                  });
+                  selectBundle('DAYS_30');
+                }}
+                className="px-5 py-3 rounded-xl text-xs font-black text-[#4F46E5] bg-[#EEF2FF] border border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white transition-all shadow-sm cursor-pointer"
+              >
+                Bloom Brain →
               </button>
               <Link
                 href="/calculator"
@@ -627,8 +652,8 @@ function CheckoutPageInner() {
                     <div className="flex flex-col sm:flex-row sm:items-baseline justify-between gap-2">
                       <h3 className="text-xl sm:text-2xl font-black text-brand-forest">{selectedProduct.name}</h3>
                       <div className="text-right">
-                        {isMonthlyProduct ? (
-                          <span className="text-xl font-black text-brand-mustard font-mono">Custom Monthly Plan (Price TBA)</span>
+                        {isComingSoonPlan ? (
+                          <span className="text-xl font-black text-brand-mustard font-mono">{selectedProduct.name} (Price TBA)</span>
                         ) : (
                           <div className="flex flex-col items-end">
                             <div className="flex items-baseline gap-2">
@@ -687,7 +712,7 @@ function CheckoutPageInner() {
                 )}
 
                 {/* Monthly Plan Logistics Alert */}
-                {isMonthlyProduct && (
+                {isComingSoonPlan && (
                   <div className="mt-6 p-4 rounded-2xl bg-brand-mustard/10 border border-brand-mustard/30 text-xs text-brand-forest-muted space-y-1">
                     <div className="flex items-center gap-2 font-black uppercase tracking-wider text-[11px] text-brand-mustard">
                       <span>🌿</span>
@@ -701,7 +726,7 @@ function CheckoutPageInner() {
               </div>
 
               {/* Standard Meal Plan Bundle Selector (Hidden for Trial & Monthly) */}
-              {!isTrialProduct && !isMonthlyProduct && (
+              {!isTrialProduct && !isComingSoonPlan && (
                 <div className="rounded-3xl p-6 sm:p-8 backdrop-blur-xl bg-brand-card/80 border border-brand-border">
                   <h4 className="text-sm font-black uppercase tracking-wider text-brand-forest-muted mb-4">
                     Subscription Duration
@@ -742,7 +767,7 @@ function CheckoutPageInner() {
                 </h4>
 
                 <div className="space-y-2.5 text-xs">
-                  {!isMonthlyProduct && (
+                  {!isComingSoonPlan && (
                     <div className="flex justify-between items-center p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20">
                       <span className="font-black text-brand-mustard">
                         {pricing.isEarlyBird ? '🎁 Early Bird Price' : 'Plan Price'}
@@ -757,7 +782,7 @@ function CheckoutPageInner() {
                   )}
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>What’s included:</span>
-                    <span className="font-bold text-brand-forest">{isMonthlyProduct ? '30-Day Plan' : '6 Bloom Boxes + 1 Surprise Box'}</span>
+                    <span className="font-bold text-brand-forest">{isComingSoonPlan ? '30-Day Plan' : '6 Bloom Boxes + 1 Surprise Box'}</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Delivery window:</span>
@@ -769,7 +794,7 @@ function CheckoutPageInner() {
                   </div>
                   <div className="pt-3 border-t border-brand-border flex justify-between items-baseline">
                     <span className="text-base font-bold text-brand-forest">Total Payable:</span>
-                    {isMonthlyProduct ? (
+                    {isComingSoonPlan ? (
                       <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
                     ) : (
                       <div className="flex items-baseline gap-2">
@@ -780,7 +805,7 @@ function CheckoutPageInner() {
                       </div>
                     )}
                   </div>
-                  {!isMonthlyProduct && pricing.isEarlyBird && (
+                  {!isComingSoonPlan && pricing.isEarlyBird && (
                     <p className="text-[10px] text-brand-forest-muted text-right">🎁 Early bird offer for first 100 customers only ({pricing.spotsLeft} spots remaining)</p>
                   )}
                 </div>
@@ -1184,11 +1209,11 @@ function CheckoutPageInner() {
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
                       <span className="text-brand-forest-muted">Plan Price:</span>
                       <div className="flex items-baseline gap-1.5">
-                        {!isMonthlyProduct && pricing.isEarlyBird && (
+                        {!isComingSoonPlan && pricing.isEarlyBird && (
                           <span className="text-brand-forest-muted line-through font-mono text-xs">₹{pricing.originalPrice}</span>
                         )}
                         <strong className="text-brand-mustard font-bold">
-                          {isMonthlyProduct ? 'TBA' : `₹${pricing.price} ${pricing.isEarlyBird ? '🎁 Early Bird' : ''}`}
+                          {isComingSoonPlan ? 'TBA' : `₹${pricing.price} ${pricing.isEarlyBird ? '🎁 Early Bird' : ''}`}
                         </strong>
                       </div>
                     </div>
@@ -1220,7 +1245,7 @@ function CheckoutPageInner() {
                     </span>
                     <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Confirm Pre-Booking</h2>
                     <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
-                      {isMonthlyProduct
+                      {isComingSoonPlan
                         ? 'No payment required at this time. We will contact you once pricing is finalized.'
                         : `Pay ₹${pricing.price} via UPI to reserve your early bird morning delivery slot.`}
                     </p>
@@ -1246,24 +1271,24 @@ function CheckoutPageInner() {
                     <div className="text-center pb-4 border-b border-brand-border">
                       <p className="text-xs text-brand-forest-muted mb-1">Amount to Pay</p>
                       <div className="flex items-baseline justify-center gap-2">
-                        {!isMonthlyProduct && pricing.isEarlyBird && (
+                        {!isComingSoonPlan && pricing.isEarlyBird && (
                           <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
                         )}
                         <span className="text-4xl font-black text-brand-mustard font-mono">
-                          ₹{isMonthlyProduct ? 'TBA' : pricing.price}
+                          ₹{isComingSoonPlan ? 'TBA' : pricing.price}
                         </span>
                       </div>
-                      {!isMonthlyProduct && pricing.isEarlyBird && (
+                      {!isComingSoonPlan && pricing.isEarlyBird && (
                         <span className="text-xs font-bold text-brand-mustard bg-brand-mustard/10 px-3 py-0.5 rounded-full border border-brand-mustard/20 mt-1 inline-block">
                           🎁 Early Bird • {pricing.spotsLeft} spots left of 100
                         </span>
                       )}
                     </div>
 
-                    {isMonthlyProduct ? (
-                      /* Monthly = No payment yet, just confirm */
+                    {isComingSoonPlan ? (
+                      /* Upcoming Plan = No payment yet, just confirm */
                       <div className="text-center space-y-3">
-                        <p className="text-sm text-brand-forest-muted">Pricing for Custom Monthly Plan will be shared via WhatsApp before launch.</p>
+                        <p className="text-sm text-brand-forest-muted">Pricing for the {selectedProduct.name} will be shared via WhatsApp before launch.</p>
                         <button
                           type="button"
                           disabled={submitting}

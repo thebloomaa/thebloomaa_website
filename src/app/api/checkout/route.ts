@@ -91,10 +91,10 @@ export async function POST(req: Request) {
       });
     }
 
-    // 3. Normalize plan to Just Bloom Plan or Custom Monthly Plan
-    const isMonthly = bundleType === 'DAYS_30';
-    const effectiveBundleType = isMonthly ? 'DAYS_30' : 'DAYS_7';
-    const bundleDays = isMonthly ? 30 : 7;
+    // 3. Normalize plan to Just Bloom Plan or Upcoming Plans (Bloom Care/Brain)
+    const isComingSoonPlan = bundleType === 'DAYS_30';
+    const effectiveBundleType = isComingSoonPlan ? 'DAYS_30' : 'DAYS_7';
+    const bundleDays = isComingSoonPlan ? 30 : 7;
 
     // Check first 100 early bird customer threshold
     const earlyBirdSlots = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_SLOTS || '100');
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
     let isEarlyBird = true;
     let finalAmount = 0;
 
-    if (!isMonthly) {
+    if (!isComingSoonPlan) {
       const currentBookedCount = await prisma.subscription.count({
         where: {
           productId: 'prod-just-bloomed-7d-trial',
@@ -116,7 +116,7 @@ export async function POST(req: Request) {
     }
 
     // Require at least one proof: UTR (≥8 chars) OR screenshot
-    if (!isMonthly && paymentMode !== 'PAY_ON_DELIVERY') {
+    if (!isComingSoonPlan && paymentMode !== 'PAY_ON_DELIVERY') {
       const cleanUtr = utr ? String(utr).trim() : '';
       const hasScreenshot = Boolean(screenshotUrl && String(screenshotUrl).trim().length > 0);
       const hasValidUtr = cleanUtr.length >= 8;
@@ -182,8 +182,8 @@ export async function POST(req: Request) {
 
       // Payment info note for kitchen/admin
       const proofSnippet = screenshotUrl ? ` | PROOF: ${screenshotUrl}` : '';
-      const paymentInfoTag = isMonthly
-        ? '[Custom Monthly Plan - Price TBA]'
+      const paymentInfoTag = isComingSoonPlan
+        ? `[${product.name} - Price TBA]`
         : `[Mode: ${modeLabel} | Paid: ₹${finalAmount} | UTR: ${effectiveUtr}${proofSnippet} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
 
       const combinedOrderNote = [deliveryNote, paymentInfoTag].filter(Boolean).join(' | ');
@@ -222,7 +222,7 @@ export async function POST(req: Request) {
 
       const paymentMethod = paymentMode === 'PAY_ON_DELIVERY'
         ? 'PAY_ON_DELIVERY'
-        : isMonthly
+        : isComingSoonPlan
         ? 'PRE_BOOK'
         : paymentMode === 'QR_SCAN'
         ? 'UPI_QR'

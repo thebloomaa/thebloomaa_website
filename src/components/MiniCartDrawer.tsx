@@ -9,7 +9,7 @@ import { useLivePricing } from '@/lib/useLivePricing';
 
 const BUNDLE_OPTIONS: { type: BundleType; label: string; days: number; discountPct: number; discountLabel?: string; badge?: string }[] = [
   { type: 'DAYS_7', label: 'Just Bloom Plan', days: 7, discountPct: 0, badge: 'Most Popular' },
-  { type: 'DAYS_30', label: 'Custom Monthly Plan', days: 30, discountPct: 20, discountLabel: 'Best Value', badge: '30 Days' },
+  { type: 'DAYS_30', label: 'Bloom Care Plan', days: 30, discountPct: 20, discountLabel: 'Best Value', badge: '30 Days' },
 ];
 
 export default function MiniCartDrawer() {
@@ -44,7 +44,7 @@ export default function MiniCartDrawer() {
 
   if (!isDrawerOpen) return null;
 
-  const handleSelectPlan = (plan: 'trial' | 'monthly') => {
+  const handleSelectPlan = (plan: 'trial' | 'bloom_care' | 'bloom_brain') => {
     if (plan === 'trial') {
       const p = BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL;
       selectProduct({
@@ -63,8 +63,8 @@ export default function MiniCartDrawer() {
       selectBundle('DAYS_7');
       closeDrawer();
       router.push('/checkout?plan=trial');
-    } else {
-      const p = BLOOMAA_PRODUCTS.MONTHLY_SUBSCRIPTION;
+    } else if (plan === 'bloom_care' || plan === 'bloom_brain') {
+      const p = plan === 'bloom_care' ? BLOOMAA_PRODUCTS.BLOOM_CARE_PLAN : BLOOMAA_PRODUCTS.BLOOM_BRAIN_PLAN;
       selectProduct({
         id: p.id,
         name: p.name,
@@ -80,7 +80,7 @@ export default function MiniCartDrawer() {
       });
       selectBundle('DAYS_30');
       closeDrawer();
-      router.push('/checkout?plan=monthly');
+      router.push(`/checkout?plan=${plan}`);
     }
   };
 
@@ -157,15 +157,30 @@ export default function MiniCartDrawer() {
 
                 <button
                   type="button"
-                  onClick={() => handleSelectPlan('monthly')}
+                  onClick={() => handleSelectPlan('bloom_care')}
                   className="w-full p-3.5 rounded-2xl bg-white border border-[#DDD5C0] hover:border-[#0F3826] hover:shadow-md transition-all cursor-pointer flex items-center justify-between group"
                 >
                   <div>
-                    <span className="text-[10px] font-black uppercase text-[#0F3826] tracking-wider block">Best Value</span>
-                    <strong className="text-xs font-bold text-[#0D2818] block">Custom Monthly Plan</strong>
-                    <span className="text-[10px] text-[#5E7A67]">30-day complete living food routine</span>
+                    <span className="text-[10px] font-black uppercase text-[#0F3826] tracking-wider block">Coming Next Month</span>
+                    <strong className="text-xs font-bold text-[#0D2818] block">Bloom Care Plan</strong>
+                    <span className="text-[10px] text-[#5E7A67]">Wellness & recovery focus</span>
                   </div>
                   <span className="text-xs font-bold text-[#0F3826] group-hover:translate-x-1 transition-transform">
+                    Pre-Book →
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleSelectPlan('bloom_brain')}
+                  className="w-full p-3.5 rounded-2xl bg-white border border-[#DDD5C0] hover:border-[#4F46E5] hover:shadow-md transition-all cursor-pointer flex items-center justify-between group"
+                >
+                  <div>
+                    <span className="text-[10px] font-black uppercase text-[#4F46E5] tracking-wider block">Coming Next Month</span>
+                    <strong className="text-xs font-bold text-[#0D2818] block">Bloom Brain Plan</strong>
+                    <span className="text-[10px] text-[#5E7A67]">Cognitive function & clarity</span>
+                  </div>
+                  <span className="text-xs font-bold text-[#4F46E5] group-hover:translate-x-1 transition-transform">
                     Pre-Book →
                   </span>
                 </button>

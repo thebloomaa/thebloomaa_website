@@ -37,8 +37,8 @@ export default function NutritionAndPlansSection() {
           </p>
         </div>
 
-        {/* 3 High-Impact Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 items-stretch max-w-6xl mx-auto">
+        {/* 4 High-Impact Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-4 items-stretch max-w-7xl mx-auto">
           
           {/* Card 1: Just Bloom Plan (Most Popular) */}
           <div className="rounded-3xl p-6 sm:p-7 bg-white border-2 border-[#D97706] shadow-md flex flex-col justify-between text-center relative transition-all hover:shadow-xl hover:-translate-y-1">
@@ -120,25 +120,25 @@ export default function NutritionAndPlansSection() {
             </Link>
           </div>
 
-          {/* Card 2: Custom Monthly Plan (Best Value) */}
-          <div className="rounded-3xl p-6 sm:p-7 bg-white border-2 border-[#0F3826]/40 shadow-xs flex flex-col justify-between text-center relative transition-all hover:border-[#0F3826] hover:shadow-xl hover:-translate-y-1">
+          {/* Card 2: Bloom Care (Coming Soon) */}
+          <div className="rounded-3xl p-6 sm:p-7 bg-white border border-[#DDD5C0] shadow-xs flex flex-col justify-between text-center relative transition-all hover:border-[#0F3826] hover:shadow-xl hover:-translate-y-1">
             <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#0F3826] text-white shadow-sm whitespace-nowrap">
-              Best Value • 30 Days
+              Coming Next Month
             </span>
 
             <div>
               <div className="w-13 h-13 rounded-2xl bg-[#FAF7F2] border border-[#DDD5C0] flex items-center justify-center mx-auto mb-3 text-2xl mt-1">
-                📅
+                ❤️
               </div>
-              <h3 className="font-serif text-xl font-bold text-[#0D2818]">Custom Monthly Plan</h3>
+              <h3 className="font-serif text-xl font-bold text-[#0D2818]">Bloom Care Plan</h3>
               <p className="text-xs text-[#5E7A67] mt-1 mb-4 leading-snug">
-                Personalized 30-day complete living food transformation in Patna
+                Tailored nutrition designed for deep wellness, recovery, and holistic care.
               </p>
               
               {/* Price Block */}
               <div className="py-4 px-3 rounded-2xl bg-[#FAF7F2] border border-[#EAE2D2] mb-5">
                 <span className="text-[10px] font-bold uppercase tracking-wider text-[#0F3826] block">
-                  Tailored Monthly Transformation
+                  Wellness & Recovery Focus
                 </span>
                 <strong className="text-3xl font-black text-[#0D2818] block font-sans tracking-tight my-1">
                   Price TBA
@@ -152,7 +152,7 @@ export default function NutritionAndPlansSection() {
               <div className="space-y-2 text-left mb-6 text-xs text-[#183925]">
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Fully customizable to allergy preferences</span>
+                  <span>Hormone balancing & gut health reset</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
@@ -166,14 +166,67 @@ export default function NutritionAndPlansSection() {
             </div>
             
             <Link
-              href="/checkout?plan=monthly"
-              className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all block cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98]"
+              href="/checkout?plan=bloom_care"
+              className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-[#0F3826] bg-[#FAF7F2] border border-[#0F3826] hover:bg-[#0F3826] hover:text-white transition-all block cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
             >
-              Pre-Book Custom Monthly →
+              Waitlist / Pre-Book →
             </Link>
           </div>
 
-          {/* Card 3: Plan Benefits & Flexibility (Perks) */}
+          {/* Card 3: Bloom Brain (Coming Soon) */}
+          <div className="rounded-3xl p-6 sm:p-7 bg-white border border-[#DDD5C0] shadow-xs flex flex-col justify-between text-center relative transition-all hover:border-[#4F46E5] hover:shadow-xl hover:-translate-y-1">
+            <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#4F46E5] text-white shadow-sm whitespace-nowrap">
+              Coming Next Month
+            </span>
+
+            <div>
+              <div className="w-13 h-13 rounded-2xl bg-[#EEF2FF] border border-[#C7D2FE] flex items-center justify-center mx-auto mb-3 text-2xl mt-1">
+                🧠
+              </div>
+              <h3 className="font-serif text-xl font-bold text-[#0D2818]">Bloom Brain Plan</h3>
+              <p className="text-xs text-[#5E7A67] mt-1 mb-4 leading-snug">
+                Optimized living foods designed to enhance cognitive function and clarity.
+              </p>
+              
+              {/* Price Block */}
+              <div className="py-4 px-3 rounded-2xl bg-[#EEF2FF] border border-[#C7D2FE] mb-5">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#4F46E5] block">
+                  Focus & Energy Optimized
+                </span>
+                <strong className="text-3xl font-black text-[#0D2818] block font-sans tracking-tight my-1">
+                  Price TBA
+                </strong>
+                <span className="text-[11px] text-[#5E7A67] font-semibold block">
+                  Priority delivery slot • Pause anytime
+                </span>
+              </div>
+
+              {/* 3 Quick Features */}
+              <div className="space-y-2 text-left mb-6 text-xs text-[#183925]">
+                <div className="flex items-center gap-2">
+                  <span className="text-[#4F46E5] font-bold">✓</span>
+                  <span>Omega-rich ingredients & antioxidants</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#4F46E5] font-bold">✓</span>
+                  <span>Neuro-protective & sustained energy focus</span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[#4F46E5] font-bold">✓</span>
+                  <span>Dedicated cloud kitchen prep supervisor</span>
+                </div>
+              </div>
+            </div>
+            
+            <Link
+              href="/checkout?plan=bloom_brain"
+              className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-[#4F46E5] bg-[#EEF2FF] border border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white transition-all block cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
+            >
+              Waitlist / Pre-Book →
+            </Link>
+          </div>
+
+          {/* Card 4: Plan Benefits & Flexibility (Perks) */}
           <div className="rounded-3xl p-6 sm:p-7 bg-white border border-[#DDD5C0] flex flex-col justify-between shadow-2xs hover:shadow-md transition-all">
             <div>
               <div className="flex items-center gap-2.5 pb-3 border-b border-[#EAE2D2] mb-4">
