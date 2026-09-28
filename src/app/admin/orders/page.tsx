@@ -105,6 +105,52 @@ export default function AdminOrdersPage() {
   const cleanStreet = (street: string): string =>
     street.replace(/\s*\[📍 GPS:.*?\]/, '').replace(/https:\/\/maps\.google\.com\/\?q=[^\]\s]+/, '').trim();
 
+  const exportToExcel = () => {
+    if (filteredOrders.length === 0) {
+      alert('No orders to export.');
+      return;
+    }
+
+    const headers = [
+      'Order ID',
+      'Delivery Date',
+      'Status',
+      'Customer Name',
+      'Phone',
+      'Address',
+      'Pincode',
+      'Plan/Product',
+      'Assigned Rider',
+      'Admin Notes',
+    ];
+
+    const rows = filteredOrders.map((o) => {
+      const addressStr = o.address ? cleanStreet(o.address.street) : '';
+      return [
+        o.id,
+        o.deliveryDate ? new Date(o.deliveryDate).toLocaleDateString() : 'N/A',
+        o.status,
+        `"${o.user?.name || ''}"`,
+        `"${o.user?.phone || ''}"`,
+        `"${addressStr.replace(/"/g, '""')}"`,
+        o.address?.pincode || '',
+        `"${o.subscription?.product?.name || ''}"`,
+        `"${o.rider?.name || 'Unassigned'}"`,
+        `"${(o.deliveryNote || '').replace(/"/g, '""')}"`,
+      ].join(',');
+    });
+
+    const csvContent = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', `bloom_orders_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   // ─── Data Fetching ────────────────────────────────────────────────────────
 
   const fetchOrders = useCallback(
@@ -401,6 +447,14 @@ export default function AdminOrdersPage() {
           >
             <span className={refreshing ? 'animate-spin inline-block' : ''}>🔄</span>
             <span>{refreshing ? 'Refreshing...' : 'Refresh'}</span>
+          </button>
+          <button
+            onClick={exportToExcel}
+            className="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-50 hover:bg-emerald-100 text-emerald-700 border border-emerald-200 transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+            title="Export filtered orders to Excel (CSV)"
+          >
+            <span>📊</span>
+            <span className="hidden sm:inline">Export Excel</span>
           </button>
         </div>
       </div>
