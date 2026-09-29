@@ -15,7 +15,7 @@ const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Rahul Kumar Sharma';
 const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || '8863002959';
 
 // ─── Delivery Zones: Patna ───────────────────────────────────
-const DELIVERY_PINCODES = ['800023', '800014', '800025', '800022', '800015'];
+const DELIVERY_PINCODES = ['800023', '800014', '800025', '800022', '800015', '800013', '800001'];
 
 const PINCODE_LOCALITIES = [
   // Colonies & Residential Areas
@@ -454,7 +454,7 @@ function CheckoutPageInner() {
     }
 
     if (!DELIVERY_PINCODES.includes(form.pincode)) {
-      setPincodeError(`We currently deliver only within active pincodes (800023, 800014, 800025, 800022, 800015) in Patna. We\'re coming to your area soon!`);
+      setPincodeError(`We currently deliver only within active pincodes (800023, 800014, 800025, 800022, 800015, 800013, 800001) in Patna. We\'re coming to your area soon!`);
       return;
     }
 
