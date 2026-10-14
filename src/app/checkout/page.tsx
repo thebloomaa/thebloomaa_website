@@ -1187,13 +1187,21 @@ function CheckoutPageInner() {
                     <div className="flex justify-between items-center">
                       <span className="text-brand-forest-muted">Payment Mode:</span>
                       <span className="text-[11px] font-bold text-brand-forest">
-                        {paymentMode === 'QR_SCAN'
+                        {paymentMode === 'PAY_ON_DELIVERY'
+                          ? '💵 Cash on Delivery (COD)'
+                          : paymentMode === 'QR_SCAN'
                           ? '📸 QR Code Scan'
-                          : paymentMode === 'PAY_ON_DELIVERY'
-                          ? '🚚 Pay on Delivery'
                           : '📱 UPI App Direct'}
                       </span>
                     </div>
+                    {paymentMode === 'PAY_ON_DELIVERY' && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left text-xs text-brand-forest">
+                        <span className="font-bold text-amber-900 block text-[11px]">💵 Cash on Delivery Scheduled</span>
+                        <p className="text-[10px] text-brand-forest-muted mt-0.5">
+                          Please keep <strong className="text-brand-forest font-mono">₹{pricing.price}</strong> cash ready, or pay via UPI QR to our delivery rider when your box arrives on 30th Sept morning.
+                        </p>
+                      </div>
+                    )}
                     {screenshotUrl && (
                       <div className="flex justify-between items-center">
                         <span className="text-brand-forest-muted">Receipt Proof:</span>
@@ -1303,21 +1311,21 @@ function CheckoutPageInner() {
                       <div className="space-y-5">
 
                         {/* Payment Mode Selection Tabs */}
-                        <div className="grid grid-cols-2 gap-2 p-1.5 bg-brand-cream/80 rounded-2xl border border-brand-border">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 p-1.5 bg-brand-cream/80 rounded-2xl border border-brand-border">
                           <button
                             type="button"
                             onClick={() => {
                               setPaymentMode('QR_SCAN');
                               setSubmitError(null);
                             }}
-                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                               paymentMode === 'QR_SCAN'
                                 ? 'bg-brand-mustard text-brand-forest shadow-md'
                                 : 'text-brand-forest-muted hover:text-brand-forest'
                             }`}
                           >
                             <span>📸</span>
-                            <span>Scan QR / Transfer</span>
+                            <span>Scan UPI QR</span>
                           </button>
 
                           <button
@@ -1326,14 +1334,30 @@ function CheckoutPageInner() {
                               setPaymentMode('UPI_APP');
                               setSubmitError(null);
                             }}
-                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-2 cursor-pointer ${
+                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
                               paymentMode === 'UPI_APP'
                                 ? 'bg-brand-mustard text-brand-forest shadow-md'
                                 : 'text-brand-forest-muted hover:text-brand-forest'
                             }`}
                           >
                             <span>📱</span>
-                            <span>Pay with UPI App</span>
+                            <span>UPI App Direct</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setPaymentMode('PAY_ON_DELIVERY');
+                              setSubmitError(null);
+                            }}
+                            className={`py-2.5 px-3 rounded-xl text-xs font-black transition-all flex items-center justify-center gap-1.5 cursor-pointer ${
+                              paymentMode === 'PAY_ON_DELIVERY'
+                                ? 'bg-brand-mustard text-brand-forest shadow-md'
+                                : 'text-brand-forest-muted hover:text-brand-forest'
+                            }`}
+                          >
+                            <span>💵</span>
+                            <span>Cash on Delivery</span>
                           </button>
                         </div>
 
@@ -1652,6 +1676,81 @@ function CheckoutPageInner() {
                                 </button>
                               );
                             })()}
+                          </div>
+                        )}
+
+                        {/* TAB 3: CASH ON DELIVERY (COD) */}
+                        {paymentMode === 'PAY_ON_DELIVERY' && (
+                          <div className="space-y-4 animate-fade-in">
+                            <div className="p-5 rounded-2xl bg-brand-cream/80 border border-brand-border space-y-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-800 flex items-center justify-center text-2xl shrink-0">
+                                  💵
+                                </div>
+                                <div>
+                                  <h4 className="text-sm font-black text-brand-forest">
+                                    Cash on Delivery (Pay at Doorstep)
+                                  </h4>
+                                  <p className="text-[11px] text-brand-forest-muted font-medium">
+                                    Zero advance payment required today
+                                  </p>
+                                </div>
+                              </div>
+
+                              <div className="space-y-2.5 pt-3 border-t border-brand-border/60 text-xs text-brand-forest-muted">
+                                <div className="flex items-start gap-2">
+                                  <span className="text-emerald-600 font-bold">✓</span>
+                                  <span>
+                                    Pay <strong className="text-brand-forest font-mono">₹{pricing.price}</strong> directly to your Bloomaa delivery rider upon arrival.
+                                  </span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                  <span className="text-emerald-600 font-bold">✓</span>
+                                  <span>
+                                    Payment options at door: <strong>Cash</strong> or scan rider's <strong>UPI QR code</strong> (GPay / PhonePe / Paytm).
+                                  </span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                  <span className="text-emerald-600 font-bold">✓</span>
+                                  <span>
+                                    Morning delivery window: <strong className="text-brand-forest font-mono">{form.deliveryTime || '07:00'} AM</strong> to your Patna address.
+                                  </span>
+                                </div>
+                                <div className="flex items-start gap-2">
+                                  <span className="text-emerald-600 font-bold">✓</span>
+                                  <span>
+                                    Deliveries start on Official Launch Day: <strong className="text-brand-forest">Wednesday, 30th September 2026</strong>.
+                                  </span>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/25 text-xs text-brand-forest flex items-start gap-2">
+                              <span className="text-amber-700 text-sm">💡</span>
+                              <p className="text-[11px] leading-relaxed">
+                                Our rider will call you at <strong className="font-mono text-brand-forest font-bold">{form.phone}</strong> before arrival at {form.street ? `"${form.street}"` : 'your address'}.
+                              </p>
+                            </div>
+
+                            {/* Confirm Button for Cash on Delivery */}
+                            <button
+                              type="button"
+                              disabled={submitting}
+                              onClick={() => handleConfirmPayment('PAY_ON_DELIVERY')}
+                              className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
+                            >
+                              {submitting ? (
+                                <>
+                                  <span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" />
+                                  <span>Confirming Cash on Delivery Order...</span>
+                                </>
+                              ) : (
+                                <>
+                                  <span>💵 Confirm Order with Cash on Delivery (₹{pricing.price})</span>
+                                  <span>→</span>
+                                </>
+                              )}
+                            </button>
                           </div>
                         )}
 

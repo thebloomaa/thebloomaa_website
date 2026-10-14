@@ -168,4 +168,20 @@ model DeliveryZone {
   createdAt    DateTime @default(now())
 }
 
+model Feedback {
+  id        String   @id @default(uuid())
+  name      String
+  phone     String?
+  orderId   String?
+  rating    Int      @default(5)
+  mealPlan  String?
+  comment   String
+  approved  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([orderId])
+}
+
+
 

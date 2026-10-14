@@ -851,29 +851,37 @@ export default function AdminOrdersPage() {
 
                           {/* Payment proof */}
                           <div className="mt-0.5 flex flex-wrap gap-1">
-                            {paymentInfo.utr && (
-                              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-brand-mustard/15 text-brand-forest border border-brand-mustard/30 truncate max-w-[130px]" title={paymentInfo.utr}>
-                                🔑 UTR: {paymentInfo.utr}
+                            {paymentInfo.mode.includes('Cash') || paymentInfo.mode.includes('COD') || (paymentInfo.utr && (paymentInfo.utr.startsWith('COD_') || paymentInfo.utr.startsWith('POD_'))) ? (
+                              <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+                                💵 Cash on Delivery
                               </span>
-                            )}
-                            {paymentInfo.screenshotUrl && (
-                              <button
-                                type="button"
-                                onClick={() =>
-                                  setPreviewReceipt({
-                                    url: paymentInfo.screenshotUrl!,
-                                    orderId: order.id,
-                                    customerName: order.user?.name || 'Customer',
-                                    customerPhone: order.user?.phone || '',
-                                    utr: paymentInfo.utr,
-                                    mode: paymentInfo.mode,
-                                  })
-                                }
-                                className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs transition-all"
-                              >
-                                <span>📸</span>
-                                <span>Receipt</span>
-                              </button>
+                            ) : (
+                              <>
+                                {paymentInfo.utr && (
+                                  <span className="inline-block px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-brand-mustard/15 text-brand-forest border border-brand-mustard/30 truncate max-w-[130px]" title={paymentInfo.utr}>
+                                    🔑 UTR: {paymentInfo.utr}
+                                  </span>
+                                )}
+                                {paymentInfo.screenshotUrl && (
+                                  <button
+                                    type="button"
+                                    onClick={() =>
+                                      setPreviewReceipt({
+                                        url: paymentInfo.screenshotUrl!,
+                                        orderId: order.id,
+                                        customerName: order.user?.name || 'Customer',
+                                        customerPhone: order.user?.phone || '',
+                                        utr: paymentInfo.utr,
+                                        mode: paymentInfo.mode,
+                                      })
+                                    }
+                                    className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-600 hover:bg-emerald-700 text-white cursor-pointer shadow-xs transition-all"
+                                  >
+                                    <span>📸</span>
+                                    <span>Receipt</span>
+                                  </button>
+                                )}
+                              </>
                             )}
                           </div>
                         </div>

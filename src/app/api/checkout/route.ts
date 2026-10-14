@@ -147,7 +147,7 @@ export async function POST(req: Request) {
     const modeLabel = paymentMode === 'QR_SCAN'
       ? 'QR Code Scan'
       : paymentMode === 'PAY_ON_DELIVERY'
-      ? 'Pay on Delivery'
+      ? 'Cash on Delivery (COD)'
       : 'UPI App Direct';
 
     // 4. Perform Atomic Database Transaction
@@ -184,6 +184,8 @@ export async function POST(req: Request) {
       const proofSnippet = screenshotUrl ? ` | PROOF: ${screenshotUrl}` : '';
       const paymentInfoTag = isComingSoonPlan
         ? `[${product.name} - Price TBA]`
+        : paymentMode === 'PAY_ON_DELIVERY'
+        ? `[Mode: Cash on Delivery (COD) | To Collect: ₹${finalAmount} | Pay on Delivery | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`
         : `[Mode: ${modeLabel} | Paid: ₹${finalAmount} | UTR: ${effectiveUtr}${proofSnippet} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
 
       const combinedOrderNote = [deliveryNote, paymentInfoTag].filter(Boolean).join(' | ');
@@ -217,11 +219,11 @@ export async function POST(req: Request) {
       const paymentGateway = paymentMode === 'QR_SCAN'
         ? 'upi_qr_scan'
         : paymentMode === 'PAY_ON_DELIVERY'
-        ? 'pay_on_delivery'
+        ? 'cash_on_delivery'
         : 'upi_app_direct';
 
       const paymentMethod = paymentMode === 'PAY_ON_DELIVERY'
-        ? 'PAY_ON_DELIVERY'
+        ? 'COD'
         : isComingSoonPlan
         ? 'PRE_BOOK'
         : paymentMode === 'QR_SCAN'
