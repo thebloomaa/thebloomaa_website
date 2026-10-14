@@ -101,14 +101,14 @@ export default function HeroSection() {
       <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-8 items-center">
         {/* Left Column: Headlines & Call to Actions */}
         <div className="lg:col-span-6 space-y-6 text-center lg:text-left">
-          {/* Subtitle / Pre-Launch Kicker */}
+          {/* Subtitle / Quality Kicker */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#0F3826]/10 border border-[#0F3826]/20">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-500 opacity-75" />
               <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-600" />
             </span>
             <span className="text-xs sm:text-[12px] font-black tracking-wider text-[#0F3826] uppercase">
-              🚀 Launching in Patna on 30th September • Pre-Orders Live
+              🌱 Daily Sunrise Living Nutrition • Delivered in Patna
             </span>
           </div>
 
@@ -129,7 +129,7 @@ export default function HeroSection() {
               href="/checkout?plan=trial"
               className="h-12 w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 rounded-full text-sm sm:text-base font-bold text-white bg-[#0F3826] hover:bg-[#164D35] transition-all hover:scale-[1.03] active:scale-[0.98] shadow-md shadow-[#0F3826]/20 cursor-pointer"
             >
-              <span>Pre-Book Just Bloom Plan</span>
+              <span>Order Just Bloom Plan</span>
               <span className="text-lg leading-none">→</span>
             </Link>
 

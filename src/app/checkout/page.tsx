@@ -484,7 +484,7 @@ function CheckoutPageInner() {
             <div className="text-6xl mb-4">🌱</div>
             <h1 className="text-2xl font-black mb-2 text-brand-forest">No Plan Selected</h1>
             <p className="text-sm mb-6 text-brand-forest-muted leading-relaxed">
-              Pre-book your Just Bloom Plan to start your sunrise living routine, lock in the Bloom Care or Bloom Brain plans, or run the Bio Calculator.
+              Order your Just Bloom Plan to start your sunrise living routine, lock in the Bloom Care or Bloom Brain plans, or run the Bio Calculator.
             </p>
             <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
               <button
@@ -580,7 +580,7 @@ function CheckoutPageInner() {
             {[
               { id: 'summary', label: '1. Order Summary' },
               { id: 'address', label: '2. Delivery Address' },
-              { id: 'pay', label: '3. Pre-Book' },
+              { id: 'pay', label: '3. Payment' },
             ].map((s, idx) => {
               const stepOrder = ['summary', 'address', 'pay'];
               const currentIdx = stepOrder.indexOf(step);
@@ -706,7 +706,7 @@ function CheckoutPageInner() {
                       <span>Just Bloom Plan — What’s Included</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>7:00 AM – 9:00 AM</strong> across Patna from <strong>30th September 2026</strong>. Fruits, sprouts, veggies & wet/dry seeds — daily rotating A/c to Healthy Functional. Zero cooking oils.
+                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>7:00 AM – 9:00 AM</strong> across Patna. Fruits, sprouts, veggies & wet/dry seeds — daily rotating A/c to Healthy Functional. Zero cooking oils.
                     </p>
                   </div>
                 )}
@@ -719,7 +719,7 @@ function CheckoutPageInner() {
                       <span>30-Day Transformation Schedule</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      Delivered every morning between <strong>6:00 AM – 9:00 AM</strong> across Patna starting <strong>30th September 2026</strong>. Enjoy continuous living nutrition with the flexibility to pause or skip any day via your dashboard.
+                      Delivered every morning between <strong>6:00 AM – 9:00 AM</strong> across Patna. Enjoy continuous living nutrition with the flexibility to pause or skip any day via your dashboard.
                     </p>
                   </div>
                 )}
@@ -1141,7 +1141,7 @@ function CheckoutPageInner() {
                     onClick={handleValidateAndProceedAddress}
                     className="px-8 py-3.5 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] cursor-pointer"
                   >
-                    Proceed to Pre-Book →
+                    Proceed to Payment →
                   </button>
                 </div>
               </div>
@@ -1164,7 +1164,7 @@ function CheckoutPageInner() {
                     waiting for confirmation from TheBlooma Team , once confirmed you will recive confirmation mail.
                   </p>
                   <p className="text-[11px] text-brand-forest-muted max-w-lg mx-auto mt-2">
-                    Your morning living food slot has been reserved! Deliveries begin on Official Launch Day: <strong className="text-brand-mustard font-bold">Wednesday, 30th September 2026</strong>.
+                    Your morning living food slot has been reserved! Deliveries start right to your doorstep between <strong className="text-brand-mustard font-bold">6:00 AM – 9:00 AM</strong> daily.
                   </p>
 
                   <div className="p-4 rounded-2xl bg-brand-cream/80 border border-brand-border text-xs text-brand-forest text-left max-w-md mx-auto space-y-2">
@@ -1198,7 +1198,7 @@ function CheckoutPageInner() {
                       <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-left text-xs text-brand-forest">
                         <span className="font-bold text-amber-900 block text-[11px]">💵 Cash on Delivery Scheduled</span>
                         <p className="text-[10px] text-brand-forest-muted mt-0.5">
-                          Please keep <strong className="text-brand-forest font-mono">₹{pricing.price}</strong> cash ready, or pay via UPI QR to our delivery rider when your box arrives on 30th Sept morning.
+                          Please keep <strong className="text-brand-forest font-mono">₹{pricing.price}</strong> cash ready, or pay via UPI QR to our delivery rider when your box arrives at your morning slot.
                         </p>
                       </div>
                     )}
@@ -1236,7 +1236,7 @@ function CheckoutPageInner() {
                       ← Back to Homepage
                     </Link>
                     <a
-                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi TheBloomaa! I just pre-booked my Just Bloom Plan (₹${pricing.price}) for the 30th September launch! 🌱`)}`}
+                      href={`https://wa.me/919117501404?text=${encodeURIComponent(`Hi TheBloomaa! I just ordered my Just Bloom Plan (₹${pricing.price})! 🌱`)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="px-6 py-3 rounded-full text-xs font-black text-white bg-[#25D366] hover:bg-[#1EBE5D] transition-all flex items-center justify-center gap-1.5 shadow-md"
@@ -1249,13 +1249,13 @@ function CheckoutPageInner() {
                 <>
                   <div className="text-center mb-6">
                     <span className="px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-brand-mustard/10 text-brand-mustard border border-brand-mustard/20">
-                      Step 3 of 3 · Pre-Book Confirmation
+                      Step 3 of 3 · Order Confirmation
                     </span>
-                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Confirm Pre-Booking</h2>
+                    <h2 className="text-2xl sm:text-3xl font-black mt-2 text-brand-forest">Confirm Your Order</h2>
                     <p className="text-xs sm:text-sm text-brand-forest-muted mt-1">
                       {isComingSoonPlan
                         ? 'No payment required at this time. We will contact you once pricing is finalized.'
-                        : `Pay ₹${pricing.price} via UPI to reserve your early bird morning delivery slot.`}
+                        : `Pay ₹${pricing.price} via UPI or choose Cash on Delivery to reserve your morning delivery slot.`}
                     </p>
                   </div>
 
@@ -1303,7 +1303,7 @@ function CheckoutPageInner() {
                           onClick={() => handleConfirmPayment('PAY_ON_DELIVERY')}
                           className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                         >
-                          {submitting ? <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming...</span></> : <><span>Confirm Pre-Booking</span><span>→</span></>}
+                          {submitting ? <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming...</span></> : <><span>Confirm Order</span><span>→</span></>}
                         </button>
                       </div>
                     ) : (
@@ -1507,11 +1507,11 @@ function CheckoutPageInner() {
                                   className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                                 >
                                   {submitting ? (
-                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
+                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Order...</span></>
                                   ) : !hasProof ? (
                                     <><span>⚠️ Enter 12-Digit UTR or Attach Screenshot to Confirm</span></>
                                   ) : (
-                                    <><span>✅ Confirm Pre-Booking (₹{pricing.price})</span><span>→</span></>
+                                    <><span>✅ Confirm Order (₹{pricing.price})</span><span>→</span></>
                                   )}
                                 </button>
                               );
@@ -1667,11 +1667,11 @@ function CheckoutPageInner() {
                                   className="w-full px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard transition-all shadow-xl shadow-brand-mustard/25 hover:scale-[1.02] active:scale-[0.98] disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer flex items-center justify-center gap-2"
                                 >
                                   {submitting ? (
-                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Pre-Booking...</span></>
+                                    <><span className="w-4 h-4 border-2 border-brand-forest border-t-transparent rounded-full animate-spin" /><span>Confirming Order...</span></>
                                   ) : !hasProof ? (
                                     <><span>⚠️ Enter 12-Digit UTR or Attach Screenshot to Confirm</span></>
                                   ) : (
-                                    <><span>✅ Confirm Pre-Booking (₹{pricing.price})</span><span>→</span></>
+                                    <><span>✅ Confirm Order (₹{pricing.price})</span><span>→</span></>
                                   )}
                                 </button>
                               );
@@ -1719,7 +1719,7 @@ function CheckoutPageInner() {
                                 <div className="flex items-start gap-2">
                                   <span className="text-emerald-600 font-bold">✓</span>
                                   <span>
-                                    Deliveries start on Official Launch Day: <strong className="text-brand-forest">Wednesday, 30th September 2026</strong>.
+                                    Deliveries scheduled fresh every morning across Patna.
                                   </span>
                                 </div>
                               </div>

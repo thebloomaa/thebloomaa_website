@@ -2,15 +2,13 @@
 
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { useLaunchCountdown } from '@/lib/useLaunchCountdown';
 
 export default function TopAnnouncementBar() {
-  const { days, hours, minutes, seconds, isLive, isMounted } = useLaunchCountdown();
   const [isDismissed, setIsDismissed] = useState(false);
 
   useEffect(() => {
     try {
-      const dismissed = sessionStorage.getItem('bloomaa_launch_bar_dismissed');
+      const dismissed = sessionStorage.getItem('bloomaa_bar_dismissed');
       if (dismissed === 'true') {
         setIsDismissed(true);
       }
@@ -23,7 +21,7 @@ export default function TopAnnouncementBar() {
     e.stopPropagation();
     setIsDismissed(true);
     try {
-      sessionStorage.setItem('bloomaa_launch_bar_dismissed', 'true');
+      sessionStorage.setItem('bloomaa_bar_dismissed', 'true');
     } catch {
       // Ignore storage errors
     }
@@ -34,48 +32,45 @@ export default function TopAnnouncementBar() {
   // Single ticker items block used for seamless looping
   const renderTickerContent = () => (
     <>
-      {/* 1. Launch Announcement with Pulsing Live Dot */}
+      {/* 1. Quality Announcement with Pulsing Live Dot */}
       <span className="inline-flex items-center gap-2 font-bold text-[#E6BE68] whitespace-nowrap">
         <span className="relative flex h-2 w-2">
           <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
           <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500" />
         </span>
-        <span>🚀 {isLive ? 'WE ARE OFFICIALLY LIVE IN PATNA!' : 'GRAND LAUNCH: 30th SEPTEMBER IN PATNA'}</span>
+        <span>🌱 FRESH LIVING FOOD DELIVERIES DAILY ACROSS PATNA</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>
 
-      {/* 2. Live Countdown Timer */}
-      {isMounted && !isLive && (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-white/10 border border-[#E6BE68]/40 font-mono text-[10.5px] sm:text-[11px] text-[#E6BE68] shadow-2xs whitespace-nowrap">
-          <span>⏳</span>
-          <span className="font-bold">{days}d : {String(hours).padStart(2, '0')}h : {String(minutes).padStart(2, '0')}m : {String(seconds).padStart(2, '0')}s</span>
-          <span className="text-[10px] text-white/70">Remaining</span>
-        </span>
-      )}
-
-      <span className="text-[#D97706]/70 text-xs select-none">✦</span>
-
-      {/* 3. Delivery Timing */}
+      {/* 2. Delivery Timing */}
       <span className="inline-flex items-center gap-1.5 text-white/90 whitespace-nowrap">
         <span>🛵</span>
-        <span>Fresh Sunrise Deliveries (6:00 AM – 9:00 AM) Across Patna</span>
+        <span>Morning Sunrise Drops (6:00 AM – 9:00 AM) Doorstep</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>
 
-      {/* 4. Living Food Quality */}
+      {/* 3. Living Food Quality */}
       <span className="inline-flex items-center gap-1.5 text-[#FAF7F2] whitespace-nowrap">
-        <span>🌱</span>
-        <span>100% Raw Living Nutrition • Zero Cooked Oils • Motherly Care</span>
+        <span>🥗</span>
+        <span>100% Raw Sprouted Microgreens & Fruits • Zero Cooked Oils</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>
 
-      {/* 5. Pre-Booking Callout */}
+      {/* 4. Payment Modes */}
       <span className="inline-flex items-center gap-1.5 text-white/95 whitespace-nowrap">
+        <span>💵</span>
+        <span>Cash on Delivery (COD) & Instant UPI Available</span>
+      </span>
+
+      <span className="text-[#D97706]/70 text-xs select-none">✦</span>
+
+      {/* 5. Special Offer */}
+      <span className="inline-flex items-center gap-1.5 text-[#E6BE68] font-bold whitespace-nowrap">
         <span>🎁</span>
-        <span>🎁 Early Pre-Orders Live: Just Bloom Plan ₹499 & Custom Monthly</span>
+        <span>Just Bloom 7-Day Plan ₹499 • 6 Rotating Bowls + 1 Surprise Box</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>
@@ -100,8 +95,7 @@ export default function TopAnnouncementBar() {
           href="/checkout?plan=trial"
           className="inline-flex items-center gap-1 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-black bg-[#D97706] hover:bg-[#B45309] text-white transition-all shadow-xs hover:scale-105 active:scale-95 whitespace-nowrap cursor-pointer"
         >
-          <span>Pre-Book</span>
-          <span className="hidden sm:inline">Now</span>
+          <span>Order Now</span>
           <span className="text-[10px]">→</span>
         </Link>
 
@@ -116,7 +110,7 @@ export default function TopAnnouncementBar() {
       </div>
 
       {/* Moving Marquee Ticker Track (Continuously glides horizontally, hover/touch to pause) */}
-      <Link href="/checkout?plan=trial" className="block overflow-hidden cursor-pointer" title="Click to Pre-Book Your Plan">
+      <Link href="/checkout?plan=trial" className="block overflow-hidden cursor-pointer" title="Click to Order Your Plan">
         <div className="animate-continuous-ticker flex items-center">
           {/* Track A */}
           <div className="flex items-center gap-6 sm:gap-8 shrink-0 pr-6 sm:pr-8">

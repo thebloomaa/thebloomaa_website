@@ -337,7 +337,7 @@ export default function BowlsSection() {
           onClick={() => handlePreBookWeekly()}
           className="w-full py-2.5 rounded-full text-xs font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all flex items-center justify-center gap-1.5 shadow-md active:scale-98 cursor-pointer hover:scale-[1.02]"
         >
-          <span>Pre-Book Just Bloom Plan</span>
+          <span>Order Just Bloom Plan</span>
           <span className="text-xs">→</span>
         </button>
 
@@ -531,7 +531,7 @@ export default function BowlsSection() {
                   onClick={() => handlePreBookWeekly()}
                   className="w-full py-3 px-4 rounded-full text-xs sm:text-sm font-black text-white bg-[#0F3826] hover:bg-[#185338] transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] cursor-pointer flex items-center justify-center gap-2"
                 >
-                  <span>Pre-Book Just Bloom Plan (Includes {selectedBowlModal.day} Bowl)</span>
+                  <span>Order Just Bloom Plan (Includes {selectedBowlModal.day} Bowl)</span>
                   <span>→</span>
                 </button>
 
@@ -548,7 +548,7 @@ export default function BowlsSection() {
                     onClick={handlePreBookMonthly}
                     className="text-xs font-bold text-[#D97706] hover:text-[#B45309] transition-colors cursor-pointer"
                   >
-                    Pre-Book 30-Day Monthly →
+                    Order 30-Day Monthly →
                   </button>
                 </div>
               </div>

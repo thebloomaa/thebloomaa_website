@@ -130,10 +130,11 @@ export async function POST(req: Request) {
     }
 
 
-    // Launch target date: 30 September 2026 06:00 AM IST
-    const launchDate = new Date('2026-09-30T06:00:00+05:30');
+    // First delivery is scheduled for next morning
     const now = new Date();
-    const firstDeliveryDate = launchDate > now ? launchDate : new Date(now.setDate(now.getDate() + 1));
+    const firstDeliveryDate = new Date(now);
+    firstDeliveryDate.setDate(now.getDate() + 1);
+    firstDeliveryDate.setHours(6, 0, 0, 0);
 
     const cleanUtr = utr && String(utr).trim().length >= 6 ? String(utr).trim() : null;
     const effectiveUtr = cleanUtr
@@ -199,7 +200,7 @@ export async function POST(req: Request) {
           status: 'QUEUED',
           deliveryDate: firstDeliveryDate,
           deliveryTime: deliveryTime || '07:00 AM',
-          deliveryNote: combinedOrderNote || `Pre-Launch Pre-Order for 30 Sept. Slot: ${deliveryTime || '07:00 AM'}`,
+          deliveryNote: combinedOrderNote || `Delivery Slot: ${deliveryTime || '07:00 AM'}`,
         },
       });
 
@@ -251,7 +252,7 @@ export async function POST(req: Request) {
       return {
         subscriptionId: subscription.id,
         orderId: order.id,
-        launchDate: '30 September 2026',
+        deliveryDate: firstDeliveryDate.toISOString(),
         amount: finalAmount,
         isEarlyBird,
         utr: effectiveUtr,

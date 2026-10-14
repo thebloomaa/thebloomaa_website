@@ -1357,7 +1357,7 @@ export default function BioCalculator() {
                   onClick={handleSelectPlanAndOrder}
                   className="w-full sm:w-auto px-8 py-4 rounded-2xl font-black text-sm bg-brand-mustard text-brand-forest hover:bg-brand-mustard-hover transition-all shadow-xl shadow-brand-mustard/25 hover:scale-105 active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                 >
-                  <span>Select This Plan &amp; Pre-Book</span>
+                  <span>Select This Plan &amp; Order</span>
                   <span>→</span>
                 </button>
               </div>

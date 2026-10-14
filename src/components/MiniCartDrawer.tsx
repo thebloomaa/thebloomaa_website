@@ -106,7 +106,7 @@ export default function MiniCartDrawer() {
             <div className="flex items-center gap-2.5">
               <span className="text-xl">🥗</span>
               <div>
-                <h3 className="text-base font-bold text-[#0D2818] font-serif">Your Pre-Booking Cart</h3>
+                <h3 className="text-base font-bold text-[#0D2818] font-serif">Your Cart</h3>
                 <p className="text-[11px] text-[#5E7A67]">
                   {selectedProduct ? '1 Plan Selected' : 'No Plan Selected Yet'}
                 </p>
@@ -134,7 +134,7 @@ export default function MiniCartDrawer() {
               <div>
                 <h4 className="font-serif text-lg font-bold text-[#0D2818]">Your Cart is Empty</h4>
                 <p className="text-xs text-[#5E7A67] mt-1.5 max-w-xs leading-relaxed">
-                  Pre-orders are live for our <strong>30th September Launch</strong> in Patna! Choose a plan below with zero advance payment.
+                  Fresh morning living nutrition in Patna! Choose a plan below with instant UPI or Cash on Delivery.
                 </p>
               </div>
 
@@ -151,7 +151,7 @@ export default function MiniCartDrawer() {
                     <span className="text-[10px] text-[#5E7A67]">6 rotating bowls + 1 Surprise Box</span>
                   </div>
                   <span className="text-xs font-bold text-[#D97706] group-hover:translate-x-1 transition-transform">
-                    Pre-Book →
+                    Order →
                   </span>
                 </button>
 
@@ -166,7 +166,7 @@ export default function MiniCartDrawer() {
                     <span className="text-[10px] text-[#5E7A67]">Wellness & recovery focus</span>
                   </div>
                   <span className="text-xs font-bold text-[#0F3826] group-hover:translate-x-1 transition-transform">
-                    Pre-Book →
+                    Select Plan →
                   </span>
                 </button>
 
@@ -181,7 +181,7 @@ export default function MiniCartDrawer() {
                     <span className="text-[10px] text-[#5E7A67]">Cognitive function & clarity</span>
                   </div>
                   <span className="text-xs font-bold text-[#4F46E5] group-hover:translate-x-1 transition-transform">
-                    Pre-Book →
+                    Select Plan →
                   </span>
                 </button>
               </div>
@@ -285,14 +285,14 @@ export default function MiniCartDrawer() {
                 </div>
               </div>
 
-              {/* Pre-Launch Commitment Note */}
+              {/* Morning Delivery Commitment Note */}
               <div className="rounded-2xl p-3.5 bg-white border border-[#DDD5C0] text-xs space-y-1.5">
                 <div className="flex items-center gap-1.5 text-xs font-bold text-[#0F3826]">
-                  <span>🗓️</span>
-                  <span>Deliveries Start 30th September 2026</span>
+                  <span>🛵</span>
+                  <span>Fresh Morning Deliveries (6:00 AM – 9:00 AM)</span>
                 </div>
                 <p className="text-[11px] text-[#5E7A67] leading-relaxed">
-                  Locking your slot today guarantees doorstep delivery in Patna. Intro pricing and delivery confirmation will be shared on WhatsApp before launch.
+                  Chef-crafted, raw living meals delivered to your doorstep across Patna. Zero cooked oils. Pause or skip anytime in your dashboard.
                 </p>
               </div>
             </div>
@@ -306,7 +306,7 @@ export default function MiniCartDrawer() {
                 onClick={handleProceedToCheckout}
                 className="w-full py-3.5 rounded-full font-bold text-xs sm:text-sm bg-[#0F3826] hover:bg-[#185338] text-white transition-all shadow-md hover:scale-[1.02] active:scale-[0.98] flex items-center justify-center gap-2 cursor-pointer"
               >
-                <span>Proceed to Pre-Book</span>
+                <span>Proceed to Checkout</span>
                 <span>→</span>
               </button>
               <p className="text-[10px] text-center text-[#5E7A67] mt-2">

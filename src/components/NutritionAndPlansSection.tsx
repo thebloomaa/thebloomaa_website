@@ -33,7 +33,7 @@ export default function NutritionAndPlansSection() {
             Choose Your Plan
           </h2>
           <p className="text-xs sm:text-sm text-[#5E7A67] font-medium mt-1.5 leading-relaxed">
-            Fresh living nutrition delivered across Patna every morning between <strong>6:00 AM – 9:00 AM</strong>. Lock your slot ahead of our 30th September launch.
+            Fresh living nutrition delivered across Patna every morning between <strong>6:00 AM – 9:00 AM</strong>. Pure vitality, zero cooked oils.
           </p>
         </div>
 
@@ -116,7 +116,7 @@ export default function NutritionAndPlansSection() {
               href="/checkout?plan=trial"
               className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-white bg-[#D97706] hover:bg-[#B45309] transition-all block cursor-pointer shadow-md hover:scale-[1.02] active:scale-[0.98]"
             >
-              Pre-Book Just Bloom Plan (₹{pricing.price}) →
+              Order Just Bloom Plan (₹{pricing.price}) →
             </Link>
           </div>
 
@@ -169,7 +169,7 @@ export default function NutritionAndPlansSection() {
               href="/checkout?plan=bloom_care"
               className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-[#0F3826] bg-[#FAF7F2] border border-[#0F3826] hover:bg-[#0F3826] hover:text-white transition-all block cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
             >
-              Waitlist / Pre-Book →
+              Join Waitlist →
             </Link>
           </div>
 
@@ -222,7 +222,7 @@ export default function NutritionAndPlansSection() {
               href="/checkout?plan=bloom_brain"
               className="w-full py-3.5 rounded-2xl text-xs sm:text-sm font-black text-[#4F46E5] bg-[#EEF2FF] border border-[#4F46E5] hover:bg-[#4F46E5] hover:text-white transition-all block cursor-pointer shadow-sm hover:scale-[1.02] active:scale-[0.98]"
             >
-              Waitlist / Pre-Book →
+              Join Waitlist →
             </Link>
           </div>
 
