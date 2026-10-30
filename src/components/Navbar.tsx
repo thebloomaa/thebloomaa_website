@@ -6,7 +6,6 @@ import Image from 'next/image';
 import { useSession, signOut } from 'next-auth/react';
 import { useBundleStore } from '@/store/useBundleStore';
 import PincodeModal from '@/components/PincodeModal';
-import TopAnnouncementBar from '@/components/TopAnnouncementBar';
 
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -21,7 +20,6 @@ export default function Navbar() {
   return (
     <>
       <header className="fixed top-0 left-0 right-0 z-50 transition-all">
-        <TopAnnouncementBar />
         <nav className="bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#E8E2D2] transition-all">
           <div className="max-w-[1536px] mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-18 sm:h-20 gap-3 xl:gap-4">

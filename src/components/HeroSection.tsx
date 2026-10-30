@@ -90,7 +90,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative pt-28 pb-6 sm:pt-32 sm:pb-8 lg:pt-36 lg:pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
+    <section className="relative pt-24 pb-6 sm:pt-28 sm:pb-8 lg:pt-30 lg:pb-10 px-4 sm:px-6 lg:px-8 overflow-hidden bg-[#FAF7F2]">
       {/* Decorative leaf backdrop silhouette */}
       <div className="absolute top-0 right-0 w-96 h-96 pointer-events-none opacity-5">
         <svg viewBox="0 0 100 100" fill="#0D2818">
