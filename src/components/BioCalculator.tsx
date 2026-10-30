@@ -1327,9 +1327,15 @@ export default function BioCalculator() {
                     <span className="px-2.5 py-1 rounded-lg bg-purple-500/10 text-purple-700 font-bold font-mono">
                       🌾 Living Enzymes Intact
                     </span>
-                    <span className="font-black text-sm text-brand-forest font-mono">
-                      Price: TBA
-                    </span>
+                    {results.matchedProduct.id === 'prod-just-bloomed-7d-trial' ? (
+                      <span className="font-black text-sm text-brand-mustard font-mono">
+                        ₹499 (7-Day Routine)
+                      </span>
+                    ) : (
+                      <span className="font-black text-sm text-brand-forest font-mono">
+                        Price: TBA
+                      </span>
+                    )}
                   </div>
 
                   {results.matchedProduct.logisticsNote && (

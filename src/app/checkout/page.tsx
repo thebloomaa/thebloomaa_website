@@ -20,9 +20,8 @@ const DELIVERY_PINCODES = ['800023', '800014', '800025', '800022', '800015', '80
 export const dynamic = 'force-dynamic';
 
 const STANDARD_BUNDLES: { type: BundleType; label: string; days: number; discount: string; discountPct: number }[] = [
-  { type: 'DAYS_7', label: 'Starter', days: 7, discount: '', discountPct: 0 },
-  { type: 'DAYS_15', label: 'Committed', days: 15, discount: '8% OFF', discountPct: 8 },
-  { type: 'DAYS_30', label: 'All-In', days: 30, discount: '20% OFF', discountPct: 20 },
+  { type: 'DAYS_7', label: '7-Day Routine', days: 7, discount: 'Most Popular', discountPct: 0 },
+  { type: 'DAYS_30', label: '30-Day Routine', days: 30, discount: 'Best Value', discountPct: 20 },
 ];
 
 function CheckoutPageInner() {
@@ -227,8 +226,8 @@ function CheckoutPageInner() {
         dietaryPreference: trialProd.dietaryPreference,
       });
       selectBundle('DAYS_7');
-    } else if (planParam === 'bloom_care' || planParam === 'bloom_brain') {
-      const planProd = planParam === 'bloom_care' ? BLOOMAA_PRODUCTS.BLOOM_CARE_PLAN : BLOOMAA_PRODUCTS.BLOOM_BRAIN_PLAN;
+    } else if (planParam === 'bloom_care' || planParam === 'bloom_brain' || planParam === 'monthly') {
+      const planProd = planParam === 'bloom_brain' ? BLOOMAA_PRODUCTS.BLOOM_BRAIN_PLAN : BLOOMAA_PRODUCTS.BLOOM_CARE_PLAN;
       selectProduct({
         id: planProd.id,
         name: planProd.name,
@@ -684,7 +683,7 @@ function CheckoutPageInner() {
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Delivery window:</span>
-                    <span className="font-bold text-brand-forest font-mono">7:00 AM – 9:00 AM</span>
+                    <span className="font-bold text-brand-forest font-mono">6:00 AM – 9:00 AM</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Doorstep morning delivery:</span>
@@ -902,7 +901,7 @@ function CheckoutPageInner() {
                     <div>
                       <p className="text-sm font-black text-amber-400">We're not in your area yet!</p>
                       <p className="text-xs text-brand-forest-muted mt-0.5 leading-relaxed">
-                        TheBloomaa currently delivers only within <strong className="text-brand-forest">Pincodes 800023, 800014, 800025, 800022, 800015</strong> (Patna). We\'re expanding rapidly and will be coming to your area very soon! 🌱
+                        TheBloomaa currently delivers only within <strong className="text-brand-forest">Pincodes 800023, 800014, 800025, 800022, 800015, 800013, 800001</strong> (Patna). We\'re expanding rapidly and will be coming to your area very soon! 🌱
                       </p>
                       <p className="text-xs text-brand-mustard mt-1.5 font-semibold">
                         💬 Want to be notified when we launch in your area?{' '}
@@ -1249,7 +1248,7 @@ function CheckoutPageInner() {
                               </div>
 
                               <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                                After paying ₹{pricing.price} to <strong>{UPI_PHONE}</strong>, provide <strong>either</strong> the UTR / reference number <em>or</em> a screenshot — you only need one.
+                                After paying ₹{pricing.price} via QR scan or UPI ID <strong>({UPI_ID})</strong>, provide <strong>either</strong> the UTR / reference number <em>or</em> a screenshot — you only need one.
                               </p>
 
                               {/* Upload Error Banner */}

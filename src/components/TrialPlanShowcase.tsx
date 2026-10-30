@@ -144,10 +144,11 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
         <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-brand-border pt-3 md:pt-0">
           <div className="text-left md:text-right">
             <span className="text-[10px] uppercase font-bold text-brand-forest-muted tracking-wider block">
-              Introductory Trial
+              7-Day Routine
             </span>
-            <div className="flex items-baseline gap-1">
-              <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
+            <div className="flex items-baseline gap-1.5">
+              <span className="text-sm font-black text-brand-forest-muted line-through font-mono">₹599</span>
+              <span className="text-2xl font-black text-brand-mustard font-mono">₹499</span>
               <span className="text-xs text-brand-forest-muted font-medium">/ 7 boxes</span>
             </div>
           </div>
@@ -157,7 +158,7 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
             onClick={handleOrderTrial}
             className="px-6 py-3 rounded-xl text-xs sm:text-sm font-black text-brand-forest bg-brand-mustard hover:bg-brand-mustard transition-all shadow-lg shadow-brand-mustard/20 hover:scale-105 active:scale-95 cursor-pointer whitespace-nowrap"
           >
-            Claim 7D Trial →
+            Claim 7D Trial (₹499) →
           </button>
         </div>
       </div>

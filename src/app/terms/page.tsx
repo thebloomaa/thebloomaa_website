@@ -11,7 +11,7 @@ export default function TermsPage() {
         <div className="max-w-3xl mx-auto space-y-8">
           <div className="border-b border-brand-border pb-6">
             <span className="text-xs text-brand-forest-muted font-serif italic block mb-1">
-              Bloom your day with BlooMaa
+              Bloom your day with Thebloomaa
             </span>
             <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-brand-forest">
               Terms of Service
@@ -25,7 +25,7 @@ export default function TermsPage() {
             <section className="space-y-2">
               <h2 className="text-base font-bold text-brand-forest">1. Subscription Bundles &amp; Prepaid Models</h2>
               <p>
-                thebloomaa operates on a prepaid subscription model offering 7-day, 15-day, and 30-day bundles, as well as the Just Bloomed 7D Trial. All plans are paid in advance via UPI or accepted payment methods.
+                Thebloomaa operates on a prepaid subscription model offering 7-day routine and 30-day care plans. All plans are paid in advance via UPI or accepted payment methods, with Cash on Delivery (COD) supported upon delivery.
               </p>
             </section>
 

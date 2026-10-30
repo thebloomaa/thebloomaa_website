@@ -5,7 +5,7 @@ import Footer from '@/components/Footer';
 import BioCalculator from '@/components/BioCalculator';
 
 export const metadata: Metadata = {
-  title: 'Living Food Bio Calculator & Diet Comparison | TheBlooMaa',
+  title: 'Living Food Bio Calculator & Diet Comparison | TheBloomaa',
   description:
     'Calculate your Living Food Vitality Score, Biological Diet Age, and TDEE blooms based on your cooked vs. living raw food intake. Compare your current diet with optimal living nutrition.',
   keywords: ['bio calculator', 'living food vitality', 'raw vs cooked food', 'diet comparison', 'TDEE calculator', 'Thebloomaa'],

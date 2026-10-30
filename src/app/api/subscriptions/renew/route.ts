@@ -78,19 +78,9 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Pricing
-    const earlyBirdSlots = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_SLOTS || '100');
-    const earlyBirdPrice = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_PRICE || '499');
-    const regularPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
-
-    const currentBookedCount = await prisma.subscription.count({
-      where: {
-        productId: 'prod-just-bloomed-7d-trial',
-        status: { in: ['PENDING', 'ACTIVE', 'CONFIRMED', 'PRE_BOOK'] },
-      },
-    });
-    const isEarlyBird = currentBookedCount < earlyBirdSlots;
-    const finalAmount = isEarlyBird ? earlyBirdPrice : regularPrice;
+    // 3. Flat standard pricing for 7-Day Plan: ₹499
+    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '499');
+    const finalAmount = planPrice;
 
     // Validate payment if UPI
     if (effectiveMode !== 'PAY_ON_DELIVERY') {

@@ -40,7 +40,7 @@ export default function Navbar() {
                   Thebloomaa
                 </span>
                 <span className="text-[10px] text-[#5E7A67] italic font-serif leading-none hidden sm:block">
-                  Bloom your day with bloomaa
+                  Bloom your day with Thebloomaa
                 </span>
               </div>
             </Link>

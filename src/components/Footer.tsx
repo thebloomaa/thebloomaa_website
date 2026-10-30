@@ -37,7 +37,7 @@ export default function Footer() {
                   Thebloomaa
                 </span>
                 <span className="text-[10px] text-[#A5C4B0] font-serif italic block">
-                  Bloom your day with bloomaa
+                  Bloom your day with Thebloomaa
                 </span>
               </div>
             </Link>

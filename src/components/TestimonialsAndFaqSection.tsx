@@ -20,7 +20,7 @@ const DEFAULT_TESTIMONIALS: ReviewItem[] = [
   {
     name: 'Priya S.',
     avatar: '/avatars/priya.jpg',
-    quote: 'The Blooma bowls have become my daily self-care. I feel more energetic and my skin looks better!',
+    quote: 'TheBloomaa bowls have become my daily self-care. I feel more energetic and my skin looks better!',
     rating: 5,
     mealPlan: 'Just Bloom Plan',
     orderId: 'ORD-98214',
@@ -53,8 +53,8 @@ const DEFAULT_TESTIMONIALS: ReviewItem[] = [
 
 const faqs = [
   {
-    q: 'What are The Blooma bowls?',
-    a: 'The Blooma bowls are chef-crafted, 100% pure vegetarian raw & living food meals prepared fresh every morning in Patna. Packed with sprouted organic legumes, microgreens, vitality nuts, seeds, and fresh fruits with zero cooked denatured oils.',
+    q: 'What are TheBloomaa bowls?',
+    a: 'TheBloomaa bowls are chef-crafted, 100% pure vegetarian raw & living food meals prepared fresh every morning in Patna. Packed with sprouted organic legumes, microgreens, vitality nuts, seeds, and fresh fruits with zero cooked denatured oils.',
   },
   {
     q: 'Do you use preservatives?',

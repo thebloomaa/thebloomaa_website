@@ -221,7 +221,9 @@ export default function MiniCartDrawer() {
                     🔥 {selectedProduct.calories || 340} kcal · 💪 {selectedProduct.protein || 16}g Protein
                   </p>
                   <span className="text-xs font-bold text-[#D97706] font-mono mt-1 block">
-                    Price: TBA (No advance payment)
+                    {selectedProduct.id === 'prod-just-bloomed-7d-trial' || bundleType === 'DAYS_7'
+                      ? '₹499 (7-Day Routine)'
+                      : 'Price: TBA (No advance payment)'}
                   </span>
                 </div>
               </div>
