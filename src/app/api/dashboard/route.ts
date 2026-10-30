@@ -21,6 +21,7 @@ export async function GET() {
       },
       include: {
         product: true,
+        address: true,
         orders: {
           orderBy: { deliveryDate: 'asc' },
         },
@@ -32,11 +33,36 @@ export async function GET() {
       orderBy: { updatedAt: 'desc' },
     });
 
-    if (!subscription) {
-      return NextResponse.json({ subscription: null });
-    }
+    // Also fetch user profile with default address
+    const user = await prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        phone: true,
+        allergies: true,
+        addresses: {
+          orderBy: { isDefault: 'desc' },
+          take: 1,
+        },
+      },
+    });
 
-    return NextResponse.json({ subscription });
+    // If no active subscription, get their most recent past subscription
+    const lastSubscription = !subscription
+      ? await prisma.subscription.findFirst({
+          where: { userId: session.user.id },
+          include: { product: true, address: true },
+          orderBy: { createdAt: 'desc' },
+        })
+      : null;
+
+    return NextResponse.json({
+      subscription: subscription || null,
+      user,
+      lastSubscription,
+    });
   } catch (error) {
     console.error('Dashboard API Error:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

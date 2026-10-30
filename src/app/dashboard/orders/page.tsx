@@ -86,15 +86,9 @@ export default function OrdersPage() {
             // Sub string for ID ORD-XXXX
             const shortId = `ORD-${order.id.substring(order.id.length - 4).toUpperCase()}`;
 
-            const isTrial =
-              order.subscription?.product?.type === 'TRIAL_PLAN' ||
-              order.subscription?.bundleType === 'DAYS_7' ||
-              order.subscription?.product?.dietaryPreference === 'LIVING_RAW' ||
-              Boolean(order.subscription?.product?.name?.toLowerCase().includes('trial'));
-
-            const dropPrice = isTrial
-              ? Math.round(451 / 7)
-              : Math.round(order.subscription?.product?.price || 299);
+            const planLabel = order.subscription
+              ? 'Included in Plan'
+              : '—';
 
             return (
               <div key={order.id} className="grid grid-cols-2 sm:grid-cols-6 gap-2 sm:gap-4 px-6 py-4 items-center hover:bg-white/[0.02] transition-colors">
@@ -107,8 +101,8 @@ export default function OrdersPage() {
                   </span>
                 </div>
                 <span className="text-sm hidden sm:block" style={{ color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{timeStr}</span>
-                <span className="text-sm font-semibold text-right" style={{ fontFamily: 'var(--font-mono)', color: order.status === 'SKIPPED' ? 'var(--text-muted)' : 'var(--text-primary)' }}>
-                  {order.status === 'SKIPPED' ? '—' : `₹${dropPrice}`}
+                <span className="text-xs sm:text-sm font-semibold text-right text-emerald-600" style={{ color: order.status === 'SKIPPED' ? 'var(--text-muted)' : '#059669' }}>
+                  {order.status === 'SKIPPED' ? '—' : planLabel}
                 </span>
               </div>
             );

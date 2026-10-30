@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import Link from 'next/link';
 import { signOut } from 'next-auth/react';
+import ReorderPlanModal from '@/components/ReorderPlanModal';
 
 // Generate calendar from actual orders
 const generateDeliveryDays = (orders: any[]) => {
@@ -63,6 +64,9 @@ export default function DashboardPage() {
 
   const [pauseModalOpen, setPauseModalOpen] = useState(false);
   const [resumeModalOpen, setResumeModalOpen] = useState(false);
+  const [reorderModalOpen, setReorderModalOpen] = useState(false);
+  const [userProfile, setUserProfile] = useState<any>(null);
+  const [savedAddress, setSavedAddress] = useState<any>(null);
   const [pauseType, setPauseType] = useState<'INDEFINITE' | 'ONE_DAY'>('INDEFINITE');
   const [pauseLoading, setPauseLoading] = useState(false);
   const [actionFeedback, setActionFeedback] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -71,6 +75,18 @@ export default function DashboardPage() {
     try {
       const res = await fetch('/api/dashboard', { cache: 'no-store' });
       const data = await res.json();
+      if (data.user) {
+        setUserProfile(data.user);
+        if (data.user.addresses?.[0]) {
+          setSavedAddress(data.user.addresses[0]);
+        }
+      }
+      if (data.subscription?.address) {
+        setSavedAddress(data.subscription.address);
+      } else if (data.lastSubscription?.address) {
+        setSavedAddress(data.lastSubscription.address);
+      }
+
       if (data.subscription) {
         const bundleDays =
           data.subscription.bundleType === 'DAYS_30'
@@ -251,27 +267,70 @@ export default function DashboardPage() {
     return <div className="p-12 text-center text-[var(--text-muted)] font-mono text-sm">Loading your diet dashboard...</div>;
   }
 
+  const nextStartDateLabel = useMemo(() => {
+    if (sub?.orders && sub.orders.length > 0) {
+      const scheduled = sub.orders
+        .filter((o: any) => o.status !== 'FAILED')
+        .map((o: any) => new Date(o.deliveryDate).getTime());
+      if (scheduled.length > 0) {
+        const maxDate = new Date(Math.max(...scheduled));
+        const nextDay = new Date(maxDate);
+        nextDay.setDate(maxDate.getDate() + 1);
+        return nextDay.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+      }
+    }
+    return 'Tomorrow morning';
+  }, [sub]);
+
   if (!sub) {
     return (
-      <div className="max-w-4xl mx-auto text-center p-12">
-        <h1 className="text-2xl font-black mb-4">No Active Subscription</h1>
-        <p className="text-[var(--text-muted)] mb-8">You don&apos;t have any active diet plans right now.</p>
-        <div className="flex items-center justify-center gap-3">
-          <Link
-            href="/#plans"
-            className="inline-block px-6 py-3 rounded-xl font-bold text-white transition-all hover:scale-105"
-            style={{ background: '#D97706' }}
-          >
-            Explore Diet Plans
-          </Link>
+      <div className="max-w-4xl mx-auto p-6 sm:p-12">
+        <div className="rounded-3xl p-8 bg-white border border-[#EAE2D2] shadow-xl text-center max-w-lg mx-auto">
+          <div className="w-16 h-16 rounded-2xl bg-[#D97706]/10 text-[#D97706] flex items-center justify-center text-3xl mx-auto mb-4">
+            🥗
+          </div>
+          <h1 className="text-2xl font-black text-[#0D2818] mb-2">No Active Subscription</h1>
+          <p className="text-xs text-[#5E7A67] mb-6 leading-relaxed">
+            Ready to continue your fresh living nutrition journey? Re-order your 7-day Just Bloom Plan in 1 tap with your saved delivery details.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            <button
+              type="button"
+              onClick={() => setReorderModalOpen(true)}
+              className="w-full sm:w-auto px-6 py-3 rounded-xl font-black text-xs sm:text-sm text-white bg-[#D97706] hover:bg-[#B45309] shadow-md transition-all hover:scale-105 cursor-pointer"
+            >
+              ⚡ 1-Tap Re-Order 7D Plan
+            </button>
+            <Link
+              href="/#plans"
+              className="w-full sm:w-auto px-5 py-3 rounded-xl font-bold text-xs text-[#0D2818] bg-[#FAF7F2] border border-[#EAE2D2] hover:bg-[#EAE2D2] transition-all"
+            >
+              Explore Plans
+            </Link>
+          </div>
           <button
             type="button"
             onClick={() => signOut({ callbackUrl: '/' })}
-            className="px-5 py-3 rounded-xl font-bold text-red-600 bg-red-500/10 hover:bg-red-500/20 border border-red-500/20 transition-all cursor-pointer text-sm"
+            className="mt-6 text-xs text-red-600 hover:underline cursor-pointer block mx-auto"
           >
             🚪 Log Out
           </button>
         </div>
+
+        {reorderModalOpen && (
+          <ReorderPlanModal
+            isOpen={reorderModalOpen}
+            onClose={() => setReorderModalOpen(false)}
+            onSuccess={(msg) => {
+              setActionFeedback({ type: 'success', text: msg });
+              fetchDashboardData();
+            }}
+            savedAddress={savedAddress || userProfile?.addresses?.[0] || null}
+            defaultDeliveryTime={userProfile?.deliveryTime || '07:00 AM'}
+            userAllergies={userProfile?.allergies || ''}
+            nextStartDateLabel="Tomorrow morning"
+          />
+        )}
       </div>
     );
   }
@@ -289,6 +348,16 @@ export default function DashboardPage() {
         </div>
 
         <div className="flex items-center gap-2">
+          {/* Quick 1-Tap Re-Order Button */}
+          <button
+            type="button"
+            onClick={() => setReorderModalOpen(true)}
+            className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-black bg-[#D97706] text-white hover:bg-[#B45309] shadow-sm transition-all hover:scale-105 cursor-pointer"
+          >
+            <span>🔄</span>
+            <span>Re-Order Plan</span>
+          </button>
+
           {/* WhatsApp Concierge Trigger */}
           <a
             href="https://wa.me/919117501404?text=Hi%20Thebloomaa%20Team,%20I%20have%20a%20question%20about%20my%20morning%20diet%20delivery"
@@ -353,8 +422,27 @@ export default function DashboardPage() {
           <div className="mb-4 p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-xs text-brand-forest flex items-center gap-2.5">
             <span className="text-base">⏳</span>
             <span>
-              <strong>Verification Pending:</strong> Waiting for confirmation from TheBlooma Team. Once verified, your deliveries will be scheduled!
+              <strong>Verification Pending:</strong> Waiting for confirmation from TheBloomaa Team. Once verified, your deliveries will be scheduled!
             </span>
+          </div>
+        )}
+
+        {/* Plan Ending Soon Alert (≤ 2 deliveries remaining) */}
+        {sub.status === 'ACTIVE' && sub.deliveriesLeft <= 2 && (
+          <div className="mb-4 p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/30 text-xs text-amber-950 flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-xs">
+            <div className="flex items-center gap-2">
+              <span className="text-base">⏳</span>
+              <span>
+                <strong>Plan Ending Soon!</strong> Only <strong>{sub.deliveriesLeft}</strong> morning {sub.deliveriesLeft === 1 ? 'drop' : 'drops'} remaining. Re-book now for zero delivery disruption!
+              </span>
+            </div>
+            <button
+              type="button"
+              onClick={() => setReorderModalOpen(true)}
+              className="px-3.5 py-1.5 rounded-xl text-xs font-black bg-[#D97706] text-white hover:bg-[#B45309] shrink-0 cursor-pointer shadow-sm transition-all text-center"
+            >
+              Re-Order Next 7 Days →
+            </button>
           </div>
         )}
 
@@ -441,6 +529,15 @@ export default function DashboardPage() {
 
           <div className="flex flex-col sm:items-end gap-1.5">
             <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setReorderModalOpen(true)}
+                className="px-4 py-2 rounded-xl text-xs font-black bg-[#D97706] text-white hover:bg-[#B45309] transition-all hover:scale-105 cursor-pointer shadow-md flex items-center gap-1.5"
+              >
+                <span>🔄</span>
+                <span>Re-Book 7D</span>
+              </button>
+
               {isPaused ? (
                 <button
                   type="button"
@@ -922,6 +1019,21 @@ export default function DashboardPage() {
           </div>
         )}
       </div>
+      {/* 1-Tap Re-Order Plan Modal */}
+      {reorderModalOpen && (
+        <ReorderPlanModal
+          isOpen={reorderModalOpen}
+          onClose={() => setReorderModalOpen(false)}
+          onSuccess={(msg) => {
+            setActionFeedback({ type: 'success', text: msg });
+            fetchDashboardData();
+          }}
+          savedAddress={savedAddress || userProfile?.addresses?.[0] || null}
+          defaultDeliveryTime={sub?.deliveryTime || '07:00 AM'}
+          nextStartDateLabel={nextStartDateLabel}
+          userAllergies={userProfile?.allergies || ''}
+        />
+      )}
     </div>
   );
 }

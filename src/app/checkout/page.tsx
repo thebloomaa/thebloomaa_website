@@ -10,85 +10,12 @@ import { BLOOMAA_PRODUCTS } from '@/lib/bioCalculator';
 import AllergyPreferencesSelector from '@/components/AllergyPreferencesSelector';
 import { useLivePricing } from '@/lib/useLivePricing';
 
-const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || '8863002959@ptyes';
-const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Rahul Kumar Sharma';
+const UPI_ID = process.env.NEXT_PUBLIC_UPI_ID || 'Q030020231@ybl';
+const UPI_NAME = process.env.NEXT_PUBLIC_UPI_NAME || 'Thebloomaa';
 const UPI_PHONE = process.env.NEXT_PUBLIC_UPI_PHONE || '8863002959';
 
 // ─── Delivery Zones: Patna ───────────────────────────────────
 const DELIVERY_PINCODES = ['800023', '800014', '800025', '800022', '800015', '800013', '800001'];
-
-const PINCODE_LOCALITIES = [
-  // Colonies & Residential Areas
-  'Punaichak Colony',
-  'Anisabad Colony',
-  'Rajendra Nagar',
-  'Kankarbagh Colony',
-  'Bailey Road Colony',
-  'Sheikhpura Colony',
-  'Hanuman Nagar',
-  'Patliputra Colony',
-  'Boring Road Area',
-  'Srikrishna Nagar',
-  'Indira Nagar',
-  'Jaganpura Colony',
-  'Saidpur Colony',
-  'Dak Bungalow Road Area',
-  'Exhibition Road Colony',
-  'Mithapur Colony',
-  'Nayatola',
-  'Shastri Nagar',
-  'Mahendru Colony',
-  'Buddha Colony',
-  'Gardanibagh Colony',
-  'Ramkrishna Nagar',
-  'Vidyapuri Colony',
-  'Agamkuan Colony',
-  'Lohanipur Colony',
-  'Chitkohra',
-  'Adalatganj',
-  'Kumhrar Colony',
-  // Chowks & Landmarks
-  'Punaichak Chowk',
-  'Anisabad Chowk',
-  'Kankarbagh Chowk',
-  'Rajendra Nagar Chowk',
-  'Sheikhpura Chowk',
-  'Boring Canal Road Chowk',
-  'Mahendru Chowk',
-  'Dak Bungalow Chowk',
-  'Exhibition Road Chowk',
-  'Khajpura Chowk',
-  'Zero Mile Chowk',
-  'Gandhi Maidan Area',
-  'Patna Junction Area',
-  'GPO Area',
-  // Apartments & Societies
-  'Laxmi Apartment, Punaichak',
-  'Green Valley Apartment, Boring Road',
-  'City Centre Apartment, Kankarbagh',
-  'Surya Vihar Apartment, Rajendra Nagar',
-  'Shanti Niketan Apartment, Sheikhpura',
-  'Anand Vihar Apartment, Anisabad',
-  'Sai Enclave, Kankarbagh',
-  'Rajveer Residency, Patliputra',
-  'Silver Oak Residency, Boring Road',
-  'Cosmos Towers, Bailey Road',
-  'Riviera Apartment, Sheikhpura',
-  'Ravi Apartment, Nayatola',
-  'Imperial Heights, Rajendra Nagar',
-  'Prestige Tower, Boring Canal Road',
-  // Roads & Streets
-  'Boring Road',
-  'Boring Canal Road',
-  'Bailey Road (800023 stretch)',
-  'Exhibition Road',
-  'Dak Bungalow Road',
-  'Kankarbagh Main Road',
-  'Rajendra Nagar Main Road',
-  'Punaichak Road',
-  'Sheikhpura Road',
-  'Hanuman Nagar Road',
-].sort();
 
 export const dynamic = 'force-dynamic';
 
@@ -240,26 +167,6 @@ function CheckoutPageInner() {
     allergies: '',
   });
 
-  // Locality search state
-  const [localitySearch, setLocalitySearch] = useState('');
-  const [showLocalityDropdown, setShowLocalityDropdown] = useState(false);
-  const localityRef = useRef<HTMLDivElement>(null);
-
-  // Close locality dropdown on outside click
-  useEffect(() => {
-    const handler = (e: MouseEvent) => {
-      if (localityRef.current && !localityRef.current.contains(e.target as Node)) {
-        setShowLocalityDropdown(false);
-      }
-    };
-    document.addEventListener('mousedown', handler);
-    return () => document.removeEventListener('mousedown', handler);
-  }, []);
-
-  const filteredLocalities = PINCODE_LOCALITIES.filter((l) =>
-    l.toLowerCase().includes(localitySearch.toLowerCase())
-  );
-
   // Whether the pincode entered is outside our delivery zone
   const isOutsideZone =
     form.pincode.length === 6 && !DELIVERY_PINCODES.includes(form.pincode);
@@ -304,7 +211,7 @@ function CheckoutPageInner() {
   const planParam = searchParams ? searchParams.get('plan') : null;
 
   useEffect(() => {
-    if (planParam === 'single' || planParam === 'trial') {
+    if (planParam === 'trial') {
       const trialProd = BLOOMAA_PRODUCTS.JUST_BLOOMED_TRIAL;
       selectProduct({
         id: trialProd.id,
@@ -389,7 +296,8 @@ function CheckoutPageInner() {
     setSubmitting(true);
     setSubmitError(null);
     try {
-      const fullStreet = form.houseNo ? `${form.houseNo}, ${form.street}` : form.street;
+      const addressParts = [form.houseNo, form.street, form.locality].filter(Boolean);
+      const fullStreet = addressParts.join(', ');
       const cleanUtr = utrInput.trim() || undefined;
 
       const allergyTag = form.allergies ? `⚠️ ALLERGIES / EXCLUSIONS: ${form.allergies}` : '';
@@ -929,79 +837,19 @@ function CheckoutPageInner() {
                   </div>
                 </div>
 
-                {/* Locality Searchable Dropdown */}
-                <div ref={localityRef} className="relative">
+                {/* Colony / Area / Locality Input */}
+                <div>
                   <label className="block text-xs font-bold uppercase tracking-wider text-brand-forest-muted mb-1.5">
-                    Colony / Area / Locality * <span className="normal-case font-normal text-[10px] text-brand-mustard ml-1">(Select from delivery zones)</span>
+                    Colony / Area / Locality *
                   </label>
-                  <div
-                    className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus-within:border-brand-mustard min-h-[46px] flex items-center gap-2 cursor-text"
-                    onClick={() => setShowLocalityDropdown(true)}
-                  >
-                    {form.locality ? (
-                      <span className="flex-1 text-brand-forest font-semibold">{form.locality}</span>
-                    ) : (
-                      <span className="flex-1 text-brand-forest-muted/60">Search colony, chowk, apartment…</span>
-                    )}
-                    {form.locality && (
-                      <button
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setForm({ ...form, locality: '' });
-                          setLocalitySearch('');
-                        }}
-                        className="text-brand-forest-muted hover:text-brand-forest transition-colors text-base leading-none"
-                        aria-label="Clear locality"
-                      >
-                        ×
-                      </button>
-                    )}
-                    <span className="text-brand-forest-muted text-xs">{showLocalityDropdown ? '▲' : '▼'}</span>
-                  </div>
-
-                  {showLocalityDropdown && (
-                    <div className="absolute z-50 top-full left-0 right-0 mt-1.5 rounded-2xl bg-brand-card border border-brand-border shadow-2xl overflow-hidden">
-                      <div className="p-2 border-b border-brand-border">
-                        <input
-                          autoFocus
-                          type="text"
-                          placeholder="Type to search your area…"
-                          value={localitySearch}
-                          onChange={(e) => setLocalitySearch(e.target.value)}
-                          className="w-full px-3 py-2 rounded-xl bg-brand-cream/80 border border-brand-border text-sm text-brand-forest focus:outline-none focus:border-brand-mustard"
-                        />
-                      </div>
-                      <div className="max-h-52 overflow-y-auto">
-                        {filteredLocalities.length > 0 ? (
-                          filteredLocalities.map((loc) => (
-                            <button
-                              key={loc}
-                              type="button"
-                              onClick={() => {
-                                setForm({ ...form, locality: loc });
-                                setLocalitySearch('');
-                                setShowLocalityDropdown(false);
-                              }}
-                              className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
-                                form.locality === loc
-                                  ? 'bg-brand-mustard/20 text-brand-forest font-bold'
-                                  : 'text-brand-forest-muted hover:bg-brand-cream hover:text-brand-forest'
-                              }`}
-                            >
-                              📍 {loc}
-                            </button>
-                          ))
-                        ) : (
-                          <div className="px-4 py-6 text-center text-xs text-brand-forest-muted">
-                            <div className="text-2xl mb-2">🗺️</div>
-                            <p className="font-bold text-brand-forest">Area not found</p>
-                            <p className="mt-1">We\'re expanding soon! Currently serving selected Patna pincodes.</p>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  )}
+                  <input
+                    type="text"
+                    required
+                    placeholder="Enter your colony, chowk, apartment, or area name"
+                    value={form.locality}
+                    onChange={(e) => setForm({ ...form, locality: e.target.value })}
+                    className="w-full px-4 py-3 rounded-xl bg-brand-cream/80 border border-brand-border text-base sm:text-sm text-brand-forest focus:outline-none focus:border-brand-mustard min-h-[46px]"
+                  />
                 </div>
 
                 {/* City, State & Pincode */}
@@ -1161,7 +1009,7 @@ function CheckoutPageInner() {
                     Booking is done 🎉
                   </h2>
                   <p className="text-sm text-brand-forest-muted max-w-lg mx-auto leading-relaxed font-bold text-amber-900">
-                    waiting for confirmation from TheBlooma Team , once confirmed you will recive confirmation mail.
+                    waiting for confirmation from TheBloomaa Team, once confirmed you will receive confirmation email.
                   </p>
                   <p className="text-[11px] text-brand-forest-muted max-w-lg mx-auto mt-2">
                     Your morning living food slot has been reserved! Deliveries start right to your doorstep between <strong className="text-brand-mustard font-bold">6:00 AM – 9:00 AM</strong> daily.
@@ -1374,39 +1222,39 @@ function CheckoutPageInner() {
                         {paymentMode === 'QR_SCAN' && (
                           <div className="space-y-4 animate-fade-in">
                             <div className="flex flex-col sm:flex-row items-center gap-4 p-4 rounded-2xl bg-brand-cream/70 border border-brand-border">
-                              <div className="w-32 h-32 rounded-xl bg-white p-2 border border-brand-border shadow-xs flex-shrink-0 flex items-center justify-center">
+                              <div className="w-36 h-48 sm:w-44 sm:h-56 rounded-2xl bg-white p-2 border border-brand-border shadow-md flex-shrink-0 flex items-center justify-center overflow-hidden">
                                 <img
-                                  src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(`upi://pay?pa=${UPI_ID}&pn=${encodeURIComponent(UPI_NAME)}&am=${pricing.price}&cu=INR&tn=Bloomaa`)}`}
-                                  alt="Scan UPI QR Code"
+                                  src="/phonepe-merchant-qr.png"
+                                  alt="Thebloomaa PhonePe Merchant QR Code"
                                   className="w-full h-full object-contain"
                                 />
                               </div>
                               <div className="text-center sm:text-left space-y-2 flex-1">
                                 <div className="flex items-center justify-center sm:justify-start gap-1.5 text-xs font-bold text-brand-forest">
                                   <span>📸</span>
-                                  <span>Scan with Paytm, PhonePe, or GPay</span>
+                                  <span>Scan Official PhonePe Merchant QR</span>
                                 </div>
                                 <p className="text-[11px] text-brand-forest-muted leading-snug">
-                                  Amount <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong> will automatically pre-fill in your scanner.
+                                  Scan using PhonePe, Google Pay, Paytm, or any UPI app to pay <strong className="text-brand-mustard font-mono font-bold">₹{pricing.price}</strong>.
                                 </p>
                                 <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
                                   <button
                                     type="button"
-                                    onClick={handleCopyPhone}
+                                    onClick={handleCopyUpi}
                                     className="px-3 py-1.5 rounded-lg text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white transition-all flex items-center gap-1.5 cursor-pointer shadow-xs"
                                   >
-                                    <span>{copiedPhone ? '✓ Number Copied!' : '📱 Copy Mobile: ' + UPI_PHONE}</span>
+                                    <span>{copiedUpi ? '✓ UPI ID Copied!' : '📋 Copy UPI ID: ' + UPI_ID}</span>
                                   </button>
                                   <button
                                     type="button"
-                                    onClick={handleCopyUpi}
+                                    onClick={handleCopyPhone}
                                     className="px-3 py-1.5 rounded-lg text-xs font-semibold bg-white border border-brand-border text-brand-forest hover:bg-brand-card transition-all flex items-center gap-1.5 cursor-pointer shadow-2xs"
                                   >
-                                    <span>{copiedUpi ? '✓ UPI ID Copied!' : '📋 Copy UPI ID'}</span>
+                                    <span>{copiedPhone ? '✓ Mobile Copied!' : '📱 Mobile: ' + UPI_PHONE}</span>
                                   </button>
                                 </div>
                                 <div className="text-[10px] text-brand-forest-muted font-medium">
-                                  Recipient: <strong className="text-brand-forest">{UPI_NAME}</strong> (Verified Bank A/c)
+                                  Verified Merchant: <strong className="text-brand-forest">Thebloomaa</strong> (Terminal 3-Q030020231)
                                 </div>
                               </div>
                             </div>
