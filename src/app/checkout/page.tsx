@@ -565,20 +565,12 @@ function CheckoutPageInner() {
                         ) : (
                           <div className="flex flex-col items-end">
                             <div className="flex items-baseline gap-2">
-                              {pricing.isEarlyBird && (
-                                <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
-                              )}
+                              <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
                               <span className="text-xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                             </div>
-                            {pricing.isEarlyBird ? (
-                              <span className="text-[10px] font-bold text-brand-mustard bg-brand-mustard/10 px-2 py-0.5 rounded-full border border-brand-mustard/20 mt-0.5">
-                                🎁 Early Bird • First 100 Only ({pricing.spotsLeft} left)
-                              </span>
-                            ) : (
-                              <span className="text-[10px] font-bold text-brand-forest-muted bg-brand-cream px-2 py-0.5 rounded-full border border-brand-border mt-0.5">
-                                Standard Launch Pricing
-                              </span>
-                            )}
+                            <span className="text-[10px] font-bold text-brand-forest-muted bg-brand-cream px-2 py-0.5 rounded-full border border-brand-border mt-0.5">
+                              Standard 7-Day Routine
+                            </span>
                           </div>
                         )}
                       </div>
@@ -678,12 +670,10 @@ function CheckoutPageInner() {
                   {!isComingSoonPlan && (
                     <div className="flex justify-between items-center p-2.5 rounded-xl bg-brand-mustard/10 border border-brand-mustard/20">
                       <span className="font-black text-brand-mustard">
-                        {pricing.isEarlyBird ? '🎁 Early Bird Price' : 'Plan Price'}
+                        Plan Price
                       </span>
                       <div className="flex items-baseline gap-1.5">
-                        {pricing.isEarlyBird && (
-                          <span className="text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
-                        )}
+                        <span className="text-brand-forest-muted line-through font-mono">₹599</span>
                         <span className="font-black text-brand-mustard font-mono text-base">₹{pricing.price}</span>
                       </div>
                     </div>
@@ -706,16 +696,11 @@ function CheckoutPageInner() {
                       <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
                     ) : (
                       <div className="flex items-baseline gap-2">
-                        {pricing.isEarlyBird && (
-                          <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
-                        )}
+                        <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
                         <span className="text-2xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                       </div>
                     )}
                   </div>
-                  {!isComingSoonPlan && pricing.isEarlyBird && (
-                    <p className="text-[10px] text-brand-forest-muted text-right">🎁 Early bird offer for first 100 customers only ({pricing.spotsLeft} spots remaining)</p>
-                  )}
                 </div>
 
                 <div className="mt-6 flex justify-end">
@@ -1065,11 +1050,11 @@ function CheckoutPageInner() {
                     <div className="flex justify-between items-center pt-1.5 border-t border-brand-border">
                       <span className="text-brand-forest-muted">Plan Price:</span>
                       <div className="flex items-baseline gap-1.5">
-                        {!isComingSoonPlan && pricing.isEarlyBird && (
-                          <span className="text-brand-forest-muted line-through font-mono text-xs">₹{pricing.originalPrice}</span>
+                        {!isComingSoonPlan && (
+                          <span className="text-brand-forest-muted line-through font-mono text-xs">₹599</span>
                         )}
                         <strong className="text-brand-mustard font-bold">
-                          {isComingSoonPlan ? 'TBA' : `₹${pricing.price} ${pricing.isEarlyBird ? '🎁 Early Bird' : ''}`}
+                          {isComingSoonPlan ? 'TBA' : `₹${pricing.price}`}
                         </strong>
                       </div>
                     </div>
@@ -1127,18 +1112,13 @@ function CheckoutPageInner() {
                     <div className="text-center pb-4 border-b border-brand-border">
                       <p className="text-xs text-brand-forest-muted mb-1">Amount to Pay</p>
                       <div className="flex items-baseline justify-center gap-2">
-                        {!isComingSoonPlan && pricing.isEarlyBird && (
-                          <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice}</span>
+                        {!isComingSoonPlan && (
+                          <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹599</span>
                         )}
                         <span className="text-4xl font-black text-brand-mustard font-mono">
                           ₹{isComingSoonPlan ? 'TBA' : pricing.price}
                         </span>
                       </div>
-                      {!isComingSoonPlan && pricing.isEarlyBird && (
-                        <span className="text-xs font-bold text-brand-mustard bg-brand-mustard/10 px-3 py-0.5 rounded-full border border-brand-mustard/20 mt-1 inline-block">
-                          🎁 Early Bird • {pricing.spotsLeft} spots left of 100
-                        </span>
-                      )}
                     </div>
 
                     {isComingSoonPlan ? (

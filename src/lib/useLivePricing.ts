@@ -22,14 +22,14 @@ const DEFAULT: LivePricing = {
   originalPrice: 599,
   earlyBirdPrice: 499,
   bookedCount: 0,
-  spotsLeft: 100,
+  spotsLeft: 0,
   totalSlots: 100,
-  isEarlyBird: true,
-  percentFilled: 0,
+  isEarlyBird: false,
+  percentFilled: 100,
   isLoading: true,
-  isLocked: true,
-  opensAt: '2026-09-26T18:30:00.000Z',
-  opensAtLabel: '12:00 AM Midnight Tonight (Patna Time)',
+  isLocked: false,
+  opensAt: '',
+  opensAtLabel: '',
 };
 
 export function useLivePricing(): LivePricing {

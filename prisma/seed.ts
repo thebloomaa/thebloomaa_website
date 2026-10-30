@@ -63,7 +63,7 @@ async function main() {
       id: 'prod-just-bloomed-7d-trial',
       name: 'Just Bloomed 7D Trial', 
       type: 'TRIAL_PLAN', 
-      price: 451, 
+      price: 499, 
       description: '7 unique raw & living nutrient boxes over 6 delivery days (6+1 double drop on day 6). Designed for high enzymatic vitality and cellular gut reset.',
       calories: 420,
       protein: 22,

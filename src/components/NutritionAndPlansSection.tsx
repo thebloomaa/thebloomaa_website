@@ -12,9 +12,7 @@ export default function NutritionAndPlansSection() {
     'Just Bloom & Monthly routines available',
     'Pause, skip or reschedule anytime',
     'Cold-prepared fresh at 5:00 AM daily',
-    pricing.isEarlyBird
-      ? `Early bird price: ₹${pricing.price} for first 100 customers (${pricing.spotsLeft} left)`
-      : `Standard plan: ₹${pricing.price}`,
+    'Just Bloom 7-Day routine: ₹499 (Just ₹71/day)',
     'Dedicated WhatsApp subscriber support',
   ];
   return (
@@ -43,7 +41,7 @@ export default function NutritionAndPlansSection() {
           {/* Card 1: Just Bloom Plan (Most Popular) */}
           <div className="rounded-3xl p-6 sm:p-7 bg-white border-2 border-[#D97706] shadow-md flex flex-col justify-between text-center relative transition-all hover:shadow-xl hover:-translate-y-1">
             <span className="absolute -top-3.5 left-1/2 -translate-x-1/2 px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-[#D97706] text-white shadow-sm whitespace-nowrap">
-              {pricing.isEarlyBird ? 'Most Popular • Early Bird' : 'Most Popular Plan'}
+              Most Popular • 7-Day Routine
             </span>
 
             <div>
@@ -56,42 +54,18 @@ export default function NutritionAndPlansSection() {
               </p>
               
               {/* Price Block */}
-              <div className="py-4 px-3 rounded-2xl bg-[#FEF9EC] border border-[#FDE3B2] mb-3 text-left">
-                {pricing.isEarlyBird ? (
-                  <>
-                    <div className="flex items-center justify-between text-[10px] font-bold uppercase tracking-wider text-[#D97706] mb-1">
-                      <span>🎁 First 100 Customers</span>
-                      <span>{pricing.spotsLeft} spots left</span>
-                    </div>
-                    <div className="flex items-baseline justify-center gap-2 my-1">
-                      <span className="text-2xl font-black text-[#5E7A67] line-through font-mono">₹{pricing.originalPrice}</span>
-                      <strong className="text-3xl font-black text-[#D97706] font-mono">₹{pricing.price}</strong>
-                    </div>
-                    {/* Live spots progress bar */}
-                    <div className="w-full bg-[#FDE3B2] rounded-full h-2 overflow-hidden my-2">
-                      <div
-                        className="bg-[#D97706] h-full rounded-full transition-all duration-500"
-                        style={{ width: `${pricing.percentFilled}%` }}
-                      />
-                    </div>
-                    <div className="flex items-center justify-between text-[10px] text-[#5E7A67] font-semibold">
-                      <span>{pricing.bookedCount} of {pricing.totalSlots} spots taken</span>
-                      <span>7–9 AM Patna Delivery</span>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E7A67] block text-center">
-                      Standard Plan Price
-                    </span>
-                    <div className="flex items-baseline justify-center gap-2 my-1">
-                      <strong className="text-3xl font-black text-[#D97706] font-mono">₹{pricing.price}</strong>
-                    </div>
-                    <span className="text-[11px] text-[#5E7A67] font-semibold block text-center">
-                      7 to 9 AM Delivery • Patna
-                    </span>
-                  </>
-                )}
+              <div className="py-4 px-3 rounded-2xl bg-[#FEF9EC] border border-[#FDE3B2] mb-3 text-center">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-[#5E7A67] block">
+                  7-Day Living Routine
+                </span>
+                <div className="flex items-baseline justify-center gap-2 my-1">
+                  <span className="text-xl font-bold text-[#5E7A67] line-through font-mono">₹599</span>
+                  <strong className="text-3xl font-black text-[#D97706] font-mono">₹499</strong>
+                </div>
+                <div className="flex items-center justify-between text-[10px] text-[#5E7A67] font-semibold pt-1 border-t border-[#FDE3B2]/60 mt-1">
+                  <span>₹71 / day (7 raw boxes)</span>
+                  <span>6–9 AM Patna Delivery</span>
+                </div>
               </div>
 
               {/* 3 Quick Features */}

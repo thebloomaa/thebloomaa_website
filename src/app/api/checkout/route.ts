@@ -96,24 +96,9 @@ export async function POST(req: Request) {
     const effectiveBundleType = isComingSoonPlan ? 'DAYS_30' : 'DAYS_7';
     const bundleDays = isComingSoonPlan ? 30 : 7;
 
-    // Check first 100 early bird customer threshold
-    const earlyBirdSlots = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_SLOTS || '100');
-    const earlyBirdPrice = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_PRICE || '499');
-    const regularPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
-
-    let isEarlyBird = true;
-    let finalAmount = 0;
-
-    if (!isComingSoonPlan) {
-      const currentBookedCount = await prisma.subscription.count({
-        where: {
-          productId: 'prod-just-bloomed-7d-trial',
-          status: { in: ['PENDING', 'ACTIVE', 'CONFIRMED', 'PRE_BOOK'] },
-        },
-      });
-      isEarlyBird = currentBookedCount < earlyBirdSlots;
-      finalAmount = isEarlyBird ? earlyBirdPrice : regularPrice;
-    }
+    // Flat price for Just Bloom 7-Day Routine: ₹499
+    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '499');
+    const finalAmount = isComingSoonPlan ? 0 : planPrice;
 
     // Require at least one proof: UTR (≥8 chars) OR screenshot
     if (!isComingSoonPlan && paymentMode !== 'PAY_ON_DELIVERY') {
@@ -173,7 +158,7 @@ export async function POST(req: Request) {
           addressId: newAddress.id,
           bundleType: effectiveBundleType,
           deliveriesLeft: bundleDays,
-          status: 'PENDING', // Awaiting admin verification & 30 Sept launch confirmation
+          status: 'PENDING', // Awaiting admin verification
           utr: effectiveUtr,
           startDate: firstDeliveryDate,
           nextDeliveryDate: firstDeliveryDate,
@@ -186,8 +171,8 @@ export async function POST(req: Request) {
       const paymentInfoTag = isComingSoonPlan
         ? `[${product.name} - Price TBA]`
         : paymentMode === 'PAY_ON_DELIVERY'
-        ? `[Mode: Cash on Delivery (COD) | To Collect: ₹${finalAmount} | Pay on Delivery | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`
-        : `[Mode: ${modeLabel} | Paid: ₹${finalAmount} | UTR: ${effectiveUtr}${proofSnippet} | ${isEarlyBird ? 'Early Bird (First 100)' : 'Regular Price'}]`;
+        ? `[Mode: Cash on Delivery (COD) | To Collect: ₹${finalAmount} | Pay on Delivery]`
+        : `[Mode: ${modeLabel} | Paid: ₹${finalAmount} | UTR: ${effectiveUtr}${proofSnippet}]`;
 
       const combinedOrderNote = [deliveryNote, paymentInfoTag].filter(Boolean).join(' | ');
 
@@ -254,7 +239,7 @@ export async function POST(req: Request) {
         orderId: order.id,
         deliveryDate: firstDeliveryDate.toISOString(),
         amount: finalAmount,
-        isEarlyBird,
+        isEarlyBird: false,
         utr: effectiveUtr,
         paymentMode: paymentMode || 'UPI_APP',
         screenshotUrl: screenshotUrl || null,

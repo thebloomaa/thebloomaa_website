@@ -97,13 +97,13 @@ export default function LoginPage() {
               {/* Live Trust Metrics */}
               <div className="pt-2 flex items-center justify-center lg:justify-start gap-4 text-xs font-semibold text-brand-forest-muted">
                 <span className="flex items-center gap-1.5">
-                  <span className="w-2 h-2 rounded-full bg-brand-mustard animate-pulse" />
-                  Patna Kitchen Ready
+                  <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                  Patna Kitchen Live
                 </span>
                 <span>·</span>
-                <span>Launching 30 Sept</span>
+                <span>Daily Morning Drops</span>
                 <span>·</span>
-                <span>100 Founding Slots</span>
+                <span>Fresh Harvested</span>
               </div>
             </div>
 

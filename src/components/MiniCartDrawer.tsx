@@ -266,14 +266,10 @@ export default function MiniCartDrawer() {
 
                           <div className="text-right">
                             {opt.type === 'DAYS_7' ? (
-                              pricing.isEarlyBird ? (
-                                <div className="flex flex-col items-end">
-                                  <span className="text-[10px] text-[#5E7A67] line-through font-mono">₹{pricing.originalPrice}</span>
-                                  <span className="text-xs font-black text-[#D97706] font-mono">₹{pricing.price}</span>
-                                </div>
-                              ) : (
-                                <span className="text-xs font-black text-[#D97706] font-mono">₹{pricing.price}</span>
-                              )
+                              <div className="flex flex-col items-end">
+                                <span className="text-[10px] text-[#5E7A67] line-through font-mono">₹599</span>
+                                <span className="text-xs font-black text-[#D97706] font-mono">₹499</span>
+                              </div>
                             ) : (
                               <span className="text-xs font-black text-[#0F3826] font-mono">Price TBA</span>
                             )}
