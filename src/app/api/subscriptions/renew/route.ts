@@ -78,8 +78,8 @@ export async function POST(req: Request) {
       );
     }
 
-    // 3. Flat standard pricing for 7-Day Plan: ₹499
-    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '499');
+    // 3. Flat standard pricing for 7-Day Plan: ₹599
+    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
     const finalAmount = planPrice;
 
     // Validate payment if UPI

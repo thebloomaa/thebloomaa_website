@@ -3,8 +3,9 @@ import { prisma } from '@/lib/prisma';
 import { isPreBookingLocked, PRE_BOOKING_OPENS_AT } from '@/lib/preBookingConfig';
 
 const EARLY_BIRD_SLOTS = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_SLOTS || '100');
-const EARLY_BIRD_PRICE = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_PRICE || '499');
+const EARLY_BIRD_PRICE = parseInt(process.env.NEXT_PUBLIC_EARLY_BIRD_PRICE || '599');
 const REGULAR_PRICE = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
+const ORIGINAL_PRICE = parseInt(process.env.NEXT_PUBLIC_ORIGINAL_PRICE || '699');
 const JUST_BLOOM_PRODUCT_ID = 'prod-just-bloomed-7d-trial';
 
 export const dynamic = 'force-dynamic';
@@ -19,9 +20,9 @@ export async function GET() {
     });
 
     return NextResponse.json({
-      price: 499,
-      originalPrice: 599,
-      earlyBirdPrice: 499,
+      price: REGULAR_PRICE,
+      originalPrice: ORIGINAL_PRICE,
+      earlyBirdPrice: EARLY_BIRD_PRICE,
       bookedCount,
       spotsLeft: 0,
       totalSlots: 100,
@@ -34,9 +35,9 @@ export async function GET() {
   } catch (error) {
     console.error('Pricing API error:', error);
     return NextResponse.json({
-      price: 499,
-      originalPrice: 599,
-      earlyBirdPrice: 499,
+      price: REGULAR_PRICE,
+      originalPrice: ORIGINAL_PRICE,
+      earlyBirdPrice: EARLY_BIRD_PRICE,
       bookedCount: 0,
       spotsLeft: 0,
       totalSlots: 100,

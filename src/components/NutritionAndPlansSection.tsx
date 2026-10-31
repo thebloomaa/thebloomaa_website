@@ -12,7 +12,7 @@ export default function NutritionAndPlansSection() {
     'Just Bloom & Monthly routines available',
     'Pause, skip or reschedule anytime',
     'Cold-prepared fresh at 5:00 AM daily',
-    'Just Bloom 7-Day routine: ₹499 (Just ₹71/day)',
+    'Just Bloom 7-Day routine: ₹599 (Just ₹86/day)',
     'Dedicated WhatsApp subscriber support',
   ];
   return (
@@ -59,11 +59,11 @@ export default function NutritionAndPlansSection() {
                   7-Day Living Routine
                 </span>
                 <div className="flex items-baseline justify-center gap-2 my-1">
-                  <span className="text-xl font-bold text-[#5E7A67] line-through font-mono">₹599</span>
-                  <strong className="text-3xl font-black text-[#D97706] font-mono">₹499</strong>
+                  <span className="text-xl font-bold text-[#5E7A67] line-through font-mono">₹699</span>
+                  <strong className="text-3xl font-black text-[#D97706] font-mono">₹599</strong>
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-[#5E7A67] font-semibold pt-1 border-t border-[#FDE3B2]/60 mt-1">
-                  <span>₹71 / day (7 raw boxes)</span>
+                  <span>₹86 / day (7 raw boxes)</span>
                   <span>6–9 AM Patna Delivery</span>
                 </div>
               </div>
@@ -72,7 +72,7 @@ export default function NutritionAndPlansSection() {
               <div className="space-y-2 text-left mb-6 text-xs text-[#183925]">
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>Fruits, Sprouts, Veggies, Wet & Dry Seeds</span>
+                  <span>Raw &amp; Dry Fruits, seeds, nuts, veggies, sprouts with honey,lemon &amp; salty finish</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>

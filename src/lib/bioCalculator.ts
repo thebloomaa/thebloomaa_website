@@ -190,7 +190,7 @@ export const BLOOMAA_PRODUCTS = {
     id: 'prod-just-bloomed-7d-trial',
     name: 'Just Bloomed 7D Trial',
     type: 'TRIAL_PLAN',
-    price: 499,
+    price: 599,
     description: '7 unique totally raw/living boxes mapped to 7 daily cellular goals. Delivered fresh every morning in Patna.',
     calories: 420, protein: 22, carbs: 48, fats: 16,
     dietaryPreference: 'LIVING_RAW',

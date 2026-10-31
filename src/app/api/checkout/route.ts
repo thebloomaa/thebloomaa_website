@@ -96,8 +96,8 @@ export async function POST(req: Request) {
     const effectiveBundleType = isComingSoonPlan ? 'DAYS_30' : 'DAYS_7';
     const bundleDays = isComingSoonPlan ? 30 : 7;
 
-    // Flat price for Just Bloom 7-Day Routine: ₹499
-    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '499');
+    // Flat price for Just Bloom 7-Day Routine: ₹599
+    const planPrice = parseInt(process.env.NEXT_PUBLIC_REGULAR_PRICE || '599');
     const finalAmount = isComingSoonPlan ? 0 : planPrice;
 
     // Require at least one proof: UTR (≥8 chars) OR screenshot

@@ -18,9 +18,9 @@ export interface LivePricing {
 }
 
 const DEFAULT: LivePricing = {
-  price: 499,
-  originalPrice: 599,
-  earlyBirdPrice: 499,
+  price: 599,
+  originalPrice: 699,
+  earlyBirdPrice: 599,
   bookedCount: 0,
   spotsLeft: 0,
   totalSlots: 100,

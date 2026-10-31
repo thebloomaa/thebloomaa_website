@@ -564,7 +564,7 @@ function CheckoutPageInner() {
                         ) : (
                           <div className="flex flex-col items-end">
                             <div className="flex items-baseline gap-2">
-                              <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
+                              <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice || 699}</span>
                               <span className="text-xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                             </div>
                             <span className="text-[10px] font-bold text-brand-forest-muted bg-brand-cream px-2 py-0.5 rounded-full border border-brand-border mt-0.5">
@@ -605,7 +605,7 @@ function CheckoutPageInner() {
                       <span>Just Bloom Plan — What’s Included</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>7:00 AM – 9:00 AM</strong> across Patna. Fruits, sprouts, veggies & wet/dry seeds — daily rotating A/c to Healthy Functional. Zero cooking oils.
+                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>6:00 AM – 9:00 AM</strong> across Patna. Raw &amp; Dry Fruits, seeds, nuts, veggies, sprouts with honey,lemon &amp; salty finish. Zero cooking oils.
                     </p>
                   </div>
                 )}
@@ -672,7 +672,7 @@ function CheckoutPageInner() {
                         Plan Price
                       </span>
                       <div className="flex items-baseline gap-1.5">
-                        <span className="text-brand-forest-muted line-through font-mono">₹599</span>
+                        <span className="text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice || 699}</span>
                         <span className="font-black text-brand-mustard font-mono text-base">₹{pricing.price}</span>
                       </div>
                     </div>
@@ -695,7 +695,7 @@ function CheckoutPageInner() {
                       <span className="text-2xl font-black text-brand-mustard font-mono">TBA</span>
                     ) : (
                       <div className="flex items-baseline gap-2">
-                        <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹599</span>
+                        <span className="text-base font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice || 699}</span>
                         <span className="text-2xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                       </div>
                     )}
@@ -1050,7 +1050,7 @@ function CheckoutPageInner() {
                       <span className="text-brand-forest-muted">Plan Price:</span>
                       <div className="flex items-baseline gap-1.5">
                         {!isComingSoonPlan && (
-                          <span className="text-brand-forest-muted line-through font-mono text-xs">₹599</span>
+                          <span className="text-brand-forest-muted line-through font-mono text-xs">₹{pricing.originalPrice || 699}</span>
                         )}
                         <strong className="text-brand-mustard font-bold">
                           {isComingSoonPlan ? 'TBA' : `₹${pricing.price}`}
@@ -1112,7 +1112,7 @@ function CheckoutPageInner() {
                       <p className="text-xs text-brand-forest-muted mb-1">Amount to Pay</p>
                       <div className="flex items-baseline justify-center gap-2">
                         {!isComingSoonPlan && (
-                          <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹599</span>
+                          <span className="text-xl font-black text-brand-forest-muted line-through font-mono">₹{pricing.originalPrice || 699}</span>
                         )}
                         <span className="text-4xl font-black text-brand-mustard font-mono">
                           ₹{isComingSoonPlan ? 'TBA' : pricing.price}

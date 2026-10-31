@@ -1329,7 +1329,7 @@ export default function BioCalculator() {
                     </span>
                     {results.matchedProduct.id === 'prod-just-bloomed-7d-trial' ? (
                       <span className="font-black text-sm text-brand-mustard font-mono">
-                        ₹499 (7-Day Routine)
+                        ₹599 (7-Day Routine)
                       </span>
                     ) : (
                       <span className="font-black text-sm text-brand-forest font-mono">

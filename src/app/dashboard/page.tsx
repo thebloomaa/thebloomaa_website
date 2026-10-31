@@ -104,7 +104,7 @@ export default function DashboardPage() {
           startDate: data.subscription.startDate,
           nextDeliveryDate: data.subscription.nextDeliveryDate,
           deliveryTime: data.subscription.deliveryTime || '07:00 AM',
-          perDay: Math.round((data.subscription.product?.price || 499) / bundleDays),
+          perDay: Math.round((data.subscription.product?.price || 599) / bundleDays),
           orders: data.subscription.orders || [],
           pauseEndDate: data.subscription.pauses?.[0]?.endDate || null,
         });
@@ -135,6 +135,21 @@ export default function DashboardPage() {
     for (let d = 1; d <= lastDay.getDate(); d++) days.push(d);
     return days;
   }, [currentMonth, currentYear]);
+
+  const nextStartDateLabel = useMemo(() => {
+    if (sub?.orders && sub.orders.length > 0) {
+      const scheduled = sub.orders
+        .filter((o: any) => o.status !== 'FAILED')
+        .map((o: any) => new Date(o.deliveryDate).getTime());
+      if (scheduled.length > 0) {
+        const maxDate = new Date(Math.max(...scheduled));
+        const nextDay = new Date(maxDate);
+        nextDay.setDate(maxDate.getDate() + 1);
+        return nextDay.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
+      }
+    }
+    return 'Tomorrow morning';
+  }, [sub]);
 
   const getDateStr = (day: number) => {
     return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
@@ -266,21 +281,6 @@ export default function DashboardPage() {
   if (loading) {
     return <div className="p-12 text-center text-[var(--text-muted)] font-mono text-sm">Loading your diet dashboard...</div>;
   }
-
-  const nextStartDateLabel = useMemo(() => {
-    if (sub?.orders && sub.orders.length > 0) {
-      const scheduled = sub.orders
-        .filter((o: any) => o.status !== 'FAILED')
-        .map((o: any) => new Date(o.deliveryDate).getTime());
-      if (scheduled.length > 0) {
-        const maxDate = new Date(Math.max(...scheduled));
-        const nextDay = new Date(maxDate);
-        nextDay.setDate(maxDate.getDate() + 1);
-        return nextDay.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
-      }
-    }
-    return 'Tomorrow morning';
-  }, [sub]);
 
   if (!sub) {
     return (

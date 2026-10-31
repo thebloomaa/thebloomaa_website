@@ -83,7 +83,7 @@ export const useBundleStore = create<BundleState>()(
         const { selectedProduct, bundleType } = get();
         if (!selectedProduct) return 0;
         if (selectedProduct.type === 'TRIAL_PLAN' || selectedProduct.dietaryPreference === 'LIVING_RAW' || selectedProduct.isTrialPlan) {
-          return Math.round(499 / 7);
+          return Math.round(599 / 7);
         }
         if (!bundleType) return 0;
         return Math.round(Number(selectedProduct.price) * BUNDLE_DISCOUNT[bundleType]);
@@ -93,7 +93,7 @@ export const useBundleStore = create<BundleState>()(
         const state = get();
         const { selectedProduct, bundleType } = state;
         if (selectedProduct && (selectedProduct.type === 'TRIAL_PLAN' || selectedProduct.dietaryPreference === 'LIVING_RAW' || selectedProduct.isTrialPlan)) {
-          return 499;
+          return 599;
         }
         return state.getPerDayPrice() * state.getBundleDays();
       },

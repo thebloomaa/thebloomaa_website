@@ -222,7 +222,7 @@ export default function MiniCartDrawer() {
                   </p>
                   <span className="text-xs font-bold text-[#D97706] font-mono mt-1 block">
                     {selectedProduct.id === 'prod-just-bloomed-7d-trial' || bundleType === 'DAYS_7'
-                      ? '₹499 (7-Day Routine)'
+                      ? '₹599 (7-Day Routine)'
                       : 'Price: TBA (No advance payment)'}
                   </span>
                 </div>
@@ -269,8 +269,8 @@ export default function MiniCartDrawer() {
                           <div className="text-right">
                             {opt.type === 'DAYS_7' ? (
                               <div className="flex flex-col items-end">
-                                <span className="text-[10px] text-[#5E7A67] line-through font-mono">₹599</span>
-                                <span className="text-xs font-black text-[#D97706] font-mono">₹499</span>
+                                <span className="text-[10px] text-[#5E7A67] line-through font-mono">₹699</span>
+                                <span className="text-xs font-black text-[#D97706] font-mono">₹599</span>
                               </div>
                             ) : (
                               <span className="text-xs font-black text-[#0F3826] font-mono">Price TBA</span>
