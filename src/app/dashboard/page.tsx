@@ -622,7 +622,7 @@ export default function DashboardPage() {
           />
         </div>
         <p className="text-xs font-medium mt-2 font-mono text-brand-forest-muted">
-          ₹{sub.bundleDays === 7 ? 99 : (sub.perDay || 99)}/day · Fresh Living Box drop 6:00 AM – 9:00 AM
+          ₹99/box · 6 Living Boxes + 1 FREE Surprise Box drop 6:00 AM – 9:00 AM
         </p>
       </div>
 

@@ -70,7 +70,7 @@ export default function TopAnnouncementBar() {
       {/* 5. Special Offer */}
       <span className="inline-flex items-center gap-1.5 text-[#E6BE68] font-bold whitespace-nowrap">
         <span>🎁</span>
-        <span>Just Bloom 7-Day Plan ₹599 • 6 Rotating Bowls + 1 Surprise Box</span>
+        <span>Just Bloom Plan ₹599 • 6 Boxes @ ₹99/box + 1 FREE Surprise Box</span>
       </span>
 
       <span className="text-[#D97706]/70 text-xs select-none">✦</span>

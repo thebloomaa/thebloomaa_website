@@ -568,7 +568,7 @@ function CheckoutPageInner() {
                               <span className="text-xl font-black text-brand-mustard font-mono">₹{pricing.price}</span>
                             </div>
                             <span className="text-[10px] font-bold text-brand-forest-muted bg-brand-cream px-2 py-0.5 rounded-full border border-brand-border mt-0.5">
-                              Standard 7-Day Routine
+                              6 Boxes @ ₹99/box + 1 FREE Surprise Box
                             </span>
                           </div>
                         )}
@@ -605,7 +605,7 @@ function CheckoutPageInner() {
                       <span>Just Bloom Plan — What’s Included</span>
                     </div>
                     <p className="text-[11px] text-brand-forest-muted leading-relaxed">
-                      <strong>6 Bloom Boxes + 1 Surprise Bloom Box</strong> delivered between <strong>6:00 AM – 9:00 AM</strong> across Patna. Raw &amp; Dry Fruits, seeds, nuts, veggies, sprouts with honey,lemon &amp; salty finish. Zero cooking oils.
+                      <strong>6 Bloom Boxes + 1 FREE Surprise Bloom Box</strong> delivered between <strong>6:00 AM – 9:00 AM</strong> across Patna. Raw &amp; Dry Fruits, seeds, nuts, veggies, sprouts with honey,lemon &amp; salty finish. Zero cooking oils.
                     </p>
                   </div>
                 )}
@@ -679,7 +679,7 @@ function CheckoutPageInner() {
                   )}
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>What’s included:</span>
-                    <span className="font-bold text-brand-forest">{isComingSoonPlan ? '30-Day Plan' : '6 Bloom Boxes + 1 Surprise Box'}</span>
+                    <span className="font-bold text-brand-forest">{isComingSoonPlan ? '30-Day Plan' : '6 Bloom Boxes + 1 FREE Surprise Box'}</span>
                   </div>
                   <div className="flex justify-between text-brand-forest-muted">
                     <span>Delivery window:</span>

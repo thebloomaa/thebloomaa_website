@@ -144,12 +144,12 @@ export default function TrialPlanShowcase({ className = '' }: { className?: stri
         <div className="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 border-brand-border pt-3 md:pt-0">
           <div className="text-left md:text-right">
             <span className="text-[10px] uppercase font-bold text-brand-forest-muted tracking-wider block">
-              7-Day Routine
+              ₹99/Box · 6 Boxes + 1 FREE Box
             </span>
             <div className="flex items-baseline gap-1.5">
               <span className="text-sm font-black text-brand-forest-muted line-through font-mono">₹699</span>
               <span className="text-2xl font-black text-brand-mustard font-mono">₹599</span>
-              <span className="text-xs text-brand-forest-muted font-medium">/ 7 boxes</span>
+              <span className="text-xs text-brand-forest-muted font-medium">/ 6 boxes + 1 Free Box</span>
             </div>
           </div>
 

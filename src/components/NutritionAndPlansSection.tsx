@@ -12,7 +12,7 @@ export default function NutritionAndPlansSection() {
     'Just Bloom & Monthly routines available',
     'Pause, skip or reschedule anytime',
     'Cold-prepared fresh at 5:00 AM daily',
-    'Just Bloom 7-Day routine: ₹599 (Just ₹86/day)',
+    'Just Bloom Plan: ₹599 (₹99/box + 1 FREE Surprise Box)',
     'Dedicated WhatsApp subscriber support',
   ];
   return (
@@ -63,7 +63,7 @@ export default function NutritionAndPlansSection() {
                   <strong className="text-3xl font-black text-[#D97706] font-mono">₹599</strong>
                 </div>
                 <div className="flex items-center justify-between text-[10px] text-[#5E7A67] font-semibold pt-1 border-t border-[#FDE3B2]/60 mt-1">
-                  <span>₹86 / day (7 raw boxes)</span>
+                  <span>₹99 / box (6 boxes + 1 Free Box)</span>
                   <span>6–9 AM Patna Delivery</span>
                 </div>
               </div>
@@ -81,7 +81,7 @@ export default function NutritionAndPlansSection() {
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-emerald-600 font-bold">✓</span>
-                  <span>1 Surprise Bloom Box included 🎁</span>
+                  <span>Last box is a FREE Surprise Bloom Box 🎁</span>
                 </div>
               </div>
             </div>
