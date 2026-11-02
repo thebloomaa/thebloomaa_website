@@ -115,10 +115,13 @@ export async function POST(req: Request) {
     }
 
 
-    // First delivery is scheduled for next morning
+    // First delivery is scheduled for next morning (skips Sunday as Kitchen is closed)
     const now = new Date();
     const firstDeliveryDate = new Date(now);
     firstDeliveryDate.setDate(now.getDate() + 1);
+    if (firstDeliveryDate.getDay() === 0) {
+      firstDeliveryDate.setDate(firstDeliveryDate.getDate() + 1); // Advance Sunday to Monday
+    }
     firstDeliveryDate.setHours(6, 0, 0, 0);
 
     const cleanUtr = utr && String(utr).trim().length >= 6 ? String(utr).trim() : null;

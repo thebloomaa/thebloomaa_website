@@ -64,6 +64,9 @@ export async function POST(
 
       const resumeDay = new Date(skipDay);
       resumeDay.setDate(skipDay.getDate() + 1);
+      if (resumeDay.getDay() === 0) {
+        resumeDay.setDate(resumeDay.getDate() + 1); // Skip Sunday to Monday
+      }
       resumeDay.setHours(7, 0, 0, 0);
 
       effectiveStartDate = skipDay;

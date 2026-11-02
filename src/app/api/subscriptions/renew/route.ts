@@ -109,14 +109,20 @@ export async function POST(req: Request) {
     const now = new Date();
     let renewalStartDate = new Date(now);
     renewalStartDate.setDate(now.getDate() + 1);
+    if (renewalStartDate.getDay() === 0) {
+      renewalStartDate.setDate(renewalStartDate.getDate() + 1);
+    }
     renewalStartDate.setHours(6, 0, 0, 0);
 
     if (latestOrder && latestOrder.deliveryDate) {
       const latestDate = new Date(latestOrder.deliveryDate);
       if (latestDate >= now) {
-        // Schedule next day after the latest scheduled drop
+        // Schedule next day after the latest scheduled drop (skipping Sundays)
         renewalStartDate = new Date(latestDate);
         renewalStartDate.setDate(latestDate.getDate() + 1);
+        if (renewalStartDate.getDay() === 0) {
+          renewalStartDate.setDate(renewalStartDate.getDate() + 1);
+        }
         renewalStartDate.setHours(6, 0, 0, 0);
       }
     }

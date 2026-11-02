@@ -5,13 +5,29 @@ import Link from 'next/link';
 import { signOut } from 'next-auth/react';
 import ReorderPlanModal from '@/components/ReorderPlanModal';
 
+// Helper to ensure next delivery skips Sundays (Kitchen Rest)
+const getEffectiveDeliveryDate = (dateVal: any) => {
+  if (!dateVal) return new Date();
+  const d = new Date(dateVal);
+  if (d.getDay() === 0) {
+    d.setDate(d.getDate() + 1); // Advance Sunday to Monday
+  }
+  return d;
+};
+
 // Generate calendar from actual orders
 const generateDeliveryDays = (orders: any[]) => {
-  const days: Record<string, 'DELIVERED' | 'SCHEDULED' | 'SKIPPED'> = {};
+  const days: Record<string, 'DELIVERED' | 'SCHEDULED' | 'SKIPPED' | 'NO_DELIVERY'> = {};
   if (!orders) return days;
   orders.forEach((o) => {
     if (!o.deliveryDate) return;
     const key = o.deliveryDate.split('T')[0];
+    const d = new Date(o.deliveryDate);
+    // Sunday is kitchen rest day — auto-skip / mark no delivery
+    if (d.getDay() === 0) {
+      days[key] = 'NO_DELIVERY';
+      return;
+    }
     if (o.status === 'DELIVERED') days[key] = 'DELIVERED';
     else if (o.status === 'SKIPPED') days[key] = 'SKIPPED';
     else if (o.status === 'QUEUED' || o.status === 'PENDING' || o.status === 'PACKED' || o.status === 'OUT_FOR_DELIVERY') {
@@ -104,7 +120,7 @@ export default function DashboardPage() {
           startDate: data.subscription.startDate,
           nextDeliveryDate: data.subscription.nextDeliveryDate,
           deliveryTime: data.subscription.deliveryTime || '07:00 AM',
-          perDay: Math.round((data.subscription.product?.price || 599) / bundleDays),
+          perDay: bundleDays === 7 ? 99 : Math.round((data.subscription.product?.price || 599) / bundleDays),
           orders: data.subscription.orders || [],
           pauseEndDate: data.subscription.pauses?.[0]?.endDate || null,
         });
@@ -139,29 +155,41 @@ export default function DashboardPage() {
   const nextStartDateLabel = useMemo(() => {
     if (sub?.orders && sub.orders.length > 0) {
       const scheduled = sub.orders
-        .filter((o: any) => o.status !== 'FAILED')
+        .filter((o: any) => o.status !== 'FAILED' && o.status !== 'SKIPPED')
         .map((o: any) => new Date(o.deliveryDate).getTime());
       if (scheduled.length > 0) {
         const maxDate = new Date(Math.max(...scheduled));
         const nextDay = new Date(maxDate);
         nextDay.setDate(maxDate.getDate() + 1);
+        if (nextDay.getDay() === 0) {
+          nextDay.setDate(nextDay.getDate() + 1); // Skip Sunday to Monday
+        }
         return nextDay.toLocaleDateString('en-IN', { weekday: 'short', month: 'short', day: 'numeric' });
       }
     }
+    const tmrw = new Date(now);
+    tmrw.setDate(now.getDate() + 1);
+    if (tmrw.getDay() === 0) {
+      return 'Monday morning';
+    }
     return 'Tomorrow morning';
-  }, [sub]);
+  }, [sub, now]);
 
   const getDateStr = (day: number) => {
     return `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
   };
 
-  const getStatusStyle = (status: string | undefined) => {
+  const getStatusStyle = (status: string | undefined, isSunday = false) => {
+    if (isSunday) {
+      return { bg: 'rgba(239, 68, 68, 0.05)', color: '#94A3B8', border: 'rgba(239, 68, 68, 0.25)' };
+    }
     switch (status) {
       case 'DELIVERED':
         return { bg: 'rgba(16, 185, 129, 0.15)', color: '#6EE7B7', border: 'rgba(16, 185, 129, 0.25)' };
       case 'SCHEDULED':
         return { bg: 'rgba(245, 158, 11, 0.12)', color: '#FCD34D', border: 'rgba(245, 158, 11, 0.2)' };
       case 'SKIPPED':
+      case 'NO_DELIVERY':
         return { bg: 'rgba(239, 68, 68, 0.12)', color: '#FCA5A5', border: 'rgba(239, 68, 68, 0.2)' };
       default:
         return { bg: 'transparent', color: 'var(--text-muted)', border: 'transparent' };
@@ -512,13 +540,13 @@ export default function DashboardPage() {
               <span className="font-semibold text-brand-forest">
                 {isPaused
                   ? sub.pauseEndDate
-                    ? `Auto-resumes ${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
+                    ? `Auto-resumes ${getEffectiveDeliveryDate(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
                         weekday: 'short',
                         month: 'short',
                         day: 'numeric',
                       })} · ${sub.deliveryTime}`
                     : 'Paused (On hold until you tap Resume)'
-                  : `${new Date(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
+                  : `${getEffectiveDeliveryDate(sub.nextDeliveryDate).toLocaleDateString('en-IN', {
                       weekday: 'short',
                       month: 'short',
                       day: 'numeric',
@@ -594,7 +622,7 @@ export default function DashboardPage() {
           />
         </div>
         <p className="text-xs font-medium mt-2 font-mono text-brand-forest-muted">
-          ₹{sub.perDay}/day · Fresh Living Box drop 6:00 AM – 9:00 AM
+          ₹{sub.bundleDays === 7 ? 99 : (sub.perDay || 99)}/day · Fresh Living Box drop 6:00 AM – 9:00 AM
         </p>
       </div>
 
@@ -603,7 +631,7 @@ export default function DashboardPage() {
         <div className="flex items-center justify-between mb-6">
           <div>
             <h3 className="text-lg font-bold text-brand-forest">Delivery Calendar</h3>
-            <p className="text-xs text-brand-forest-muted mt-0.5">Tap any scheduled morning drop to skip it before 8:30 PM</p>
+            <p className="text-xs text-brand-forest-muted mt-0.5">Tap any scheduled morning drop to skip it before 8:30 PM (Sundays are Kitchen Rest days)</p>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -627,8 +655,9 @@ export default function DashboardPage() {
         {/* Day labels */}
         <div className="grid grid-cols-7 gap-1.5 mb-2">
           {DAY_LABELS.map((d) => (
-            <div key={d} className="text-center text-xs font-bold py-1 text-brand-forest-muted">
+            <div key={d} className={`text-center text-xs font-bold py-1 ${d === 'Su' ? 'text-red-500/80 font-black' : 'text-brand-forest-muted'}`}>
               {d}
+              {d === 'Su' && <span className="block text-[8px] font-semibold text-red-500/70 -mt-0.5">Off</span>}
             </div>
           ))}
         </div>
@@ -638,9 +667,10 @@ export default function DashboardPage() {
           {calendarDays.map((day, i) => {
             if (!day) return <div key={i} className="aspect-square" />;
             const dateStr = getDateStr(day);
-            const status = deliveryDays[dateStr];
-            const style = getStatusStyle(status);
-            const isScheduled = status === 'SCHEDULED';
+            const isSunday = new Date(currentYear, currentMonth, day).getDay() === 0;
+            const status = isSunday ? 'NO_DELIVERY' : deliveryDays[dateStr];
+            const style = getStatusStyle(status, isSunday);
+            const isScheduled = status === 'SCHEDULED' && !isSunday;
             const isToday = dateStr === todayStr;
 
             return (
@@ -648,24 +678,30 @@ export default function DashboardPage() {
                 key={i}
                 type="button"
                 onClick={() => {
-                  if (isScheduled) {
+                  if (isScheduled && !isSunday) {
                     setSkipConfirmDate(dateStr);
                     setSkipError(null);
                   }
                 }}
-                disabled={!isScheduled}
-                className="relative aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-bold transition-all disabled:cursor-default"
+                disabled={!isScheduled || isSunday}
+                className={`relative aspect-square rounded-xl flex flex-col items-center justify-center text-xs font-bold transition-all disabled:cursor-default ${isSunday ? 'opacity-85' : ''}`}
                 style={{
                   background: style.bg,
                   color: style.color,
-                  border: isToday ? '2px solid var(--brand-primary)' : `1px solid ${style.border}`,
+                  border: isToday ? '2px solid var(--brand-primary)' : isSunday ? '1px dashed rgba(239, 68, 68, 0.35)' : `1px solid ${style.border}`,
                 }}
-                title={status ? `${dateStr}: ${status}` : dateStr}
+                title={isSunday ? `${dateStr}: Sunday Kitchen Rest (No Deliveries)` : status ? `${dateStr}: ${status}` : dateStr}
               >
                 <span>{day}</span>
-                {status === 'DELIVERED' && <span className="text-[9px] mt-0.5 font-bold">✓</span>}
-                {status === 'SKIPPED' && <span className="text-[9px] mt-0.5 font-bold">✕</span>}
-                {isScheduled && <span className="text-[9px] mt-0.5 text-brand-mustard">●</span>}
+                {isSunday ? (
+                  <span className="text-[8px] font-bold text-red-400 leading-tight">No Drop</span>
+                ) : (
+                  <>
+                    {status === 'DELIVERED' && <span className="text-[9px] mt-0.5 font-bold">✓</span>}
+                    {status === 'SKIPPED' && <span className="text-[9px] mt-0.5 font-bold">✕</span>}
+                    {isScheduled && <span className="text-[9px] mt-0.5 text-brand-mustard">●</span>}
+                  </>
+                )}
               </button>
             );
           })}
@@ -677,6 +713,7 @@ export default function DashboardPage() {
             { label: 'Delivered', color: '#6EE7B7', symbol: '✓' },
             { label: 'Scheduled', color: '#FCD34D', symbol: '●' },
             { label: 'Skipped', color: '#FCA5A5', symbol: '✕' },
+            { label: 'Sunday (No Delivery)', color: '#F87171', symbol: '—' },
           ].map((item) => (
             <div key={item.label} className="flex items-center gap-1.5">
               <span style={{ color: item.color }} className="font-bold">{item.symbol}</span>
@@ -684,7 +721,7 @@ export default function DashboardPage() {
             </div>
           ))}
           <span className="ml-auto text-[11px] text-brand-forest-muted/70">
-            ⏰ 8:30 PM eve cutoff for skips
+            ⏰ 8:30 PM eve cutoff for skips · Sundays Kitchen Rest
           </span>
         </div>
       </div>

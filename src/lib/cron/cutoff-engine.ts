@@ -19,6 +19,12 @@ export async function processDailyCutoff() {
   tomorrow.setDate(now.getDate() + 1);
   tomorrow.setHours(0, 0, 0, 0); // Normalized start of tomorrow
 
+  // Sunday is Kitchen Rest day — no deliveries!
+  if (tomorrow.getDay() === 0) {
+    console.log('[Cutoff Engine] Tomorrow is Sunday (No Deliveries / Kitchen Closed). Skipping.');
+    return;
+  }
+
   const dayAfterTomorrow = new Date(tomorrow);
   dayAfterTomorrow.setDate(tomorrow.getDate() + 1);
 
@@ -130,6 +136,9 @@ export async function processDailyCutoff() {
         const newDeliveriesLeft = sub.deliveriesLeft - 1;
         const newNextDeliveryDate = new Date(sub.nextDeliveryDate);
         newNextDeliveryDate.setDate(newNextDeliveryDate.getDate() + 1);
+        if (newNextDeliveryDate.getDay() === 0) {
+          newNextDeliveryDate.setDate(newNextDeliveryDate.getDate() + 1); // Advance Sunday to Monday
+        }
 
         await tx.subscription.update({
           where: { id: sub.id },

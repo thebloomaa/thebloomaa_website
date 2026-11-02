@@ -42,6 +42,10 @@ export async function POST(
       // Before 8:30 PM: Morning delivery resumes tomorrow
       nextDelivery.setDate(now.getDate() + 1);
     }
+    // Sunday is Kitchen Rest day — advance to Monday
+    if (nextDelivery.getDay() === 0) {
+      nextDelivery.setDate(nextDelivery.getDate() + 1);
+    }
     nextDelivery.setHours(0, 0, 0, 0);
 
     const result = await prisma.$transaction(async (tx) => {

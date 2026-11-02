@@ -33,6 +33,37 @@ export async function GET() {
       orderBy: { updatedAt: 'desc' },
     });
 
+    // Auto-skip any Sunday orders that are currently queued/pending, and advance Sunday nextDeliveryDate
+    if (subscription) {
+      if (subscription.orders && subscription.orders.length > 0) {
+        for (const ord of subscription.orders) {
+          const d = new Date(ord.deliveryDate);
+          if (d.getDay() === 0 && (ord.status === 'QUEUED' || ord.status === 'PENDING')) {
+            await prisma.order.update({
+              where: { id: ord.id },
+              data: {
+                status: 'SKIPPED',
+                deliveryNote: ord.deliveryNote
+                  ? `${ord.deliveryNote} [Auto-skipped: No Sunday Deliveries]`
+                  : 'Auto-skipped: No Sunday Deliveries',
+              },
+            });
+            ord.status = 'SKIPPED';
+          }
+        }
+      }
+
+      if (subscription.nextDeliveryDate && new Date(subscription.nextDeliveryDate).getDay() === 0) {
+        const nextMon = new Date(subscription.nextDeliveryDate);
+        nextMon.setDate(nextMon.getDate() + 1);
+        await prisma.subscription.update({
+          where: { id: subscription.id },
+          data: { nextDeliveryDate: nextMon },
+        });
+        subscription.nextDeliveryDate = nextMon;
+      }
+    }
+
     // Also fetch user profile with default address
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },
